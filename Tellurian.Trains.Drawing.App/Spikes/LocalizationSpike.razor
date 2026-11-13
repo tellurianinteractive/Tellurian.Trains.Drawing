@@ -1,0 +1,107 @@
+@page "/spike/localization"
+@using System.Globalization
+@using Tellurian.Localization
+@using Tellurian.Trains.Drawing.App.Spikes.Resources
+@inject ILanguageService LanguageService
+@inject IJSRuntime JS
+
+<PageTitle>Spike B – localization</PageTitle>
+
+<div class="spike-page">
+    <h1>Spike B – localization</h1>
+
+    <section>
+        <h2>Language</h2>
+        <div class="spike-buttons">
+            @foreach (var language in LanguageService.GetSupportedLanguages())
+            {
+                var culture = CultureOf(language);
+                <button class="@(culture == CultureInfo.CurrentUICulture.Name ? "selected" : "")" @onclick="() => ChangeCulture(culture)">
+                    @CultureInfo.GetCultureInfo(culture).NativeName
+                </button>
+            }
+        </div>
+        <p>
+            CurrentCulture: <b>@CultureInfo.CurrentCulture.Name</b>,
+            CurrentUICulture: <b>@CultureInfo.CurrentUICulture.Name</b>,
+            globalization: <b>@(CultureInfo.InvariantCulture.Equals(CultureInfo.CurrentCulture) ? "invariant (!)" : "ICU")</b>
+        </p>
+    </section>
+
+    <section>
+        <h2>RESX (satellite assemblies)</h2>
+        <table class="spike-table">
+            <tbody>
+                @foreach (var key in Keys)
+                {
+                    <tr><td><code>@key</code></td><td>@Text(key)</td></tr>
+                }
+                <tr><td><code>Length</code> with 1 234,5</td><td>@string.Format(CultureInfo.CurrentCulture, Text("Length"), 1234.5)</td></tr>
+            </tbody>
+        </table>
+        <p>Loaded satellite assemblies: <b>@SatelliteAssemblies</b></p>
+    </section>
+
+    <section>
+        <h2>Formatting (ICU)</h2>
+        <p>Number: <b>@((1234567.891).ToString("N2", CultureInfo.CurrentCulture))</b>,
+           date: <b>@(new DateTime(2026, 11, 13).ToString("D", CultureInfo.CurrentCulture))</b>,
+           month names: <b>@string.Join(", ", CultureInfo.CurrentCulture.DateTimeFormat.MonthNames.Take(3))</b></p>
+        <p>Sorting "Ärla, Zeta, Öst, Åby, Alfa": <b>@string.Join(", ", new[] { "Ärla", "Zeta", "Öst", "Åby", "Alfa" }.Order(StringComparer.Create(CultureInfo.CurrentCulture, true)))</b></p>
+    </section>
+
+    <section>
+        <h2>Markdown over HTTP (and offline)</h2>
+        <p>Norwegian has no help file on purpose: it should fall back to English.</p>
+        <pre class="spike-markdown">@markdown</pre>
+        <p>Loaded in @markdownMilliseconds ms. Go offline (DevTools → Network → Offline) and reload: the text should still appear once the service worker has cached it (Release build only).</p>
+    </section>
+</div>
+
+@code {
+    private static readonly string[] Keys = ["Title", "Save", "Open", "EndProfile", "Module", "HallPlan", "Clamped"];
+
+    [Inject(Key = "Resx")] private IResourceProviderGroup Resx { get; set; } = default!;
+    [Inject(Key = "Markdown")] private IResourceProvider Markdown { get; set; } = default!;
+
+    private string markdown = "…";
+    private long markdownMilliseconds;
+
+    private string Text(string key) => Resx.Translated<SpikeTexts>(key).Text;
+
+    private static string CultureOf(Language language) =>
+        language.CultureCode is null ? language.TwoLetterCode : $"{language.TwoLetterCode}-{language.CultureCode}";
+
+    private static string SatelliteAssemblies =>
+        string.Join(", ", AppDomain.CurrentDomain.GetAssemblies()
+            .Select(a => a.GetName())
+            .Where(n => n.Name?.EndsWith(".resources", StringComparison.Ordinal) == true)
+            .Select(n => $"{n.Name} ({n.CultureName})")) is { Length: > 0 } list ? list : "none";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            markdown = (await Markdown.GetTranslationAsync("spike-help", CultureInfo.CurrentUICulture)).Text;
+        }
+        catch (HttpRequestException ex)
+        {
+            markdown = $"Could not load help: {ex.Message}";
+        }
+        markdownMilliseconds = watch.ElapsedMilliseconds;
+    }
+
+    private async Task ChangeCulture(string culture)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", "tellurian-drawing-culture", culture);
+            await JS.InvokeVoidAsync("location.reload");
+        }
+        catch (JSException ex)
+        {
+            markdown = $"Could not change language: {ex.Message}";
+        }
+    }
+}

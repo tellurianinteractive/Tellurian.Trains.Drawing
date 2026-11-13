@@ -104,3 +104,32 @@ code {
 #update-available[hidden] {
     display: none;
 }
+
+/* Spike B: localization (throw-away). */
+.spike-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1rem;
+    font: 15px system-ui, sans-serif;
+}
+
+.spike-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.spike-buttons .selected {
+    font-weight: bold;
+    outline: 2px solid #1f5fbf;
+}
+
+.spike-table td {
+    padding: 0.15rem 1rem 0.15rem 0;
+}
+
+.spike-markdown {
+    background: #f3f4f6;
+    padding: 0.75rem;
+    white-space: pre-wrap;
+}
