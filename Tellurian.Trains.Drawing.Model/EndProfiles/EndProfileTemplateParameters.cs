@@ -9,7 +9,7 @@ public sealed record EndProfileTemplateParameters
     public Guid? Id { get; init; }
     public required string Designation { get; init; }
     public required string Scale { get; init; }
-    public IReadOnlyList<Guid> StandardIds { get; init; } = [];
+    public IReadOnlyList<CatalogueReference> Standards { get; init; } = [];
     public required double PlateWidth { get; init; }
 
     /// <summary>Y of the top edge of the plate; normally negative (below rail top).</summary>

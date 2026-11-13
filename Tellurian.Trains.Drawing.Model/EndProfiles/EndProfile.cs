@@ -1,3 +1,5 @@
+using Tellurian.Trains.Drawing.Model.Catalogue;
+
 namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 
 /// <summary>
@@ -15,8 +17,8 @@ public sealed record EndProfile
     /// <summary>The short name of the scale.</summary>
     public required string Scale { get; init; }
 
-    /// <summary>The standards the profile belongs to.</summary>
-    public IReadOnlyList<Guid> StandardIds { get; init; } = [];
+    /// <summary>The standards the profile belongs to, by id and short name.</summary>
+    public IReadOnlyList<CatalogueReference> Standards { get; init; } = [];
 
     /// <summary>The end-plate outline: a closed path. Shown for information; it isn't a fit criterion.</summary>
     public PathDrawing? Outline { get; init; }
