@@ -69,11 +69,10 @@ public sealed class EndProfileAnalysisTests
     [TestMethod]
     public void MirroringTwiceRestoresTheProfile()
     {
-        var profile = TestProfiles.Asymmetric() with { CablePassages = [PathDrawing.Polyline([new(10, -60), new(30, -60), new(30, -80)], isClosed: true)] };
+        var profile = TestProfiles.Asymmetric();
         var twice = profile.MirroredX().MirroredX();
         Assert.AreEqual(JointFit.Fits, JointFitEvaluator.Evaluate(profile, ProfileOrientation.Mirrored, twice, ProfileOrientation.Normal).Fit);
         Assert.IsTrue(ShapeComparison.MaximumDeviation(profile.GroundLine!.Tessellate(), twice.GroundLine!.Tessellate()).IsWithin(1e-9));
-        Assert.IsTrue(twice.CablePassages[0].Start.IsCloseTo(new(10, -60)));
         Assert.AreSame(profile, profile.Oriented(ProfileOrientation.Normal));
     }
 

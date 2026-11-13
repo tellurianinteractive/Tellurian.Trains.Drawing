@@ -27,7 +27,6 @@ public sealed record EndProfile
     public IReadOnlyList<EndProfileTrack> Tracks { get; init; } = [];
     public IReadOnlyList<Circle> ScrewHoles { get; init; } = [];
     public IReadOnlyList<Circle> Dowels { get; init; } = [];
-    public IReadOnlyList<PathDrawing> CablePassages { get; init; } = [];
 
     /// <summary>Identifies the screw-hole pattern, used for fit when holes aren't drawn.</summary>
     public string? ScrewHolePattern { get; init; }
@@ -50,7 +49,6 @@ public sealed record EndProfile
         Tracks = [.. Tracks.Select(t => t.MirroredX())],
         ScrewHoles = [.. ScrewHoles.Select(h => h.MirroredX())],
         Dowels = [.. Dowels.Select(d => d.MirroredX())],
-        CablePassages = [.. CablePassages.Select(c => c.MirroredX())],
     };
 
     /// <summary>The drawing as it is built at an exit with <paramref name="orientation"/>.</summary>

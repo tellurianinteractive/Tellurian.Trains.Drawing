@@ -109,7 +109,7 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 ### Phase 2 – Domain model, fit evaluator, catalogue and file format (≈2–3 weeks)
 1. Model records:
    - Scale, ModuleStandard, **StandardAddOn** (base standard), EndProfileCompatibilityOverride;
-   - **EndProfile drawing**: outline, ground line, tracks (offset, gauge, rail top), screw holes, dowels, cable passages, dimensions, labels, and the fallback screw-hole pattern identifier;
+   - **EndProfile drawing**: outline, ground line, tracks (offset, gauge, rail top), screw holes, dowels, dimensions, labels, and the fallback screw-hole pattern identifier;
    - Owner, Module (shared properties, incl. add-ons met) → **ModuleVariant** (configuration label, default flag, optional Registry id) → **Section** (outline), **InternalJoint** (optional free internal end profile), Exit (outer ends only, with profile orientation and rail-top offset, 0 = standard height), TrackElement hierarchy (straight, arc, turnout variants, crossing, double slip, buffer stop), **OperatorSpace** (polygon), **PublicSide** (edge references), **DuckUnderArea** (polygon, optional clear height), Label;
    - Hall, Obstacle, Door, NoGoZone;
    - HallPlan (primary + accepted standards, preferred add-ons), Placement (with leg adjustment), Joint (fit, join method Bolted/Clamped, override flag, number of clamps), **PublicArea** (polygon), **WalkingPath** (centre line + width), **Acknowledgement** (finding type, involved placements, state fingerprint, note, time).
@@ -189,7 +189,7 @@ This comes first among the editors because module exits (Phase 6) depend on end 
    - outline tool for the end-plate cross-section (EP-3);
    - ground line tool (EP-4);
    - track tool with rails and optional track bed (EP-5);
-   - screw hole, dowel and cable passage tools (EP-6);
+   - screw hole and dowel tools (EP-6);
    - dimensions and labels (EP-10).
 4. Live derived-properties panel, symmetry indicator and mirror ghost highlighting the asymmetric parts (EP-7).
 5. **Compare view** (EP-8):
@@ -330,7 +330,7 @@ In priority order (to be confirmed):
 5. VA-9 track continuity across joints.
 6. EX-3 PDF (browser print-to-PDF first), EX-6 workspace backup.
 7. EP-11/MD-14/HA-4 background images with calibration, including PDF pages (one shared mechanism; EP-11 possibly already in Phase 5).
-8. EP-6 dowels and cable passages (if not done in Phase 5), AP-5 dark theme.
+8. EP-6 dowels (if not done in Phase 5), AP-5 dark theme.
 
 ### Later (separate plan)
 - **Module Registry upload of module files and end profile drawings** (spec §10). This is Registry-side work in its own repository, based on the published schemas. End profile drawings are stored with the Registry's EndProfile entity. This app needs no changes beyond keeping the schemas stable.
