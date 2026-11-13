@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.16** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.17** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -155,7 +155,7 @@ The structure of a module drawing (exits → end plates → sides → sections �
 | MD-3 | M | **Quick-create templates**: a straight module (length × width), a curved module (radius, angle, width) and a straight+curve module. Each template creates the outline, exits and through tracks according to the chosen end profile. Templates use the auto-draw function (MD-20). |
 | MD-4 | M | **Sections and outlines**: a module has one or more sections. Each section's outline is a closed path of line and arc segments, edited by vertex handles and numeric input. A section can be split in two along a line, and adjacent sections can be merged. Sections are labelled and visually separated. |
 | MD-4a | M | **Internal joints**: where two sections meet, there is an internal joint. Its internal end profile can optionally be drawn as a user end profile, freely designed by the owner and not checked against any standard. Internal joints are fixed and never offered for snapping in a hall plan. |
-| MD-5 | M | **Exits** (outer ends): add exits to section edges that are not internal joints, and edit them. Each has a label, direction, end profile and, for asymmetric profiles, the profile orientation. The end profile **must be one of the module standard's end profiles**; otherwise the editor shows a warning. An exit snaps to an outline edge and is perpendicular to it by default, and the end plate is drawn at the exit with its profile width. Its pose can also be entered numerically. The exit's end profile drawing can be shown in a side panel. |
+| MD-5 | M | **Exits** (outer ends): every exit must reference a **drawn** end profile, so end profiles are drawn or imported before modules are drawn. Add exits to section edges that are not internal joints, and edit them. Each has a label, direction, end profile and, for asymmetric profiles, the profile orientation. The end profile **must be one of the module standard's end profiles**; otherwise the editor shows a warning. An exit snaps to an outline edge and is perpendicular to it by default, and the end plate is drawn at the exit with its profile width. Its pose can also be entered numerically. The exit's end profile drawing can be shown in a side panel. |
 | MD-6 | M | **Track plan** with track elements: straight, arc, turnout (left, right, curved, wye, three-way, with parametric length/angle/radius), crossing, double slip, buffer stop. Each element has connection points, and elements snap to each other and to exit track positions. |
 | MD-7a | M | **Ramp modules**: the rail-top offset of each exit can be set (default 0 = standard height). If the exits differ, the module is shown as a ramp with its height difference and gradient along the main track. |
 | MD-7 | M | The track positions at an exit come from its end profile drawing. The editor warns if a track ends at an exit off a profile position (tolerance configurable, default 0.5 mm) or if a profile track position has no track. |
@@ -309,7 +309,8 @@ The app never talks to the Registry as a user with rights. Access control is ent
 
 **Coming Registry release (Registry-side work, enabled by EX-7):**
 - A user uploads a module file to a module in the Module Registry. The Registry validates it against the published module schema, stores it, and can show it (replacing or complementing the DWG/SKP document links).
-- An end profile drawing is stored with the Registry's **EndProfile** entity (complementing its PDF document).
+- An end profile drawing is stored with the Registry's **EndProfile** entity (complementing its PDF document). End profile drawings are maintained there and **imported into the app**, so modules are drawn with the current profiles.
+- **Data flows back:** when a module drawing is uploaded, the Registry can set missing properties and update measures from the drawing: exits, straight/radius/angle/length, width, sections, through tracks and flags (ModuleDrawing.md §8.8). The module file therefore includes the derived values per variant. This improves the Registry data, where 71 % of the modules have no exits today.
 - Meeting organisers can then get module files of registered modules from the Registry, or collect them in any other way.
 
 **Reuse in the Registry (enabled by NF-10):**

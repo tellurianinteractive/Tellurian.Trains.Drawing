@@ -234,6 +234,7 @@ is listed in the result as an "assumption"** and shown to the user, e.g. "exits 
 | Width smaller than the plate width | Ignore it and use the plate width, with a warning. |
 | Number of through tracks 0 | Draw no through track; the module is drawn as baseboard only. |
 | Number of through tracks doesn't match the end profile | The end profile wins. Warning. |
+| Standard *MMM-2R/SSM* or *FREMO/SSM* | Standard MMM-2R with the add-on MMM-Summer, and default end profile MMM480. |
 | No geometry (no straight length, no curve) | Not auto-drawable. The result is "needs manual drawing". |
 | Angle ≥ 360°, or a turntable module | Drawn as far as possible and marked "check". |
 
@@ -241,6 +242,20 @@ is listed in the result as an "assumption"** and shown to the user, e.g. "exits 
 - The output is a module drawing with one variant, valid against the module schema (EX-7).
 - It records `autoDraw: { generatorVersion, parameters }` per variant. While a variant is unedited, it can be **re-generated** from changed parameters. The Registry does this when module data changes.
 - Editing a generated part by hand clears the auto-draw marker for that variant. The Registry then stops overwriting it.
+
+### 8.8 Upload to the Registry: data flowing back
+A drawing contains exact data that is often missing in the Registry (§12). When a module drawing is uploaded, the Registry can offer to update the module with values derived from the drawing. The user confirms each change:
+
+| Registry field | From the drawing |
+|---|---|
+| *ModuleExit* rows (label, direction, end profile) | The exits of the variant. The "exits" with the *Internal* profile become internal joints in the drawing; the Registry keeps or adds them according to its own convention. |
+| *Straight*, *Radius*, *Angle*, *Length* | The main path (§6.1). |
+| *Width* | The derived width (§5.4). |
+| *NumberOfSections* | The number of sections. |
+| *NumberOfThroughTracks* | The number of through tracks. |
+| *IsEndOfLine*, *IsDuckunder* | The number of exits, and the duck-under area. |
+
+The app supports this by including the **derived values** in the module file (per variant), next to the drawing. A receiver can then use them without re-computing the geometry. For a module drawing to be complete, every exit must reference a **drawn** end profile. End profiles are therefore drawn (or imported from the Registry) before modules are drawn.
 
 ## 9. Visual style (default)
 
@@ -292,7 +307,7 @@ the defaults above and for the inference rules in §8.6.
 
 | Topic | Finding | Consequence |
 |---|---|---|
-| Standards | FREMO/H0-RE 460, MMM-2R 317, MMM-2R/SSM 40, MMM-3R 29, FREMO/SSM 19, FREMO 0-RE 15, FREMO/N-RE 14, AmericaN 9, USMS 5. There are also a few MMM/H0n3, SIH0 and FREMO/E modules. | The built-in catalogue covers FREMO/H0-RE, MMM-2R and MMM-3R first, then the SSM variants, FREMO 0-RE and FREMO/N-RE. |
+| Standards | FREMO/H0-RE 460, MMM-2R 317, MMM-2R/SSM 40, MMM-3R 29, FREMO/SSM 19, FREMO 0-RE 15, FREMO/N-RE 14, AmericaN 9, USMS 5. There are also a few MMM/H0n3, SIH0 and FREMO/E modules. | The built-in catalogue covers FREMO/H0-RE, MMM-2R and MMM-3R first, then FREMO 0-RE and FREMO/N-RE. *SSM = MMM-Summer*: the two SSM standards map to MMM-2R + the MMM-Summer add-on (§13). |
 | **Exits** | **648 modules (71 %) have no exits registered.** 57 have 1, 187 have 2, 17 have 3 and 9 have 4. | Auto-draw must **infer exits** when there are none (§8.6). Otherwise most modules couldn't be drawn. |
 | End-of-line flag | 19 modules are flagged; 11 of them have no exits and 8 have 1. 49 one-exit modules are *not* flagged. | A single exit, or the flag, means end of line. A flag that disagrees with the exits only gives a warning. |
 | Exit directions (2 exits) | EW 152, undefined 34, WW 1. | Undefined directions: use the registered exit order. |
@@ -314,5 +329,10 @@ the defaults above and for the inference rules in §8.6.
 3. **Default operator space depth** per standard (e.g. 800 mm)?
 4. **Track colours** for the built-in standards: blue for all, or one colour per standard family (e.g. FREMO blue, MMM another)?
 5. **Default end profiles** per standard, used when exits are inferred. *Decided for the spikes (2026-11-13):* FREMO/H0-RE → FREMO-H0-B96 (single track) and FREMO-H0-2E96 (double track); MMM-2R → MMM480. Still open: MMM-3R, and whether these defaults hold for the release.
-6. **SSM**: what do *MMM-2R/SSM* and *FREMO/SSM* stand for? Are they standards of their own, or add-ons like MMM-Summer and MMM-Modern?
-7. **Registry data quality**: 71 % of the modules have no exits, and 24 have an angle but no radius. Should the Registry encourage completing this data, for example by showing the auto-drawn module and its assumptions when a module is edited?
+
+### Resolved
+- **SSM** is **MMM-Summer** (2026-11-13). Registry modules with the standard *MMM-2R/SSM* or *FREMO/SSM* map to standard **MMM-2R** with the add-on **MMM-Summer**, and get **MMM480** end profiles when exits are inferred.
+- **Registry data quality** (2026-11-13): this app improves it.
+  - When a module is drawn, its exits must have **drawn end profiles**, so end profiles are drawn first (or imported).
+  - End profile drawings are kept in the Registry and imported into the app.
+  - When a module drawing is **uploaded to the Registry**, the Registry can set missing properties and update measures from the drawing (§8.8).
