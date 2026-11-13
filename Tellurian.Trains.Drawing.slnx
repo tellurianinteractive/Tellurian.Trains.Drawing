@@ -13,6 +13,7 @@
   </Folder>
   <Folder Name="/docs/">
     <File Path="docs/adr/0001-svg-canvas.md" />
+    <File Path="docs/adr/0002-files-first-storage.md" />
     <File Path="docs/ImplementationPlan.md" />
     <File Path="docs/ModuleDrawing.md" />
     <File Path="docs/Specification.md" />
