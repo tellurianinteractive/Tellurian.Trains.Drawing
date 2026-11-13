@@ -1,7 +1,14 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": [ "/_framework/*", "/css/*", "/js/*", "*.{png,ico,svg,json,webmanifest,wasm,dat,blat,js,css}" ]
+    "exclude": [
+      "/_framework/*",
+      "/Content/*",
+      "/css/*",
+      "/js/*",
+      "/schema/*",
+      "*.{png,ico,svg,json,webmanifest,wasm,dat,blat,js,css,md,zip,pdf,tdmodule,tdendprofile,tdhall,tdhallplan,tdcatalogue}"
+    ]
   },
   "mimeTypes": {
     ".wasm": "application/wasm",
@@ -10,9 +17,24 @@
     ".webmanifest": "application/manifest+json"
   },
   "routes": [
-    { "route": "/index.html", "headers": { "cache-control": "no-cache" } },
-    { "route": "/service-worker.js", "headers": { "cache-control": "no-cache" } },
-    { "route": "/service-worker-assets.js", "headers": { "cache-control": "no-cache" } }
+    {
+      "route": "/index.html",
+      "headers": {
+        "cache-control": "no-cache"
+      }
+    },
+    {
+      "route": "/service-worker.js",
+      "headers": {
+        "cache-control": "no-cache"
+      }
+    },
+    {
+      "route": "/service-worker-assets.js",
+      "headers": {
+        "cache-control": "no-cache"
+      }
+    }
   ],
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
