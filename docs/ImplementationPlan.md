@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Implementation Plan
 
-Status: **Draft 0.15** (2026-11-13). Based on [Specification.md](Specification.md) draft 0.18, [UseCases.md](UseCases.md) draft 0.1 and [ModuleDrawing.md](ModuleDrawing.md) draft 0.1.
+Status: **Draft 0.16** (2026-11-13). Based on [Specification.md](Specification.md) draft 0.23, [UseCases.md](UseCases.md) draft 0.1 and [ModuleDrawing.md](ModuleDrawing.md) draft 0.1.
 Requirement IDs (e.g. `MD-6`) refer to the specification.
 
 ---
@@ -241,11 +241,11 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 1. Create a hall plan (hall + primary standard + additional accepted standards, editable later). Settings for tolerances and clearance (HP-1).
 2. **Module collection** (HP-2, UC-7): import from a ZIP archive, a shared folder (re-read for changes) or single files. A list with filters (standard, add-ons, owner, not used yet) and flags (unaccepted standard, missing end profiles). Cached in IndexedDB.
 3. **Line model and layout engine** in `Model`, unit-tested without UI:
-   - `Line` (ordered entries, anchor entry and pose, optional start at the free exit of another line's module, closed flag) and `LineEntry` (module, variant, entry exit, exit exit);
-   - `LineLayout.Compute(line, …) → poses`: starts at the anchor and works outwards in both directions, joining each entry's entry exit to its neighbour's exit exit with the join math (§1.3). Branch lines start from their parent exit. A closed line reports its closure gap (VA-5);
+   - `Layout` (anchor module, anchor pose, anchor dimensions, lines), `Line` (ordered entries, optional start at the free exit of another line's module, optional end at a free exit elsewhere) and `LineEntry` (module, variant, entry exit, exit exit);
+   - `LayoutEngine.Compute(layout, …) → poses`: starts at the **anchor module** and works outwards through all lines (in both directions along the anchor's line, then into branches from their parent exits), joining each entry's entry exit to its neighbour's exit exit with the join math (§1.3). Rejoining lines and loops report their closure gap (VA-5);
    - tests: straight and curve chains, flips, anchors in the middle, branches (including branches of branches, swapping the main line and a branch, and moving or flipping a junction module with its branches), loops that close and loops that don't.
 4. **Ordered list UI** (HP-3, HP-4, HP-19): a **tree**, with branch lines nested under their junction module and collapsible. Add from the collection, remove, move up/down, drag in the list, flip (2 exits), choose entry/exit exits (≥ 3 exits), start a branch at a branch point, switch variant (HP-7). The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
-5. **Positioning lines** (HP-5): drag or rotate a whole line in the drawing (step rotation), numeric pose, choose the anchor module, lock. Several lines per plan. Branch lines (HP-19). **Joining a line's end to another exit** (HP-20): rejoining branches and closed loops, with the closure gap (VA-5).
+5. **Anchor and anchor dimensions** (HP-5, HP-21): choose the anchor module; drag or rotate it in the drawing (step rotation) or enter its pose, and the whole layout follows; lock. **Anchor dimension tool**: pick a reference point on the anchor and two walls or obstacles. It shows the distances and the angle as dimension lines, and typing a distance or angle moves the anchor. Uses the minimum-distance functions from Phase 1. Several layouts per plan. Check dimensions (HP-22, should). Branch lines (HP-19). **Joining a line's end to another exit** (HP-20): rejoining branches and closed loops, with the closure gap (VA-5).
 6. Leg adjustment per placement with a marker in the drawing (HP-13).
 7. **Joint fit feedback (HP-11):**
    - the fit is evaluated for every joint after each change;
@@ -265,7 +265,7 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 12. Performance check against NF-2 with a generated 300-module plan.
 
 **Milestone M2:** modules from a Registry ZIP archive can be ordered into an end-to-end layout with a branch, placed in a hall, saved and shared as one file.
-**Requirements:** HP-1..HP-7, HP-11, HP-12, HP-13, HP-14, HP-16, HP-17, HP-18, HP-19, HP-20, EX-5, NF-2.
+**Requirements:** HP-1..HP-7, HP-11, HP-12, HP-13, HP-14, HP-16, HP-17, HP-18, HP-19, HP-20, HP-21, EX-5, NF-2.
 Loop closure is *report only* (VA-5). Adjustable modules (MD-16) are a later item. They can be added later without breaking the file format, by adding optional parameters to the module.
 
 ### Phase 10 – Validation engine and problems list (≈2–3 weeks)
@@ -302,6 +302,7 @@ Validation logic lives in `Model` and is unit-tested without UI. Parts of it can
    - chosen scale (1:1 for end profiles) or fit-to-page;
    - A4/A3 tiling with overlap and registration marks;
    - title block with scale bar and legend;
+   - the hall plan's **set-up plan** with the anchor dimensions (HP-21) and check dimensions (HP-22);
    - CSS `@page`.
 
 **Requirements:** RP-1, RP-2, EX-1, EX-2.
@@ -362,7 +363,8 @@ In priority order (to be confirmed):
 | HA-4 | 13 |
 | HA-6 | replaced by HP-17 |
 | HP-1 … HP-7, HP-11, HP-12, HP-13 | 9 (HP-6 framework in 4; "Level from here" in 13) |
-| HP-14, HP-16, HP-17, HP-18, HP-19, HP-20 | 9 |
+| HP-14, HP-16, HP-17, HP-18, HP-19, HP-20, HP-21 | 9 (printed in 11) |
+| HP-22 | 9 (should) |
 | HP-15 | 10 |
 | HP-8, HP-9 | 13 |
 | HP-10 | Later |

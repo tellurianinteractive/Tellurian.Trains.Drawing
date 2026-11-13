@@ -97,9 +97,10 @@ The Module Registry runs the same auto-draw on its server, without this app (MD-
 4. The app computes the line: each module is joined to the previous one, at its *entry exit*, and the line continues from its *exit exit*. **The hall plan is redrawn immediately.**
 5. The planner **moves modules up or down** in the line, or drags them in the list. The plan is redrawn after every change.
 6. If a module is turned the wrong way, for example a curve that bends the wrong way, the planner **flips** it: its other end now connects to the previous module. The plan is redrawn.
-7. The planner **positions the line in the hall**. They move and rotate it by its **anchor module**, which by default is the first module but can be any module of the line, e.g. a station that must stand in a particular place. The rest of the line is computed in both directions from the anchor.
-8. A plan can have several lines, e.g. separate layouts in the same hall.
-9. The planner **saves the hall plan file**. It embeds the hall, the used modules and their end profiles (spec §6). Drafts are autosaved.
+7. The planner **positions the layout in the hall** by its **anchor module**. The anchor is one module for the whole layout, including its branches. By default it's the first module added, but any module can be chosen, e.g. a station that must stand in a particular place. When the anchor is moved or rotated, **the whole layout follows**; every other module just extends the layout from the anchor.
+8. The planner sets the **anchor dimensions**: a reference point on the anchor module, and its distances to two walls or obstacles (e.g. a pillar), plus the angle to a wall. They can type the distances to place the anchor exactly. These dimensions tell the people setting up where to put the first module (HP-21).
+9. A hall plan can have more than one layout, e.g. separate layouts in the same hall, each with its own anchor.
+10. The planner **saves the hall plan file**. It embeds the hall, the used modules and their end profiles (spec §6). Drafts are autosaved.
 
 ### UC-9 Branch at a junction module
 Branches are a normal part of most layouts.
@@ -123,7 +124,7 @@ A **loop module** at the end of a line (a return loop) is something else: it's a
 3. The planner draws the public areas and walking paths (HP-17, HP-18).
 
 ### UC-12 Print and share a hall plan
-1. The planner prints the plan at a scale or tiled on A4/A3 pages, or exports it as SVG or PNG. The module list per owner can be exported as CSV.
+1. The planner prints the plan at a scale or tiled on A4/A3 pages, or exports it as SVG or PNG. The **set-up plan** shows the anchor dimensions, and any check dimensions, so the layout builders can place the anchor module first and build outwards from it. The module list per owner can be exported as CSV.
 2. They share the **hall plan file**. Participants open it in the app to view it (UC-8 is not needed to view).
 
 ### UC-13 Upload a module drawing to the Module Registry or another shared location
