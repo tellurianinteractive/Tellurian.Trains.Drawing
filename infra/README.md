@@ -15,6 +15,10 @@ location is **West Europe**. The location only decides where the app's metadata 
 is served from Azure's global edge network. The identity is in the resource group's location.
 
 This follows the same pattern as the Module Registry (`id-moduleregistry-deploy`).
+One difference: this repository is newer, and GitHub puts its **immutable owner and repository ids** in the
+token subject (`repo:tellurianinteractive@57481455/Tellurian.Trains.Drawing@1456346388:environment:…`).
+The template parameter `gitHubSubjectPrefix` holds that prefix; read it with
+`gh api repos/tellurianinteractive/Tellurian.Trains.Drawing/actions/oidc/customization/sub`.
 
 ## Deploy or update the resources
 

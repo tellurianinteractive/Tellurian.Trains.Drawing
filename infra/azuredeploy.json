@@ -30,10 +30,10 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]"
     },
-    "gitHubRepository": {
+    "gitHubSubjectPrefix": {
       "type": "string",
-      "defaultValue": "tellurianinteractive/Tellurian.Trains.Drawing",
-      "metadata": { "description": "owner/name of the repository whose workflow may log in as the identity." }
+      "defaultValue": "repo:tellurianinteractive@57481455/Tellurian.Trains.Drawing@1456346388",
+      "metadata": { "description": "Subject prefix of the repository's OIDC tokens. New repositories use immutable owner and repository ids; read it with: gh api repos/OWNER/REPO/actions/oidc/customization/sub (sub_claim_prefix)." }
     },
     "tags": {
       "type": "object",
@@ -82,7 +82,7 @@
       ],
       "properties": {
         "issuer": "[variables('gitHubIssuer')]",
-        "subject": "[format('repo:{0}:environment:production', parameters('gitHubRepository'))]",
+        "subject": "[format('{0}:environment:production', parameters('gitHubSubjectPrefix'))]",
         "audiences": "[variables('audiences')]"
       }
     },
@@ -96,7 +96,7 @@
       ],
       "properties": {
         "issuer": "[variables('gitHubIssuer')]",
-        "subject": "[format('repo:{0}:environment:preview', parameters('gitHubRepository'))]",
+        "subject": "[format('{0}:environment:preview', parameters('gitHubSubjectPrefix'))]",
         "audiences": "[variables('audiences')]"
       }
     },
