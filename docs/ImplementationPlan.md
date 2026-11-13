@@ -94,7 +94,8 @@ Results: ADR 0001 (SVG canvas), ADR 0002 (files first, per-browser fallback), AD
 **Exit criteria:** an installable, offline-capable "hello" app deployed to Azure SWA from CI. Spike results recorded in `docs/adr/`.
 **Requirements:** NF-1, NF-3, NF-4 (partly), AP-1 (skeleton).
 
-### Phase 1 – Geometry library (≈1–2 weeks)
+### Phase 1 – Geometry library (≈1–2 weeks) — ✅ done 2026-11-13
+Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tessellated outlines runs as a timed unit test (< 200 ms in Debug); a separate benchmark project is still to be added.
 1. Primitives, `Pose2`, `Transform2`, `Mirror` and the join math (§1.3).
 2. Line/arc segments, paths, tessellation, bounding boxes.
 3. Intersection, minimum distance, point-in-polygon, polygon offset for clearance visualisation.

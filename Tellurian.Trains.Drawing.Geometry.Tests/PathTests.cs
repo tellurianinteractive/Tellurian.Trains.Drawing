@@ -1,0 +1,106 @@
+namespace Tellurian.Trains.Drawing.Geometry.Tests;
+
+[TestClass]
+public sealed class PathTests
+{
+    private const double Precision = 1e-9;
+
+    private static Path2 StraightThenCurve() =>
+        new PathBuilder(Pose2.Origin).Straight(500).Curve(1000, 90).Build();
+
+    [TestMethod]
+    public void BuilderChainsTangentSegments()
+    {
+        var path = StraightThenCurve();
+        Assert.HasCount(2, path.Segments);
+        Assert.IsTrue(path.IsTangentContinuous());
+        Assert.IsTrue(path.End.IsCloseTo(new(1500, 1000)));
+        Assert.AreEqual(500 + 1000 * Math.PI / 2, path.Length, Precision);
+    }
+
+    [TestMethod]
+    public void BuilderIgnoresZeroSteps()
+    {
+        var path = new PathBuilder(Pose2.Origin).Straight(0).Curve(1000, 0).Straight(10).Build();
+        Assert.HasCount(1, path.Segments);
+    }
+
+    [TestMethod]
+    public void EmptyPathIsRejected() =>
+        Assert.ThrowsExactly<ArgumentException>(() => new PathBuilder(Pose2.Origin).Build());
+
+    [TestMethod]
+    public void DisconnectedSegmentsAreRejected() =>
+        Assert.ThrowsExactly<ArgumentException>(() => new Path2([new LineSegment(new(0, 0), new(1, 0)), new LineSegment(new(2, 0), new(3, 0))]));
+
+    [TestMethod]
+    public void OpenPathCanNotBeClosed() =>
+        Assert.ThrowsExactly<ArgumentException>(() => new Path2(StraightThenCurve().Segments, isClosed: true));
+
+    [TestMethod]
+    public void PoseAtWalksAlongSegments()
+    {
+        var path = StraightThenCurve();
+        Assert.IsTrue(path.PoseAt(250).IsCloseTo(new Pose2(new(250, 0), Angle.Zero)));
+        Assert.IsTrue(path.PoseAt(-1).IsCloseTo(path.StartPose));
+        Assert.IsTrue(path.PoseAt(1e6).IsCloseTo(path.EndPose));
+        Assert.AreEqual(45, path.PoseAt(500 + 1000 * Math.PI / 4).Heading.Normalized.Degrees, 1e-9);
+    }
+
+    [TestMethod]
+    public void ReversedPathRunsBackwards()
+    {
+        var path = StraightThenCurve();
+        var reversed = path.Reversed();
+        Assert.IsTrue(reversed.Start.IsCloseTo(path.End));
+        Assert.IsTrue(reversed.End.IsCloseTo(path.Start));
+        Assert.AreEqual(path.Length, reversed.Length, Precision);
+    }
+
+    [TestMethod]
+    public void TransformedAndMirroredPaths()
+    {
+        var path = StraightThenCurve();
+        var transform = new Transform2(new Angle(90), new Vector2(10, 0));
+        Assert.IsTrue(path.Transformed(transform).End.IsCloseTo(transform.Apply(path.End)));
+        Assert.IsTrue(Mirror.AboutCentreLine(path).End.IsCloseTo(new(-1500, 1000)));
+    }
+
+    [TestMethod]
+    public void OffsetPathIsParallel()
+    {
+        var path = StraightThenCurve();
+        var offset = path.Offset(-50);
+        Assert.IsTrue(offset.Start.IsCloseTo(new(0, 50 * -1)));
+        Assert.IsTrue(offset.End.IsCloseTo(new(1550, 1000)));
+        Assert.IsTrue(offset.IsTangentContinuous());
+    }
+
+    [TestMethod]
+    public void KinkedPathCanNotBeOffset()
+    {
+        var path = new PathBuilder(Pose2.Origin).Straight(10).LineTo(new(10, 10)).Build();
+        Assert.IsFalse(path.IsTangentContinuous());
+        Assert.ThrowsExactly<InvalidOperationException>(() => path.Offset(1));
+    }
+
+    [TestMethod]
+    public void ClosedPathTessellatesWithoutDuplicateEnd()
+    {
+        var square = new PathBuilder(Pose2.Origin).Straight(100).Curve(1, 90).Straight(100).Curve(1, 90)
+            .Straight(100).Curve(1, 90).Straight(100).Curve(1, 90).Build(isClosed: true);
+        var polygon = square.Tessellate();
+        Assert.IsTrue(polygon.IsClosed);
+        Assert.IsFalse(polygon.Points[^1].IsCloseTo(polygon.Points[0]));
+        Assert.IsTrue(polygon.IsCounterClockwise);
+        Assert.AreEqual(square.Bounds.Width, polygon.Bounds.Width, 0.05);
+    }
+
+    [TestMethod]
+    public void BoundsCoverCurve()
+    {
+        var bounds = StraightThenCurve().Bounds;
+        Assert.AreEqual(1500, bounds.Max.X, Precision);
+        Assert.AreEqual(1000, bounds.Max.Y, Precision);
+    }
+}
