@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <!-- View and editor components, shared by this app (WebAssembly) and the Module Registry (Blazor Server).
+       Must not depend on a specific hosting model or render mode. -->
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Blazor components for displaying and editing Tellurian Trains end profile, module and hall plan drawings.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tellurian.Trains.Drawing.Editing\Tellurian.Trains.Drawing.Editing.csproj" />
+  </ItemGroup>
+
+</Project>

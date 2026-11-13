@@ -1,0 +1,13 @@
+<Project Sdk="MSTest.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tellurian.Trains.Drawing.Geometry\Tellurian.Trains.Drawing.Geometry.csproj" />
+  </ItemGroup>
+
+</Project>

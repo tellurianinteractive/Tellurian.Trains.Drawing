@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>2D geometry for Tellurian Trains drawings: poses, transforms, line and arc segments, distances.</Description>
+  </PropertyGroup>
+
+</Project>

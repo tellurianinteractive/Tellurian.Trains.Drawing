@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Domain model for Tellurian Trains drawings: end profiles, modules, halls, hall plans, joint fit rules, validation, file format and auto-drawing of modules.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Tellurian.Utilities" Version="1.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tellurian.Trains.Drawing.Geometry\Tellurian.Trains.Drawing.Geometry.csproj" />
+  </ItemGroup>
+</Project>

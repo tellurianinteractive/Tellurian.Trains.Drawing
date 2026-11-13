@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>UI-independent editing for Tellurian Trains drawings: commands, undo/redo, snapping and tools.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tellurian.Trains.Drawing.Model\Tellurian.Trains.Drawing.Model.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,201 @@
+name: Build and deploy
+
+# Every push and pull request: build, test and publish (AOT).
+# Pull requests from this repository: deploy to an Azure Static Web Apps preview environment.
+# Push to master: deploy to production, but only when <Version> in Directory.Build.props has no tag v<Version> yet.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Redeploy even if the version is already tagged
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Pull requests cancel outdated runs; runs on master are never cancelled, so a deploy is never interrupted.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      deploy: ${{ steps.version.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # AOT compilation of the Blazor WebAssembly app needs the wasm-tools workload.
+      - name: Install workloads
+        run: dotnet workload install wasm-tools
+
+      - name: Build
+        run: dotnet build Tellurian.Trains.Drawing.slnx --configuration Release
+
+      - name: Test
+        run: dotnet test --solution Tellurian.Trains.Drawing.slnx --configuration Release --no-build
+
+      - name: Decide whether to deploy to production
+        id: version
+        env:
+          FORCE: ${{ inputs.force }}
+          IS_MASTER: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' }}
+        run: |
+          version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props | head -1 | tr -d '[:space:]')
+          if [ -z "$version" ]; then echo "::error::No <Version> found in Directory.Build.props"; exit 1; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ "$IS_MASTER" != "true" ]; then
+            echo "Not master, no production deploy."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          elif ! git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null; then
+            echo "Version $version is new and will be deployed."
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          elif [ "$FORCE" = "true" ]; then
+            echo "Version $version is already tagged, redeploying because force is set."
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version $version is already tagged, nothing to deploy."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Every release has a section with its date and at least one bullet in RELEASENOTES.md
+      # (changes that affect users or security, otherwise "- Maintenance update.").
+      - name: Check release notes
+        if: steps.version.outputs.deploy == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          tr -d '\r' < RELEASENOTES.md | awk -v heading="## Release $VERSION" '
+            found == 2 { if ($0 ~ /^- /) ok = 1; exit }
+            found == 1 { if ($0 ~ /^Released [0-9]{4}-[0-9]{2}-[0-9]{2}$/) found = 2; else exit; next }
+            $0 == heading { found = 1 }
+            END { exit ok ? 0 : 1 }
+          ' || { echo "::error::RELEASENOTES.md needs a section '## Release $VERSION', then 'Released yyyy-MM-dd', then at least one bullet (e.g. '- Maintenance update.')."; exit 1; }
+
+      # Published on every run, so that the AOT build is verified for every change.
+      - name: Publish (AOT)
+        run: dotnet publish Tellurian.Trains.Drawing.App/Tellurian.Trains.Drawing.App.csproj --configuration Release --output publish
+
+      - name: Report size
+        run: |
+          echo "### Published size" >> "$GITHUB_STEP_SUMMARY"
+          echo "- wwwroot: $(du -sh publish/wwwroot | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- _framework, Brotli files only: $(find publish/wwwroot/_framework -name '*.br' -print0 | du -ch --files0-from=- | tail -1 | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: app
+          path: publish/wwwroot
+          retention-days: 14
+
+  preview:
+    needs: build
+    # Secrets are not available to pull requests from forks.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pull-requests: write # The deploy action comments the preview URL on the pull request.
+    env:
+      HAS_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
+    steps:
+      - name: Check deployment token
+        if: env.HAS_TOKEN != 'true'
+        run: echo "::warning::Secret AZURE_STATIC_WEB_APPS_API_TOKEN is not set; skipping deployment."
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: app
+          path: app
+
+      - uses: Azure/static-web-apps-deploy@v1
+        if: env.HAS_TOKEN == 'true'
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ github.token }}
+          action: upload
+          app_location: app
+          skip_app_build: true
+          skip_api_build: true
+
+  close-preview:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HAS_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
+    steps:
+      - uses: Azure/static-web-apps-deploy@v1
+        if: env.HAS_TOKEN == 'true'
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: close
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+    permissions:
+      contents: write # Tag and GitHub release.
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+      HAS_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
+    steps:
+      - name: Check deployment token
+        if: env.HAS_TOKEN != 'true'
+        run: echo "::warning::Secret AZURE_STATIC_WEB_APPS_API_TOKEN is not set; skipping deployment."
+
+      - uses: actions/checkout@v7 # For RELEASENOTES.md.
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: app
+          path: app
+
+      - uses: Azure/static-web-apps-deploy@v1
+        if: env.HAS_TOKEN == 'true'
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: app
+          skip_app_build: true
+          skip_api_build: true
+
+      - name: Tag and create GitHub release
+        if: env.HAS_TOKEN == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk -v heading="## Release $VERSION" '
+            $0 == heading { found = 1; next }
+            found && /^## / { exit }
+            found && !/^Released / { print }
+          ' <(tr -d '\r' < RELEASENOTES.md) > release-notes.md
+          if [ ! -s release-notes.md ]; then echo "- Maintenance update." > release-notes.md; fi
+          if gh release view "v$VERSION" > /dev/null 2>&1; then
+            echo "Release v$VERSION already exists (forced redeploy)."
+          else
+            gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Release $VERSION" --notes-file release-notes.md
+          fi

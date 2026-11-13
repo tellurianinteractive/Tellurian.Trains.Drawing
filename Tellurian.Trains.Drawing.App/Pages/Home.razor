@@ -1,0 +1,12 @@
+@page "/"
+
+<PageTitle>Tellurian Trains Drawing</PageTitle>
+
+<h1>Tellurian Trains Drawing</h1>
+
+<p>Draw end profiles, modules and hall plans for model railway module meetings.</p>
+<p class="version">Version @Version</p>
+
+@code {
+    private static string Version => typeof(Home).Assembly.GetName().Version?.ToString(3) ?? "?";
+}

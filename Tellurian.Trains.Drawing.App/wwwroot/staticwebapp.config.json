@@ -1,0 +1,21 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [ "/_framework/*", "/css/*", "/js/*", "*.{png,ico,svg,json,webmanifest,wasm,dat,blat,js,css}" ]
+  },
+  "mimeTypes": {
+    ".wasm": "application/wasm",
+    ".dat": "application/octet-stream",
+    ".blat": "application/octet-stream",
+    ".webmanifest": "application/manifest+json"
+  },
+  "routes": [
+    { "route": "/index.html", "headers": { "cache-control": "no-cache" } },
+    { "route": "/service-worker.js", "headers": { "cache-control": "no-cache" } },
+    { "route": "/service-worker-assets.js", "headers": { "cache-control": "no-cache" } }
+  ],
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  }
+}

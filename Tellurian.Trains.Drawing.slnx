@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/build-and-deploy.yml" />
+    <File Path="CLAUDE.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+    <File Path="RELEASENOTES.md" />
+  </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/ImplementationPlan.md" />
+    <File Path="docs/Specification.md" />
+  </Folder>
+  <Project Path="Tellurian.Trains.Drawing.App.Tests/Tellurian.Trains.Drawing.App.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.App/Tellurian.Trains.Drawing.App.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Components.Tests/Tellurian.Trains.Drawing.Components.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Components/Tellurian.Trains.Drawing.Components.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Editing.Tests/Tellurian.Trains.Drawing.Editing.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Editing/Tellurian.Trains.Drawing.Editing.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Geometry.Tests/Tellurian.Trains.Drawing.Geometry.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Geometry/Tellurian.Trains.Drawing.Geometry.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Model.Tests/Tellurian.Trains.Drawing.Model.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.Model/Tellurian.Trains.Drawing.Model.csproj" />
+</Solution>
