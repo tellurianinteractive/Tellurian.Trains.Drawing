@@ -1,6 +1,6 @@
 # Module Drawing – Detailed Definition
 
-Status: **Draft 0.1** (2026-11-13). Part of the [specification](Specification.md); refines MD-1…MD-20.
+Status: **Draft 0.2** (2026-11-13), with defaults checked against Module Registry data (§12). Part of the [specification](Specification.md); refines MD-1…MD-20.
 It defines what a module drawing consists of, how its parts are built from each other, how it is
 auto-drawn from Module Registry data, and how it looks.
 
@@ -189,7 +189,7 @@ The parameters map one-to-one to Module Registry data. The ones marked *new* are
 | Width | *Module.Width* | the end profile's plate width |
 | Number of through tracks | *Module.NumberOfThroughTracks* | from the end profile |
 | Number of sections | *Module.NumberOfSections* | 1 |
-| Exits (label, direction, end profile) | *ModuleExit* rows | – |
+| Exits (label, direction, end profile) | *ModuleExit* rows; exits with the *Internal* profile become internal joints | inferred when missing (§8.6) |
 | End of line | *Module.IsEndOfLine* | from the number of exits |
 | Duck-under | *Module.IsDuckunder* | false |
 | Operation place | the module is the *Station.PrimaryModule* | false |
@@ -221,7 +221,23 @@ evenly spaced, and marked "position not set". Their sides start in Auto mode as 
 The user then places the exits and draws the track work. A junction auto-draw always carries the
 note "needs manual completion".
 
-### 8.6 Result
+### 8.6 Inference and data sanity rules
+Registry data is often incomplete (§12), so auto-draw fills gaps by these rules. **Every inferred value
+is listed in the result as an "assumption"** and shown to the user, e.g. "exits inferred: 2 × FREMO-H0-B96".
+
+| Gap or anomaly | Rule |
+|---|---|
+| **No exits registered** | Infer them: **1 exit** if *IsEndOfLine*, otherwise **2 exits** labelled W and E. Their end profile is the standard's **default end profile** for the number of through tracks: one default for single track and one for double track, in the catalogue, e.g. FREMO/H0-RE → FREMO-H0-B96 (single). |
+| Exit with the *Internal* end profile | Not an exit. It becomes an **internal joint**. The number of sections is at least the number of internal joints + 1. |
+| Exit directions undefined | Use the registered order: the first exit becomes exit 1. |
+| Angle without radius | Use the standard's **default radius**, from the catalogue (e.g. the median of its scale, H0: 2 000 mm), with a warning. |
+| Width smaller than the plate width | Ignore it and use the plate width, with a warning. |
+| Number of through tracks 0 | Draw no through track; the module is drawn as baseboard only. |
+| Number of through tracks doesn't match the end profile | The end profile wins. Warning. |
+| No geometry (no straight length, no curve) | Not auto-drawable. The result is "needs manual drawing". |
+| Angle ≥ 360°, or a turntable module | Drawn as far as possible and marked "check". |
+
+### 8.7 Result
 - The output is a module drawing with one variant, valid against the module schema (EX-7).
 - It records `autoDraw: { generatorVersion, parameters }` per variant. While a variant is unedited, it can be **re-generated** from changed parameters. The Registry does this when module data changes.
 - Editing a generated part by hand clears the auto-draw marker for that variant. The Registry then stops overwriting it.
@@ -268,21 +284,35 @@ apply. Joint fit markers (spec HP-11) are drawn on top.
 | 6 | Station (3 sections) | Straight 3000, Width 600 (> plate), operation place, 3 sections | A widened body, an operator space on the right-hand (south) side, 2 section lines; the track work is drawn by hand |
 | 7 | Junction | 3 exits (W, E, E) | Main path W–E. The second E exit is placed provisionally and marked for manual completion. |
 
-The numbers are illustrative. §12 lists the checks to run against the Registry data.
+The examples reflect the most common Registry cases (§12): straight 1 200 mm, curve R 2 000 mm at 30°, single track, FREMO-H0-B96.
 
-## 12. To be checked against Module Registry data
-The local copy of the Registry database wasn't running when this was written. These queries should
-confirm or adjust the defaults:
+## 12. Findings from Module Registry data (2026-11-13)
+These are aggregate statistics from the production database: 918 modules. They are the basis for
+the defaults above and for the inference rules in §8.6.
 
-1. The distribution of the number of exits per module (how common are 1, 2 and ≥ 3?).
-2. Geometry combinations: straight only, curve only, and both. The ranges of Radius, Angle and Straight per scale.
-3. *Width* compared with the plate width of the exits' end profiles: how many modules are wider, and by how much (widened bodies)?
-4. End profiles per standard, and how often a module's two exits have different end profiles (transition modules).
-5. *NumberOfSections* and *NumberOfThroughTracks* distributions.
-6. Station primary modules: their widths and numbers of exits (to judge the widening side and the operator space defaults).
+| Topic | Finding | Consequence |
+|---|---|---|
+| Standards | FREMO/H0-RE 460, MMM-2R 317, MMM-2R/SSM 40, MMM-3R 29, FREMO/SSM 19, FREMO 0-RE 15, FREMO/N-RE 14, AmericaN 9, USMS 5. There are also a few MMM/H0n3, SIH0 and FREMO/E modules. | The built-in catalogue covers FREMO/H0-RE, MMM-2R and MMM-3R first, then the SSM variants, FREMO 0-RE and FREMO/N-RE. |
+| **Exits** | **648 modules (71 %) have no exits registered.** 57 have 1, 187 have 2, 17 have 3 and 9 have 4. | Auto-draw must **infer exits** when there are none (§8.6). Otherwise most modules couldn't be drawn. |
+| End-of-line flag | 19 modules are flagged; 11 of them have no exits and 8 have 1. 49 one-exit modules are *not* flagged. | A single exit, or the flag, means end of line. A flag that disagrees with the exits only gives a warning. |
+| Exit directions (2 exits) | EW 152, undefined 34, WW 1. | Undefined directions: use the registered exit order. |
+| Geometry (H0) | Straight only 453, curve only 293, straight + curve 56, no geometry 77. **24 modules have an angle but no radius.** | A curve without a radius uses the standard's default radius, with a warning (§8.6). Modules with no geometry can't be auto-drawn. |
+| Ranges (H0) | Straight 0–16 500 mm (median 1 200); radius 600–10 000 (median 2 000); angle 1–360° (median 30°). | Long stations exist. Angles over 180° (loops) are allowed; 360° and turntable modules are flagged "check". |
+| Common angles | 30° (90), 45° (42), 15° (37), 90° (36), 22.5° (20), 10° (16). | These are offered as presets in the template dialog. |
+| Width | FREMO/H0-RE median 500 (P90 550, max 2 365); MMM-2R median 480 (max 1 600). A few implausible values (30, 100). | Most modules are as wide as their end plate. Widened bodies exist, mostly among stations. A width **smaller than the plate width is treated as a data error**: it is ignored, with a warning. |
+| End profiles | The most used are FREMO-H0-B96 (152 exits), FREMO-H0-F96 (88), MMM280 (47), MMM480 (37), MMM337 (35), FREMO-H0-IH05, E96, B09, MMM680 and so on. The MMM profiles are named after their **plate width** (280/337/480/680 mm). **No end profile has a PDF in the Registry.** | The plate widths of the MMM profiles follow from their names. The source drawings have to come from FREMO and MMM directly. |
+| **"Internal" end profile** | The Registry has an end profile designated **Internal** in every scale (20 exits use it in H0). | Exits with the *Internal* profile are **internal joints between sections**, not exits (§8.6). |
+| Transition modules | 56 modules have exits with different end profiles. Some of these differ only because of *Internal* exits. | Transition modules (§8.3) are common enough to support from the start. |
+| Through tracks | 1: 719, 2: 174, 0: 10, 3–4: 15. | Single and double track cover 97 %. |
+| Sections | 1 section: 671; 2–5: 169; 6–31: 77. | Multi-section modules are common. Equal-length sections are a reasonable default. |
+| Flags | Duck-under 25, end of line 19, end-profile switcher 12, turntable 23, variant label 41. | As specified. |
+| Stations | 281 primary modules. 172 of them have no exits. Average width about 500 mm, but about 780 mm for stations with 3 exits. **267 of 281 stations consist of one module.** | This confirms "one module = one drawing, several sections". Wide stations are mostly junction stations. |
 
 ## 13. Open questions
 1. **Curve direction** and **straight position** are not in the Registry. Should the Registry get these two fields, so that auto-draw becomes unambiguous? Until then the defaults in §8.1 apply, and the Registry can re-generate with corrected values.
 2. **Widening side** of station modules: is it usually towards the back (the non-operator side), as assumed?
 3. **Default operator space depth** per standard (e.g. 800 mm)?
 4. **Track colours** for the built-in standards: blue for all, or one colour per standard family (e.g. FREMO blue, MMM another)?
+5. **Default end profiles** per standard, used when exits are inferred: FREMO/H0-RE → FREMO-H0-B96 (single) and FREMO-H0-2E96 (double)? MMM-2R → MMM480? MMM-3R → ?
+6. **SSM**: what do *MMM-2R/SSM* and *FREMO/SSM* stand for? Are they standards of their own, or add-ons like MMM-Summer and MMM-Modern?
+7. **Registry data quality**: 71 % of the modules have no exits, and 24 have an angle but no radius. Should the Registry encourage completing this data, for example by showing the auto-drawn module and its assumptions when a module is edited?

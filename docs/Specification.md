@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.15** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.16** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -42,7 +42,7 @@ Terms and properties follow the **Module Registry** so that a later import maps 
 | Concept | Description | Key properties |
 |---|---|---|
 | **Scale** | Model scale. | Short name (H0, N, 0…), denominator (87, 160…). |
-| **Module standard** | A standard that modules follow, e.g. FREMO H0-RE, MMM-2R or MMM-3R. | Short name, scale, track system, normal/narrow gauge (mm), couplings, electricity, wheelset. **New:** height of rail top above floor (Swedish *RÖK*, default **1300 mm**, which is the most common value), default minimum clearance (mm), default operator space depth (mm), **track colour** (default blue `#1f5fbf`), minimum radius for generated reverse curves. |
+| **Module standard** | A standard that modules follow, e.g. FREMO H0-RE, MMM-2R or MMM-3R. | Short name, scale, track system, normal/narrow gauge (mm), couplings, electricity, wheelset. **New:** height of rail top above floor (Swedish *RÖK*, default **1300 mm**, which is the most common value), default minimum clearance (mm), default operator space depth (mm), **track colour** (default blue `#1f5fbf`), minimum radius for generated reverse curves, **default end profiles** (single and double track) and **default curve radius**, used when auto-draw has to infer missing Registry data (ModuleDrawing.md §8.6). |
 | **Standard add-on** | Extra requirements on top of a base standard, e.g. **MMM-Summer** and **MMM-Modern**, which are both add-ons to MMM-2R. A module can meet zero or more add-ons of its standard. A hall plan can prefer add-ons, so that the planner sees which modules don't meet them. | Short name, base standard, description, optional PDF/URL reference. |
 | **End profile** (*ModuleEndProfile*) | The shape of a module end, **drawn in end view** (§5.2). How well two ends fit is worked out from the drawings by the rules in §3.2. | Designation, scale, standard(s), optional PDF/URL reference, optional Registry end profile id. **Drawing:** end-plate outline, ground line, tracks (lateral position, gauge; rail top at Y = 0), **screw holes**, optional dowels and cable passages, dimensions and labels. **Derived from the drawing:** plate width and height, number of tracks, track offsets and c/c, screw-hole positions, symmetry (*Symmetric* / *Asymmetric*, with which elements are asymmetric). **Fallback:** a screw-hole pattern identifier, for when holes are not drawn. End profiles of the same standard may have different plate heights. That doesn't affect fit; the **screw-hole positions** (relative to rail top and centre line) are what matter. |
 | **End profile compatibility override** | An optional catalogue entry that overrides the rule result for a specific pair of profiles, for known exceptions. | Pair (A, B), forced result (§3.2), note. |
