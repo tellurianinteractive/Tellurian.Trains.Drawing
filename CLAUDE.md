@@ -47,3 +47,7 @@ dotnet pack Tellurian.Trains.Drawing.Components               # pack libraries o
 ## Release
 
 CI (`.github/workflows/build-and-deploy.yml`) builds and tests every push and pull request. A push to `master` deploys when `<Version>` in `Directory.Build.props` has no tag `v<Version>`; it then tags and creates a GitHub release. Every release needs a `RELEASENOTES.md` section (`## Release x.y.z`, `Released yyyy-MM-dd`, at least one bullet; `- Maintenance update.` for internal-only changes). Pull requests from this repository get an Azure preview environment.
+
+## Azure
+
+Static Web App `tellurian-trains-drawing` in resource group `Tellurian.Trains` (location West Europe; Static Web Apps aren't available in North Europe). Defined in `infra/azuredeploy.json`; see `infra/README.md` for deploying it and rotating the `AZURE_STATIC_WEB_APPS_API_TOKEN` secret.

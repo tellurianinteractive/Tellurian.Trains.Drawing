@@ -15,7 +15,7 @@ you share them as files. Module files will also be accepted by the
 [Module Registry](https://moduleregistry.azurewebsites.net/).
 
 #### Status
-Under development. See the [specification](docs/Specification.md) and the
+Under development. The latest release runs at https://victorious-ocean-0a8bfd603.4.azurestaticapps.net. See the [specification](docs/Specification.md) and the
 [implementation plan](docs/ImplementationPlan.md).
 
 #### Technology

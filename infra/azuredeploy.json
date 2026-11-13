@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "description": "Azure Static Web App hosting Tellurian Trains Drawing. Content is deployed by GitHub Actions with the deployment token (no GitHub integration in Azure)."
+  },
+  "parameters": {
+    "name": {
+      "type": "string",
+      "defaultValue": "tellurian-trains-drawing",
+      "metadata": { "description": "Name of the static web app; also the first part of its default host name." }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope",
+      "allowedValues": [ "westeurope", "centralus", "eastus2", "westus2", "eastasia" ],
+      "metadata": { "description": "Regions where Static Web Apps can be created (North Europe is not one of them). The site itself is served globally." }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [ "Free", "Standard" ]
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {
+        "application": "Tellurian.Trains.Drawing",
+        "repository": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/staticSites",
+      "apiVersion": "2024-04-01",
+      "name": "[parameters('name')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "[parameters('sku')]",
+        "tier": "[parameters('sku')]"
+      },
+      "properties": {
+        "stagingEnvironmentPolicy": "Enabled",
+        "allowConfigFileUpdates": true
+      }
+    }
+  ],
+  "outputs": {
+    "defaultHostname": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/staticSites', parameters('name')), '2024-04-01').defaultHostname]"
+    }
+  }
+}

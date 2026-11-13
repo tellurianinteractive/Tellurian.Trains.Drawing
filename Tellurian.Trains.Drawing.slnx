@@ -5,6 +5,9 @@
     <File Path="CLAUDE.md" />
     <File Path="Directory.Build.props" />
     <File Path="global.json" />
+    <File Path="infra/azuredeploy.json" />
+    <File Path="infra/azuredeploy.parameters.json" />
+    <File Path="infra/README.md" />
     <File Path="README.md" />
     <File Path="RELEASENOTES.md" />
   </Folder>

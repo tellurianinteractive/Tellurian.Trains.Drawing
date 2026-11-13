@@ -157,6 +157,7 @@ jobs:
     timeout-minutes: 15
     environment:
       name: production
+      url: https://victorious-ocean-0a8bfd603.4.azurestaticapps.net
     permissions:
       contents: write # Tag and GitHub release.
     env:
