@@ -34,7 +34,7 @@ public static class PolygonOffset
             var normalOut = Outward(outgoing);
             var turn = incoming.Cross(outgoing);
 
-            if (Math.Abs(turn) < 1e-12 && incoming.Dot(outgoing) > 0)
+            if (Math.Abs(turn) < Tolerance.Collinear && incoming.Dot(outgoing) > 0)
             {
                 result.Add(corner + normalIn * distance);
             }

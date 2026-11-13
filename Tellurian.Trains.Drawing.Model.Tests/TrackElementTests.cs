@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Geometry;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -6,10 +5,8 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 [TestClass]
 public sealed class TrackElementTests
 {
-    private const double Precision = 1e-9;
-
     private static void AssertPose(Pose expected, Pose actual) =>
-        Assert.IsTrue(expected.IsCloseTo(actual, 1e-9, 1e-9), $"Expected {expected}, was {actual}.");
+        Assert.IsTrue(expected.IsCloseTo(actual, Precision, Precision), $"Expected {expected}, was {actual}.");
 
     [TestMethod]
     public void StraightTrack()
@@ -46,9 +43,9 @@ public sealed class TrackElementTests
         var routes = turnout.Routes();
         Assert.HasCount(2, routes);
         Assert.AreEqual(230, routes[0].End.X, Precision);
-        Assert.AreEqual(230, routes[1].End.X, 1e-9);
+        Assert.AreEqual(230, routes[1].End.X, Precision);
         Assert.IsGreaterThan(0, routes[1].End.Y);
-        Assert.AreEqual(12, routes[1].EndPose.Heading.Degrees, 1e-9);
+        Assert.AreEqual(12, routes[1].EndPose.Heading.Degrees, Precision);
         Assert.HasCount(3, turnout.ConnectionPoints());
         AssertPose(Pose.Origin.Reversed(), turnout.ConnectionPoints()[0]);
     }
@@ -77,8 +74,8 @@ public sealed class TrackElementTests
     {
         var wye = new Turnout { Start = Pose.Origin, Kind = TurnoutKind.Wye, Length = 200, Radius = 1200, Angle = 15 };
         var routes = wye.Routes();
-        Assert.AreEqual(7.5, routes[0].EndPose.Heading.Signed.Degrees, 1e-9);
-        Assert.AreEqual(-7.5, routes[1].EndPose.Heading.Signed.Degrees, 1e-9);
+        Assert.AreEqual(7.5, routes[0].EndPose.Heading.Signed.Degrees, Precision);
+        Assert.AreEqual(-7.5, routes[1].EndPose.Heading.Signed.Degrees, Precision);
         Assert.AreEqual(routes[0].End.Y, -routes[1].End.Y, Precision);
     }
 
@@ -97,8 +94,8 @@ public sealed class TrackElementTests
     {
         var turnout = new Turnout { Start = Pose.Origin, Kind = kind, Length = 0, Radius = 2000, Angle = 10, InnerRadius = 1200, InnerAngle = 15 };
         var routes = turnout.Routes();
-        Assert.AreEqual(sign * 10, routes[0].EndPose.Heading.Signed.Degrees, 1e-9);
-        Assert.AreEqual(sign * 15, routes[1].EndPose.Heading.Signed.Degrees, 1e-9);
+        Assert.AreEqual(sign * 10, routes[0].EndPose.Heading.Signed.Degrees, Precision);
+        Assert.AreEqual(sign * 15, routes[1].EndPose.Heading.Signed.Degrees, Precision);
     }
 
     [TestMethod]

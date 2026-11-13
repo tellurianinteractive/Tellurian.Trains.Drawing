@@ -3,8 +3,6 @@ namespace Tellurian.Trains.Drawing.Geometry.Tests;
 [TestClass]
 public sealed class PrimitiveTests
 {
-    private const double Precision = 1e-9;
-
     [TestMethod]
     [DataRow(0, 0)]
     [DataRow(360, 0)]
@@ -24,7 +22,7 @@ public sealed class PrimitiveTests
 
     [TestMethod]
     public void AnglesAcrossZeroAreClose() =>
-        Assert.IsTrue(new Angle(359.9999999999).IsCloseTo(new Angle(0.0000000001), 1e-6));
+        Assert.IsTrue(new Angle(359.9999999999).IsCloseTo(new Angle(0.0000000001), Tolerance.Length));
 
     [TestMethod]
     public void AngleRadiansRoundTrip() =>
@@ -79,7 +77,7 @@ public sealed class PrimitiveTests
         var total = Transform.Identity;
         for (var i = 0; i < 300; i++) total = total.Then(step);
         for (var i = 0; i < 300; i++) total = total.Then(step.Inverse());
-        Assert.IsTrue(total.IsCloseTo(Transform.Identity, 1e-6, 1e-9));
+        Assert.IsTrue(total.IsCloseTo(Transform.Identity, Tolerance.Length, Precision));
     }
 
     [TestMethod]

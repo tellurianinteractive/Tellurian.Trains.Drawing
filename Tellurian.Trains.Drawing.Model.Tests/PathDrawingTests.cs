@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Geometry;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
@@ -14,10 +13,10 @@ public sealed class PathDrawingTests
         Assert.IsInstanceOfType<ArcStep>(drawing.Steps[1]);
 
         var back = drawing.ToPath();
-        Assert.IsTrue(back.End.IsCloseTo(path.End, 1e-9));
-        Assert.IsTrue(back.EndPose.Heading.IsCloseTo(path.EndPose.Heading, 1e-9));
-        Assert.AreEqual(path.Length, back.Length, 1e-9);
-        Assert.IsTrue(back.IsTangentContinuous(1e-9));
+        Assert.IsTrue(back.End.IsCloseTo(path.End, Precision));
+        Assert.IsTrue(back.EndPose.Heading.IsCloseTo(path.EndPose.Heading, Precision));
+        Assert.AreEqual(path.Length, back.Length, Precision);
+        Assert.IsTrue(back.IsTangentContinuous(Precision));
     }
 
     [TestMethod]
@@ -27,7 +26,7 @@ public sealed class PathDrawingTests
         Assert.HasCount(3, drawing.Steps);
         var path = drawing.ToPath();
         Assert.IsTrue(path.IsClosed);
-        Assert.AreEqual(10 + 10 + Math.Sqrt(200), path.Length, 1e-9);
+        Assert.AreEqual(10 + 10 + Math.Sqrt(200), path.Length, Precision);
     }
 
     [TestMethod]
@@ -40,7 +39,7 @@ public sealed class PathDrawingTests
         var drawing = new PathDrawing
         {
             Start = new(0, 0),
-            Steps = [new LineStep(new(10, 0)), new LineStep(new(10, 10)), new LineStep(new(1e-9, 0))],
+            Steps = [new LineStep(new(10, 0)), new LineStep(new(10, 10)), new LineStep(new(Tolerance.Length / 1000, 0))],
             IsClosed = true,
         };
         Assert.IsTrue(drawing.ToPath().End.Equals(new Point(0, 0)));

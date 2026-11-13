@@ -7,18 +7,16 @@ namespace Tellurian.Trains.Drawing.Geometry;
 /// </summary>
 public sealed class SegmentPath
 {
-    private const double ConnectionTolerance = 1e-6;
-
     public SegmentPath(IEnumerable<Segment> segments, bool isClosed = false)
     {
         Segments = [.. segments];
         if (Segments.Count == 0) throw new ArgumentException("A path must have at least one segment.", nameof(segments));
         for (var i = 1; i < Segments.Count; i++)
         {
-            if (!Segments[i - 1].End.IsCloseTo(Segments[i].Start, ConnectionTolerance))
+            if (!Segments[i - 1].End.IsCloseTo(Segments[i].Start, Tolerance.Length))
                 throw new ArgumentException($"Segment {i} doesn't start where segment {i - 1} ends.", nameof(segments));
         }
-        if (isClosed && !End.IsCloseTo(Start, ConnectionTolerance))
+        if (isClosed && !End.IsCloseTo(Start, Tolerance.Length))
             throw new ArgumentException("A closed path must end where it starts.", nameof(isClosed));
         IsClosed = isClosed;
     }
@@ -33,7 +31,7 @@ public sealed class SegmentPath
     public BoundingBox Bounds => Segments.Aggregate(BoundingBox.Empty, (box, s) => box.Union(s.Bounds));
 
     /// <summary>True if the direction of travel doesn't jump at any joint between segments.</summary>
-    public bool IsTangentContinuous(double angleTolerance = 1e-6)
+    public bool IsTangentContinuous(double angleTolerance = Tolerance.Angle)
     {
         for (var i = 1; i < Segments.Count; i++)
         {

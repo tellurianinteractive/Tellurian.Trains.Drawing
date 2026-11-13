@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Geometry;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -46,7 +45,7 @@ public sealed class ModuleGeometryTests
         var plate = ModuleGeometry.EndPlate(Exit("W", new(Point.Origin, Angle.Half)), 500);
         Assert.IsTrue(plate.RightCorner.IsCloseTo(new(0, -250)));
         Assert.IsTrue(plate.LeftCorner.IsCloseTo(new(0, 250)));
-        Assert.AreEqual(500, ModuleGeometry.EndPlate(Exit("W", Pose.Origin), Single).Width, 1e-9);
+        Assert.AreEqual(500, ModuleGeometry.EndPlate(Exit("W", Pose.Origin), Single).Width, Precision);
     }
 
     [TestMethod]
@@ -56,7 +55,7 @@ public sealed class ModuleGeometryTests
         Assert.IsNotNull(outline);
         Assert.IsTrue(outline.IsClosed);
         var polygon = outline.Tessellate();
-        Assert.AreEqual(1000 * 500, polygon.SignedArea, 1e-6);
+        Assert.AreEqual(1000 * 500, polygon.SignedArea, Tolerance.Length);
         Assert.IsTrue(polygon.IsCounterClockwise);
         Assert.HasCount(4, outline.Segments);
     }
@@ -91,7 +90,7 @@ public sealed class ModuleGeometryTests
             Sides = [new() { FromExit = "A", ToExit = "A", Path = PathDrawing.Polyline([new(0, -250), new(1200, -250), new(1200, 250), new(0, 250)]) }],
         };
         Assert.AreEqual(ModuleKind.EndOfLine, variant.Kind);
-        Assert.AreEqual(1200 * 500, ModuleGeometry.Outline(variant, Lookup)!.Tessellate().SignedArea, 1e-6);
+        Assert.AreEqual(1200 * 500, ModuleGeometry.Outline(variant, Lookup)!.Tessellate().SignedArea, Tolerance.Length);
     }
 
     [TestMethod]
@@ -141,8 +140,8 @@ public sealed class ModuleGeometryTests
         var offCentre = Single with { Tracks = [new() { Offset = 20, Gauge = 16.5 }] };
         var normal = ModuleGeometry.TrackPositions(Exit("E", Pose.Origin, offCentre), offCentre);
         var mirrored = ModuleGeometry.TrackPositions(Exit("E", Pose.Origin, offCentre, ProfileOrientation.Mirrored), offCentre);
-        Assert.AreEqual(20, normal[0].Position.Y, 1e-9);
-        Assert.AreEqual(-20, mirrored[0].Position.Y, 1e-9);
+        Assert.AreEqual(20, normal[0].Position.Y, Precision);
+        Assert.AreEqual(-20, mirrored[0].Position.Y, Precision);
     }
 
     [TestMethod]

@@ -3,8 +3,6 @@ namespace Tellurian.Trains.Drawing.Geometry.Tests;
 [TestClass]
 public sealed class PathTests
 {
-    private const double Precision = 1e-9;
-
     private static SegmentPath StraightThenCurve() =>
         new PathBuilder(Pose.Origin).Straight(500).Curve(1000, 90).Build();
 
@@ -44,7 +42,7 @@ public sealed class PathTests
         Assert.IsTrue(path.PoseAt(250).IsCloseTo(new Pose(new(250, 0), Angle.Zero)));
         Assert.IsTrue(path.PoseAt(-1).IsCloseTo(path.StartPose));
         Assert.IsTrue(path.PoseAt(1e6).IsCloseTo(path.EndPose));
-        Assert.AreEqual(45, path.PoseAt(500 + 1000 * Math.PI / 4).Heading.Normalized.Degrees, 1e-9);
+        Assert.AreEqual(45, path.PoseAt(500 + 1000 * Math.PI / 4).Heading.Normalized.Degrees, Precision);
     }
 
     [TestMethod]

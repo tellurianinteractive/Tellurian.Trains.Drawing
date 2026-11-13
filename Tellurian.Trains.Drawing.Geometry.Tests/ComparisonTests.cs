@@ -7,14 +7,14 @@ public sealed class ComparisonTests
     public void IdenticalShapesHaveNoDeviation()
     {
         var line = new Polyline([new(-200, 0), new(-100, 20), new(100, 20), new(200, 0)], false);
-        Assert.AreEqual(0, ShapeComparison.MaximumDeviation(line, line).Maximum, 1e-9);
+        Assert.AreEqual(0, ShapeComparison.MaximumDeviation(line, line).Maximum, Precision);
     }
 
     [TestMethod]
     public void SymmetricShapeMatchesItsMirror()
     {
         var line = new Polyline([new(-200, 0), new(-100, 20), new(100, 20), new(200, 0)], false);
-        Assert.IsTrue(ShapeComparison.MaximumDeviation(line, Mirror.AboutCentreLine(line)).IsWithin(1e-9));
+        Assert.IsTrue(ShapeComparison.MaximumDeviation(line, Mirror.AboutCentreLine(line)).IsWithin(Precision));
     }
 
     [TestMethod]
@@ -32,7 +32,7 @@ public sealed class ComparisonTests
         var shortLine = new Polyline([new(0, 0), new(100, 0)], false);
         var longLine = new Polyline([new(0, 0), new(150, 0)], false);
         var deviation = ShapeComparison.MaximumDeviation(shortLine, longLine);
-        Assert.AreEqual(50, deviation.Maximum, 1e-9);
+        Assert.AreEqual(50, deviation.Maximum, Precision);
         Assert.IsTrue(deviation.At.IsCloseTo(new(150, 0)));
     }
 
@@ -41,7 +41,7 @@ public sealed class ComparisonTests
     {
         var a = new Polyline([new(0, 0), new(100, 0)], false);
         var b = new Polyline([new(0, 3), new(100, 3)], false);
-        Assert.AreEqual(3, ShapeComparison.MaximumDeviation(a, b).Maximum, 1e-9);
+        Assert.AreEqual(3, ShapeComparison.MaximumDeviation(a, b).Maximum, Precision);
     }
 
     [TestMethod]

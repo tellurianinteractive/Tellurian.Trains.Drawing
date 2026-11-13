@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Geometry;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 

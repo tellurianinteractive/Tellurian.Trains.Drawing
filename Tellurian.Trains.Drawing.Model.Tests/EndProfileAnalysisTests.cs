@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Geometry;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -6,8 +5,6 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 [TestClass]
 public sealed class EndProfileAnalysisTests
 {
-    private const double Precision = 1e-9;
-
     [TestMethod]
     public void TemplateProfileProperties()
     {
@@ -72,7 +69,7 @@ public sealed class EndProfileAnalysisTests
         var profile = TestProfiles.Asymmetric();
         var twice = profile.MirroredX().MirroredX();
         Assert.AreEqual(JointFit.Fits, JointFitEvaluator.Evaluate(profile, ProfileOrientation.Mirrored, twice, ProfileOrientation.Normal).Fit);
-        Assert.IsTrue(ShapeComparison.MaximumDeviation(profile.GroundLine!.Tessellate(), twice.GroundLine!.Tessellate()).IsWithin(1e-9));
+        Assert.IsTrue(ShapeComparison.MaximumDeviation(profile.GroundLine!.Tessellate(), twice.GroundLine!.Tessellate()).IsWithin(Precision));
         Assert.AreSame(profile, profile.Oriented(ProfileOrientation.Normal));
     }
 

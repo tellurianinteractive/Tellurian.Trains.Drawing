@@ -16,9 +16,9 @@ public sealed class JoinTests
         var placement = Join.PlacementFor(target, localExit);
         var placedExit = placement.Apply(localExit);
 
-        Assert.IsTrue(placedExit.Position.IsCloseTo(target.Position, 1e-9));
-        Assert.IsTrue(placedExit.Heading.IsCloseTo(target.Reversed().Heading, 1e-9));
-        Assert.IsTrue(Join.Gap(target, placedExit).IsWithin(1e-9, 1e-9));
+        Assert.IsTrue(placedExit.Position.IsCloseTo(target.Position, Precision));
+        Assert.IsTrue(placedExit.Heading.IsCloseTo(target.Reversed().Heading, Precision));
+        Assert.IsTrue(Join.Gap(target, placedExit).IsWithin(Precision, Precision));
     }
 
     [TestMethod]
@@ -47,7 +47,7 @@ public sealed class JoinTests
             current = Join.PlacementFor(current, entry).Apply(exit);
         }
         var gap = Join.Gap(first, current);
-        Assert.IsTrue(gap.IsWithin(1e-6, 1e-9), gap.ToString());
+        Assert.IsTrue(gap.IsWithin(Tolerance.Length, Precision), gap.ToString());
     }
 
     [TestMethod]
@@ -57,10 +57,10 @@ public sealed class JoinTests
         // The other exit is 5 mm further out (along +Y in world), 2 mm to the exit's left (−X), turned 1°.
         var other = new Pose(new(98, 105), new Angle(270 + 1));
         var gap = Join.Gap(exit, other);
-        Assert.AreEqual(5, gap.Dx, 1e-9);
-        Assert.AreEqual(2, gap.Dy, 1e-9);
-        Assert.AreEqual(1, gap.Dθ.Degrees, 1e-9);
-        Assert.AreEqual(Math.Sqrt(29), gap.Distance, 1e-9);
+        Assert.AreEqual(5, gap.Dx, Precision);
+        Assert.AreEqual(2, gap.Dy, Precision);
+        Assert.AreEqual(1, gap.Dθ.Degrees, Precision);
+        Assert.AreEqual(Math.Sqrt(29), gap.Distance, Precision);
         Assert.IsFalse(gap.IsWithin(1, 10));
         Assert.IsFalse(gap.IsWithin(10, 0.5));
         Assert.IsTrue(gap.IsWithin(10, 1.5));

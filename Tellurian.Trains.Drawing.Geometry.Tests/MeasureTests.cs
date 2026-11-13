@@ -3,8 +3,6 @@ namespace Tellurian.Trains.Drawing.Geometry.Tests;
 [TestClass]
 public sealed class MeasureTests
 {
-    private const double Precision = 1e-9;
-
     private static Polyline Square(double x, double y, double size) =>
         new([new(x, y), new(x + size, y), new(x + size, y + size), new(x, y + size)], true);
 

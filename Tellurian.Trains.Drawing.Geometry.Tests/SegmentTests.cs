@@ -3,8 +3,6 @@ namespace Tellurian.Trains.Drawing.Geometry.Tests;
 [TestClass]
 public sealed class SegmentTests
 {
-    private const double Precision = 1e-9;
-
     [TestMethod]
     public void LineHasLengthHeadingAndPoints()
     {
@@ -67,7 +65,7 @@ public sealed class SegmentTests
         var bounds = arc.Bounds;
         Assert.AreEqual(100, bounds.Max.X, Precision);
         Assert.AreEqual(200, bounds.Max.Y, Precision);
-        Assert.AreEqual(0, bounds.Min.X, 1e-9);
+        Assert.AreEqual(0, bounds.Min.X, Precision);
     }
 
     [TestMethod]
@@ -94,7 +92,7 @@ public sealed class SegmentTests
         var reversed = arc.Reversed();
         Assert.IsTrue(reversed.Start.IsCloseTo(arc.End));
         Assert.IsTrue(reversed.End.IsCloseTo(arc.Start));
-        Assert.IsTrue(reversed.StartHeading.IsCloseTo(arc.EndHeading + Angle.Half, 1e-9));
+        Assert.IsTrue(reversed.StartHeading.IsCloseTo(arc.EndHeading + Angle.Half, Precision));
     }
 
     [TestMethod]
@@ -104,7 +102,7 @@ public sealed class SegmentTests
         var transform = new Transform(new Angle(60), new Vector(50, 70));
         var moved = arc.Transformed(transform);
         Assert.IsTrue(moved.End.IsCloseTo(transform.Apply(arc.End)));
-        Assert.IsTrue(moved.EndHeading.IsCloseTo(transform.Apply(arc.EndHeading), 1e-9));
+        Assert.IsTrue(moved.EndHeading.IsCloseTo(transform.Apply(arc.EndHeading), Precision));
 
         var mirrored = arc.MirroredX();
         Assert.IsTrue(mirrored.Start.IsCloseTo(arc.Start.MirroredX()));
@@ -132,7 +130,7 @@ public sealed class SegmentTests
         {
             var middle = Point.Lerp(points[i - 1], points[i], 0.5);
             var sagitta = 2000 - middle.DistanceTo(arc.Center);
-            Assert.IsLessThanOrEqualTo(0.05 + 1e-9, sagitta);
+            Assert.IsLessThanOrEqualTo(0.05 + Precision, sagitta);
         }
     }
 }

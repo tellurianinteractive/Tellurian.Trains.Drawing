@@ -10,11 +10,11 @@ public sealed class PolygonOffsetTests
     {
         var grown = PolygonOffset.Offset(Square, 10, 0.01);
         Assert.IsTrue(grown.IsCounterClockwise);
-        Assert.AreEqual(-10, grown.Bounds.Min.X, 1e-9);
-        Assert.AreEqual(110, grown.Bounds.Max.Y, 1e-9);
+        Assert.AreEqual(-10, grown.Bounds.Min.X, Precision);
+        Assert.AreEqual(110, grown.Bounds.Max.Y, Precision);
         foreach (var point in grown.Points)
         {
-            Assert.AreEqual(10, Measure.PointToPolyline(point, Square), 1e-6);
+            Assert.AreEqual(10, Measure.PointToPolyline(point, Square), Tolerance.Length);
         }
         // Rounded corners: the area is the square, four side strips and a full circle.
         Assert.AreEqual(100 * 100 + 4 * 100 * 10 + Math.PI * 100, grown.SignedArea, 1);
@@ -25,7 +25,7 @@ public sealed class PolygonOffsetTests
     {
         var shrunk = PolygonOffset.Offset(Square, -10);
         Assert.HasCount(4, shrunk.Points);
-        Assert.AreEqual(80 * 80, shrunk.SignedArea, 1e-9);
+        Assert.AreEqual(80 * 80, shrunk.SignedArea, Precision);
         Assert.IsTrue(shrunk.Points.Any(p => p.IsCloseTo(new(10, 10))));
     }
 
@@ -33,7 +33,7 @@ public sealed class PolygonOffsetTests
     public void ClockwiseInputGivesTheSameResult()
     {
         var clockwise = new Polyline(Square.Points.Reverse(), true);
-        Assert.AreEqual(PolygonOffset.Offset(Square, 5).SignedArea, PolygonOffset.Offset(clockwise, 5).SignedArea, 1e-9);
+        Assert.AreEqual(PolygonOffset.Offset(Square, 5).SignedArea, PolygonOffset.Offset(clockwise, 5).SignedArea, Precision);
     }
 
     [TestMethod]
@@ -59,12 +59,12 @@ public sealed class PolygonOffsetTests
     {
         var withExtras = new Polyline([new(0, 0), new(50, 0), new(50, 0), new(100, 0), new(100, 100), new(0, 100), new(0, 0)], true);
         var shrunk = PolygonOffset.Offset(withExtras, -10);
-        Assert.AreEqual(80 * 80, shrunk.SignedArea, 1e-9);
+        Assert.AreEqual(80 * 80, shrunk.SignedArea, Precision);
     }
 
     [TestMethod]
     public void ZeroDistanceReturnsTheCleanedPolygon() =>
-        Assert.AreEqual(Square.SignedArea, PolygonOffset.Offset(Square, 0).SignedArea, 1e-9);
+        Assert.AreEqual(Square.SignedArea, PolygonOffset.Offset(Square, 0).SignedArea, Precision);
 
     [TestMethod]
     public void InvalidInputIsRejected()
