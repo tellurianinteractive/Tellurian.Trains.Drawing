@@ -10,7 +10,7 @@ public sealed record BufferStop : TrackElement
 {
     public required Pose Pose { get; init; }
 
-    public override IReadOnlyList<TrackPath> Routes() => [];
+    public override IReadOnlyList<SegmentPath> Routes() => [];
 
     public override IReadOnlyList<Pose> ConnectionPoints() => [Pose];
 }

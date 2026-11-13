@@ -39,7 +39,7 @@ public static class ModuleGeometry
     /// </summary>
     /// <exception cref="InvalidOperationException">A side refers to an unknown exit or doesn't meet its end-plate corners.</exception>
     /// <exception cref="KeyNotFoundException">An exit's end profile isn't available.</exception>
-    public static TrackPath? Outline(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles)
+    public static SegmentPath? Outline(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles)
     {
         if (variant.Sides.Count == 0) return null;
         var plates = EndPlates(variant, endProfiles);
@@ -57,7 +57,7 @@ public static class ModuleGeometry
             segments.Add(new LineSegment(previousEnd, sides[i].Start));
             segments.AddRange(sides[i].Segments);
         }
-        return new TrackPath(segments, isClosed: true);
+        return new SegmentPath(segments, isClosed: true);
     }
 
     public static IReadOnlyDictionary<string, EndPlate> EndPlates(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles) =>

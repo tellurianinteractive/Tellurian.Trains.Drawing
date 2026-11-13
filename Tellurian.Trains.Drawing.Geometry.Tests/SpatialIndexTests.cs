@@ -80,7 +80,7 @@ public sealed class SpatialIndexTests
             var main = new PathBuilder(pose).Straight(300).Curve(2000, i % 2 == 0 ? 4 : -4).Straight(300).Build();
             var left = main.Offset(250);
             var right = main.Offset(-250).Reversed();
-            var outline = new TrackPath([.. left.Segments, new LineSegment(left.End, right.Start), .. right.Segments, new LineSegment(right.End, left.Start)], isClosed: true);
+            var outline = new SegmentPath([.. left.Segments, new LineSegment(left.End, right.Start), .. right.Segments, new LineSegment(right.End, left.Start)], isClosed: true);
             outlines.Add(outline.Tessellate());
             pose = main.EndPose;
         }

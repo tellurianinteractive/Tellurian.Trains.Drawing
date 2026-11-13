@@ -32,7 +32,7 @@ public abstract record TrackElement
     public bool IsGenerated { get; init; }
 
     /// <summary>The centre lines of all routes through the element.</summary>
-    public abstract IReadOnlyList<TrackPath> Routes();
+    public abstract IReadOnlyList<SegmentPath> Routes();
 
     /// <summary>The points where other elements or exits connect, headings pointing out of the element.</summary>
     public abstract IReadOnlyList<Pose> ConnectionPoints();

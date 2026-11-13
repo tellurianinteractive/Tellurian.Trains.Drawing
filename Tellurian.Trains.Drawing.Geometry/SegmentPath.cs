@@ -5,11 +5,11 @@ namespace Tellurian.Trains.Drawing.Geometry;
 /// A closed path also ends where it starts (outlines, hall walls); an open path doesn't
 /// (main paths, track centre lines, ground lines).
 /// </summary>
-public sealed class TrackPath
+public sealed class SegmentPath
 {
     private const double ConnectionTolerance = 1e-6;
 
-    public TrackPath(IEnumerable<Segment> segments, bool isClosed = false)
+    public SegmentPath(IEnumerable<Segment> segments, bool isClosed = false)
     {
         Segments = [.. segments];
         if (Segments.Count == 0) throw new ArgumentException("A path must have at least one segment.", nameof(segments));
@@ -54,18 +54,18 @@ public sealed class TrackPath
         return EndPose;
     }
 
-    public TrackPath Reversed() => new(Segments.Reverse().Select(s => s.Reversed()), IsClosed);
+    public SegmentPath Reversed() => new(Segments.Reverse().Select(s => s.Reversed()), IsClosed);
 
-    public TrackPath Transformed(Transform transform) => new(Segments.Select(s => s.Transformed(transform)), IsClosed);
+    public SegmentPath Transformed(Transform transform) => new(Segments.Select(s => s.Transformed(transform)), IsClosed);
 
     /// <summary>The path mirrored about the Y axis. Only for comparing end profiles.</summary>
-    public TrackPath MirroredX() => new(Segments.Select(s => s.MirroredX()), IsClosed);
+    public SegmentPath MirroredX() => new(Segments.Select(s => s.MirroredX()), IsClosed);
 
     /// <summary>
     /// A parallel path at <paramref name="distance"/> to the left (negative: right).
     /// Exact for tangent-continuous paths, such as module main paths and track centre lines.
     /// </summary>
-    public TrackPath Offset(double distance)
+    public SegmentPath Offset(double distance)
     {
         if (!IsTangentContinuous())
             throw new InvalidOperationException("Only tangent-continuous paths can be offset exactly.");

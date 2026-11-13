@@ -9,7 +9,7 @@ public sealed record CurvedTrack : TrackElement
     public required double Radius { get; init; }
     public required double Angle { get; init; }
 
-    public override IReadOnlyList<TrackPath> Routes() => [new PathBuilder(Start).Curve(Radius, Angle).Build()];
+    public override IReadOnlyList<SegmentPath> Routes() => [new PathBuilder(Start).Curve(Radius, Angle).Build()];
 
     public override IReadOnlyList<Pose> ConnectionPoints() => [Start.Reversed(), Routes()[0].EndPose];
 }

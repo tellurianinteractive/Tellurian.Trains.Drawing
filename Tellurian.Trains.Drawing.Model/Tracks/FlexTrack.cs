@@ -10,7 +10,7 @@ public sealed record FlexTrack : TrackElement
 {
     public required PathDrawing Path { get; init; }
 
-    public override IReadOnlyList<TrackPath> Routes() => [Path.ToPath()];
+    public override IReadOnlyList<SegmentPath> Routes() => [Path.ToPath()];
 
     public override IReadOnlyList<Pose> ConnectionPoints()
     {

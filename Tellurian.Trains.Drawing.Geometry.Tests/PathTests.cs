@@ -5,7 +5,7 @@ public sealed class PathTests
 {
     private const double Precision = 1e-9;
 
-    private static TrackPath StraightThenCurve() =>
+    private static SegmentPath StraightThenCurve() =>
         new PathBuilder(Pose.Origin).Straight(500).Curve(1000, 90).Build();
 
     [TestMethod]
@@ -31,11 +31,11 @@ public sealed class PathTests
 
     [TestMethod]
     public void DisconnectedSegmentsAreRejected() =>
-        Assert.ThrowsExactly<ArgumentException>(() => new TrackPath([new LineSegment(new(0, 0), new(1, 0)), new LineSegment(new(2, 0), new(3, 0))]));
+        Assert.ThrowsExactly<ArgumentException>(() => new SegmentPath([new LineSegment(new(0, 0), new(1, 0)), new LineSegment(new(2, 0), new(3, 0))]));
 
     [TestMethod]
     public void OpenPathCanNotBeClosed() =>
-        Assert.ThrowsExactly<ArgumentException>(() => new TrackPath(StraightThenCurve().Segments, isClosed: true));
+        Assert.ThrowsExactly<ArgumentException>(() => new SegmentPath(StraightThenCurve().Segments, isClosed: true));
 
     [TestMethod]
     public void PoseAtWalksAlongSegments()

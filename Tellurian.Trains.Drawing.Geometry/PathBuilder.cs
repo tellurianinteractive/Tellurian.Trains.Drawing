@@ -33,5 +33,5 @@ public sealed class PathBuilder(Pose start)
         return this;
     }
 
-    public TrackPath Build(bool isClosed = false) => new(_segments, isClosed);
+    public SegmentPath Build(bool isClosed = false) => new(_segments, isClosed);
 }

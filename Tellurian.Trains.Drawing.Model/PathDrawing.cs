@@ -24,7 +24,7 @@ public sealed record PathDrawing
     }
 
     /// <summary>A drawing of <paramref name="path"/>.</summary>
-    public static PathDrawing From(TrackPath path) => new()
+    public static PathDrawing From(SegmentPath path) => new()
     {
         Start = path.Start,
         Steps = [.. path.Segments.Select(PathStep.From)],
@@ -32,7 +32,7 @@ public sealed record PathDrawing
     };
 
     /// <summary>The geometry of the path. A closed path's last step is snapped to the start.</summary>
-    public TrackPath ToPath()
+    public SegmentPath ToPath()
     {
         var segments = new List<Segment>(Steps.Count);
         var current = Start;

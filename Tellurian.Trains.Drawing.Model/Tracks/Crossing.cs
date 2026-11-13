@@ -12,7 +12,7 @@ public sealed record Crossing : TrackElement
     public required double Length { get; init; }
     public required double Angle { get; init; }
 
-    public override IReadOnlyList<TrackPath> Routes() => [Line(Center), Line(SecondCenter)];
+    public override IReadOnlyList<SegmentPath> Routes() => [Line(Center), Line(SecondCenter)];
 
     public override IReadOnlyList<Pose> ConnectionPoints() =>
     [
@@ -22,5 +22,5 @@ public sealed record Crossing : TrackElement
 
     internal Pose SecondCenter => Center with { Heading = Center.Heading + new Angle(Angle) };
 
-    private TrackPath Line(Pose middle) => new PathBuilder(middle.Advanced(-Length / 2)).Straight(Length).Build();
+    private SegmentPath Line(Pose middle) => new PathBuilder(middle.Advanced(-Length / 2)).Straight(Length).Build();
 }

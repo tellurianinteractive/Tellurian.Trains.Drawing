@@ -61,7 +61,7 @@ The App holds only what is specific to the PWA: shell and pages, IndexedDB stora
 - `Transform`: rotation + translation, composition, inverse. It has **no mirroring**, and it is used for placements.
 - `Mirror`: a separate operation, used only to compare end profiles (X → −X about the centre line, spec §3.1). It is kept separate so that a module placement can never be mirrored by mistake.
 - Segments: `LineSegment`, `ArcSegment` (centre, radius, start angle, sweep) with length, point-at, tangent-at and bounding box.
-- `TrackPath` (open/closed sequence of segments), `Polyline` (tessellated), polygon area/orientation, point-in-polygon, polyline–polyline intersection and minimum distance.
+- `SegmentPath` (open/closed sequence of segments), `Polyline` (tessellated), polygon area/orientation, point-in-polygon, polyline–polyline intersection and minimum distance.
 - **Shape comparison**: the Hausdorff-style maximum deviation between two tessellated paths. It is used for comparing ground lines (spec §3.2 rule 3) and for detecting symmetry.
 - **Point-set matching**: matches two sets of points (screw holes, track positions) within a tolerance and reports the unmatched points.
 - **Join math**: given a target exit pose `T` (world) and the moving module's exit pose `E` (local), the placement transform is `T ∘ Rot(180°) ∘ E⁻¹`.

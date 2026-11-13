@@ -8,7 +8,7 @@ public sealed record StraightTrack : TrackElement
     public required Pose Start { get; init; }
     public required double Length { get; init; }
 
-    public override IReadOnlyList<TrackPath> Routes() => [new PathBuilder(Start).Straight(Length).Build()];
+    public override IReadOnlyList<SegmentPath> Routes() => [new PathBuilder(Start).Straight(Length).Build()];
 
     public override IReadOnlyList<Pose> ConnectionPoints() => [Start.Reversed(), Start.Advanced(Length)];
 }

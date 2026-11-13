@@ -15,7 +15,7 @@ public sealed record DoubleSlip : TrackElement
 
     public double SlipRadius => Length / 2 / Math.Tan(Math.Abs(Angle) * Math.PI / 360);
 
-    public override IReadOnlyList<TrackPath> Routes()
+    public override IReadOnlyList<SegmentPath> Routes()
     {
         var crossing = AsCrossing();
         var second = crossing.SecondCenter;

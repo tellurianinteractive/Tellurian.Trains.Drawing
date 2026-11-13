@@ -29,7 +29,7 @@ public sealed record Turnout : TrackElement
     public double? InnerRadius { get; init; }
     public double? InnerAngle { get; init; }
 
-    public override IReadOnlyList<TrackPath> Routes() => Kind switch
+    public override IReadOnlyList<SegmentPath> Routes() => Kind switch
     {
         TurnoutKind.Left => [Straight(), Diverging(Angle)],
         TurnoutKind.Right => [Straight(), Diverging(-Angle)],
@@ -42,11 +42,11 @@ public sealed record Turnout : TrackElement
 
     public override IReadOnlyList<Pose> ConnectionPoints() => [Start.Reversed(), .. Routes().Select(r => r.EndPose)];
 
-    private TrackPath Straight() => new PathBuilder(Start).Straight(Length).Build();
+    private SegmentPath Straight() => new PathBuilder(Start).Straight(Length).Build();
 
-    private TrackPath Curve(double radius, double angle) => new PathBuilder(Start).Curve(radius, angle).Build();
+    private SegmentPath Curve(double radius, double angle) => new PathBuilder(Start).Curve(radius, angle).Build();
 
-    private TrackPath Diverging(double angle)
+    private SegmentPath Diverging(double angle)
     {
         var builder = new PathBuilder(Start).Curve(Radius, angle);
         var radians = Math.Abs(angle) * Math.PI / 180;

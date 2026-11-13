@@ -11,7 +11,7 @@ public static class Mirror
 
     public static Segment AboutCentreLine(Segment segment) => segment.MirroredX();
 
-    public static TrackPath AboutCentreLine(TrackPath path) => path.MirroredX();
+    public static SegmentPath AboutCentreLine(SegmentPath path) => path.MirroredX();
 
     public static Polyline AboutCentreLine(Polyline polyline) =>
         new(polyline.Points.Select(p => p.MirroredX()), polyline.IsClosed);
