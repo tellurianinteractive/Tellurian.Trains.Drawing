@@ -63,6 +63,13 @@ public sealed record ArcSegment : Segment
 
     public override Segment Reversed() => new ArcSegment(Center, Radius, EndAngle, -SweepDegrees);
 
+    public override Segment Between(double from, double to)
+    {
+        var start = Clamp(from);
+        var end = Clamp(to);
+        return new ArcSegment(Center, Radius, AngleAt(start), Math.Sign(SweepDegrees) * (end - start) / Radius * 180.0 / Math.PI);
+    }
+
     public override Segment Transformed(Transform transform) =>
         new ArcSegment(transform.Apply(Center), Radius, transform.Apply(StartAngle), SweepDegrees);
 

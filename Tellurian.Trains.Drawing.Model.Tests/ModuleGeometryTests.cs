@@ -77,7 +77,7 @@ public sealed class ModuleGeometryTests
         };
         var polygon = ModuleGeometry.Outline(variant, Lookup)!.Tessellate(0.01);
         var expectedArea = Math.PI / 12 * (2250 * 2250 - 1750 * 1750) / 2 * 2;
-        Assert.AreEqual(expectedArea, polygon.SignedArea, expectedArea * 1e-4);
+        Assert.AreEqual(expectedArea, polygon.SignedArea, expectedArea * RelativeArea);
     }
 
     [TestMethod]

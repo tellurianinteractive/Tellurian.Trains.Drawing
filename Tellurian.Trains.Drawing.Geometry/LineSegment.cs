@@ -29,6 +29,8 @@ public sealed record LineSegment : Segment
 
     public override Segment Reversed() => new LineSegment(_end, _start);
 
+    public override Segment Between(double from, double to) => new LineSegment(PointAt(from), PointAt(to));
+
     public override Segment Transformed(Transform transform) => new LineSegment(transform.Apply(_start), transform.Apply(_end));
 
     public override Segment MirroredX() => new LineSegment(_start.MirroredX(), _end.MirroredX());

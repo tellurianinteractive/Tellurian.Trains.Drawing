@@ -1,3 +1,4 @@
+using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
 namespace Tellurian.Trains.Drawing.Model.Modules;
@@ -36,6 +37,9 @@ public sealed record ModuleVariant
 
     /// <summary>Measures entered in or imported from the Registry, for comparison (MD-10).</summary>
     public RegistryMeasures? RegistryMeasures { get; init; }
+
+    /// <summary>Set while the variant is as auto-draw generated it (MD-20); null once edited by hand.</summary>
+    public AutoDrawRecord? AutoDraw { get; init; }
 
     public ModuleKind Kind => Exits.Count switch
     {

@@ -101,4 +101,36 @@ public sealed class PathTests
         Assert.AreEqual(1500, bounds.Max.X, Precision);
         Assert.AreEqual(1000, bounds.Max.Y, Precision);
     }
+
+    [TestMethod]
+    public void BetweenCutsAcrossSegments()
+    {
+        var path = StraightThenCurve();
+        var quarter = 1000 * Math.PI / 4;
+        var part = path.Between(250, 500 + quarter);
+        Assert.HasCount(2, part.Segments);
+        Assert.AreEqual(250 + quarter, part.Length, Precision);
+        Assert.IsTrue(part.StartPose.IsCloseTo(path.PoseAt(250)));
+        Assert.IsTrue(part.EndPose.IsCloseTo(path.PoseAt(500 + quarter)));
+        Assert.IsTrue(part.IsTangentContinuous());
+    }
+
+    [TestMethod]
+    public void BetweenWithinOneArcKeepsTheArc()
+    {
+        var arc = ArcSegment.FromStart(Pose.Origin, 1000, -60);
+        var part = (ArcSegment)arc.Between(arc.Length / 3, arc.Length * 2 / 3);
+        Assert.AreEqual(-20, part.SweepDegrees, Precision);
+        Assert.AreEqual(1000, part.Radius, Precision);
+        Assert.IsTrue(part.Start.IsCloseTo(arc.PointAt(arc.Length / 3)));
+    }
+
+    [TestMethod]
+    public void BetweenIsClampedAndSkipsTinyParts()
+    {
+        var path = StraightThenCurve();
+        Assert.HasCount(1, path.Between(-100, 500).Segments);
+        Assert.AreEqual(path.Length, path.Between(0, 1e6).Length, Precision);
+        Assert.ThrowsExactly<ArgumentException>(() => path.Between(300, 300));
+    }
 }

@@ -32,6 +32,12 @@ public abstract record Segment
     /// <summary>The same segment, travelled in the opposite direction.</summary>
     public abstract Segment Reversed();
 
+    /// <summary>
+    /// The part of the segment from <paramref name="from"/> to <paramref name="to"/> along it (clamped).
+    /// The part must have a length.
+    /// </summary>
+    public abstract Segment Between(double from, double to);
+
     public abstract Segment Transformed(Transform transform);
 
     /// <summary>The segment mirrored about the Y axis. Only for comparing end profiles.</summary>

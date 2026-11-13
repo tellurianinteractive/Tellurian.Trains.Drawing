@@ -52,6 +52,26 @@ public sealed class SegmentPath
         return EndPose;
     }
 
+    /// <summary>
+    /// The open path from <paramref name="from"/> to <paramref name="to"/> along this one (clamped).
+    /// Parts of segments shorter than <see cref="Tolerance.Length"/> are left out.
+    /// </summary>
+    public SegmentPath Between(double from, double to)
+    {
+        if (to - from < Tolerance.Length) throw new ArgumentException("The part must have a length.", nameof(to));
+        var parts = new List<Segment>();
+        var start = 0.0;
+        foreach (var segment in Segments)
+        {
+            var end = start + segment.Length;
+            var partFrom = Math.Max(from, start);
+            var partTo = Math.Min(to, end);
+            if (partTo - partFrom >= Tolerance.Length) parts.Add(segment.Between(partFrom - start, partTo - start));
+            start = end;
+        }
+        return new(parts);
+    }
+
     public SegmentPath Reversed() => new(Segments.Reverse().Select(s => s.Reversed()), IsClosed);
 
     public SegmentPath Transformed(Transform transform) => new(Segments.Select(s => s.Transformed(transform)), IsClosed);
