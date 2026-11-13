@@ -7,7 +7,7 @@ Status: **Draft 0.1** (2026-11-13). Part of the [specification](Specification.md
 1. **One drawing at a time.** A user works on one end profile, one module or one hall plan at a time.
 2. **Files are the result.** The primary result of every drawing is its **JSON file**: an end profile, module, hall or hall plan file. Files are what users keep, share and upload to the Module Registry.
 3. **IndexedDB is a workbench.** It holds work in progress: autosaved drafts, recently used files, and collections of imported modules for a hall plan. It is not the place where finished work is kept. The user is reminded to save a file when a draft has unsaved changes.
-4. **Hall plans are built by ordering modules.** Almost all module layouts are **end to end**. So a hall plan is built by putting modules in a **sequence**, not by placing each module freely. The app computes every module's position from the previous one. Branches at junction modules are less common; closed loops are rare.
+4. **Hall plans are built by ordering modules.** Almost all module layouts are **end to end**. So a hall plan is built by putting modules in a **sequence**, not by placing each module freely. The app computes every module's position from the previous one. **Branches are common**: layouts often contain junction modules (three or more end profiles) where a branch line starts. Closed loops are rare.
 
 ## Actors
 There are no roles in the app (spec §4). The actors below are only typical situations.
@@ -30,7 +30,7 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 | UC-6 | Draw a hall | Hall file |
 | UC-7 | Collect modules for a hall plan | Module collection of the hall plan |
 | UC-8 | Build a hall plan by ordering modules | Hall plan file |
-| UC-9 | Branch at a junction module | Branch line in the hall plan |
+| UC-9 | Branch at a junction module (common) | Branch line in the hall plan |
 | UC-10 | Close a loop (rare) | Closed line, with its closure gap reported |
 | UC-11 | Validate and adjust a hall plan | A hall plan without errors |
 | UC-12 | Print and share a hall plan | Printout, SVG/PNG or hall plan file |
@@ -97,9 +97,12 @@ The Module Registry runs the same auto-draw on its server, without this app (MD-
 9. The planner **saves the hall plan file**. It embeds the hall, the used modules and their end profiles (spec §6). Drafts are autosaved.
 
 ### UC-9 Branch at a junction module
+Branches are a normal part of most layouts.
 1. A line contains a junction module with three or more exits. For that module the planner chooses which exit is the entry and which continues the line.
-2. A remaining free exit can **start a branch line**. The branch is anchored at that exit, so it moves with the junction module.
-3. The planner builds the branch like any line (UC-8).
+2. Each remaining free exit is shown as a **branch point**. With one click the planner **starts a branch line** there. The branch is anchored at that exit, so it moves with the junction module.
+3. The planner builds the branch like any line (UC-8): adding, moving up or down, and flipping modules. Branches can have branches of their own.
+4. The ordered list shows the layout as a **tree**: each branch is nested under the junction module where it starts, and can be collapsed.
+5. Moving the junction module within its line, or flipping it, redraws all its branches. Choosing a different exit to continue the line swaps which way is the "main" line and which is the branch.
 
 ### UC-10 Close a loop (rare)
 1. The planner marks a line as **closed**: its last module should join its first module, or join a free exit elsewhere.

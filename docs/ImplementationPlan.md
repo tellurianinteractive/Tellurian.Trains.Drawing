@@ -243,8 +243,8 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 3. **Line model and layout engine** in `Model`, unit-tested without UI:
    - `Line` (ordered entries, anchor entry and pose, optional start at the free exit of another line's module, closed flag) and `LineEntry` (module, variant, entry exit, exit exit);
    - `LineLayout.Compute(line, …) → poses`: starts at the anchor and works outwards in both directions, joining each entry's entry exit to its neighbour's exit exit with the join math (§1.3). Branch lines start from their parent exit. A closed line reports its closure gap (VA-5);
-   - tests: straight and curve chains, flips, anchors in the middle, branches, loops that close and loops that don't.
-4. **Ordered list UI** (HP-3, HP-4): add from the collection, remove, move up/down, drag in the list, flip (2 exits), choose entry/exit exits (≥ 3 exits), switch variant (HP-7). The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
+   - tests: straight and curve chains, flips, anchors in the middle, branches (including branches of branches, swapping the main line and a branch, and moving or flipping a junction module with its branches), loops that close and loops that don't.
+4. **Ordered list UI** (HP-3, HP-4, HP-19): a **tree**, with branch lines nested under their junction module and collapsible. Add from the collection, remove, move up/down, drag in the list, flip (2 exits), choose entry/exit exits (≥ 3 exits), start a branch at a branch point, switch variant (HP-7). The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
 5. **Positioning lines** (HP-5): drag or rotate a whole line in the drawing (step rotation), numeric pose, choose the anchor module, lock. Several lines per plan. Branch lines (HP-19). Closing a loop (HP-20, should).
 6. Leg adjustment per placement with a marker in the drawing (HP-13).
 7. **Joint fit feedback (HP-11):**
