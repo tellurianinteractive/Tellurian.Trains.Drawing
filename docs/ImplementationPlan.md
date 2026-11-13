@@ -245,7 +245,7 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
    - `LineLayout.Compute(line, …) → poses`: starts at the anchor and works outwards in both directions, joining each entry's entry exit to its neighbour's exit exit with the join math (§1.3). Branch lines start from their parent exit. A closed line reports its closure gap (VA-5);
    - tests: straight and curve chains, flips, anchors in the middle, branches (including branches of branches, swapping the main line and a branch, and moving or flipping a junction module with its branches), loops that close and loops that don't.
 4. **Ordered list UI** (HP-3, HP-4, HP-19): a **tree**, with branch lines nested under their junction module and collapsible. Add from the collection, remove, move up/down, drag in the list, flip (2 exits), choose entry/exit exits (≥ 3 exits), start a branch at a branch point, switch variant (HP-7). The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
-5. **Positioning lines** (HP-5): drag or rotate a whole line in the drawing (step rotation), numeric pose, choose the anchor module, lock. Several lines per plan. Branch lines (HP-19). Closing a loop (HP-20, should).
+5. **Positioning lines** (HP-5): drag or rotate a whole line in the drawing (step rotation), numeric pose, choose the anchor module, lock. Several lines per plan. Branch lines (HP-19). **Joining a line's end to another exit** (HP-20): rejoining branches and closed loops, with the closure gap (VA-5).
 6. Leg adjustment per placement with a marker in the drawing (HP-13).
 7. **Joint fit feedback (HP-11):**
    - the fit is evaluated for every joint after each change;
@@ -265,7 +265,7 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 12. Performance check against NF-2 with a generated 300-module plan.
 
 **Milestone M2:** modules from a Registry ZIP archive can be ordered into an end-to-end layout with a branch, placed in a hall, saved and shared as one file.
-**Requirements:** HP-1..HP-7, HP-11, HP-12, HP-13, HP-14, HP-16, HP-17, HP-18, HP-19, EX-5, NF-2.
+**Requirements:** HP-1..HP-7, HP-11, HP-12, HP-13, HP-14, HP-16, HP-17, HP-18, HP-19, HP-20, EX-5, NF-2.
 Loop closure is *report only* (VA-5). Adjustable modules (MD-16) are a later item. They can be added later without breaking the file format, by adding optional parameters to the module.
 
 ### Phase 10 – Validation engine and problems list (≈2–3 weeks)
@@ -319,7 +319,7 @@ Validation logic lives in `Model` and is unit-tested without UI. Parts of it can
 
 ### Phase 13 – "Should" requirements (release 1.x, ≈3–5 weeks)
 In priority order (to be confirmed):
-1. EP-9 fit matrix; "Level from here" (HP-13); HP-20 closing a loop.
+1. EP-9 fit matrix; "Level from here" (HP-13).
 2. VA-12 public side check and VA-8 enclosed areas (reachability, with duck-under passages).
 3. HP-8/HP-9 colouring by owner/state/status, plus layers.
 4. RP-3 joint list, RP-4 placement numbering.
@@ -362,8 +362,7 @@ In priority order (to be confirmed):
 | HA-4 | 13 |
 | HA-6 | replaced by HP-17 |
 | HP-1 … HP-7, HP-11, HP-12, HP-13 | 9 (HP-6 framework in 4; "Level from here" in 13) |
-| HP-14, HP-16, HP-17, HP-18, HP-19 | 9 |
-| HP-20 | 13 |
+| HP-14, HP-16, HP-17, HP-18, HP-19, HP-20 | 9 |
 | HP-15 | 10 |
 | HP-8, HP-9 | 13 |
 | HP-10 | Later |

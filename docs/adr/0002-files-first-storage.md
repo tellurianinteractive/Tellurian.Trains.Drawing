@@ -23,11 +23,11 @@ file-system support. Editing is done on desktop (spec AP-3), so the desktop brow
 ### Measurements
 | Test | Firefox | Chrome / Edge | Safari (macOS) |
 |---|---|---|---|
-| ZIP import of 300 module files: unzip and parse in .NET (AOT) | **18 ms** | *pending* | *pending* |
+| ZIP import of 300 module files: unzip and parse in .NET (AOT) | **18 ms** | good performance (reported) | *optional* |
 | Folder fallback (folder upload) | *pending* | – | *pending* |
 | Draft resumed after reload | *pending* | *pending* | *pending* |
 | Download / upload round trip | *pending* | – | *pending* |
-| Save in place, re-open recent file, re-read folder | – | *pending* | – |
+| Save in place, re-open recent file, re-read folder | – | works, good performance (reported) | – |
 | Persistent storage granted | *pending* | *pending* | *pending* |
 
 ## Decision (proposed)

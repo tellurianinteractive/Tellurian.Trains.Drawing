@@ -7,7 +7,7 @@ Status: **Draft 0.1** (2026-11-13). Part of the [specification](Specification.md
 1. **One drawing at a time.** A user works on one end profile, one module or one hall plan at a time.
 2. **Files are the result.** The primary result of every drawing is its **JSON file**: an end profile, module, hall or hall plan file. Files are what users keep, share and upload to the Module Registry.
 3. **IndexedDB is a workbench.** It holds work in progress: autosaved drafts, recently used files, and collections of imported modules for a hall plan. It is not the place where finished work is kept. The user is reminded to save a file when a draft has unsaved changes.
-4. **Hall plans are built by ordering modules.** Almost all module layouts are **end to end**. So a hall plan is built by putting modules in a **sequence**, not by placing each module freely. The app computes every module's position from the previous one. **Branches are common**: layouts often contain junction modules (three or more end profiles) where a branch line starts. Closed loops are rare.
+4. **Hall plans are built by ordering modules.** Almost all module layouts are **end to end**. So a hall plan is built by putting modules in a **sequence**, not by placing each module freely. The app computes every module's position from the previous one. **Branches are common**: layouts often contain junction modules (three or more end profiles) where a branch line starts, and branches often **rejoin** another line. Closed loops built from several modules are rare.
 
 ## Actors
 There are no roles in the app (spec §4). The actors below are only typical situations.
@@ -16,7 +16,7 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 |---|---|
 | Module owner | Draws their own modules and uploads them to the Module Registry or another shared location. The owner can also provide the data to someone else who draws them (Registry data, measures, a sketch or photos). |
 | Module drawer | Draws modules on behalf of one or more owners, from the data they provide, and uploads them to the Module Registry or another shared location. |
-| End profile author | One of a **few selected persons**, e.g. appointed by FREMO or MMM, who draw the end profiles from the standards' specifications. The end profiles are published (in the Module Registry) and then **used** in module drawings by everyone else. |
+| End profile author | One of a **few selected persons**, e.g. appointed by FREMO or MMM, who draw the end profiles from the standards' specifications. The end profiles are published in the Module Registry or other shared location and then **used** in module drawings by everyone else. |
 | Planner | Usually the meeting organiser. Collects module files and builds the hall plan. |
 | Participant | Looks at a hall plan to see where their modules go. |
 
@@ -33,7 +33,7 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 | UC-7 | Collect modules for a hall plan | Module collection of the hall plan |
 | UC-8 | Build a hall plan by ordering modules | Hall plan file |
 | UC-9 | Branch at a junction module (common) | Branch line in the hall plan |
-| UC-10 | Close a loop (rare) | Closed line, with its closure gap reported |
+| UC-10 | Rejoin a line or close a loop | Joint with its closure gap reported |
 | UC-11 | Validate and adjust a hall plan | A hall plan without errors |
 | UC-12 | Print and share a hall plan | Printout, SVG/PNG or hall plan file |
 | UC-13 | Upload a module drawing to the Module Registry or another shared location | Module data in the Registry (done in the Registry) |
@@ -109,10 +109,13 @@ Branches are a normal part of most layouts.
 4. The ordered list shows the layout as a **tree**: each branch is nested under the junction module where it starts, and can be collapsed.
 5. Moving the junction module within its line, or flipping it, redraws all its branches. Choosing a different exit to continue the line swaps which way is the "main" line and which is the branch.
 
-### UC-10 Close a loop (rare)
-1. The planner marks a line as **closed**: its last module should join its first module, or join a free exit elsewhere.
-2. The geometry rarely closes exactly. The app reports the **closure gap**: distance, angle and height (VA-5).
-3. The planner adjusts the order, flips modules or changes modules until the gap is within tolerance. Otherwise the gap stays as a reported problem.
+### UC-10 Rejoin a line or close a loop
+Branches that **rejoin** another line are common, e.g. a triangle junction or two branches meeting at a station. A line joining its own start (a closed loop) is rare.
+1. The planner joins the last module of a line to a chosen **free exit** elsewhere in the plan, in another line or in the same line.
+2. The geometry rarely matches exactly. The app reports the **closure gap**: distance, angle and height (VA-5).
+3. The planner adjusts the order, flips modules or swaps modules until the gap is within tolerance. Otherwise the gap stays as a reported problem.
+
+A **loop module** at the end of a line (a return loop) is something else: it's a single, complete module with one exit, not a loop built from several modules (ModuleDrawing.md §3).
 
 ### UC-11 Validate and adjust a hall plan
 1. The app validates continuously: joint fit, overlaps, clearance, operator spaces, walking paths, heights and add-ons (VA-…).

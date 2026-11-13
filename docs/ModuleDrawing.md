@@ -37,7 +37,7 @@ or the track work of a station.
 | Exits | Kind | Typical modules | Auto-draw from parameters |
 |---|---|---|---|
 | 0 | *Invalid* (warning) | A diorama without connections | No |
-| 1 | **End of line** | A terminus or staging track with a buffer stop. Registry flag *IsEndOfLine*. | Yes (§8.4) |
+| 1 | **End of line** | Either a **terminus** or staging track with buffer stops, or a **loop module**: a single, complete module whose track forms a return loop back to its only exit. Registry flag *IsEndOfLine*. | Terminus: yes (§8.4). Loop module: its track is drawn by hand. |
 | 2 | **Pass-through** | Straight, curve, straight+curve and transition modules, simple stations | Yes (§8.2, §8.3) |
 | ≥ 3 | **Junction** | Branch-line junctions and stations with several exits per direction | Partly: the exits and main path are generated, the rest is drawn by hand (§8.5) |
 
@@ -236,6 +236,7 @@ is listed in the result as an "assumption"** and shown to the user, e.g. "exits 
 | Number of through tracks doesn't match the end profile | The end profile wins. Warning. |
 | Standard *MMM-2R/SSM* or *FREMO/SSM* | Standard MMM-2R with the add-on MMM-Summer, and default end profile MMM480. |
 | No geometry (no straight length, no curve) | Not auto-drawable. The result is "needs manual drawing". |
+| One exit and a curve angle of about 180° or more | Probably a **loop module**. The outline is drawn from the parameters; the return-loop track is drawn by hand. Marked "check". |
 | Angle ≥ 360°, or a turntable module | Drawn as far as possible and marked "check". |
 
 ### 8.7 Result
