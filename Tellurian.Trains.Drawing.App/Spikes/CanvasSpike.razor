@@ -1,0 +1,143 @@
+@page "/spike/canvas"
+@using System.Diagnostics
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Spike A – canvas</PageTitle>
+
+<div class="spike-toolbar">
+    <strong>Spike A – SVG canvas</strong>
+    <label>
+        Modules
+        <select @bind="Count" @bind:after="Regenerate">
+            @foreach (var n in Counts)
+            {
+                <option value="@n">@n</option>
+            }
+        </select>
+    </label>
+    <label>
+        Drag
+        <select @bind="DragMode" @bind:after="ApplyMode">
+            <option value="js">JS moves element, .NET on drop</option>
+            <option value="dotnet">.NET re-renders every frame</option>
+        </select>
+    </label>
+    <span>Render: <b>@renderMilliseconds ms</b></span>
+    <span id="spike-fps">fps: –</span>
+    <span id="spike-latency">drag latency: –</span>
+    <span>Drops: @drops</span>
+    <span class="spike-runtime">@Runtime</span>
+</div>
+
+<svg @ref="canvas" class="spike-canvas" viewBox="0 0 @HallWidth @HallDepth" preserveAspectRatio="xMidYMid meet">
+    <rect class="hall" x="0" y="0" width="@HallWidth" height="@HallDepth" />
+    @foreach (var module in modules)
+    {
+        <g @key="module.Id" class="module" data-id="@module.Id" transform="@module.Transform">
+            <path class="board" d="@module.Outline" />
+            <path class="@module.TrackClass" d="@module.Tracks" />
+        </g>
+    }
+</svg>
+
+<p class="spike-help">
+    Wheel or pinch: zoom. Drag the background: pan. Drag a module: move it.
+    Measure in the AOT Release build (pull request preview or production), not in Debug.
+</p>
+
+@code {
+    private static readonly int[] Counts = [100, 300, 600, 1000];
+    private static readonly string HallWidth = SpikeModules.HallWidth.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    private static readonly string HallDepth = SpikeModules.HallDepth.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+    private ElementReference canvas;
+    private IJSObjectReference? jsModule;
+    private IJSObjectReference? jsCanvas;
+    private DotNetObjectReference<CanvasSpike>? self;
+    private List<SpikeModule> modules = [];
+    private readonly Stopwatch renderWatch = new();
+    private long renderMilliseconds;
+    private int drops;
+
+    private int Count { get; set; } = 300;
+    private string DragMode { get; set; } = "js";
+
+    private static string Runtime =>
+        System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription +
+        (System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Diagnostics.DebuggableAttribute), false).Length > 0 ? " (Debug)" : " (Release)");
+
+    protected override void OnInitialized() => Regenerate();
+
+    private void Regenerate()
+    {
+        renderWatch.Restart();
+        modules = SpikeModules.Create(Count);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (renderWatch.IsRunning)
+        {
+            renderWatch.Stop();
+            renderMilliseconds = renderWatch.ElapsedMilliseconds;
+            StateHasChanged();
+        }
+        if (firstRender)
+        {
+            self = DotNetObjectReference.Create(this);
+            try
+            {
+                jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./Spikes/CanvasSpike.razor.js");
+                jsCanvas = await jsModule.InvokeAsync<IJSObjectReference>("init", canvas, self, DragMode);
+            }
+            catch (JSException ex)
+            {
+                Console.Error.WriteLine($"Canvas spike could not start: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task ApplyMode()
+    {
+        if (jsCanvas is null) return;
+        try
+        {
+            await jsCanvas.InvokeVoidAsync("setMode", DragMode);
+        }
+        catch (JSException ex)
+        {
+            Console.Error.WriteLine($"Could not change drag mode: {ex.Message}");
+        }
+    }
+
+    /// <summary>Called by JS once per animation frame while dragging in ".NET" mode.</summary>
+    [JSInvokable]
+    public void ModuleDragged(int id, double x, double y)
+    {
+        var module = modules[id];
+        (module.X, module.Y) = (x, y);
+        StateHasChanged();
+    }
+
+    /// <summary>Called by JS when a drag ends (both modes).</summary>
+    [JSInvokable]
+    public void ModuleDropped(int id, double x, double y)
+    {
+        var module = modules[id];
+        (module.X, module.Y) = (x, y);
+        drops++;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (jsCanvas is not null) { await jsCanvas.InvokeVoidAsync("dispose"); await jsCanvas.DisposeAsync(); }
+            if (jsModule is not null) await jsModule.DisposeAsync();
+        }
+        catch (JSDisconnectedException) { }
+        self?.Dispose();
+    }
+}

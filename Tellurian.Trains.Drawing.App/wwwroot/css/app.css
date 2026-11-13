@@ -104,3 +104,70 @@ code {
 #update-available[hidden] {
     display: none;
 }
+
+/* Spike A: SVG canvas performance (throw-away). */
+.spike-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font: 14px system-ui, sans-serif;
+    background: #f3f4f6;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.spike-runtime {
+    color: #6b7280;
+}
+
+.spike-canvas {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 7rem);
+    background: #ffffff;
+    touch-action: none;
+    user-select: none;
+}
+
+.spike-canvas .hall {
+    fill: #fafafa;
+    stroke: #374151;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.spike-canvas .board {
+    fill: #e5e7eb;
+    stroke: #4b5563;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.spike-canvas .track {
+    fill: none;
+    stroke-width: 16.5; /* H0 gauge, in mm: scales with zoom */
+    stroke-linecap: butt;
+}
+
+.spike-canvas .track.fremo {
+    stroke: #1f5fbf;
+}
+
+.spike-canvas .track.mmm {
+    stroke: #0f8a6a;
+}
+
+.spike-canvas .module {
+    cursor: grab;
+}
+
+.spike-canvas .module.dragging .board {
+    fill: #fde68a;
+}
+
+.spike-help {
+    padding: 0 1rem;
+    font: 13px system-ui, sans-serif;
+    color: #4b5563;
+}

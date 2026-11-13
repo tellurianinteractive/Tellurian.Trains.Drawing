@@ -313,6 +313,6 @@ the defaults above and for the inference rules in §8.6.
 2. **Widening side** of station modules: is it usually towards the back (the non-operator side), as assumed?
 3. **Default operator space depth** per standard (e.g. 800 mm)?
 4. **Track colours** for the built-in standards: blue for all, or one colour per standard family (e.g. FREMO blue, MMM another)?
-5. **Default end profiles** per standard, used when exits are inferred: FREMO/H0-RE → FREMO-H0-B96 (single) and FREMO-H0-2E96 (double)? MMM-2R → MMM480? MMM-3R → ?
+5. **Default end profiles** per standard, used when exits are inferred. *Decided for the spikes (2026-11-13):* FREMO/H0-RE → FREMO-H0-B96 (single track) and FREMO-H0-2E96 (double track); MMM-2R → MMM480. Still open: MMM-3R, and whether these defaults hold for the release.
 6. **SSM**: what do *MMM-2R/SSM* and *FREMO/SSM* stand for? Are they standards of their own, or add-ons like MMM-Summer and MMM-Modern?
 7. **Registry data quality**: 71 % of the modules have no exits, and 24 have an angle but no radius. Should the Registry encourage completing this data, for example by showing the auto-drawn module and its assumptions when a module is edited?
