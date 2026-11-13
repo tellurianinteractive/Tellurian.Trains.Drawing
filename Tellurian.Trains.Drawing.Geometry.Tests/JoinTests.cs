@@ -10,8 +10,8 @@ public sealed class JoinTests
     [DataRow(-250, 80, -120, 0, 600, 270)]
     public void PlacedExitFacesTarget(double tx, double ty, double th, double ex, double ey, double eh)
     {
-        var target = new Pose2(new(tx, ty), new Angle(th));
-        var localExit = new Pose2(new(ex, ey), new Angle(eh));
+        var target = new Pose(new(tx, ty), new Angle(th));
+        var localExit = new Pose(new(ex, ey), new Angle(eh));
 
         var placement = Join.PlacementFor(target, localExit);
         var placedExit = placement.Apply(localExit);
@@ -25,23 +25,23 @@ public sealed class JoinTests
     public void StraightModuleContinuesStraight()
     {
         // A 1000 mm straight module: entry exit at the origin facing back, exit at x=1000 facing forward.
-        var entry = new Pose2(Point2.Origin, Angle.Half);
-        var exit = new Pose2(new(1000, 0), Angle.Zero);
-        var previousExit = new Pose2(new(1000, 0), Angle.Zero);
+        var entry = new Pose(Point.Origin, Angle.Half);
+        var exit = new Pose(new(1000, 0), Angle.Zero);
+        var previousExit = new Pose(new(1000, 0), Angle.Zero);
 
         var placement = Join.PlacementFor(previousExit, entry);
-        Assert.IsTrue(placement.Apply(exit).IsCloseTo(new Pose2(new(2000, 0), Angle.Zero)));
+        Assert.IsTrue(placement.Apply(exit).IsCloseTo(new Pose(new(2000, 0), Angle.Zero)));
     }
 
     [TestMethod]
     public void FourQuarterCurvesCloseALoop()
     {
         var radius = 1000.0;
-        var entry = new Pose2(Point2.Origin, Angle.Half);
-        var exit = ArcSegment.FromStart(Pose2.Origin, radius, 90).EndPose;
+        var entry = new Pose(Point.Origin, Angle.Half);
+        var exit = ArcSegment.FromStart(Pose.Origin, radius, 90).EndPose;
 
-        var first = new Pose2(Point2.Origin, Angle.Half);
-        var current = new Pose2(Point2.Origin, Angle.Zero);
+        var first = new Pose(Point.Origin, Angle.Half);
+        var current = new Pose(Point.Origin, Angle.Zero);
         for (var i = 0; i < 4; i++)
         {
             current = Join.PlacementFor(current, entry).Apply(exit);
@@ -53,9 +53,9 @@ public sealed class JoinTests
     [TestMethod]
     public void GapIsExpressedInTheExitFrame()
     {
-        var exit = new Pose2(new(100, 100), new Angle(90));
+        var exit = new Pose(new(100, 100), new Angle(90));
         // The other exit is 5 mm further out (along +Y in world), 2 mm to the exit's left (−X), turned 1°.
-        var other = new Pose2(new(98, 105), new Angle(270 + 1));
+        var other = new Pose(new(98, 105), new Angle(270 + 1));
         var gap = Join.Gap(exit, other);
         Assert.AreEqual(5, gap.Dx, 1e-9);
         Assert.AreEqual(2, gap.Dy, 1e-9);

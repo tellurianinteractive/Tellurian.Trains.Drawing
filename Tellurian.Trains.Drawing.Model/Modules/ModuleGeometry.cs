@@ -16,7 +16,7 @@ public static class ModuleGeometry
     /// The plan position of a point at <paramref name="endViewX"/> on the exit's end view X axis.
     /// Seen from outside, the end view's right is the exit's left-hand side in plan.
     /// </summary>
-    public static Point2 ToPlan(ModuleExit exit, double endViewX) => exit.Pose.Position + exit.Pose.Left * endViewX;
+    public static Point ToPlan(ModuleExit exit, double endViewX) => exit.Pose.Position + exit.Pose.Left * endViewX;
 
     public static EndPlate EndPlate(ModuleExit exit, double plateWidth) =>
         new(exit, plateWidth, ToPlan(exit, -plateWidth / 2), ToPlan(exit, plateWidth / 2));
@@ -28,10 +28,10 @@ public static class ModuleGeometry
     /// The track centre positions where tracks cross the exit's end plate, from the end profile as built
     /// at the exit (its orientation), with the exit's heading.
     /// </summary>
-    public static IReadOnlyList<Pose2> TrackPositions(ModuleExit exit, EndProfile profile) =>
+    public static IReadOnlyList<Pose> TrackPositions(ModuleExit exit, EndProfile profile) =>
         [.. profile.Oriented(exit.Orientation).Tracks
             .OrderBy(t => t.Offset)
-            .Select(t => new Pose2(ToPlan(exit, t.Offset), exit.Pose.Heading))];
+            .Select(t => new Pose(ToPlan(exit, t.Offset), exit.Pose.Heading))];
 
     /// <summary>
     /// The outline of the variant: the end plates and the sides between them, counter-clockwise.
@@ -39,7 +39,7 @@ public static class ModuleGeometry
     /// </summary>
     /// <exception cref="InvalidOperationException">A side refers to an unknown exit or doesn't meet its end-plate corners.</exception>
     /// <exception cref="KeyNotFoundException">An exit's end profile isn't available.</exception>
-    public static Path2? Outline(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles)
+    public static TrackPath? Outline(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles)
     {
         if (variant.Sides.Count == 0) return null;
         var plates = EndPlates(variant, endProfiles);
@@ -57,7 +57,7 @@ public static class ModuleGeometry
             segments.Add(new LineSegment(previousEnd, sides[i].Start));
             segments.AddRange(sides[i].Segments);
         }
-        return new Path2(segments, isClosed: true);
+        return new TrackPath(segments, isClosed: true);
     }
 
     public static IReadOnlyDictionary<string, EndPlate> EndPlates(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles) =>
@@ -68,7 +68,7 @@ public static class ModuleGeometry
     private static EndPlate Plate(IReadOnlyDictionary<string, EndPlate> plates, string exitLabel) =>
         plates.TryGetValue(exitLabel, out var plate) ? plate : throw new InvalidOperationException($"A side refers to the unknown exit {exitLabel}.");
 
-    private static void CheckCorner(Point2 actual, Point2 expected, string message)
+    private static void CheckCorner(Point actual, Point expected, string message)
     {
         if (!actual.IsCloseTo(expected, CornerTolerance)) throw new InvalidOperationException($"{message} Gap {actual.DistanceTo(expected):0.###} mm.");
     }

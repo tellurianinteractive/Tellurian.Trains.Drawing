@@ -2,13 +2,13 @@ namespace Tellurian.Trains.Drawing.Geometry;
 
 /// <summary>
 /// Builds a path step by step from a start pose, e.g. a module main path:
-/// <c>new PathBuilder(Pose2.Origin).Straight(500).Curve(2000, 30).Build()</c>.
+/// <c>new PathBuilder(Pose.Origin).Straight(500).Curve(2000, 30).Build()</c>.
 /// </summary>
-public sealed class PathBuilder(Pose2 start)
+public sealed class PathBuilder(Pose start)
 {
     private readonly List<Segment> _segments = [];
 
-    public Pose2 Current { get; private set; } = start;
+    public Pose Current { get; private set; } = start;
 
     public PathBuilder Straight(double length)
     {
@@ -24,7 +24,7 @@ public sealed class PathBuilder(Pose2 start)
     }
 
     /// <summary>A straight line to <paramref name="point"/>; the heading becomes the line's direction.</summary>
-    public PathBuilder LineTo(Point2 point) => Add(new LineSegment(Current.Position, point));
+    public PathBuilder LineTo(Point point) => Add(new LineSegment(Current.Position, point));
 
     public PathBuilder Add(Segment segment)
     {
@@ -33,5 +33,5 @@ public sealed class PathBuilder(Pose2 start)
         return this;
     }
 
-    public Path2 Build(bool isClosed = false) => new(_segments, isClosed);
+    public TrackPath Build(bool isClosed = false) => new(_segments, isClosed);
 }

@@ -46,7 +46,7 @@ public static class EndProfileComparison
     /// <summary>The parts of an open polyline with X between <paramref name="minX"/> and <paramref name="maxX"/>.</summary>
     public static Polyline? ClipX(Polyline polyline, double minX, double maxX)
     {
-        var points = new List<Point2>();
+        var points = new List<Point>();
         foreach (var (a, b) in polyline.Edges())
         {
             var (t0, t1) = (0.0, 1.0);
@@ -64,12 +64,12 @@ public static class EndProfileComparison
                 t1 = Math.Min(t1, tMax);
                 if (t0 > t1) continue;
             }
-            Add(points, Point2.Lerp(a, b, t0));
-            Add(points, Point2.Lerp(a, b, t1));
+            Add(points, Point.Lerp(a, b, t0));
+            Add(points, Point.Lerp(a, b, t1));
         }
         return points.Count >= 2 ? new Polyline(points, false) : null;
 
-        static void Add(List<Point2> points, Point2 point)
+        static void Add(List<Point> points, Point point)
         {
             if (points.Count == 0 || !points[^1].IsCloseTo(point)) points.Add(point);
         }

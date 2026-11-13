@@ -13,10 +13,10 @@ public sealed record InternalJoint
     public required string SecondSection { get; init; }
 
     /// <summary>One end of the section line, at the outline.</summary>
-    public required Point2 Start { get; init; }
+    public required Point Start { get; init; }
 
     /// <summary>The other end of the section line, at the outline.</summary>
-    public required Point2 End { get; init; }
+    public required Point End { get; init; }
 
     /// <summary>An optional, freely designed internal end profile; not checked against any standard.</summary>
     public CatalogueReference? EndProfile { get; init; }

@@ -6,11 +6,11 @@ namespace Tellurian.Trains.Drawing.Geometry;
 public static class Measure
 {
     /// <summary>The shortest distance from <paramref name="point"/> to the edge from <paramref name="a"/> to <paramref name="b"/>.</summary>
-    public static double PointToSegment(Point2 point, Point2 a, Point2 b) =>
+    public static double PointToSegment(Point point, Point a, Point b) =>
         point.DistanceTo(ClosestPointOnSegment(point, a, b));
 
     /// <summary>The point on the edge from <paramref name="a"/> to <paramref name="b"/> closest to <paramref name="point"/>.</summary>
-    public static Point2 ClosestPointOnSegment(Point2 point, Point2 a, Point2 b)
+    public static Point ClosestPointOnSegment(Point point, Point a, Point b)
     {
         var edge = b - a;
         var lengthSquared = edge.LengthSquared;
@@ -23,7 +23,7 @@ public static class Measure
     /// The intersection point of the edges a1–a2 and b1–b2, or null if they don't meet.
     /// Collinear overlapping edges return one point of the overlap.
     /// </summary>
-    public static Point2? SegmentIntersection(Point2 a1, Point2 a2, Point2 b1, Point2 b2)
+    public static Point? SegmentIntersection(Point a1, Point a2, Point b1, Point b2)
     {
         var r = a2 - a1;
         var s = b2 - b1;
@@ -49,7 +49,7 @@ public static class Measure
     }
 
     /// <summary>The shortest distance between the edges a1–a2 and b1–b2; zero if they intersect.</summary>
-    public static double SegmentToSegment(Point2 a1, Point2 a2, Point2 b1, Point2 b2)
+    public static double SegmentToSegment(Point a1, Point a2, Point b1, Point b2)
     {
         if (SegmentIntersection(a1, a2, b1, b2) is not null) return 0;
         return Math.Min(
@@ -58,7 +58,7 @@ public static class Measure
     }
 
     /// <summary>The shortest distance from <paramref name="point"/> to the edges of <paramref name="polyline"/>.</summary>
-    public static double PointToPolyline(Point2 point, Polyline polyline)
+    public static double PointToPolyline(Point point, Polyline polyline)
     {
         var minimum = double.PositiveInfinity;
         foreach (var (a, b) in polyline.Edges())
@@ -98,9 +98,9 @@ public static class Measure
         first.Bounds.Intersects(second.Bounds) && PolylineToPolyline(first, second) <= Tolerance.Length;
 
     /// <summary>All points where edges of <paramref name="first"/> cross edges of <paramref name="second"/>.</summary>
-    public static IReadOnlyList<Point2> Intersections(Polyline first, Polyline second)
+    public static IReadOnlyList<Point> Intersections(Polyline first, Polyline second)
     {
-        var result = new List<Point2>();
+        var result = new List<Point>();
         if (!first.Bounds.Inflated(Tolerance.Length).Intersects(second.Bounds)) return result;
         foreach (var (a1, a2) in first.Edges())
         {

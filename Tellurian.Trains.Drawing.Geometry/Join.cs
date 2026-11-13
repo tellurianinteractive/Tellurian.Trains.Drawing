@@ -11,8 +11,8 @@ public static class Join
     /// coordinates) against the exit <paramref name="target"/> (in world coordinates):
     /// <c>T ∘ Rot(180°) ∘ E⁻¹</c>.
     /// </summary>
-    public static Transform2 PlacementFor(Pose2 target, Pose2 localExit) =>
-        Transform2.FromPose(localExit).Inverse().Then(Transform2.FromPose(target.Reversed()));
+    public static Transform PlacementFor(Pose target, Pose localExit) =>
+        Transform.FromPose(localExit).Inverse().Then(Transform.FromPose(target.Reversed()));
 
     /// <summary>
     /// How far <paramref name="other"/> is from fitting against <paramref name="exit"/>, expressed in the
@@ -20,7 +20,7 @@ public static class Join
     /// Y to its left, and the angle the other exit must turn to face <paramref name="exit"/> exactly.
     /// All zero when the exits fit. Used for the closure gap of loops and rejoining lines.
     /// </summary>
-    public static ClosureGap Gap(Pose2 exit, Pose2 other)
+    public static ClosureGap Gap(Pose exit, Pose other)
     {
         var offset = (other.Position - exit.Position).Rotated(-exit.Heading);
         var angle = (other.Heading - exit.Reversed().Heading).Signed;

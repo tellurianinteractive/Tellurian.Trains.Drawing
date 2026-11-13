@@ -17,7 +17,7 @@ public sealed record EndProfileProperties
     /// <summary>The centre distances (c/c) between neighbouring tracks, from left to right.</summary>
     public required IReadOnlyList<double> TrackCentreDistances { get; init; }
 
-    public required IReadOnlyList<Point2> ScrewHolePositions { get; init; }
+    public required IReadOnlyList<Point> ScrewHolePositions { get; init; }
 
     /// <summary>The elements that differ from their mirror image; <see cref="FitDifferences.None"/> when symmetric.</summary>
     public required FitDifferences AsymmetricElements { get; init; }

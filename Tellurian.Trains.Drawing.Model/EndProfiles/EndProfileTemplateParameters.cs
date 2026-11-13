@@ -21,7 +21,7 @@ public sealed record EndProfileTemplateParameters
     public IReadOnlyList<double> TrackOffsets { get; init; } = [0];
     public required double Gauge { get; init; }
     public RailSystem RailSystem { get; init; }
-    public IReadOnlyList<Point2> ScrewHoles { get; init; } = [];
+    public IReadOnlyList<Point> ScrewHoles { get; init; } = [];
     public double ScrewHoleDiameter { get; init; } = 8;
     public string? ScrewHolePattern { get; init; }
     public DocumentReference? Source { get; init; }

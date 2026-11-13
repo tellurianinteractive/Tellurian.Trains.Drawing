@@ -10,7 +10,7 @@ public static class PointMatching
     /// Pairs points of <paramref name="first"/> and <paramref name="second"/> that are at most
     /// <paramref name="tolerance"/> apart, closest pairs first, and reports the unmatched points by index.
     /// </summary>
-    public static PointMatchResult Match(IReadOnlyList<Point2> first, IReadOnlyList<Point2> second, double tolerance)
+    public static PointMatchResult Match(IReadOnlyList<Point> first, IReadOnlyList<Point> second, double tolerance)
     {
         if (tolerance < 0) throw new ArgumentOutOfRangeException(nameof(tolerance), tolerance, "The tolerance must not be negative.");
         var candidates = new List<PointPair>();

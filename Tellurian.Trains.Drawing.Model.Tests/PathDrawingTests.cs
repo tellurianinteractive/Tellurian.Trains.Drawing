@@ -8,7 +8,7 @@ public sealed class PathDrawingTests
     [TestMethod]
     public void RoundTripThroughGeometryKeepsLinesAndArcs()
     {
-        var path = new PathBuilder(new Pose2(new(10, 20), new Angle(30))).Straight(500).Curve(2000, -15).Curve(800, 40).Straight(100).Build();
+        var path = new PathBuilder(new Pose(new(10, 20), new Angle(30))).Straight(500).Curve(2000, -15).Curve(800, 40).Straight(100).Build();
         var drawing = PathDrawing.From(path);
         Assert.HasCount(4, drawing.Steps);
         Assert.IsInstanceOfType<ArcStep>(drawing.Steps[1]);
@@ -43,7 +43,7 @@ public sealed class PathDrawingTests
             Steps = [new LineStep(new(10, 0)), new LineStep(new(10, 10)), new LineStep(new(1e-9, 0))],
             IsClosed = true,
         };
-        Assert.IsTrue(drawing.ToPath().End.Equals(new Point2(0, 0)));
+        Assert.IsTrue(drawing.ToPath().End.Equals(new Point(0, 0)));
     }
 
     [TestMethod]
@@ -51,7 +51,7 @@ public sealed class PathDrawingTests
     {
         var drawing = PathDrawing.Polyline([new(-250, -10), new(100, -40)]);
         var mirrored = drawing.MirroredX();
-        Assert.AreEqual(new Point2(250, -10), mirrored.Start);
+        Assert.AreEqual(new Point(250, -10), mirrored.Start);
         Assert.IsTrue(mirrored.ToPath().End.IsCloseTo(new(-100, -40)));
     }
 

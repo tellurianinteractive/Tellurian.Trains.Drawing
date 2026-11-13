@@ -21,7 +21,7 @@ public static class PolygonOffset
         if (points.Count < 3) throw new ArgumentException("The polygon has fewer than three distinct corners.", nameof(polygon));
         if (Math.Abs(distance) < Tolerance.Length) return new(points, true);
 
-        var result = new List<Point2>();
+        var result = new List<Point>();
         var n = points.Count;
         for (var i = 0; i < n; i++)
         {
@@ -51,9 +51,9 @@ public static class PolygonOffset
     }
 
     /// <summary>The outward normal of a counter-clockwise polygon edge: to the right of the direction of travel.</summary>
-    private static Vector2 Outward(Vector2 direction) => new(direction.Y, -direction.X);
+    private static Vector Outward(Vector direction) => new(direction.Y, -direction.X);
 
-    private static void AppendArc(List<Point2> result, Point2 corner, Vector2 from, Vector2 to, double distance, double chordTolerance)
+    private static void AppendArc(List<Point> result, Point corner, Vector from, Vector to, double distance, double chordTolerance)
     {
         var radius = Math.Abs(distance);
         var sign = Math.Sign(distance);
@@ -64,11 +64,11 @@ public static class PolygonOffset
         var steps = Math.Max(1, (int)Math.Ceiling(Math.Abs(sweep) / maxStepDegrees));
         for (var s = 0; s <= steps; s++)
         {
-            result.Add(corner + Vector2.FromAngle(startAngle + new Angle(sweep * s / steps), radius));
+            result.Add(corner + Vector.FromAngle(startAngle + new Angle(sweep * s / steps), radius));
         }
     }
 
-    private static void AppendMiter(List<Point2> result, Point2 corner, Vector2 normalIn, Vector2 normalOut, double distance)
+    private static void AppendMiter(List<Point> result, Point corner, Vector normalIn, Vector normalOut, double distance)
     {
         var bisector = (normalIn + normalOut).Normalized;
         var cosHalf = bisector.Dot(normalIn);
@@ -83,9 +83,9 @@ public static class PolygonOffset
         }
     }
 
-    private static List<Point2> Cleaned(IEnumerable<Point2> points)
+    private static List<Point> Cleaned(IEnumerable<Point> points)
     {
-        var result = new List<Point2>();
+        var result = new List<Point>();
         foreach (var point in points)
         {
             if (result.Count == 0 || !result[^1].IsCloseTo(point)) result.Add(point);

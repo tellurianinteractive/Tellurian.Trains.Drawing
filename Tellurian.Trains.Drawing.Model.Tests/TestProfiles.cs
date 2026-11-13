@@ -65,7 +65,7 @@ internal static class TestProfiles
     {
         Id = Guid.NewGuid(),
         Designation = "TEST-ASYM-HOLES",
-        ScrewHoles = [new Circle(new Point2(150, -70), 8)],
+        ScrewHoles = [new Circle(new Point(150, -70), 8)],
     };
 
     public static EndProfile WithoutScrewHoles(string? pattern) => FremoSingle() with

@@ -23,7 +23,7 @@ public sealed record ModuleExit
     public double RailTopOffset { get; init; }
 
     /// <summary>The centre of the end plate on its joint face, heading out of the module.</summary>
-    public required Pose2 Pose { get; init; }
+    public required Pose Pose { get; init; }
 
     /// <summary>True while a provisionally placed junction exit hasn't been positioned by the user (ModuleDrawing §8.5).</summary>
     public bool IsPositionProvisional { get; init; }

@@ -49,7 +49,7 @@ public sealed class EndProfileAnalysisTests
         var profile = TestProfiles.FremoSingle() with
         {
             Outline = PathDrawing.Polyline([new(-250, -140), new(270, -140), new(270, -40), new(-250, -40)], isClosed: true),
-            Dowels = [new Circle(new Point2(100, -90), 6)],
+            Dowels = [new Circle(new Point(100, -90), 6)],
         };
         var properties = EndProfileAnalysis.Analyze(profile);
         Assert.AreEqual(FitDifferences.Outline | FitDifferences.Dowels, properties.AsymmetricElements);

@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Geometry;
 /// </summary>
 public sealed class Polyline
 {
-    public Polyline(IEnumerable<Point2> points, bool isClosed)
+    public Polyline(IEnumerable<Point> points, bool isClosed)
     {
         Points = [.. points];
         if (Points.Count < 2) throw new ArgumentException("A polyline needs at least two points.", nameof(points));
@@ -14,7 +14,7 @@ public sealed class Polyline
         Bounds = BoundingBox.FromPoints(Points);
     }
 
-    public IReadOnlyList<Point2> Points { get; }
+    public IReadOnlyList<Point> Points { get; }
     public bool IsClosed { get; }
     public BoundingBox Bounds { get; }
     public int EdgeCount => IsClosed ? Points.Count : Points.Count - 1;
@@ -39,15 +39,15 @@ public sealed class Polyline
 
     public bool IsCounterClockwise => SignedArea > 0;
 
-    public (Point2 Start, Point2 End) Edge(int index) => (Points[index], Points[(index + 1) % Points.Count]);
+    public (Point Start, Point End) Edge(int index) => (Points[index], Points[(index + 1) % Points.Count]);
 
-    public IEnumerable<(Point2 Start, Point2 End)> Edges()
+    public IEnumerable<(Point Start, Point End)> Edges()
     {
         for (var i = 0; i < EdgeCount; i++) yield return Edge(i);
     }
 
     /// <summary>True if <paramref name="point"/> is inside or on the boundary of a closed polyline.</summary>
-    public bool Contains(Point2 point)
+    public bool Contains(Point point)
     {
         if (!IsClosed || !Bounds.Inflated(Tolerance.Length).Contains(point)) return false;
         var inside = false;

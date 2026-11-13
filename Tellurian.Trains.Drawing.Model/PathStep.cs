@@ -9,7 +9,7 @@ namespace Tellurian.Trains.Drawing.Model;
 [JsonDerivedType(typeof(ArcStep), "arc")]
 public abstract record PathStep
 {
-    public abstract Segment ToSegment(Point2 start);
+    public abstract Segment ToSegment(Point start);
 
     public static PathStep From(Segment segment) => segment switch
     {

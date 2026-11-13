@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Geometry;
 /// </summary>
 public sealed record ArcSegment : Segment
 {
-    public ArcSegment(Point2 center, double radius, Angle startAngle, double sweepDegrees)
+    public ArcSegment(Point center, double radius, Angle startAngle, double sweepDegrees)
     {
         if (radius < Tolerance.Length) throw new ArgumentOutOfRangeException(nameof(radius), radius, "The radius must be positive.");
         if (Math.Abs(sweepDegrees) < Tolerance.Angle) throw new ArgumentOutOfRangeException(nameof(sweepDegrees), sweepDegrees, "The sweep must not be zero.");
@@ -17,7 +17,7 @@ public sealed record ArcSegment : Segment
         SweepDegrees = sweepDegrees;
     }
 
-    public Point2 Center { get; }
+    public Point Center { get; }
     public double Radius { get; }
     public Angle StartAngle { get; }
     public double SweepDegrees { get; }
@@ -25,8 +25,8 @@ public sealed record ArcSegment : Segment
     public bool IsCounterClockwise => SweepDegrees > 0;
     public Angle EndAngle => StartAngle + new Angle(SweepDegrees);
 
-    public override Point2 Start => PointOnCircle(StartAngle);
-    public override Point2 End => PointOnCircle(EndAngle);
+    public override Point Start => PointOnCircle(StartAngle);
+    public override Point End => PointOnCircle(EndAngle);
     public override double Length => Radius * Math.Abs(SweepDegrees) * Math.PI / 180.0;
     public override Angle StartHeading => TangentAt(StartAngle);
     public override Angle EndHeading => TangentAt(EndAngle);
@@ -49,7 +49,7 @@ public sealed record ArcSegment : Segment
     /// An arc starting at <paramref name="start"/>, tangent to its heading, turning
     /// <paramref name="turnDegrees"/> (positive left, negative right) with <paramref name="radius"/>.
     /// </summary>
-    public static ArcSegment FromStart(Pose2 start, double radius, double turnDegrees)
+    public static ArcSegment FromStart(Pose start, double radius, double turnDegrees)
     {
         var turnsLeft = turnDegrees > 0;
         var center = start.Position + start.Left * (turnsLeft ? radius : -radius);
@@ -57,13 +57,13 @@ public sealed record ArcSegment : Segment
         return new ArcSegment(center, radius, startAngle, turnDegrees);
     }
 
-    public override Point2 PointAt(double distance) => PointOnCircle(AngleAt(distance));
+    public override Point PointAt(double distance) => PointOnCircle(AngleAt(distance));
 
     public override Angle HeadingAt(double distance) => TangentAt(AngleAt(distance));
 
     public override Segment Reversed() => new ArcSegment(Center, Radius, EndAngle, -SweepDegrees);
 
-    public override Segment Transformed(Transform2 transform) =>
+    public override Segment Transformed(Transform transform) =>
         new ArcSegment(transform.Apply(Center), Radius, transform.Apply(StartAngle), SweepDegrees);
 
     public override Segment MirroredX() =>
@@ -77,7 +77,7 @@ public sealed record ArcSegment : Segment
         return new ArcSegment(Center, radius, StartAngle, SweepDegrees);
     }
 
-    public override void AppendTessellation(List<Point2> points, double chordTolerance)
+    public override void AppendTessellation(List<Point> points, double chordTolerance)
     {
         var steps = StepsFor(chordTolerance);
         for (var i = 1; i <= steps; i++)
@@ -105,7 +105,7 @@ public sealed record ArcSegment : Segment
     private Angle AngleAt(double distance) =>
         StartAngle + new Angle(Math.Sign(SweepDegrees) * Clamp(distance) / Radius * 180.0 / Math.PI);
 
-    private Point2 PointOnCircle(Angle angle) => Center + Vector2.FromAngle(angle, Radius);
+    private Point PointOnCircle(Angle angle) => Center + Vector.FromAngle(angle, Radius);
 
     private Angle TangentAt(Angle angle) => angle + new Angle(IsCounterClockwise ? 90 : -90);
 }

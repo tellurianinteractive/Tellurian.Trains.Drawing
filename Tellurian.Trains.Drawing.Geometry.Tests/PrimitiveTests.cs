@@ -33,53 +33,53 @@ public sealed class PrimitiveTests
     [TestMethod]
     public void VectorRotationAndCross()
     {
-        var rotated = new Vector2(1, 0).Rotated(new Angle(90));
-        Assert.IsTrue(rotated.IsCloseTo(new Vector2(0, 1)));
-        Assert.IsGreaterThan(0, new Vector2(1, 0).Cross(new Vector2(0, 1)));
-        Assert.AreEqual(Vector2.Zero, Vector2.Zero.Normalized);
-        Assert.AreEqual(5, new Vector2(3, 4).Length, Precision);
-        Assert.AreEqual(90, new Vector2(0, 2).Direction.Degrees, Precision);
-        Assert.AreEqual(new Vector2(-2, 1), new Vector2(1, 2).LeftNormal);
+        var rotated = new Vector(1, 0).Rotated(new Angle(90));
+        Assert.IsTrue(rotated.IsCloseTo(new Vector(0, 1)));
+        Assert.IsGreaterThan(0, new Vector(1, 0).Cross(new Vector(0, 1)));
+        Assert.AreEqual(Vector.Zero, Vector.Zero.Normalized);
+        Assert.AreEqual(5, new Vector(3, 4).Length, Precision);
+        Assert.AreEqual(90, new Vector(0, 2).Direction.Degrees, Precision);
+        Assert.AreEqual(new Vector(-2, 1), new Vector(1, 2).LeftNormal);
     }
 
     [TestMethod]
     public void PoseAdvanceAndReverse()
     {
-        var pose = new Pose2(new(10, 0), new Angle(90));
+        var pose = new Pose(new(10, 0), new Angle(90));
         Assert.IsTrue(pose.Advanced(5).Position.IsCloseTo(new(10, 5)));
-        Assert.IsTrue(pose.Left.IsCloseTo(new Vector2(-1, 0)));
+        Assert.IsTrue(pose.Left.IsCloseTo(new Vector(-1, 0)));
         Assert.AreEqual(270, pose.Reversed().Heading.Normalized.Degrees, Precision);
     }
 
     [TestMethod]
     public void TransformComposesAndInverts()
     {
-        var first = new Transform2(new Angle(30), new Vector2(100, -50));
-        var second = new Transform2(new Angle(-75), new Vector2(-20, 400));
-        var point = new Point2(12.5, 7.25);
+        var first = new Transform(new Angle(30), new Vector(100, -50));
+        var second = new Transform(new Angle(-75), new Vector(-20, 400));
+        var point = new Point(12.5, 7.25);
 
         var composed = first.Then(second);
         Assert.IsTrue(composed.Apply(point).IsCloseTo(second.Apply(first.Apply(point))));
-        Assert.IsTrue(first.Then(first.Inverse()).IsCloseTo(Transform2.Identity));
+        Assert.IsTrue(first.Then(first.Inverse()).IsCloseTo(Transform.Identity));
         Assert.IsTrue(first.Inverse().Apply(first.Apply(point)).IsCloseTo(point));
     }
 
     [TestMethod]
     public void TransformFromPoseMapsOriginToPose()
     {
-        var pose = new Pose2(new(300, 200), new Angle(45));
-        Assert.IsTrue(Transform2.FromPose(pose).Apply(Pose2.Origin).IsCloseTo(pose));
+        var pose = new Pose(new(300, 200), new Angle(45));
+        Assert.IsTrue(Transform.FromPose(pose).Apply(Pose.Origin).IsCloseTo(pose));
     }
 
     [TestMethod]
     public void RepeatedTransformsKeepPrecision()
     {
         // NF-8: 300 modules joined in a chain must not drift measurably.
-        var step = new Transform2(new Angle(1.2), new Vector2(1000, 0));
-        var total = Transform2.Identity;
+        var step = new Transform(new Angle(1.2), new Vector(1000, 0));
+        var total = Transform.Identity;
         for (var i = 0; i < 300; i++) total = total.Then(step);
         for (var i = 0; i < 300; i++) total = total.Then(step.Inverse());
-        Assert.IsTrue(total.IsCloseTo(Transform2.Identity, 1e-6, 1e-9));
+        Assert.IsTrue(total.IsCloseTo(Transform.Identity, 1e-6, 1e-9));
     }
 
     [TestMethod]
@@ -88,7 +88,7 @@ public sealed class PrimitiveTests
         var box = BoundingBox.FromPoints([new(0, 0), new(10, 5)]);
         Assert.AreEqual(10, box.Width, Precision);
         Assert.AreEqual(5, box.Height, Precision);
-        Assert.AreEqual(new Point2(5, 2.5), box.Center);
+        Assert.AreEqual(new Point(5, 2.5), box.Center);
         Assert.IsTrue(BoundingBox.Empty.IsEmpty);
         Assert.AreEqual(0, BoundingBox.Empty.Width);
         Assert.AreEqual(box, BoundingBox.Empty.Union(box));
@@ -103,10 +103,10 @@ public sealed class PrimitiveTests
     [TestMethod]
     public void MirrorFlipsXOnly()
     {
-        Assert.AreEqual(new Point2(-3, 4), Mirror.AboutCentreLine(new Point2(3, 4)));
+        Assert.AreEqual(new Point(-3, 4), Mirror.AboutCentreLine(new Point(3, 4)));
         var square = new Polyline([new(0, 0), new(2, 0), new(2, 1), new(0, 1)], true);
         Assert.IsTrue(square.IsCounterClockwise);
         Assert.IsFalse(Mirror.AboutCentreLine(square).IsCounterClockwise);
-        CollectionAssert.AreEqual(new[] { new Point2(-1, 0) }, Mirror.AboutCentreLine([new Point2(1, 0)]).ToArray());
+        CollectionAssert.AreEqual(new[] { new Point(-1, 0) }, Mirror.AboutCentreLine([new Point(1, 0)]).ToArray());
     }
 }

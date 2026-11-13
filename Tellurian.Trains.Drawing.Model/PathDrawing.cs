@@ -9,12 +9,12 @@ namespace Tellurian.Trains.Drawing.Model;
 /// </summary>
 public sealed record PathDrawing
 {
-    public required Point2 Start { get; init; }
+    public required Point Start { get; init; }
     public required IReadOnlyList<PathStep> Steps { get; init; }
     public bool IsClosed { get; init; }
 
     /// <summary>A polyline path through <paramref name="points"/>.</summary>
-    public static PathDrawing Polyline(IEnumerable<Point2> points, bool isClosed = false)
+    public static PathDrawing Polyline(IEnumerable<Point> points, bool isClosed = false)
     {
         var list = points.ToList();
         if (list.Count < 2) throw new ArgumentException("A path needs at least two points.", nameof(points));
@@ -24,7 +24,7 @@ public sealed record PathDrawing
     }
 
     /// <summary>A drawing of <paramref name="path"/>.</summary>
-    public static PathDrawing From(Path2 path) => new()
+    public static PathDrawing From(TrackPath path) => new()
     {
         Start = path.Start,
         Steps = [.. path.Segments.Select(PathStep.From)],
@@ -32,7 +32,7 @@ public sealed record PathDrawing
     };
 
     /// <summary>The geometry of the path. A closed path's last step is snapped to the start.</summary>
-    public Path2 ToPath()
+    public TrackPath ToPath()
     {
         var segments = new List<Segment>(Steps.Count);
         var current = Start;

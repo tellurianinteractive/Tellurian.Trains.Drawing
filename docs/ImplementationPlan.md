@@ -57,11 +57,11 @@ The App holds only what is specific to the PWA: shell and pages, IndexedDB stora
 | Hosting | **Azure Static Web Apps** (Free or Standard tier). `staticwebapp.config.json` for navigation fallback, MIME types (`.wasm`, `.dat`, `.webmanifest`) and cache headers (`index.html`/`service-worker.js` no-cache, fingerprinted assets immutable). | Decided. |
 
 ### 1.3 Core geometry concepts (Geometry project)
-- `Vector2`, `Point2`, `Angle` (degrees, normalised), `Pose2(Point2 Position, Angle Heading)`.
-- `Transform2`: rotation + translation, composition, inverse. It has **no mirroring**, and it is used for placements.
+- `Vector`, `Point`, `Angle` (degrees, normalised), `Pose(Point Position, Angle Heading)`.
+- `Transform`: rotation + translation, composition, inverse. It has **no mirroring**, and it is used for placements.
 - `Mirror`: a separate operation, used only to compare end profiles (X → −X about the centre line, spec §3.1). It is kept separate so that a module placement can never be mirrored by mistake.
 - Segments: `LineSegment`, `ArcSegment` (centre, radius, start angle, sweep) with length, point-at, tangent-at and bounding box.
-- `Path2` (open/closed sequence of segments), `Polyline` (tessellated), polygon area/orientation, point-in-polygon, polyline–polyline intersection and minimum distance.
+- `TrackPath` (open/closed sequence of segments), `Polyline` (tessellated), polygon area/orientation, point-in-polygon, polyline–polyline intersection and minimum distance.
 - **Shape comparison**: the Hausdorff-style maximum deviation between two tessellated paths. It is used for comparing ground lines (spec §3.2 rule 3) and for detecting symmetry.
 - **Point-set matching**: matches two sets of points (screw holes, track positions) within a tolerance and reports the unmatched points.
 - **Join math**: given a target exit pose `T` (world) and the moving module's exit pose `E` (local), the placement transform is `T ∘ Rot(180°) ∘ E⁻¹`.
@@ -96,7 +96,7 @@ Results: ADR 0001 (SVG canvas), ADR 0002 (files first, per-browser fallback), AD
 
 ### Phase 1 – Geometry library (≈1–2 weeks) — ✅ done 2026-11-13
 Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tessellated outlines runs as a timed unit test (< 200 ms in Debug); a separate benchmark project is still to be added.
-1. Primitives, `Pose2`, `Transform2`, `Mirror` and the join math (§1.3).
+1. Primitives, `Pose`, `Transform`, `Mirror` and the join math (§1.3).
 2. Line/arc segments, paths, tessellation, bounding boxes.
 3. Intersection, minimum distance, point-in-polygon, polygon offset for clearance visualisation.
 4. Shape comparison (maximum deviation) and point-set matching.

@@ -14,7 +14,7 @@ public sealed class ModuleGeometryTests
 
     private static EndProfile? Lookup(Guid id) => id == Single.Id ? Single : id == Double.Id ? Double : null;
 
-    private static ModuleExit Exit(string label, Pose2 pose, EndProfile? profile = null, ProfileOrientation orientation = ProfileOrientation.Normal) => new()
+    private static ModuleExit Exit(string label, Pose pose, EndProfile? profile = null, ProfileOrientation orientation = ProfileOrientation.Normal) => new()
     {
         Label = label,
         Pose = pose,
@@ -25,7 +25,7 @@ public sealed class ModuleGeometryTests
     /// <summary>A 1000 mm straight module, 500 mm wide, drawn by hand.</summary>
     private static ModuleVariant Straight()
     {
-        var west = Exit("W", new(Point2.Origin, Angle.Half));
+        var west = Exit("W", new(Point.Origin, Angle.Half));
         var east = Exit("E", new(new(1000, 0), Angle.Zero));
         return new()
         {
@@ -43,10 +43,10 @@ public sealed class ModuleGeometryTests
     public void EndPlateCornersAreSeenFromOutside()
     {
         // West exit faces −X; standing outside (west of it) looking east, the right corner is to the south.
-        var plate = ModuleGeometry.EndPlate(Exit("W", new(Point2.Origin, Angle.Half)), 500);
+        var plate = ModuleGeometry.EndPlate(Exit("W", new(Point.Origin, Angle.Half)), 500);
         Assert.IsTrue(plate.RightCorner.IsCloseTo(new(0, -250)));
         Assert.IsTrue(plate.LeftCorner.IsCloseTo(new(0, 250)));
-        Assert.AreEqual(500, ModuleGeometry.EndPlate(Exit("W", Pose2.Origin), Single).Width, 1e-9);
+        Assert.AreEqual(500, ModuleGeometry.EndPlate(Exit("W", Pose.Origin), Single).Width, 1e-9);
     }
 
     [TestMethod]
@@ -65,8 +65,8 @@ public sealed class ModuleGeometryTests
     public void CurvedModuleOutlineHasConcentricSides()
     {
         // R 2000, 30° to the left; sides at R ∓ 250.
-        var main = new PathBuilder(Pose2.Origin).Curve(2000, 30).Build();
-        var west = Exit("W", Pose2.Origin.Reversed());
+        var main = new PathBuilder(Pose.Origin).Curve(2000, 30).Build();
+        var west = Exit("W", Pose.Origin.Reversed());
         var east = Exit("E", main.EndPose);
         var right = main.Offset(-250);
         var left = main.Offset(250).Reversed();
@@ -84,7 +84,7 @@ public sealed class ModuleGeometryTests
     [TestMethod]
     public void EndOfLineModuleHasOneSide()
     {
-        var exit = Exit("A", new(Point2.Origin, Angle.Half));
+        var exit = Exit("A", new(Point.Origin, Angle.Half));
         var variant = new ModuleVariant
         {
             Exits = [exit],
@@ -139,8 +139,8 @@ public sealed class ModuleGeometryTests
     public void MirroredOrientationMirrorsTrackPositions()
     {
         var offCentre = Single with { Tracks = [new() { Offset = 20, Gauge = 16.5 }] };
-        var normal = ModuleGeometry.TrackPositions(Exit("E", Pose2.Origin, offCentre), offCentre);
-        var mirrored = ModuleGeometry.TrackPositions(Exit("E", Pose2.Origin, offCentre, ProfileOrientation.Mirrored), offCentre);
+        var normal = ModuleGeometry.TrackPositions(Exit("E", Pose.Origin, offCentre), offCentre);
+        var mirrored = ModuleGeometry.TrackPositions(Exit("E", Pose.Origin, offCentre, ProfileOrientation.Mirrored), offCentre);
         Assert.AreEqual(20, normal[0].Position.Y, 1e-9);
         Assert.AreEqual(-20, mirrored[0].Position.Y, 1e-9);
     }
@@ -153,7 +153,7 @@ public sealed class ModuleGeometryTests
     [DataRow(4, ModuleKind.Junction)]
     public void KindFollowsNumberOfExits(int exits, ModuleKind expected)
     {
-        var variant = new ModuleVariant { Exits = [.. Enumerable.Range(0, exits).Select(i => Exit($"{i}", Pose2.Origin))] };
+        var variant = new ModuleVariant { Exits = [.. Enumerable.Range(0, exits).Select(i => Exit($"{i}", Pose.Origin))] };
         Assert.AreEqual(expected, variant.Kind);
     }
 

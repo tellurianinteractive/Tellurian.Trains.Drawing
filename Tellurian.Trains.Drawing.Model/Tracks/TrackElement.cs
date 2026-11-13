@@ -32,10 +32,10 @@ public abstract record TrackElement
     public bool IsGenerated { get; init; }
 
     /// <summary>The centre lines of all routes through the element.</summary>
-    public abstract IReadOnlyList<Path2> Routes();
+    public abstract IReadOnlyList<TrackPath> Routes();
 
     /// <summary>The points where other elements or exits connect, headings pointing out of the element.</summary>
-    public abstract IReadOnlyList<Pose2> ConnectionPoints();
+    public abstract IReadOnlyList<Pose> ConnectionPoints();
 
     /// <summary>The sum of the route lengths. Parts shared by several routes, such as the points of a turnout, count once per route.</summary>
     public virtual double TrackLength => Routes().Sum(r => r.Length);

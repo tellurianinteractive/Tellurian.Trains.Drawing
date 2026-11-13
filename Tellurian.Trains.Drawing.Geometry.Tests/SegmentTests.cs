@@ -24,14 +24,14 @@ public sealed class SegmentTests
     [TestMethod]
     public void LineReverseTransformMirrorOffset()
     {
-        var line = LineSegment.FromStart(Pose2.Origin, 100);
+        var line = LineSegment.FromStart(Pose.Origin, 100);
         Assert.IsTrue(line.Reversed().Start.IsCloseTo(new(100, 0)));
-        Assert.IsTrue(line.Transformed(new(new Angle(90), new Vector2(0, 0))).End.IsCloseTo(new(0, 100)));
+        Assert.IsTrue(line.Transformed(new(new Angle(90), new Vector(0, 0))).End.IsCloseTo(new(0, 100)));
         Assert.IsTrue(line.MirroredX().End.IsCloseTo(new(-100, 0)));
         var offset = line.Offset(10);
         Assert.IsTrue(offset.Start.IsCloseTo(new(0, 10)));
         Assert.IsTrue(offset.End.IsCloseTo(new(100, 10)));
-        var points = new List<Point2>();
+        var points = new List<Point>();
         line.AppendTessellation(points, 0.1);
         Assert.HasCount(1, points);
     }
@@ -39,19 +39,19 @@ public sealed class SegmentTests
     [TestMethod]
     public void LeftArcFromStart()
     {
-        var arc = ArcSegment.FromStart(Pose2.Origin, 1000, 90);
+        var arc = ArcSegment.FromStart(Pose.Origin, 1000, 90);
         Assert.IsTrue(arc.IsCounterClockwise);
         Assert.IsTrue(arc.Center.IsCloseTo(new(0, 1000)));
         Assert.IsTrue(arc.End.IsCloseTo(new(1000, 1000)));
         Assert.AreEqual(90, arc.EndHeading.Normalized.Degrees, Precision);
         Assert.AreEqual(1000 * Math.PI / 2, arc.Length, Precision);
-        Assert.IsTrue(arc.StartPose.IsCloseTo(Pose2.Origin));
+        Assert.IsTrue(arc.StartPose.IsCloseTo(Pose.Origin));
     }
 
     [TestMethod]
     public void RightArcFromStart()
     {
-        var arc = ArcSegment.FromStart(Pose2.Origin, 500, -90);
+        var arc = ArcSegment.FromStart(Pose.Origin, 500, -90);
         Assert.IsFalse(arc.IsCounterClockwise);
         Assert.IsTrue(arc.Center.IsCloseTo(new(0, -500)));
         Assert.IsTrue(arc.End.IsCloseTo(new(500, -500)));
@@ -63,7 +63,7 @@ public sealed class SegmentTests
     [TestMethod]
     public void ArcBoundsIncludeCardinalExtremes()
     {
-        var arc = ArcSegment.FromStart(Pose2.Origin, 100, 180);
+        var arc = ArcSegment.FromStart(Pose.Origin, 100, 180);
         var bounds = arc.Bounds;
         Assert.AreEqual(100, bounds.Max.X, Precision);
         Assert.AreEqual(200, bounds.Max.Y, Precision);
@@ -73,7 +73,7 @@ public sealed class SegmentTests
     [TestMethod]
     public void FullCircleArc()
     {
-        var arc = new ArcSegment(Point2.Origin, 100, Angle.Zero, 360);
+        var arc = new ArcSegment(Point.Origin, 100, Angle.Zero, 360);
         Assert.IsTrue(arc.Start.IsCloseTo(arc.End));
         Assert.AreEqual(2 * Math.PI * 100, arc.Length, Precision);
         Assert.AreEqual(200, arc.Bounds.Width, Precision);
@@ -83,14 +83,14 @@ public sealed class SegmentTests
     [TestMethod]
     public void InvalidArcsAreRejected()
     {
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new ArcSegment(Point2.Origin, 0, Angle.Zero, 10));
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new ArcSegment(Point2.Origin, 10, Angle.Zero, 0));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new ArcSegment(Point.Origin, 0, Angle.Zero, 10));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new ArcSegment(Point.Origin, 10, Angle.Zero, 0));
     }
 
     [TestMethod]
     public void ArcReverseRunsBackwards()
     {
-        var arc = ArcSegment.FromStart(Pose2.Origin, 1000, 30);
+        var arc = ArcSegment.FromStart(Pose.Origin, 1000, 30);
         var reversed = arc.Reversed();
         Assert.IsTrue(reversed.Start.IsCloseTo(arc.End));
         Assert.IsTrue(reversed.End.IsCloseTo(arc.Start));
@@ -100,8 +100,8 @@ public sealed class SegmentTests
     [TestMethod]
     public void ArcTransformAndMirror()
     {
-        var arc = ArcSegment.FromStart(Pose2.Origin, 1000, 30);
-        var transform = new Transform2(new Angle(60), new Vector2(50, 70));
+        var arc = ArcSegment.FromStart(Pose.Origin, 1000, 30);
+        var transform = new Transform(new Angle(60), new Vector(50, 70));
         var moved = arc.Transformed(transform);
         Assert.IsTrue(moved.End.IsCloseTo(transform.Apply(arc.End)));
         Assert.IsTrue(moved.EndHeading.IsCloseTo(transform.Apply(arc.EndHeading), 1e-9));
@@ -114,23 +114,23 @@ public sealed class SegmentTests
     [TestMethod]
     public void ArcOffsetChangesRadius()
     {
-        var left = (ArcSegment)ArcSegment.FromStart(Pose2.Origin, 1000, 30).Offset(100);
+        var left = (ArcSegment)ArcSegment.FromStart(Pose.Origin, 1000, 30).Offset(100);
         Assert.AreEqual(900, left.Radius, Precision);
-        var right = (ArcSegment)ArcSegment.FromStart(Pose2.Origin, 1000, -30).Offset(100);
+        var right = (ArcSegment)ArcSegment.FromStart(Pose.Origin, 1000, -30).Offset(100);
         Assert.AreEqual(1100, right.Radius, Precision);
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => ArcSegment.FromStart(Pose2.Origin, 50, 30).Offset(60));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => ArcSegment.FromStart(Pose.Origin, 50, 30).Offset(60));
     }
 
     [TestMethod]
     public void ArcTessellationRespectsChordTolerance()
     {
-        var arc = ArcSegment.FromStart(Pose2.Origin, 2000, 45);
-        var points = new List<Point2> { arc.Start };
+        var arc = ArcSegment.FromStart(Pose.Origin, 2000, 45);
+        var points = new List<Point> { arc.Start };
         arc.AppendTessellation(points, 0.05);
         Assert.IsTrue(points[^1].IsCloseTo(arc.End));
         for (var i = 1; i < points.Count; i++)
         {
-            var middle = Point2.Lerp(points[i - 1], points[i], 0.5);
+            var middle = Point.Lerp(points[i - 1], points[i], 0.5);
             var sagitta = 2000 - middle.DistanceTo(arc.Center);
             Assert.IsLessThanOrEqualTo(0.05 + 1e-9, sagitta);
         }

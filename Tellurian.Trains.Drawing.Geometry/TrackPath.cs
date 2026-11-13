@@ -5,11 +5,11 @@ namespace Tellurian.Trains.Drawing.Geometry;
 /// A closed path also ends where it starts (outlines, hall walls); an open path doesn't
 /// (main paths, track centre lines, ground lines).
 /// </summary>
-public sealed class Path2
+public sealed class TrackPath
 {
     private const double ConnectionTolerance = 1e-6;
 
-    public Path2(IEnumerable<Segment> segments, bool isClosed = false)
+    public TrackPath(IEnumerable<Segment> segments, bool isClosed = false)
     {
         Segments = [.. segments];
         if (Segments.Count == 0) throw new ArgumentException("A path must have at least one segment.", nameof(segments));
@@ -25,10 +25,10 @@ public sealed class Path2
 
     public IReadOnlyList<Segment> Segments { get; }
     public bool IsClosed { get; }
-    public Point2 Start => Segments[0].Start;
-    public Point2 End => Segments[^1].End;
-    public Pose2 StartPose => Segments[0].StartPose;
-    public Pose2 EndPose => Segments[^1].EndPose;
+    public Point Start => Segments[0].Start;
+    public Point End => Segments[^1].End;
+    public Pose StartPose => Segments[0].StartPose;
+    public Pose EndPose => Segments[^1].EndPose;
     public double Length => Segments.Sum(s => s.Length);
     public BoundingBox Bounds => Segments.Aggregate(BoundingBox.Empty, (box, s) => box.Union(s.Bounds));
 
@@ -43,7 +43,7 @@ public sealed class Path2
     }
 
     /// <summary>The pose at <paramref name="distance"/> from the start, clamped to the path.</summary>
-    public Pose2 PoseAt(double distance)
+    public Pose PoseAt(double distance)
     {
         var remaining = Math.Max(0, distance);
         foreach (var segment in Segments)
@@ -54,18 +54,18 @@ public sealed class Path2
         return EndPose;
     }
 
-    public Path2 Reversed() => new(Segments.Reverse().Select(s => s.Reversed()), IsClosed);
+    public TrackPath Reversed() => new(Segments.Reverse().Select(s => s.Reversed()), IsClosed);
 
-    public Path2 Transformed(Transform2 transform) => new(Segments.Select(s => s.Transformed(transform)), IsClosed);
+    public TrackPath Transformed(Transform transform) => new(Segments.Select(s => s.Transformed(transform)), IsClosed);
 
     /// <summary>The path mirrored about the Y axis. Only for comparing end profiles.</summary>
-    public Path2 MirroredX() => new(Segments.Select(s => s.MirroredX()), IsClosed);
+    public TrackPath MirroredX() => new(Segments.Select(s => s.MirroredX()), IsClosed);
 
     /// <summary>
     /// A parallel path at <paramref name="distance"/> to the left (negative: right).
     /// Exact for tangent-continuous paths, such as module main paths and track centre lines.
     /// </summary>
-    public Path2 Offset(double distance)
+    public TrackPath Offset(double distance)
     {
         if (!IsTangentContinuous())
             throw new InvalidOperationException("Only tangent-continuous paths can be offset exactly.");
@@ -74,7 +74,7 @@ public sealed class Path2
 
     public Polyline Tessellate(double chordTolerance = Tolerance.Chord)
     {
-        var points = new List<Point2> { Start };
+        var points = new List<Point> { Start };
         foreach (var segment in Segments) segment.AppendTessellation(points, chordTolerance);
         if (IsClosed) points.RemoveAt(points.Count - 1);
         return new(points, IsClosed);

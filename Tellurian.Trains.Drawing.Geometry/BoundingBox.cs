@@ -1,7 +1,7 @@
 namespace Tellurian.Trains.Drawing.Geometry;
 
 /// <summary>An axis-aligned bounding box. <see cref="Empty"/> contains nothing.</summary>
-public readonly record struct BoundingBox(Point2 Min, Point2 Max)
+public readonly record struct BoundingBox(Point Min, Point Max)
 {
     public static BoundingBox Empty => new(
         new(double.PositiveInfinity, double.PositiveInfinity),
@@ -10,12 +10,12 @@ public readonly record struct BoundingBox(Point2 Min, Point2 Max)
     public bool IsEmpty => Min.X > Max.X || Min.Y > Max.Y;
     public double Width => IsEmpty ? 0 : Max.X - Min.X;
     public double Height => IsEmpty ? 0 : Max.Y - Min.Y;
-    public Point2 Center => new((Min.X + Max.X) / 2, (Min.Y + Max.Y) / 2);
+    public Point Center => new((Min.X + Max.X) / 2, (Min.Y + Max.Y) / 2);
 
-    public static BoundingBox FromPoints(IEnumerable<Point2> points) =>
+    public static BoundingBox FromPoints(IEnumerable<Point> points) =>
         points.Aggregate(Empty, (box, point) => box.Including(point));
 
-    public BoundingBox Including(Point2 point) => new(
+    public BoundingBox Including(Point point) => new(
         new(Math.Min(Min.X, point.X), Math.Min(Min.Y, point.Y)),
         new(Math.Max(Max.X, point.X), Math.Max(Max.Y, point.Y)));
 
@@ -29,7 +29,7 @@ public readonly record struct BoundingBox(Point2 Min, Point2 Max)
     public BoundingBox Inflated(double margin) =>
         IsEmpty ? this : new(new(Min.X - margin, Min.Y - margin), new(Max.X + margin, Max.Y + margin));
 
-    public bool Contains(Point2 point) =>
+    public bool Contains(Point point) =>
         point.X >= Min.X && point.X <= Max.X && point.Y >= Min.Y && point.Y <= Max.Y;
 
     public bool Intersects(BoundingBox other) =>

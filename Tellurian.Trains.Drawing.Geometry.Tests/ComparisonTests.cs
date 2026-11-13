@@ -52,8 +52,8 @@ public sealed class ComparisonTests
     [TestMethod]
     public void PointsMatchWithinTolerance()
     {
-        Point2[] first = [new(-150, 50), new(150, 50), new(0, 100)];
-        Point2[] second = [new(150.3, 50), new(-150, 49.8), new(0, 200)];
+        Point[] first = [new(-150, 50), new(150, 50), new(0, 100)];
+        Point[] second = [new(150.3, 50), new(-150, 49.8), new(0, 200)];
         var result = PointMatching.Match(first, second, 0.5);
         Assert.HasCount(2, result.Pairs);
         Assert.AreEqual(new PointPair(0, 1, first[0].DistanceTo(second[1])), result.Pairs[0]);
@@ -68,8 +68,8 @@ public sealed class ComparisonTests
     public void ClosestPairsWin()
     {
         // Both first points are within tolerance of second[0]; the closer one gets it.
-        Point2[] first = [new(0, 0), new(0.9, 0)];
-        Point2[] second = [new(1, 0), new(5, 0)];
+        Point[] first = [new(0, 0), new(0.9, 0)];
+        Point[] second = [new(1, 0), new(5, 0)];
         var result = PointMatching.Match(first, second, 1.5);
         Assert.HasCount(1, result.Pairs);
         Assert.AreEqual(1, result.Pairs[0].FirstIndex);
@@ -80,7 +80,7 @@ public sealed class ComparisonTests
     public void EmptyAndCompleteSets()
     {
         Assert.IsTrue(PointMatching.Match([], [], 1).IsComplete);
-        Point2[] points = [new(1, 2), new(3, 4)];
+        Point[] points = [new(1, 2), new(3, 4)];
         Assert.IsTrue(PointMatching.Match(points, points, 0).IsComplete);
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => PointMatching.Match(points, points, -1));
     }

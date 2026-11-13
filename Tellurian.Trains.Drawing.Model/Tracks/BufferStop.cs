@@ -8,9 +8,9 @@ namespace Tellurian.Trains.Drawing.Model.Tracks;
 /// </summary>
 public sealed record BufferStop : TrackElement
 {
-    public required Pose2 Pose { get; init; }
+    public required Pose Pose { get; init; }
 
-    public override IReadOnlyList<Path2> Routes() => [];
+    public override IReadOnlyList<TrackPath> Routes() => [];
 
-    public override IReadOnlyList<Pose2> ConnectionPoints() => [Pose];
+    public override IReadOnlyList<Pose> ConnectionPoints() => [Pose];
 }

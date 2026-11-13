@@ -10,9 +10,9 @@ public sealed record FlexTrack : TrackElement
 {
     public required PathDrawing Path { get; init; }
 
-    public override IReadOnlyList<Path2> Routes() => [Path.ToPath()];
+    public override IReadOnlyList<TrackPath> Routes() => [Path.ToPath()];
 
-    public override IReadOnlyList<Pose2> ConnectionPoints()
+    public override IReadOnlyList<Pose> ConnectionPoints()
     {
         var path = Path.ToPath();
         return [path.StartPose.Reversed(), path.EndPose];

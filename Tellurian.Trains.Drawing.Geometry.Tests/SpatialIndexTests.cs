@@ -74,13 +74,13 @@ public sealed class SpatialIndexTests
     {
         // NF-2 budget check: 300 curved module outlines, tessellated, all-pairs nearby distance check.
         var outlines = new List<Polyline>();
-        var pose = Pose2.Origin;
+        var pose = Pose.Origin;
         for (var i = 0; i < 300; i++)
         {
             var main = new PathBuilder(pose).Straight(300).Curve(2000, i % 2 == 0 ? 4 : -4).Straight(300).Build();
             var left = main.Offset(250);
             var right = main.Offset(-250).Reversed();
-            var outline = new Path2([.. left.Segments, new LineSegment(left.End, right.Start), .. right.Segments, new LineSegment(right.End, left.Start)], isClosed: true);
+            var outline = new TrackPath([.. left.Segments, new LineSegment(left.End, right.Start), .. right.Segments, new LineSegment(right.End, left.Start)], isClosed: true);
             outlines.Add(outline.Tessellate());
             pose = main.EndPose;
         }

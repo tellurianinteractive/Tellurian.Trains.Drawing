@@ -30,13 +30,13 @@ public static class ShapeComparison
         return worst;
     }
 
-    private static IEnumerable<Point2> Samples(Polyline polyline, double sampleSpacing)
+    private static IEnumerable<Point> Samples(Polyline polyline, double sampleSpacing)
     {
         yield return polyline.Points[0];
         foreach (var (a, b) in polyline.Edges())
         {
             var steps = Math.Max(1, (int)Math.Ceiling(a.DistanceTo(b) / sampleSpacing));
-            for (var i = 1; i <= steps; i++) yield return Point2.Lerp(a, b, (double)i / steps);
+            for (var i = 1; i <= steps; i++) yield return Point.Lerp(a, b, (double)i / steps);
         }
     }
 }
