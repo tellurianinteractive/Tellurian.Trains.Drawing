@@ -71,7 +71,8 @@ The App holds only what is specific to the PWA: shell and pages, IndexedDB stora
 
 Each phase ends with something working, tested and deployed to the staging environment. Estimates assume one developer working part-time with AI assistance and are only indicative.
 
-### Phase 0 – Foundations and technical spikes (≈1–2 weeks)
+### Phase 0 – Foundations and technical spikes (≈1–2 weeks) — ✅ done 2026-11-13
+Results: ADR 0001 (SVG canvas), ADR 0002 (files first, per-browser fallback), ADR 0003 (localization). Production runs on Azure Static Web Apps, deployed with OIDC.
 **Goal:** de-risk the platform before building features.
 1. Initialise the git repository and create the GitHub repository (owner's decision on organisation/visibility). Add `.gitignore`, `README.md`, `LICENSE`, `CLAUDE.md`.
 2. Create the solution, `Directory.Build.props` (net11.0, Version 0.1.0, NuGet metadata), `global.json`, all projects and test projects (empty), and the package references (Tellurian.Utilities, Tellurian.Localization). Geometry, Model, Editing and Components are packable (NF-10).

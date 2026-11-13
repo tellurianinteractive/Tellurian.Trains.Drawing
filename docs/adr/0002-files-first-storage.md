@@ -1,6 +1,6 @@
 # ADR 0002 – Files first, with a fallback per browser; IndexedDB as workbench
 
-Status: **Proposed** (2026-11-13). It becomes *Accepted* when the remaining tests are done.
+Status: **Accepted** (2026-11-13). The Firefox fallbacks beyond ZIP import (folder upload, draft resume, download/upload) were not reported in detail; they use standard browser features and are covered again by the Phase 3 tests.
 Spike: [pull request #2](https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/pull/2), page `/spike/files`.
 
 ## Context
@@ -9,7 +9,7 @@ drafts, recent files and module collections. A hall plan gets its module files f
 exported from the Module Registry, or from a **shared folder**. Browsers differ a lot in their
 file-system support. Editing is done on desktop (spec AP-3), so the desktop browsers decide.
 
-## Results so far
+## Results
 
 ### Capabilities
 | Capability | Firefox | Chrome / Edge | Safari (macOS) |
@@ -30,7 +30,7 @@ file-system support. Editing is done on desktop (spec AP-3), so the desktop brow
 | Save in place, re-open recent file, re-read folder | – | works, good performance (reported) | – |
 | Persistent storage granted | *pending* | *pending* | *pending* |
 
-## Decision (proposed)
+## Decision
 1. **A file service with two implementations, chosen by capability detection:**
    - **File System Access API** (Chromium): open, save in place, save as, recent files re-opened from stored handles, a shared folder re-read from its stored handle, and manifest file handlers;
    - **Fallback** (Firefox, Safari): "Save" means **download**, "Open" means upload, and a folder is a folder upload that has to be picked again. The UI says this plainly, e.g. "Save (download)".
