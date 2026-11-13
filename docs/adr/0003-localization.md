@@ -38,6 +38,6 @@ and the Markdown provider took it for the translation. The Debug dev server does
 5. **Suggested library improvement:** `HttpMarkdownResourceProvider` in Tellurian.Localization should treat a response with `Content-Type: text/html` as *missing*, and so should a network error while offline (fall back to the neutral file). That would protect every app behind an SPA fallback, including the Debug dev server, without relying on host configuration.
 
 ## Consequences
-- Changing language reloads the app. That's acceptable, since it rarely happens.
+- Changing language reloads the app. That's acceptable, since it rarely happens, **provided no data is lost** (spec AP-7): the reload goes through the safe-reload service, which writes all unsaved drawings as drafts, waits for confirmation, and reopens them in the same state afterwards. If the drafts can't be written, the language isn't changed until the user has saved.
 - Help files must exist at least in English, the neutral language. The other languages are optional.
 - Help for a language that isn't cached can't be fetched while offline. With improvement 5 this falls back to English; without it, it shows an error.

@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.23** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.24** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -268,6 +268,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 | AP-4 | M | Pan/zoom canvas with zoom-to-fit, zoom-to-selection, and a scale bar. |
 | AP-5 | S | Light/dark theme. |
 | AP-6 | M | Context help (Markdown, localised) for the editors. |
+| AP-7 | M | **No data loss when the app reloads itself.** Changing language (AP-2) and accepting an update (AP-1) reload the app. Before such a reload, every open drawing with unsaved changes is written as a **draft** to IndexedDB, and the reload waits until the writes are confirmed. After the reload, the app **reopens the same drawings in the same state**: document, variant, selected line or module, zoom and pan. If the drafts can't be written (e.g. storage is blocked), the reload is **not** done; the user is told why and offered to save the files first. The same draft mechanism protects against closing the tab or a crash, as far as the last autosave (UC-5). |
 
 ## 6. Data storage and file formats
 

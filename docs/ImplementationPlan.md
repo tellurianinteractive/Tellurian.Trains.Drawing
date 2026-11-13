@@ -157,9 +157,10 @@ Each phase ends with something working, tested and deployed to the staging envir
 4. Catalogue pages: list and edit scales, standards, standard add-ons and overrides (user layer).
 5. Localization infrastructure in place: English master resources, language selector.
 6. Update-available prompt (AP-1).
+7. **Safe reload (AP-7)**: one `SafeReload` service that is used for every reload the app starts itself (language change, update). It flushes all open drafts to IndexedDB, waits for confirmation, stores the editor state (open documents, variant, selection, view), then reloads. On start it restores the editor state. If flushing fails, it cancels the reload and offers Save. Tests cover: a language change with unsaved edits in two open drawings, an update with an unsaved hall plan, and blocked storage.
 
 **Exit criteria:** create a module from a template via the UI and save it as a file. Close the app with unsaved changes and resume the draft. Re-open the saved file from the recent files. Import end profiles from a ZIP archive.
-**Requirements:** EP-1 (library part), MD-1, CA-2, CA-3, EX-4, EX-9, AP-1, AP-2 (infrastructure).
+**Requirements:** EP-1 (library part), MD-1, CA-2, CA-3, EX-4, EX-9, AP-1, AP-2 (infrastructure), AP-7.
 
 ### Phase 4 – Shared drawing canvas and editor framework (≈2–3 weeks)
 1. `DrawingCanvas` component plus `canvas.js`: pan, wheel/pinch zoom, zoom to fit/selection, scale bar, grid (AP-3, AP-4).
@@ -384,6 +385,7 @@ In priority order (to be confirmed):
 | AP-3, AP-4 | 4 |
 | AP-5 | 13 |
 | AP-6 | 12 |
+| AP-7 | 3 (safe reload), 12 (language switcher uses it) |
 | NF-1, NF-3 | 0, 12 |
 | NF-2 | 0 (spike), 1, 9, 10, 12 |
 | NF-4 | 0, 12 |
