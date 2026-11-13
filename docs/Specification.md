@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.14** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.15** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -42,7 +42,7 @@ Terms and properties follow the **Module Registry** so that a later import maps 
 | Concept | Description | Key properties |
 |---|---|---|
 | **Scale** | Model scale. | Short name (H0, N, 0…), denominator (87, 160…). |
-| **Module standard** | A standard that modules follow, e.g. FREMO H0-RE, MMM-2R or MMM-3R. | Short name, scale, track system, normal/narrow gauge (mm), couplings, electricity, wheelset. **New:** height of rail top above floor (Swedish *RÖK*, default **1300 mm**, which is the most common value), default minimum clearance (mm), default operator space depth (mm). |
+| **Module standard** | A standard that modules follow, e.g. FREMO H0-RE, MMM-2R or MMM-3R. | Short name, scale, track system, normal/narrow gauge (mm), couplings, electricity, wheelset. **New:** height of rail top above floor (Swedish *RÖK*, default **1300 mm**, which is the most common value), default minimum clearance (mm), default operator space depth (mm), **track colour** (default blue `#1f5fbf`), minimum radius for generated reverse curves. |
 | **Standard add-on** | Extra requirements on top of a base standard, e.g. **MMM-Summer** and **MMM-Modern**, which are both add-ons to MMM-2R. A module can meet zero or more add-ons of its standard. A hall plan can prefer add-ons, so that the planner sees which modules don't meet them. | Short name, base standard, description, optional PDF/URL reference. |
 | **End profile** (*ModuleEndProfile*) | The shape of a module end, **drawn in end view** (§5.2). How well two ends fit is worked out from the drawings by the rules in §3.2. | Designation, scale, standard(s), optional PDF/URL reference, optional Registry end profile id. **Drawing:** end-plate outline, ground line, tracks (lateral position, gauge; rail top at Y = 0), **screw holes**, optional dowels and cable passages, dimensions and labels. **Derived from the drawing:** plate width and height, number of tracks, track offsets and c/c, screw-hole positions, symmetry (*Symmetric* / *Asymmetric*, with which elements are asymmetric). **Fallback:** a screw-hole pattern identifier, for when holes are not drawn. End profiles of the same standard may have different plate heights. That doesn't affect fit; the **screw-hole positions** (relative to rail top and centre line) are what matter. |
 | **End profile compatibility override** | An optional catalogue entry that overrides the rule result for a specific pair of profiles, for known exceptions. | Pair (A, B), forced result (§3.2), note. |
@@ -146,6 +146,8 @@ All three editors (end profile, module, hall) share the same drawing canvas: pan
 | EP-11 | S | A background image can be placed and calibrated by two points, for tracing (same mechanism as MD-14). A page of a **PDF** (such as a FREMO or MMM end profile drawing) can be used directly as the background. |
 
 ### 5.3 Module drawing (MD)
+The structure of a module drawing (exits → end plates → sides → sections → tracks → zones), the auto-draw rules and the visual style are defined in detail in [ModuleDrawing.md](ModuleDrawing.md).
+
 | ID | Pri | Requirement |
 |---|---|---|
 | MD-1 | M | Create, open, duplicate, rename and delete module drawings. Show them in a searchable library (by name, owner, standard, flags), with their variants. |
@@ -169,6 +171,8 @@ All three editors (end profile, module, hall) share the same drawing canvas: pan
 | MD-17 | M | **Operator spaces**: add operator spaces to a module variant. The quick way is "add operator space along this edge" with a depth (default from the standard, e.g. 800 mm) and the edge length; it can then be edited as a polygon. Spaces can be added on both sides. They are drawn as hatched areas, outside the baseboard. |
 | MD-18 | M | **Public side**: mark one or more outline edges as the public side. It is shown with a distinct edge style and symbol, both in the module drawing and in hall plans. |
 | MD-19 | M | **Duck-under**: the module's duck-under flag (as in the Module Registry) is set in the module properties. In the drawing, the duck-under area is shown with its own fill and symbol. By default it is the whole module; it can be limited to selected sections or to a drawn polygon. Optionally the clear height under it can be given. A module with a duck-under area has its duck-under flag set automatically, and the other way round. |
+| MD-21 | M | **Track colour by standard**: tracks are drawn in their module standard's track colour (default blue), with a lighter tint for narrow gauge. In a hall plan the colours tell the standards apart. |
+| MD-22 | M | **Sides between end plates**: the outline consists of the end plates (one per exit, as wide as its end profile) and the sides between them. Each side is generated (*Auto*) or drawn by hand (*Custom*), with its ends attached to the end-plate corners. Operator spaces and public sides attach to sides and are likewise generated or drawn by hand. The kind of module (end of line, pass-through, junction) is derived from its number of exits. |
 | MD-16 | L | **Adjustable modules**: modules with variable length or angle, for closing loops. No such modules are known today. |
 
 ### 5.4 Hall drawing (HA)

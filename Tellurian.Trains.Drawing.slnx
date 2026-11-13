@@ -13,6 +13,7 @@
   </Folder>
   <Folder Name="/docs/">
     <File Path="docs/ImplementationPlan.md" />
+    <File Path="docs/ModuleDrawing.md" />
     <File Path="docs/Specification.md" />
   </Folder>
   <Project Path="Tellurian.Trains.Drawing.App.Tests/Tellurian.Trains.Drawing.App.Tests.csproj" />

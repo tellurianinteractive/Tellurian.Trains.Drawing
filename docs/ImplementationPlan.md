@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Implementation Plan
 
-Status: **Draft 0.13** (2026-11-13). Based on [Specification.md](Specification.md) draft 0.14.
+Status: **Draft 0.14** (2026-11-13). Based on [Specification.md](Specification.md) draft 0.15 and [ModuleDrawing.md](ModuleDrawing.md) draft 0.1.
 Requirement IDs (e.g. `MD-6`) refer to the specification.
 
 ---
@@ -120,6 +120,7 @@ Each phase ends with something working, tested and deployed to the staging envir
 4. Parametric track element geometry: each element produces centre-line paths and connection points (poses).
 5. **Templates**:
    - end profile: rectangular plate with N tracks (EP-2 logic);
+   - module structure per [ModuleDrawing.md](ModuleDrawing.md): exits → end plates → sides (Auto/Custom) → sections → tracks → zones; the auto side and through-track rules (MD-22);
    - module **auto-draw** (MD-20): a public, UI-independent API, `ModuleAutoDraw.Create(parameters, catalogue) → Module`. Its parameters mirror the Module Registry's module data: standard; length/straight, radius, angle and width; number of through tracks; number of sections; exits (label, direction, end profile); flags such as duck-under. It generates the sections, outline, exits, through tracks (on the end profile track positions) and, when flagged, the duck-under area. The result records the generator version and parameters. It covers straight, curved and straight+curve modules; the MD-3 templates use the same API. There are table-driven tests on Registry-like data, and the generated JSON is validated against the module schema.
 6. Derived module measures (length, width, radius, angle, track length, ramp height difference and gradient) and comparison with the entered Registry-style values (MD-10 logic).
 7. File envelope, `JsonSerializerContext`, schema version + migration pipeline (no-op v1 → v1), refusal of newer versions.
@@ -333,7 +334,8 @@ In priority order (to be confirmed):
 | EP-11 | 13 |
 | MD-1 | 3 |
 | MD-2, MD-4, MD-4a, MD-5, MD-9, MD-13, MD-17, MD-18, MD-19 | 6 |
-| MD-3, MD-10, MD-20 | 2 (logic), 6 (UI) |
+| MD-3, MD-10, MD-20, MD-22 | 2 (logic), 6 (UI) |
+| MD-21 | 2 (standard colour), 4 (rendering) |
 | MD-6, MD-7, MD-8 | 7 |
 | MD-7a | 2 (logic), 6 (UI) |
 | MD-11, MD-12 | 4 |
