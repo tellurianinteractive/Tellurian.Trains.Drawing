@@ -14,7 +14,9 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 
 | Actor | Typical situation |
 |---|---|
-| Module owner | Draws their own modules and end profiles, and uploads module files to the Module Registry. |
+| Module owner | Draws their own modules, **or provides the data to someone else who draws them** (Registry data, measures, a sketch or photos). Uploads the module files to the Module Registry. |
+| Module drawer | Draws modules on behalf of one or more owners, from the data they provide. Gives the module files back to the owners, who upload them. |
+| End profile author | One of a **few selected persons**, e.g. appointed by FREMO or MMM, who draw the end profiles from the standards' specifications. The end profiles are published (in the Module Registry) and then **used** in module drawings by everyone else. |
 | Planner | Usually the meeting organiser. Collects module files and builds the hall plan. |
 | Participant | Looks at a hall plan to see where their modules go. |
 
@@ -22,7 +24,7 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 
 | ID | Use case | Primary result |
 |---|---|---|
-| UC-1 | Draw an end profile | End profile file |
+| UC-1 | Draw an end profile (selected persons) | End profile file |
 | UC-2 | Import end profiles from the Module Registry | End profiles in the local catalogue |
 | UC-3 | Draw a module | Module file |
 | UC-4 | Auto-draw a module from parameters | Module file |
@@ -39,17 +41,20 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 ---
 
 ### UC-1 Draw an end profile
+**Actor:** end profile author. Most users never draw end profiles; they import them (UC-2).
 1. The user creates a new end profile, from the template (plate width, track positions) or as a copy of an existing one.
 2. They draw or adjust the plate outline, the ground line, the tracks and the screw holes. A PDF page of the standard can be used as a background for tracing (EP-11).
 3. The app shows the derived properties and the symmetry live. The user can compare the profile with another one (EP-8).
 4. The user **saves the end profile file**. The draft is autosaved in IndexedDB in the meantime.
 
 ### UC-2 Import end profiles from the Module Registry
+**Actor:** module owner or module drawer, before drawing modules.
 1. The user downloads end profile files from the Registry, as single files or a ZIP archive, and opens them in the app.
 2. The app adds them to the local catalogue. If a profile already exists, the app shows the differences and the user chooses which to keep.
 3. *Later phase:* the app fetches them directly from the Registry's API (CA-5).
 
 ### UC-3 Draw a module
+**Actor:** module owner, or a module drawer working from data the owner has provided. The owners entered in the module are the real owners, not the person who draws.
 **Precondition:** the end profiles that the module's exits need exist as drawings. If not, the user does UC-1 or UC-2 first.
 1. The user creates a new module from a template, from parameters (UC-4), or from scratch.
 2. They enter the module properties: name, standard, owners and so on.
@@ -119,6 +124,6 @@ Branches are a normal part of most layouts.
 2. They share the **hall plan file**. Participants open it in the app to view it (UC-8 is not needed to view).
 
 ### UC-13 Upload a module drawing to the Module Registry
-This use case is done in the Registry, not in the app.
+**Actor:** module owner. If someone else drew the module, they give the file to the owner. This use case is done in the Registry, not in the app; the Registry decides who may upload.
 1. The owner uploads the module file to their module in the Registry.
 2. The Registry validates it, stores it, and offers to update missing or different module data from the drawing (ModuleDrawing.md §8.8).
