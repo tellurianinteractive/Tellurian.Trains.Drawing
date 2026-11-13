@@ -1,0 +1,381 @@
+@page "/spike/files"
+@using System.Diagnostics
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.Forms
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Spike C – files</PageTitle>
+
+<div class="spike-page">
+    <h1>Spike C – files first, IndexedDB as workbench</h1>
+
+    <section>
+        <h2>Browser capabilities</h2>
+        @if (capabilities.Count == 0)
+        {
+            <p>Checking…</p>
+        }
+        else
+        {
+            <ul class="spike-capabilities">
+                @foreach (var (name, supported) in capabilities)
+                {
+                    <li class="@(supported ? "yes" : "no")">@(supported ? "✓" : "✕") @name</li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section>
+        <h2>1. One drawing: save in place, drafts</h2>
+        <p>File: <b>@(string.IsNullOrEmpty(fileName) ? "(not saved)" : fileName)</b> @(unsaved ? "– unsaved changes (draft kept in IndexedDB)" : "")</p>
+        <textarea class="spike-editor" @bind="drawingJson" @bind:event="oninput" @bind:after="DrawingChanged"></textarea>
+        <div class="spike-buttons">
+            <button @onclick="NewSample">New sample module</button>
+            <button @onclick="OpenFile" disabled="@(!Supports("openFilePicker"))">Open…</button>
+            <button @onclick="() => Save(false)" disabled="@(!Supports("saveFilePicker"))">Save</button>
+            <button @onclick="() => Save(true)" disabled="@(!Supports("saveFilePicker"))">Save as…</button>
+            <button @onclick="ReopenRecent" disabled="@(!Supports("openFilePicker"))">Re-open recent file</button>
+            <span class="spike-fallback">Fallback:
+                <button @onclick="Download">Download</button>
+                <InputFile OnChange="UploadFile" accept=".tdmodule,.tdendprofile,.tdhallplan,.json" />
+            </span>
+        </div>
+        <h3>Drafts in IndexedDB</h3>
+        <button @onclick="RefreshDrafts">Refresh</button>
+        <ul>
+            @foreach (var draft in drafts)
+            {
+                <li>
+                    <code>@draft.Id</code> – @draft.Modified, @draft.Size characters
+                    <button @onclick="() => LoadDraft(draft.Id)">Load</button>
+                    <button @onclick="() => DeleteDraft(draft.Id)">Delete</button>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <section>
+        <h2>2. Shared folder</h2>
+        <div class="spike-buttons">
+            <button @onclick="PickFolder" disabled="@(!Supports("directoryPicker"))">Pick folder…</button>
+            <button @onclick="RereadFolder" disabled="@(!Supports("directoryPicker"))">Re-read remembered folder</button>
+            <span class="spike-fallback">Fallback: <InputFile OnChange="UploadFolder" multiple webkitdirectory /></span>
+        </div>
+        @if (folderSummary is not null)
+        {
+            <p>@folderSummary</p>
+        }
+    </section>
+
+    <section>
+        <h2>3. ZIP archive (e.g. a Module Registry export)</h2>
+        <div class="spike-buttons">
+            <label>Files <input type="number" min="1" max="2000" @bind="zipCount" /></label>
+            <button @onclick="GenerateZip">Generate and download sample ZIP</button>
+            <span>Import: <InputFile OnChange="ImportZip" accept=".zip" /></span>
+        </div>
+        @if (zipSummary is not null)
+        {
+            <p>@zipSummary</p>
+        }
+    </section>
+
+    <section>
+        <h2>4. Storage</h2>
+        <p>@storageSummary</p>
+        <button @onclick="RequestPersistence">Request persistent storage</button>
+        <button @onclick="RefreshStorage">Refresh</button>
+    </section>
+
+    <section>
+        <h2>5. Open from the operating system</h2>
+        <p>
+            Install the app, then open a <code>.tdmodule</code> file with it (Chromium only).
+            Launch queue: <b>@(launchQueue ? "listening" : "not available")</b>
+        </p>
+    </section>
+
+    <section>
+        <h2>Log</h2>
+        <ol class="spike-log" reversed>
+            @foreach (var line in log.AsEnumerable().Reverse())
+            {
+                <li>@line</li>
+            }
+        </ol>
+    </section>
+</div>
+
+@code {
+#pragma warning disable BL0016 // All interop calls run inside Try(...), which catches JSException; the analyzer can't see through the lambda.
+    private const string DraftId = "current-drawing";
+    private IJSObjectReference? js;
+    private DotNetObjectReference<FilesSpike>? self;
+    private readonly List<(string Name, bool Supported)> capabilities = [];
+    private readonly List<string> log = [];
+    private List<DraftInfo> drafts = [];
+    private Dictionary<string, long> lastFolder = [];
+    private string drawingJson = SpikeFiles.SampleModuleJson(1);
+    private string fileName = "";
+    private bool unsaved;
+    private string? folderSummary, zipSummary, storageSummary;
+    private int zipCount = 300;
+    private bool launchQueue;
+    private CancellationTokenSource? draftDelay;
+
+    private sealed record DraftInfo(string Id, string Modified, int Size);
+
+    private bool Supports(string capability) => capabilities.Any(c => c.Name == capability && c.Supported);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        self = DotNetObjectReference.Create(this);
+        await Try("start", async () =>
+        {
+            js = await JS.InvokeAsync<IJSObjectReference>("import", "./Spikes/FilesSpike.razor.js");
+            using (var doc = JsonDocument.Parse(await js.InvokeAsync<string>("capabilities")))
+                foreach (var p in doc.RootElement.EnumerateObject()) capabilities.Add((p.Name, p.Value.GetBoolean()));
+            launchQueue = await js.InvokeAsync<bool>("initLaunchQueue", self);
+            var draft = await js.InvokeAsync<string>("loadDraft", DraftId);
+            if (!string.IsNullOrEmpty(draft)) { drawingJson = draft; unsaved = true; Log("Resumed the draft from IndexedDB."); }
+            await RefreshDrafts();
+            await RefreshStorage();
+        });
+        StateHasChanged();
+    }
+
+    // ---------- 1. One drawing ----------
+
+    private async Task DrawingChanged()
+    {
+        unsaved = true;
+        draftDelay?.Cancel();
+        draftDelay = new CancellationTokenSource();
+        var token = draftDelay.Token;
+        try { await Task.Delay(800, token); } catch (TaskCanceledException) { return; }
+        await Try("autosave draft", async () => { await js!.InvokeVoidAsync("saveDraft", DraftId, drawingJson); });
+    }
+
+    private async Task NewSample()
+    {
+        drawingJson = SpikeFiles.SampleModuleJson(Random.Shared.Next(1, 999));
+        fileName = "";
+        await DrawingChanged();
+    }
+
+    private Task OpenFile() => Try("open", async () =>
+    {
+        ShowOpened(await js!.InvokeAsync<string>("openFile"));
+        await DiscardDraft();
+    });
+
+    private Task ReopenRecent() => Try("re-open recent", async () =>
+    {
+        var result = await js!.InvokeAsync<string>("reopenRecentFile");
+        if (string.IsNullOrEmpty(result)) { Log("No recent file remembered."); return; }
+        ShowOpened(result);
+        await DiscardDraft();
+    });
+
+    private void ShowOpened(string result)
+    {
+        using var doc = JsonDocument.Parse(result);
+        if (doc.RootElement.TryGetProperty("error", out var error)) { Log(error.GetString()!); return; }
+        fileName = doc.RootElement.GetProperty("name").GetString()!;
+        drawingJson = doc.RootElement.GetProperty("text").GetString()!;
+        unsaved = false;
+        Log($"Opened {fileName}: {SpikeFiles.Describe(drawingJson).Text}");
+    }
+
+    private Task Save(bool saveAs) => Try(saveAs ? "save as" : "save", async () =>
+    {
+        fileName = await js!.InvokeAsync<string>("save", drawingJson, string.IsNullOrEmpty(fileName) ? "module.tdmodule" : fileName, saveAs);
+        unsaved = false;
+        await DiscardDraft();
+        Log($"Saved {fileName} in place.");
+    });
+
+    private Task Download() => Try("download", async () =>
+    {
+        await js!.InvokeVoidAsync("downloadText", drawingJson, string.IsNullOrEmpty(fileName) ? "module.tdmodule" : fileName);
+        Log("Downloaded (fallback). The draft is kept until the file is saved with Save.");
+    });
+
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        await Try("upload", async () =>
+        {
+            using var reader = new StreamReader(e.File.OpenReadStream(10_000_000));
+            drawingJson = await reader.ReadToEndAsync();
+            fileName = e.File.Name;
+            unsaved = false;
+            await DiscardDraft();
+            Log($"Uploaded {fileName} (fallback): {SpikeFiles.Describe(drawingJson).Text}");
+        });
+    }
+
+    private async Task DiscardDraft()
+    {
+        await js!.InvokeVoidAsync("deleteDraft", DraftId);
+        await RefreshDrafts();
+    }
+
+    private Task RefreshDrafts() => Try("list drafts", async () =>
+    {
+        using var doc = JsonDocument.Parse(await js!.InvokeAsync<string>("listDrafts"));
+        drafts = doc.RootElement.EnumerateArray()
+            .Select(d => new DraftInfo(d.GetProperty("id").GetString()!, d.GetProperty("modified").GetString()!, d.GetProperty("size").GetInt32()))
+            .ToList();
+    });
+
+    private Task LoadDraft(string id) => Try("load draft", async () =>
+    {
+        drawingJson = await js!.InvokeAsync<string>("loadDraft", id);
+        unsaved = true;
+        Log($"Loaded draft {id}.");
+    });
+
+    private Task DeleteDraft(string id) => Try("delete draft", async () =>
+    {
+        await js!.InvokeVoidAsync("deleteDraft", id);
+        await RefreshDrafts();
+        Log($"Deleted draft {id}.");
+    });
+
+    // ---------- 2. Folder ----------
+
+    private Task PickFolder() => Try("pick folder", async () => ShowFolder(await js!.InvokeAsync<string>("pickFolder")));
+
+    private Task RereadFolder() => Try("re-read folder", async () => ShowFolder(await js!.InvokeAsync<string>("rereadFolder")));
+
+    private void ShowFolder(string result)
+    {
+        var watch = Stopwatch.StartNew();
+        using var doc = JsonDocument.Parse(result);
+        if (doc.RootElement.TryGetProperty("error", out var error)) { Log(error.GetString()!); return; }
+        var import = new ImportResult();
+        var current = new Dictionary<string, long>();
+        foreach (var f in doc.RootElement.GetProperty("files").EnumerateArray())
+        {
+            var name = f.GetProperty("name").GetString()!;
+            current[name] = f.GetProperty("lastModified").GetInt64();
+            import.Add(name, f.GetProperty("text").GetString()!);
+        }
+        var added = current.Keys.Count(k => !lastFolder.ContainsKey(k));
+        var changed = current.Count(kv => lastFolder.TryGetValue(kv.Key, out var t) && t != kv.Value);
+        var removed = lastFolder.Keys.Count(k => !current.ContainsKey(k));
+        var firstRead = lastFolder.Count == 0;
+        lastFolder = current;
+        folderSummary = $"Folder '{doc.RootElement.GetProperty("folder").GetString()}': {import.Files} files, {import.Valid} valid, " +
+            $"read in {doc.RootElement.GetProperty("milliseconds").GetInt32()} ms (JS) + parsed in {watch.ElapsedMilliseconds} ms (.NET)" +
+            (firstRead ? "." : $"; since last read: {added} new, {changed} changed, {removed} removed.") +
+            (import.Errors.Count > 0 ? $" Errors: {string.Join("; ", import.Errors.Take(3))}" : "");
+        Log(folderSummary);
+    }
+
+    private async Task UploadFolder(InputFileChangeEventArgs e)
+    {
+        await Try("folder fallback", async () =>
+        {
+            var watch = Stopwatch.StartNew();
+            var import = new ImportResult();
+            foreach (var file in e.GetMultipleFiles(5000).Where(f => SpikeFiles.IsDrawingFile(f.Name)))
+            {
+                using var reader = new StreamReader(file.OpenReadStream(10_000_000));
+                import.Add(file.Name, await reader.ReadToEndAsync());
+            }
+            folderSummary = $"Folder (fallback): {import.Files} files, {import.Valid} valid, read in {watch.ElapsedMilliseconds} ms. Re-reading means picking the folder again.";
+            Log(folderSummary);
+        });
+    }
+
+    // ---------- 3. ZIP ----------
+
+    private Task GenerateZip() => Try("generate ZIP", async () =>
+    {
+        var watch = Stopwatch.StartNew();
+        var bytes = SpikeFiles.CreateSampleZip(Math.Clamp(zipCount, 1, 2000));
+        var created = watch.ElapsedMilliseconds;
+        using var stream = new MemoryStream(bytes);
+        using var reference = new DotNetStreamReference(stream);
+        await js!.InvokeVoidAsync("downloadStream", $"spike-modules-{zipCount}.zip", reference);
+        Log($"Created a ZIP with {zipCount} module files ({bytes.Length / 1024} KB) in {created} ms.");
+    });
+
+    private async Task ImportZip(InputFileChangeEventArgs e)
+    {
+        await Try("import ZIP", async () =>
+        {
+            var watch = Stopwatch.StartNew();
+            using var buffer = new MemoryStream();
+            await e.File.OpenReadStream(100_000_000).CopyToAsync(buffer);
+            var copied = watch.ElapsedMilliseconds;
+            buffer.Position = 0;
+            var import = SpikeFiles.ReadZip(buffer);
+            zipSummary = $"ZIP '{e.File.Name}' ({e.File.Size / 1024} KB): {import.Files} drawing files, {import.Valid} valid. " +
+                $"Transfer {copied} ms, unzip and parse {watch.ElapsedMilliseconds - copied} ms. First: {import.First}." +
+                (import.Errors.Count > 0 ? $" Errors: {string.Join("; ", import.Errors.Take(3))}" : "");
+            Log(zipSummary);
+        });
+    }
+
+    // ---------- 4. Storage ----------
+
+    private Task RefreshStorage() => Try("storage info", async () =>
+    {
+        using var doc = JsonDocument.Parse(await js!.InvokeAsync<string>("storageInfo"));
+        var r = doc.RootElement;
+        storageSummary = $"Persistent: {(r.GetProperty("persisted").GetBoolean() ? "yes" : "no")}, " +
+            $"used {r.GetProperty("usage").GetDouble() / 1024:F0} KB of {r.GetProperty("quota").GetDouble() / 1024 / 1024:F0} MB.";
+    });
+
+    private Task RequestPersistence() => Try("request persistence", async () =>
+    {
+        var granted = await js!.InvokeAsync<bool>("requestPersistence");
+        Log(granted ? "Persistent storage granted." : "Persistent storage not granted (the browser decides; installing the app usually helps).");
+        await RefreshStorage();
+    });
+
+    // ---------- 5. Launch queue ----------
+
+    [JSInvokable]
+    public async Task FileLaunched(string name, string text)
+    {
+        fileName = name;
+        drawingJson = text;
+        unsaved = false;
+        Log($"Opened from the operating system: {name}: {SpikeFiles.Describe(text).Text}");
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // ---------- Helpers ----------
+
+    private async Task Try(string what, Func<Task> action)
+    {
+        try
+        {
+            await action();
+        }
+        catch (JSException ex) when (ex.Message.Contains("AbortError") || ex.Message.Contains("aborted"))
+        {
+            Log($"{what}: cancelled by the user.");
+        }
+        catch (Exception ex) when (ex is JSException or JsonException or InvalidDataException or IOException)
+        {
+            Log($"{what} failed: {ex.Message}");
+        }
+    }
+
+    private void Log(string message) => log.Add($"{DateTime.Now:HH:mm:ss} {message}");
+
+    public async ValueTask DisposeAsync()
+    {
+        draftDelay?.Cancel();
+        try { if (js is not null) await js.DisposeAsync(); }
+        catch (JSDisconnectedException) { }
+        self?.Dispose();
+    }
+}
