@@ -50,4 +50,4 @@ CI (`.github/workflows/build-and-deploy.yml`) builds and tests every push and pu
 
 ## Azure
 
-Static Web App `tellurian-trains-drawing` in resource group `Tellurian.Trains` (location West Europe; Static Web Apps aren't available in North Europe). Defined in `infra/azuredeploy.json`; see `infra/README.md` for deploying it and rotating the `AZURE_STATIC_WEB_APPS_API_TOKEN` secret.
+Static Web App `tellurian-trains-drawing` in resource group `Tellurian.Trains` (location West Europe; Static Web Apps aren't available in North Europe). Defined in `infra/azuredeploy.json` together with the deploy identity `id-trainsdrawing-deploy`. GitHub Actions logs in with OpenID Connect (GitHub environments `production` and `preview`) and reads the deployment token at run time; no credentials are stored in GitHub. See `infra/README.md`.

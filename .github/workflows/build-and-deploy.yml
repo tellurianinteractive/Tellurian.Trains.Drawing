@@ -28,6 +28,8 @@ concurrency:
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
+  SWA_NAME: tellurian-trains-drawing
+  SWA_RESOURCE_GROUP: Tellurian.Trains
 
 jobs:
   build:
@@ -109,28 +111,41 @@ jobs:
 
   preview:
     needs: build
-    # Secrets are not available to pull requests from forks.
+    # Pull requests from forks get no Azure login.
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.static_web_app_url }}
     permissions:
+      id-token: write # OIDC login to Azure.
       pull-requests: write # The deploy action comments the preview URL on the pull request.
-    env:
-      HAS_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
     steps:
-      - name: Check deployment token
-        if: env.HAS_TOKEN != 'true'
-        run: echo "::warning::Secret AZURE_STATIC_WEB_APPS_API_TOKEN is not set; skipping deployment."
-
       - uses: actions/download-artifact@v8
         with:
           name: app
           path: app
 
-      - uses: Azure/static-web-apps-deploy@v1
-        if: env.HAS_TOKEN == 'true'
+      # OpenID Connect login as the managed identity id-trainsdrawing-deploy (see infra/); no stored credentials.
+      - uses: azure/login@v3
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # The static web app's deployment token is read at run time and masked; it is never stored in GitHub.
+      - name: Get deployment token
+        id: swa
+        run: |
+          token=$(az staticwebapp secrets list --name "$SWA_NAME" --resource-group "$SWA_RESOURCE_GROUP" --query properties.apiKey --output tsv)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      - uses: Azure/static-web-apps-deploy@v1
+        id: deploy
+        with:
+          azure_static_web_apps_api_token: ${{ steps.swa.outputs.token }}
           repo_token: ${{ github.token }}
           action: upload
           app_location: app
@@ -141,13 +156,29 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      HAS_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
+    environment:
+      name: preview
+    permissions:
+      id-token: write # OIDC login to Azure.
     steps:
-      - uses: Azure/static-web-apps-deploy@v1
-        if: env.HAS_TOKEN == 'true'
+      # OpenID Connect login as the managed identity id-trainsdrawing-deploy (see infra/); no stored credentials.
+      - uses: azure/login@v3
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # The static web app's deployment token is read at run time and masked; it is never stored in GitHub.
+      - name: Get deployment token
+        id: swa
+        run: |
+          token=$(az staticwebapp secrets list --name "$SWA_NAME" --resource-group "$SWA_RESOURCE_GROUP" --query properties.apiKey --output tsv)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      - uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.swa.outputs.token }}
           action: close
 
   deploy:
@@ -160,14 +191,10 @@ jobs:
       url: https://victorious-ocean-0a8bfd603.4.azurestaticapps.net
     permissions:
       contents: write # Tag and GitHub release.
+      id-token: write # OIDC login to Azure.
     env:
       VERSION: ${{ needs.build.outputs.version }}
-      HAS_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
     steps:
-      - name: Check deployment token
-        if: env.HAS_TOKEN != 'true'
-        run: echo "::warning::Secret AZURE_STATIC_WEB_APPS_API_TOKEN is not set; skipping deployment."
-
       - uses: actions/checkout@v7 # For RELEASENOTES.md.
 
       - uses: actions/download-artifact@v8
@@ -175,17 +202,30 @@ jobs:
           name: app
           path: app
 
-      - uses: Azure/static-web-apps-deploy@v1
-        if: env.HAS_TOKEN == 'true'
+      # OpenID Connect login as the managed identity id-trainsdrawing-deploy (see infra/); no stored credentials.
+      - uses: azure/login@v3
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # The static web app's deployment token is read at run time and masked; it is never stored in GitHub.
+      - name: Get deployment token
+        id: swa
+        run: |
+          token=$(az staticwebapp secrets list --name "$SWA_NAME" --resource-group "$SWA_RESOURCE_GROUP" --query properties.apiKey --output tsv)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      - uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.swa.outputs.token }}
           action: upload
           app_location: app
           skip_app_build: true
           skip_api_build: true
 
       - name: Tag and create GitHub release
-        if: env.HAS_TOKEN == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
