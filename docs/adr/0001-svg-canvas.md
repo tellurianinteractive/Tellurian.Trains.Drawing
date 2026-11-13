@@ -1,6 +1,6 @@
 # ADR 0001 – SVG rendered by Blazor for all drawing canvases
 
-Status: **Proposed** (2026-11-13). It becomes *Accepted* when the iPad test is done.
+Status: **Accepted** (2026-11-13). Editing is done on desktop (spec AP-3), so the desktop results decide. Tablets are only for viewing.
 Spike: [pull request #1](https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/pull/1), page `/spike/canvas`.
 
 ## Context
@@ -21,11 +21,11 @@ Registry statistics. Each module is an SVG group with its outline and track path
 |---|---|---|
 | Desktop Chrome, AOT Release build (preview) | 1000 | No problems displaying, panning, zooming or moving a module. |
 | Desktop Firefox, AOT Release build (preview) | 1000 | No problems displaying, panning, zooming or moving a module. |
-| Safari on iPad | – | *Pending.* |
+| Tablets | – | Not tested. Tablets are for viewing only (AP-3); this is checked in Phase 12. |
 
 So the desktop handles more than three times the 300-module target without visible problems.
 
-## Decision (proposed)
+## Decision
 1. All canvases (end profile, module, hall plan) are **SVG rendered by Razor components** in the `Components` library, in millimetres.
 2. **Pan and zoom are handled in JS** by changing the `viewBox`. .NET is told the final view, debounced.
 3. **While dragging, JS moves the element**, and the model is updated in .NET on drop. (The spike's JS mode.) In hall plans the dragged element is a whole **line** of modules, since single modules are not placed freely there (UseCases.md UC-8). Reordering and flipping are list operations, followed by one re-render.
@@ -34,6 +34,6 @@ So the desktop handles more than three times the 300-module target without visib
 5. Read-only display (EX-8) needs no JS at all. Pan and zoom are an optional enhancement.
 
 ## Consequences
-- No canvas fallback is needed, unless the iPad test shows otherwise.
+- No canvas fallback is needed.
 - The JS module of the canvas is small and lives with the canvas component (`*.razor.js`). It must work under Blazor Server too, so it uses no synchronous interop.
 - The spike code is thrown away. The real canvas is built in Phase 4.

@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.18** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.19** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -260,7 +260,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 |---|---|---|
 | AP-1 | M | Installable PWA that works fully offline after the first load. Shows an "update available" prompt when a new version is deployed. |
 | AP-2 | M | UI languages: English, German, Danish, Swedish and Norwegian (the same as the Module Registry), using Tellurian.Localization. |
-| AP-3 | M | Mouse and keyboard on desktop, plus touch (pan, pinch-zoom, drag) on tablets. Phones: viewing only. |
+| AP-3 | M | **Editing is done on a desktop or laptop** with mouse and keyboard, preferably on a large screen. Hall plans need a lot of screen space, much like CAD work. **Tablets and phones are for viewing** end profiles, modules and hall plans, e.g. at the meeting, with touch pan and pinch-zoom. Editing on a touch device is not a goal. |
 | AP-4 | M | Pan/zoom canvas with zoom-to-fit, zoom-to-selection, and a scale bar. |
 | AP-5 | S | Light/dark theme. |
 | AP-6 | M | Context help (Markdown, localised) for the editors. |
@@ -286,7 +286,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 | NF-1 | Blazor WebAssembly **standalone** on **.NET 11**, **AOT compiled**, deployed as static files to **Azure Static Web Apps**. No server code. |
 | NF-2 | Performance: a hall plan with 300 modules pans and zooms smoothly (≥ 30 fps on a mid-range laptop). Reordering, flipping and dragging a line redraw within 100 ms. Validation of 300 modules finishes in under 200 ms. |
 | NF-3 | The first load on broadband is under ~10 s. Later starts work offline from the cache. |
-| NF-4 | Supported browsers: current Chrome, Edge, Firefox and Safari (desktop and iPadOS). |
+| NF-4 | Supported browsers for editing: current Chrome, Edge, Firefox and Safari on desktop. For viewing: also Safari on iPadOS/iOS and Chrome on Android. |
 | NF-5 | Geometry and validation logic sit in a UI-independent .NET library with unit tests (MSTest). |
 | NF-6 | Keep JavaScript interop to a minimum and isolate it (pointer/gesture handling, IndexedDB, file access, printing). |
 | NF-7 | No personal data leaves the device. Owner names are stored only locally and in files the user chooses to share. |
@@ -306,7 +306,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 - **End profile compare view**: two profile pickers with orientation, the overlay canvas, a difference list and the fit result.
 - **Module editor**: variant switcher, toolbar (select, section outline, split/merge section, exit, track tools, label, measure), canvas, property panel (selected object or module properties), problems list.
 - **Hall editor**: like the module editor, with tools for walls, pillars, doors and no-go zones.
-- **Hall plan editor**: tools for public areas and walking paths, module palette (left), canvas (centre), properties and problems (right, with "Mark as OK" on acknowledgeable warnings), summary bar (bottom).
+- **Hall plan editor** (designed for large screens; panels can be collapsed to give the drawing more room, and the drawing can be shown full screen): tools for public areas and walking paths, module collection and ordered list (left), canvas (centre), properties and problems (right, with "Mark as OK" on acknowledgeable warnings), summary bar (bottom).
 
 ## 9. Assumptions
 - The track geometry needs to be accurate enough for planning (±0.5 mm), not for building track.

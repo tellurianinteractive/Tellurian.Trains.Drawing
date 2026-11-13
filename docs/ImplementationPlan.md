@@ -81,7 +81,7 @@ Each phase ends with something working, tested and deployed to the staging envir
    - on push and pull request: `dotnet workload install wasm-tools`, build, test;
    - on push to `master` with a new `<Version>`: `dotnet publish -c Release` and deploy `wwwroot` with `Azure/static-web-apps-deploy` (`skip_app_build: true`), then tag and create a release (same release model as the Module Registry);
    - pull requests get SWA preview environments.
-6. **Spike A – canvas performance:** render 300 module-like SVG groups (arcs + tracks), pan/zoom/drag in the AOT Release build. Measure fps and drag latency in Chrome, Firefox, Safari/iPad. Write an ADR with the results (confirm SVG, or fall back to canvas for the hall view).
+6. **Spike A – canvas performance:** render 300 module-like SVG groups (arcs + tracks), pan/zoom/drag in the AOT Release build. Measure fps and drag latency in Chrome and Firefox (desktop is the editing platform, AP-3). Write an ADR with the results (confirm SVG, or fall back to canvas for the hall view).
 7. **Spike B – localization in WASM:** verify Tellurian.Localization RESX + Markdown under trimming/AOT and culture switching.
 8. **Spike C – files first, IndexedDB as workbench** (UseCases.md):
    - open and save a JSON file in place with the File System Access API, with a download/upload fallback (Firefox, Safari);
@@ -175,7 +175,7 @@ Each phase ends with something working, tested and deployed to the staging envir
 
 6. All components live in the `Components` library. **Read-only display components** for end profiles, modules and hall plans (EX-8), taking the model or the file JSON, with layer options. A minimal Blazor Server test host (in the Components test project or a sample) verifies that the display components render in Interactive Server mode without JS (NF-10).
 
-**Exit criteria:** a test document of simple shapes can be panned, zoomed, selected, moved with snapping and undone, using both mouse and touch. A module drawing renders read-only in both a WebAssembly and a Server host.
+**Exit criteria:** a test document of simple shapes can be panned, zoomed, selected, moved with snapping and undone, with the mouse; pan and pinch-zoom also work with touch, for viewing. A module drawing renders read-only in both a WebAssembly and a Server host.
 **Requirements:** AP-3, AP-4, MD-11, MD-12, EP-10 (dimensions), HP-6 (framework), EX-8 (framework), NF-10.
 
 ### Phase 5 – End profile editor and compare view (≈2 weeks)
@@ -309,7 +309,7 @@ Validation logic lives in `Model` and is unit-tested without UI. Parts of it can
 ### Phase 12 – Localization, help, hardening, release 1.0 (≈2 weeks)
 1. Translations: de, da, sv, nb resources and help Markdown (AP-2, AP-6).
 2. Accessibility pass: keyboard navigation, focus, contrast (NF-9).
-3. Cross-browser/device test round (NF-4): Chrome, Edge, Firefox, Safari macOS, iPadOS.
+3. Cross-browser test round (NF-4): editing in Chrome, Edge, Firefox and Safari on desktop; viewing on iPadOS/iOS and Android.
 4. Performance and size review against NF-2/NF-3, including the first-load time from Azure SWA.
 5. Privacy statement (NF-7), about page, release notes. Set the version to 1.0.0 and deploy.
 6. Freeze **end profile and module schemas v1** (EX-7). Publish them with the app (e.g. `/schema/endprofile.v1.json`, `/schema/module.v1.json`) and hand them over to the Module Registry for its upload feature.
@@ -396,12 +396,12 @@ In priority order (to be confirmed):
 ## 4. Risks and mitigations
 | Risk | Impact | Mitigation |
 |---|---|---|
-| SVG rendering too slow for 300 modules on iPad | Hall plan editor sluggish | Spike A in Phase 0. Overlay layer for dragging, `ShouldRender` discipline. Canvas fallback for the hall plan view if needed. |
+| SVG rendering too slow for large hall plans | Hall plan editor sluggish | Spike A in Phase 0: 1000 modules without problems on desktop (ADR 0001). Overlay layer for dragging, `ShouldRender` discipline. Canvas fallback for the hall plan view if needed. |
 | AOT build time and download size | Slow CI, slow first load | AOT only in Release. Trimming + Brotli. Measure size in CI and fail on large regressions. |
 | Built-in end profiles drawn incorrectly from the FREMO/MMM PDFs | Joint fit colours are wrong | Record the source document and revision per profile. Dimension check against the PDF, ideally reviewed by someone from FREMO/MMM. Users can override (CA-2). |
 | Drawn end profiles too imprecise for the automatic comparison (e.g. ground lines drawn roughly) | False yellow results | Separate, looser landscape tolerance (spec §3.2). Templates and snapping to exact values. Differences are explained in the compare view. |
 | Safari IndexedDB eviction / no File System Access | Data loss, clumsy saving | Persistent storage request. Prompt users to export regularly. Download/upload fallback. Workspace backup (EX-6). |
-| Touch gestures differ between browsers | Poor tablet experience | Pointer Events only, tested on iPad in each phase from Phase 4. |
+| Viewing on tablets and phones is poor | Participants can't read the plan at the meeting | Pointer Events for pan and pinch-zoom; a check on a tablet and a phone in Phase 12. Editing on touch devices is not a goal (AP-3). |
 | Schema changes break Registry uploads | Uploaded files rejected or misread | Schema test in CI, change log, only backward-compatible changes within a major version, coordinated releases with the Registry. |
 | Scope creep in track editing (CAD-like) | Delays | Keep to parametric elements (MD-6). No flex-track/easement in release 1. |
 | Localization library behaviour under trimming | Missing strings at runtime | Spike B in Phase 0. Trimmer roots for resource assemblies if needed. |

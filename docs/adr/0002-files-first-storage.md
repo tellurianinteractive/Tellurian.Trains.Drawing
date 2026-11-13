@@ -7,12 +7,12 @@ Spike: [pull request #2](https://github.com/tellurianinteractive/Tellurian.Train
 The use cases (UseCases.md) make **JSON files the primary result**. IndexedDB holds work in progress:
 drafts, recent files and module collections. A hall plan gets its module files from a **ZIP archive**
 exported from the Module Registry, or from a **shared folder**. Browsers differ a lot in their
-file-system support.
+file-system support. Editing is done on desktop (spec AP-3), so the desktop browsers decide.
 
 ## Results so far
 
 ### Capabilities
-| Capability | Firefox (desktop) | Chrome / Edge | Safari (iPad) |
+| Capability | Firefox | Chrome / Edge | Safari (macOS) |
 |---|---|---|---|
 | File System Access API: open/save pickers, folder picker | ✕ | *pending* | *pending* |
 | Launch queue (open files from the OS) | ✕ | *pending* | *pending* |
@@ -21,7 +21,7 @@ file-system support.
 | Persistent storage API | ✓ | *pending* | *pending* |
 
 ### Measurements
-| Test | Firefox | Chrome / Edge | Safari (iPad) |
+| Test | Firefox | Chrome / Edge | Safari (macOS) |
 |---|---|---|---|
 | ZIP import of 300 module files: unzip and parse in .NET (AOT) | **18 ms** | *pending* | *pending* |
 | Folder fallback (folder upload) | *pending* | – | *pending* |
