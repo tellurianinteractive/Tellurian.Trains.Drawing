@@ -14,7 +14,13 @@
     ".wasm": "application/wasm",
     ".dat": "application/octet-stream",
     ".blat": "application/octet-stream",
-    ".webmanifest": "application/manifest+json"
+    ".webmanifest": "application/manifest+json",
+    ".md": "text/markdown; charset=utf-8",
+    ".tdmodule": "application/vnd.tellurian.drawing+json",
+    ".tdendprofile": "application/vnd.tellurian.drawing+json",
+    ".tdhall": "application/vnd.tellurian.drawing+json",
+    ".tdhallplan": "application/vnd.tellurian.drawing+json",
+    ".tdcatalogue": "application/vnd.tellurian.drawing+json"
   },
   "routes": [
     {
