@@ -114,7 +114,7 @@ Typical scenarios (not roles):
 |---|---|
 | Draw an end profile | One of a few selected persons (e.g. appointed by FREMO or MMM) draws an end profile from a standard's specification sheet, and publishes it with the end profile in the Module Registry (§10). Everyone else imports it and uses it in module drawings. |
 | Check end profile fit | Someone compares two end profiles to see whether and how they fit, e.g. before joining modules of different standards. |
-| Draw a module | The module owner, or someone drawing on the owner's behalf from data the owner provides, draws a module and saves it as a module file. The owner uploads it to the Registry. They can share it in any way they like, and in a coming release they can upload it to the Module Registry (§10). |
+| Draw a module | The module owner, or someone drawing on the owner's behalf from data the owner provides, draws a module and saves it as a module file. The owner or the drawer uploads it to the Registry or another shared location. They can share it in any way they like, and in a coming release they can upload it to the Module Registry (§10). |
 | Draw a hall | Someone draws a hall and shares the hall file. |
 | Plan a layout in a hall | Someone collects module files and builds and validates a hall plan in a hall. They then print it or share the hall plan file. Typically this person is a meeting organiser. |
 | View a hall plan | Someone opens a shared hall plan file, for example to see where their modules go. |

@@ -14,8 +14,8 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 
 | Actor | Typical situation |
 |---|---|
-| Module owner | Draws their own modules, **or provides the data to someone else who draws them** (Registry data, measures, a sketch or photos). Uploads the module files to the Module Registry. |
-| Module drawer | Draws modules on behalf of one or more owners, from the data they provide. Gives the module files back to the owners, who upload them. |
+| Module owner | Draws their own modules and uploads them to the Module Registry or another shared location. The owner can also provide the data to someone else who draws them (Registry data, measures, a sketch or photos). |
+| Module drawer | Draws modules on behalf of one or more owners, from the data they provide, and uploads them to the Module Registry or another shared location. |
 | End profile author | One of a **few selected persons**, e.g. appointed by FREMO or MMM, who draw the end profiles from the standards' specifications. The end profiles are published (in the Module Registry) and then **used** in module drawings by everyone else. |
 | Planner | Usually the meeting organiser. Collects module files and builds the hall plan. |
 | Participant | Looks at a hall plan to see where their modules go. |
@@ -36,7 +36,7 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 | UC-10 | Close a loop (rare) | Closed line, with its closure gap reported |
 | UC-11 | Validate and adjust a hall plan | A hall plan without errors |
 | UC-12 | Print and share a hall plan | Printout, SVG/PNG or hall plan file |
-| UC-13 | Upload a module drawing to the Module Registry | Module data in the Registry (done in the Registry) |
+| UC-13 | Upload a module drawing to the Module Registry or another shared location | Module data in the Registry (done in the Registry) |
 
 ---
 
@@ -123,7 +123,7 @@ Branches are a normal part of most layouts.
 1. The planner prints the plan at a scale or tiled on A4/A3 pages, or exports it as SVG or PNG. The module list per owner can be exported as CSV.
 2. They share the **hall plan file**. Participants open it in the app to view it (UC-8 is not needed to view).
 
-### UC-13 Upload a module drawing to the Module Registry
-**Actor:** module owner. If someone else drew the module, they give the file to the owner. This use case is done in the Registry, not in the app; the Registry decides who may upload.
+### UC-13 Upload a module drawing to the Module Registry or another shared location
+**Actor:** module owner or module drawer. This use case is done in the Registry, not in the app; the Registry decides who may upload. A file can also be put in another shared location, e.g. the shared folder a planner reads (UC-7).
 1. The owner uploads the module file to their module in the Registry.
 2. The Registry validates it, stores it, and offers to update missing or different module data from the drawing (ModuleDrawing.md §8.8).
