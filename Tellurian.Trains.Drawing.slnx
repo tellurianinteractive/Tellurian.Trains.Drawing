@@ -16,6 +16,7 @@
     <File Path="docs/ImplementationPlan.md" />
     <File Path="docs/ModuleDrawing.md" />
     <File Path="docs/Specification.md" />
+    <File Path="docs/UseCases.md" />
   </Folder>
   <Project Path="Tellurian.Trains.Drawing.App.Tests/Tellurian.Trains.Drawing.App.Tests.csproj" />
   <Project Path="Tellurian.Trains.Drawing.App/Tellurian.Trains.Drawing.App.csproj" />

@@ -28,7 +28,7 @@ So the desktop handles more than three times the 300-module target without visib
 ## Decision (proposed)
 1. All canvases (end profile, module, hall plan) are **SVG rendered by Razor components** in the `Components` library, in millimetres.
 2. **Pan and zoom are handled in JS** by changing the `viewBox`. .NET is told the final view, debounced.
-3. **While dragging, JS moves the element**, and the model is updated in .NET on drop. (The spike's JS mode.)
+3. **While dragging, JS moves the element**, and the model is updated in .NET on drop. (The spike's JS mode.) In hall plans the dragged element is a whole **line** of modules, since single modules are not placed freely there (UseCases.md UC-8). Reordering and flipping are list operations, followed by one re-render.
    Snapping previews during a drag are computed in .NET at most once per animation frame, and only for the dragged item.
 4. Static content uses `@key` and per-item components with `ShouldRender`, so that a change re-renders only what changed.
 5. Read-only display (EX-8) needs no JS at all. Pan and zoom are an optional enhancement.

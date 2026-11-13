@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Implementation Plan
 
-Status: **Draft 0.14** (2026-11-13). Based on [Specification.md](Specification.md) draft 0.15 and [ModuleDrawing.md](ModuleDrawing.md) draft 0.1.
+Status: **Draft 0.15** (2026-11-13). Based on [Specification.md](Specification.md) draft 0.18, [UseCases.md](UseCases.md) draft 0.1 and [ModuleDrawing.md](ModuleDrawing.md) draft 0.1.
 Requirement IDs (e.g. `MD-6`) refer to the specification.
 
 ---
@@ -83,7 +83,12 @@ Each phase ends with something working, tested and deployed to the staging envir
    - pull requests get SWA preview environments.
 6. **Spike A – canvas performance:** render 300 module-like SVG groups (arcs + tracks), pan/zoom/drag in the AOT Release build. Measure fps and drag latency in Chrome, Firefox, Safari/iPad. Write an ADR with the results (confirm SVG, or fall back to canvas for the hall view).
 7. **Spike B – localization in WASM:** verify Tellurian.Localization RESX + Markdown under trimming/AOT and culture switching.
-8. **Spike C – storage/files:** IndexedDB module, persistent storage request, File System Access with fallback, file handlers.
+8. **Spike C – files first, IndexedDB as workbench** (UseCases.md):
+   - open and save a JSON file in place with the File System Access API, with a download/upload fallback (Firefox, Safari);
+   - pick a **folder** and read all `*.tdmodule` files in it, then re-read it later with the stored handle (Chromium); multi-file fallback;
+   - read module files from a **ZIP archive** with `System.IO.Compression` in WebAssembly;
+   - drafts and recent file handles in IndexedDB, and the persistent-storage request;
+   - manifest file handlers.
 
 **Exit criteria:** an installable, offline-capable "hello" app deployed to Azure SWA from CI. Spike results recorded in `docs/adr/`.
 **Requirements:** NF-1, NF-3, NF-4 (partly), AP-1 (skeleton).
@@ -138,16 +143,23 @@ Each phase ends with something working, tested and deployed to the staging envir
 **Exit criteria:** end profiles and a module can be created from templates in code, saved to a file and loaded back identically. The fit evaluator classifies the built-in profile pairs as expected.
 **Requirements:** CA-1, CA-2 (logic), EP-2/EP-7 (logic), MD-3 (logic), MD-10 (logic), §6 file format, EX-4 (logic), EX-7.
 
-### Phase 3 – Storage, library and app shell (≈1–2 weeks)
-1. Repository services over IndexedDB (end profiles, modules with variants, halls, hall plans, user catalogue, settings), with revision and modified time.
-2. App shell: navigation, start page with recent items, Library tabs (End profiles, Modules, Halls, Hall plans, Catalogue) with search and filter.
-3. Create, duplicate, rename, delete. Import and export of all file kinds. Copy a built-in end profile to a user profile.
+### Phase 3 – Files, workbench storage and app shell (≈1–2 weeks)
+**Files are the primary result; IndexedDB is the workbench** (UseCases.md, spec §6).
+1. File service: open, save, save as for all file kinds, using the File System Access API with a fallback. Import from **ZIP archives** and **folders** (EX-9).
+2. Workbench over IndexedDB:
+   - **drafts**, autosaved per open drawing, with an "unsaved changes" flag;
+   - **recent files**, with handles where possible;
+   - the user catalogue and settings.
+
+   Each stored item has a revision and modified time.
+3. App shell: navigation. The start page shows the drafts with unsaved changes, recent files, and New / Open (UC-5).
+4. The catalogue of end profiles and standards, including importing end profiles from Registry files or ZIP archives (UC-2). Copy a built-in end profile to a user profile.
 4. Catalogue pages: list and edit scales, standards, standard add-ons and overrides (user layer).
 5. Localization infrastructure in place: English master resources, language selector.
 6. Update-available prompt (AP-1).
 
-**Exit criteria:** create a module from a template via the UI, see it in the library, export it, delete it, import it again.
-**Requirements:** EP-1 (library part), MD-1, CA-2, CA-3, EX-4, AP-1, AP-2 (infrastructure).
+**Exit criteria:** create a module from a template via the UI and save it as a file. Close the app with unsaved changes and resume the draft. Re-open the saved file from the recent files. Import end profiles from a ZIP archive.
+**Requirements:** EP-1 (library part), MD-1, CA-2, CA-3, EX-4, EX-9, AP-1, AP-2 (infrastructure).
 
 ### Phase 4 – Shared drawing canvas and editor framework (≈2–3 weeks)
 1. `DrawingCanvas` component plus `canvas.js`: pan, wheel/pinch zoom, zoom to fit/selection, scale bar, grid (AP-3, AP-4).
@@ -225,31 +237,35 @@ This comes first among the editors because module exits (Phase 6) depend on end 
 **Requirements:** HA-1, HA-2, HA-3, HA-5.
 
 ### Phase 9 – Hall planning (≈3 weeks)
+Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-10). There is no free placement of single modules.
 1. Create a hall plan (hall + primary standard + additional accepted standards, editable later). Settings for tolerances and clearance (HP-1).
-2. Module palette filtered by the accepted standards (filter can be switched off), with variant choice and a "placed" indicator (HP-2, HP-7). Switching the variant of a placed module, keeping the joint at an exit with the same label (HP-7).
-3. Drag from the palette (mouse/touch) into the canvas. Exit-to-exit snapping with the join math. Cycle which exit joins (HP-3).
-4. Free move/rotate with step rotation, numeric pose, lock (HP-4). Leg adjustment per placement with a marker in the drawing (HP-13).
-5. Joint management: automatic joint creation when exits coincide within tolerance, detach, move a chain (HP-5).
-   **Joint fit feedback (HP-11):**
-   - the snap preview shows the fit from the evaluator;
-   - joint markers in green ✓, yellow !, yellow + clamp (*tving*) symbol, or red ✕, also in print/export;
+2. **Module collection** (HP-2, UC-7): import from a ZIP archive, a shared folder (re-read for changes) or single files. A list with filters (standard, add-ons, owner, not used yet) and flags (unaccepted standard, missing end profiles). Cached in IndexedDB.
+3. **Line model and layout engine** in `Model`, unit-tested without UI:
+   - `Line` (ordered entries, anchor entry and pose, optional start at the free exit of another line's module, closed flag) and `LineEntry` (module, variant, entry exit, exit exit);
+   - `LineLayout.Compute(line, …) → poses`: starts at the anchor and works outwards in both directions, joining each entry's entry exit to its neighbour's exit exit with the join math (§1.3). Branch lines start from their parent exit. A closed line reports its closure gap (VA-5);
+   - tests: straight and curve chains, flips, anchors in the middle, branches, loops that close and loops that don't.
+4. **Ordered list UI** (HP-3, HP-4): add from the collection, remove, move up/down, drag in the list, flip (2 exits), choose entry/exit exits (≥ 3 exits), switch variant (HP-7). The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
+5. **Positioning lines** (HP-5): drag or rotate a whole line in the drawing (step rotation), numeric pose, choose the anchor module, lock. Several lines per plan. Branch lines (HP-19). Closing a loop (HP-20, should).
+6. Leg adjustment per placement with a marker in the drawing (HP-13).
+7. **Joint fit feedback (HP-11):**
+   - the fit is evaluated for every joint after each change;
+   - markers in green ✓, yellow !, yellow + clamp (*tving*) symbol, or red ✕, in the drawing, in the list, and in print/export;
    - per-joint override of the join method;
    - editable number of clamps.
 
    **Inspect joint (HP-12):** opens the compare view for the joint's two exits in their actual orientations.
-6. Layout graph (union-find/BFS over joints) used for chain moves and later loop detection.
-7. Embedding of module drawings (with revision), end profiles and catalogue entries in the hall plan file. Difference resolution on open (EX-5).
-8. **Read-only modules (HP-16)**:
+8. Embedding of module drawings (with revision), end profiles and catalogue entries in the hall plan file. Difference resolution on open (EX-5).
+9. **Read-only modules (HP-16)**:
    - placements reference an immutable embedded module snapshot;
    - the hall plan editor exposes only placement and joint commands, so there are no module-editing commands in the plan;
    - "Open in module editor" goes to the library copy;
    - a "newer revision available" indicator, with a diff and an "Update" command that replaces the snapshot and re-validates the plan.
-9. Operator spaces, public sides and duck-under areas (from the module drawings) rendered for placed modules, with layer toggles (HP-14).
-10. Public area tool (polygon, reusing the path tool) and walking path tool (centre line + width, snapping to module edges, duck-under passage symbol) (HP-17, HP-18).
-11. Performance check against NF-2 with a generated 300-module plan.
+10. Operator spaces, public sides and duck-under areas (from the module drawings) rendered for placed modules, with layer toggles (HP-14).
+11. Public area tool (polygon, reusing the path tool) and walking path tool (centre line + width, snapping to module edges, duck-under passage symbol) (HP-17, HP-18).
+12. Performance check against NF-2 with a generated 300-module plan.
 
-**Milestone M2:** a layout with a closed loop of modules can be built in a hall, saved and shared as one file.
-**Requirements:** HP-1..HP-7, HP-11, HP-12, HP-13, HP-14, HP-16, HP-17, HP-18, EX-5, NF-2.
+**Milestone M2:** modules from a Registry ZIP archive can be ordered into an end-to-end layout with a branch, placed in a hall, saved and shared as one file.
+**Requirements:** HP-1..HP-7, HP-11, HP-12, HP-13, HP-14, HP-16, HP-17, HP-18, HP-19, EX-5, NF-2.
 Loop closure is *report only* (VA-5). Adjustable modules (MD-16) are a later item. They can be added later without breaking the file format, by adding optional parameters to the module.
 
 ### Phase 10 – Validation engine and problems list (≈2–3 weeks)
@@ -303,7 +319,7 @@ Validation logic lives in `Model` and is unit-tested without UI. Parts of it can
 
 ### Phase 13 – "Should" requirements (release 1.x, ≈3–5 weeks)
 In priority order (to be confirmed):
-1. EP-9 fit matrix; "Level from here" (HP-13).
+1. EP-9 fit matrix; "Level from here" (HP-13); HP-20 closing a loop.
 2. VA-12 public side check and VA-8 enclosed areas (reachability, with duck-under passages).
 3. HP-8/HP-9 colouring by owner/state/status, plus layers.
 4. RP-3 joint list, RP-4 placement numbering.
@@ -346,7 +362,8 @@ In priority order (to be confirmed):
 | HA-4 | 13 |
 | HA-6 | replaced by HP-17 |
 | HP-1 … HP-7, HP-11, HP-12, HP-13 | 9 (HP-6 framework in 4; "Level from here" in 13) |
-| HP-14, HP-16, HP-17, HP-18 | 9 |
+| HP-14, HP-16, HP-17, HP-18, HP-19 | 9 |
+| HP-20 | 13 |
 | HP-15 | 10 |
 | HP-8, HP-9 | 13 |
 | HP-10 | Later |
@@ -357,6 +374,7 @@ In priority order (to be confirmed):
 | EX-1, EX-2 | 11 |
 | EX-3, EX-6 | 13 |
 | EX-4 | 2 (logic), 3 (UI) |
+| EX-9 | 0 (spike C), 3, 9 |
 | EX-5 | 9 |
 | EX-7 | 2 (schemas), 12 (freeze v1) |
 | EX-8 | 4 (framework), 5, 6, 9 (per drawing kind) |

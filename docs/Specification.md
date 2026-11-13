@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.17** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.18** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -12,7 +12,7 @@ A progressive web app (PWA) that anyone can use to:
 
 1. **Draw end profiles**: the cross-section of a module end, with its end plate, track positions, screw holes and ground line.
 2. **Draw modules**: the baseboard outline, the track plan and the module ends (exits) with their end profiles.
-3. **Plan a layout in a hall**: drag module drawings into a drawing of the hall, join them end to end, and check that the layout fits physically and technically.
+3. **Plan a layout in a hall**: put modules in order, so the app joins them end to end, place the result in a drawing of the hall, and check that the layout fits physically and technically.
 
 **All drawings are 2D.** End profiles are drawn in *end view*. Modules, halls and hall plans are drawn in *plan view* (from above).
 
@@ -25,7 +25,7 @@ The app is a client-only **AOT-compiled Blazor WebAssembly standalone app**. It 
 - Module drawing editor (outline + track plan + exits).
 - Local catalogue of scales, module standards and end profiles, bundled with the app and editable by the user.
 - Hall editor (walls, pillars, doors, no-go zones).
-- Hall planning: placing modules, snapping and validating joints, clearance checks, loop closure checks, statistics.
+- Hall planning: collecting module files (ZIP, shared folder), ordering modules into lines, flipping, branching, validating joints, clearance checks, loop closure checks, statistics.
 - Local storage, file import/export, printing and export.
 
 ### Out of scope (first release)
@@ -56,11 +56,14 @@ Terms and properties follow the **Module Registry** so that a later import maps 
 | **Internal joint** | The fixed joint between two sections of the same module. The owner designs the **internal end profile** freely; it does not have to follow any standard. | The two sections, position along their common edge, optional internal end profile drawing (user end profile, not tied to a standard). |
 | **Exit** (*ModuleExit*) | An **outer** module end that can connect to another module. Its end profile **must conform to the module's standard**. | Label (e.g. "A", "East"), direction (*Eastwards/Westwards/Undefined*), end profile, **profile orientation** (*Normal* / *Mirrored*, only meaningful for asymmetric profiles), **rail-top offset** (mm relative to the standard's rail-top height; **0 = standard**, e.g. 1300 mm above floor; non-zero only on ramp modules), **pose** (position + outward heading in module coordinates). |
 | **Hall** | A room where a hall plan is built. | Name, outline (polygon), obstacles, doors, no-go zones, notes. |
-| **Hall plan** | A hall plus the modules placed in it. | Name, hall, primary standard, **accepted standards** (one or more, e.g. FREMO H0-RE and MMM-2R), **preferred add-ons** (e.g. MMM-Modern), placements, joints, **public areas**, **walking paths**, acknowledgements, settings (tolerances, clearance, path width). |
+| **Hall plan** | A hall plus the modules placed in it. | Name, hall, primary standard, **accepted standards** (one or more, e.g. FREMO H0-RE and MMM-2R), **preferred add-ons** (e.g. MMM-Modern), **module collection**, **lines**, **public areas**, **walking paths**, acknowledgements, settings (tolerances, clearance, path width). |
+| **Module collection** | The module files available to a hall plan, imported from a ZIP archive, a shared folder or single files (UC-7). | Modules (read-only copies with revision), source (ZIP / folder / files), import time. |
+| **Line** | A sequence of modules joined **end to end**. This is how almost all layouts are built. The positions of its modules are **computed**, not placed one by one. | Ordered entries, **anchor** (one of its entries, by default the first, with a pose in hall coordinates), optional **start at** a free exit of a module in another line (a branch), **closed** flag (rare loop), name. |
+| **Line entry** | One module in a line. | Module and variant, **entry exit** (joins the previous entry), **exit exit** (continues the line). For a 2-exit module these are swapped by a **flip**. |
 | **Public area** | An area of the plan where visitors have access. | Polygon, label/note. |
 | **Walking path** | A path for train drivers to walk along while following their trains. It may pass under duck-under parts of modules, but not through other modules. | Centre line (open path of line/arc segments), width (default 600 mm, configurable per plan), label. |
-| **Placement** | One module, in one of its variants, placed in a hall plan. The module drawing is **read-only** in the plan; only the placement's own properties can be changed there. | Reference to an embedded (read-only) module drawing and its revision, chosen variant, pose in hall coordinates, **leg adjustment** (mm, default 0; raises or lowers the whole module), locked flag, note. |
-| **Joint** | Two placed exits connected to each other. | Exit A, exit B, **fit** (§3.2: *Fits* / *Fits with mismatch* / *Fits with clamps* / *Incompatible*), **join method** (*Bolted* / *Clamped*), measured gap (mm) and angle error (°). |
+| **Placement** | One module, in one of its variants, placed in a hall plan, i.e. a line entry seen together with its computed pose. The module drawing is **read-only** in the plan; only the placement's own properties can be changed there. | Reference to an embedded (read-only) module drawing and its revision, chosen variant, **computed** pose in hall coordinates, **leg adjustment** (mm, default 0; raises or lowers the whole module), locked flag, note. |
+| **Joint** | Two placed exits connected to each other. Joints between consecutive line entries are **exact by construction**; only loop closures and branch reconnections can have a gap. | Exit A, exit B, **fit** (§3.2: *Fits* / *Fits with mismatch* / *Fits with clamps* / *Incompatible*), **join method** (*Bolted* / *Clamped*), measured gap (mm) and angle error (°). |
 | **Acknowledgement** | A planner's decision that a specific warning in a hall plan is OK. It is valid only as long as the situation it was given for is unchanged. | Finding type, involved placements, a **fingerprint** of their state when acknowledged (pose, variant, leg adjustment and module drawing revision), note, time. |
 | **Clamped joint** (Swedish *tving*) | A joint whose tracks line up but whose screw holes don't, so the ends are held together with clamps. This is typical for single-track modules of different standards, e.g. FREMO H0-RE and MMM-2R. Shown with a clamp symbol at the junction. | Number of clamps (default 2), note. |
 
@@ -99,6 +102,8 @@ Notes:
 - **Colour is never the only signal.** Each fit has its own symbol as well (✓, !, clamp, ✕), for colour-blind users and black-and-white prints.
 
 ## 4. Users and main use cases
+
+The use cases are described in detail in [UseCases.md](UseCases.md).
 
 **Anyone can use the app** to draw end profiles, modules, halls and hall plans. The app has **no accounts, rights or roles**: every user can do everything with the data on their own device.
 Roles and access rights exist only **outside** the app. For example, the Module Registry defines which module data a user may see or change, and a meeting organiser decides how modules are submitted to a meeting.
@@ -189,10 +194,10 @@ The structure of a module drawing (exits → end plates → sides → sections �
 | ID | Pri | Requirement |
 |---|---|---|
 | HP-1 | M | Create a hall plan for a hall with a primary module standard and **any number of additional accepted standards** of the same scale (e.g. FREMO H0-RE + MMM-2R). Accepted standards can be changed at any time. The plan can also have **preferred add-ons** (e.g. MMM-Modern). |
-| HP-2 | M | A **module palette** shows the module library, filtered by the hall plan's accepted standards. The filter can be switched off to show all modules of the scale. A second filter shows only modules that meet the preferred add-ons. Modules are **dragged** into the hall (mouse and touch), using the default variant unless another is chosen in the palette. |
-| HP-3 | M | **Snapping**: while dragging, the app finds the nearest open exit of an already placed module and offers to join it with one of the dragged module's exits. The dragged module is then placed exactly in pose. The user can cycle through which of its exits joins (keyboard/tap) to "turn the module around". |
-| HP-4 | M | Free placement: move, rotate (free, or in 15°/configurable steps), numeric pose input. A placement can be locked. |
-| HP-5 | M | Select a placement and move it, delete it, or detach it from its neighbours. Moving a chain of joined modules moves them together (option). |
+| HP-2 | M | **Module collection** (UC-7): import module files into the plan's collection **from a ZIP archive** (e.g. exported from the Module Registry), **from a shared folder** (directory picker; re-reading the folder picks up new and changed files where the browser allows), or as single files. The collection lists the modules with owner, standard, length and number of exits, and filters by accepted standards, preferred add-ons, owner and "not used yet". It flags modules with an unaccepted standard or missing end profiles. |
+| HP-3 | M | **Ordering** (UC-8): a line is shown as an **ordered list** next to the drawing. Add modules from the collection at the end or at any position, remove them, **move them up or down**, or drag them in the list. The plan is **redrawn immediately** after every change. Selecting a module in the list highlights it in the drawing, and the other way round. |
+| HP-4 | M | **Flip** (UC-8): turn a module around, so that its other end connects to the previous module, e.g. a curve that bends the wrong way. For a module with three or more exits, choose the entry exit and the exit that continues the line. The plan is redrawn immediately. |
+| HP-5 | M | **Positioning lines** (UC-8): each line has an **anchor module** (by default the first; any module can be chosen, e.g. a station that must stand in a particular place). Move and rotate a line by dragging it in the drawing (rotation in 15°/configurable steps) or with numeric input. The rest of the line is computed in both directions from the anchor. A line can be locked. A plan can have several lines. |
 | HP-6 | M | Rubber-band and multi-select. Undo/redo. Autosave. |
 | HP-7 | M | The same module can only be placed once per hall plan, in one variant (it is one physical object). The variant of a placed module can be switched. The module stays joined at an exit with the same label in the new variant, if there is one; otherwise it keeps its pose. |
 | HP-8 | S | Colour modules by owner, standard, add-on compliance, functional state or validation status. Show a legend. (Joint fit markers, HP-11, are always shown.) |
@@ -202,7 +207,9 @@ The structure of a module drawing (exits → end plates → sides → sections �
 | HP-18 | M | **Walking paths**: draw walking paths for train drivers as centre lines with a width (plan default 600 mm; can be set per path). They snap to module edges and to each other. A path may pass under duck-under areas; a passage under a duck-under module is shown with a duck-under symbol. |
 | HP-15 | M | **Acknowledge warnings**: the planner can mark an acknowledgeable warning (see VA-11) as OK, with an optional note. It then appears as "acknowledged" in the problems list and in the drawing instead of as a warning. If any involved placement changes (moved, rotated, variant switched, leg adjustment changed, or module updated to a newer revision, HP-16) and the warning still applies, the acknowledgement is **invalidated**: the warning is shown again (marked "previously acknowledged") and must be acknowledged again. If the warning no longer applies, the acknowledgement is removed. |
 | HP-10 | L | Drag an arrangement into another plan and use a plan as a template. |
-| HP-11 | M | **Joint fit feedback**: snapping (HP-3) offers all exits, and the snap preview already shows the fit colour and symbol (§3.2). Each joint is drawn with its fit marker: green, yellow, yellow + **clamp (tving) symbol** across the junction, or red. The join method follows the rules automatically. The user can override it per joint (e.g. "Join with clamps" when the screw-hole data is missing), and can edit the number of clamps. An incompatible (red) joint can be placed but stays an error. |
+| HP-19 | M | **Branches** (UC-9): a free exit of a module with three or more exits can **start a branch line**. The branch is anchored at that exit and moves with it. |
+| HP-20 | S | **Closing a loop** (UC-10, rare): mark a line as closed, so that its last module should join its first, or join a chosen free exit elsewhere. The closure gap is reported (VA-5). |
+| HP-11 | M | **Joint fit feedback**: when a module is added, moved or flipped (HP-3, HP-4), the joint with its neighbours gets its fit colour and symbol immediately (§3.2); the ordered list shows them too. Each joint is drawn with its fit marker: green, yellow, yellow + **clamp (tving) symbol** across the junction, or red. The join method follows the rules automatically. The user can override it per joint (e.g. "Join with clamps" when the screw-hole data is missing), and can edit the number of clamps. An incompatible (red) joint can be placed but stays an error. |
 | HP-13 | M | **Leg adjustment**: set a placement's leg adjustment numerically (0 = standard height). A "Level from here" command (S) propagates adjustments along a chain of joined modules from a chosen module, so heights continue after a ramp. Modules with a non-zero adjustment are marked in the drawing. |
 | HP-16 | M | **Modules are read-only in a hall plan.** The plan can't change a module's drawing or properties: outline, tracks, exits, operator spaces, public sides, owners and so on. In the plan you can only change placement and joint properties: pose, variant, leg adjustment, lock, note, join-method override and number of clamps. "Open in module editor" opens the module from the library, if it is there. When the library has a newer revision of a placed module, the plan shows it. The planner can then **update** the embedded copy after seeing the differences, which re-validates the plan. |
 | HP-12 | M | **Inspect joint**: selecting a joint opens the end profile compare view (EP-8) for its two exits, in their actual orientations. |
@@ -215,9 +222,9 @@ Validation runs continuously and its results appear in a **problems list** and a
 | VA-1 | M | **Joint fit** according to §3.2:<br>• *Incompatible* is an **error**.<br>• *Fits with mismatch* is a **warning** ("end profiles don't match", with the differing elements).<br>• *Fits with clamps* is a **warning** ("clamps needed").<br>• *Fits* gives no finding.<br>A joint whose method the user overrode against the rule result is reported as a warning with the reason. Modules flagged as end-profile switcher are adapters and are validated per exit. |
 | VA-2 | M | **Standard/scale consistency**: modules of another scale are an error. Modules whose standard is not among the hall plan's **accepted standards** are a warning. |
 | VA-14 | M | **Preferred add-ons**: a module that doesn't meet a preferred add-on of the hall plan (e.g. MMM-Modern) is a **warning** ("doesn't meet MMM-Modern"). The warning is acknowledgeable (HP-15). Modules of standards the add-on doesn't apply to are not checked. |
-| VA-3 | M | **Joint geometry**: for two exits within the snap distance that are not perfectly aligned, show the position gap (mm) and angle error (°). Within the tolerances (default 2 mm, 0.5°, configurable per plan) the joint is accepted with a warning. Outside them it is not a joint. |
+| VA-3 | M | **Joint geometry** (loop closures and branch reconnections only; joints within a line are exact): for two exits that should join but don't align exactly, show the position gap (mm) and angle error (°). Within the tolerances (default 2 mm, 0.5°, configurable per plan) the joint is accepted with a warning. Outside them it is not a joint. |
 | VA-4 | M | **Open ends**: list every exit without a joint, except exits of modules flagged as end of line. |
-| VA-5 | M | **Loop closure**: when the layout graph has a cycle, report the closure gap (dx, dy, angle and height) at the last joint. Highlight the modules in the loop. |
+| VA-5 | M | **Loop closure**: for a closed line (HP-20), report the closure gap (dx, dy, angle and height) at the closing joint. Highlight the modules in the loop. |
 | VA-6 | M | **Overlap**: module outlines may not overlap each other (except at joints), walls, obstacles, door zones or no-go zones. |
 | VA-7 | M | **Clearance**: check the minimum distance between non-joined module outlines, and between modules and walls/obstacles. Default from the standard, can be overridden per plan. Show violations as dimension markers. Operator spaces count as part of the module for this check, so an aisle is measured from the edge of the operator space. This can be switched off per plan. |
 | VA-11 | M | **Operator space conflicts**: an operator space that overlaps another module's operator space is a **warning**. The same applies if it overlaps another module's baseboard, a wall, an obstacle, a door zone, a no-go zone or a **public area**. These warnings are **acknowledgeable** (HP-15). |
@@ -241,7 +248,8 @@ Validation runs continuously and its results appear in a **problems list** and a
 | EX-1 | M | Export an end profile drawing, a module drawing and a hall plan as **SVG** and **PNG**. |
 | EX-2 | M | **Print** at a chosen scale (e.g. 1:1 for end profiles, 1:10, 1:50, 1:100) or fit to page. Large drawings are printed on tiled A4/A3 pages with overlap marks. Includes a title block (name, date, scale bar, legend). |
 | EX-3 | S | PDF export (may be "print to PDF" in the browser for the first release). |
-| EX-4 | M | Save and open **end profile files**, **module files**, **hall files**, **hall plan files** and **catalogue files** (§6). |
+| EX-4 | M | Save and open **end profile files**, **module files**, **hall files**, **hall plan files** and **catalogue files** (§6). **Files are the primary result** of all drawing work (UseCases.md). |
+| EX-9 | M | **Import from ZIP archives and folders**: read module and end profile files from a ZIP archive (e.g. a Module Registry export) or from a folder chosen by the user, in one go (UC-2, UC-7). |
 | EX-5 | M | Opening a hall plan or module file that contains modules or end profiles that already exist in the local library shows any differences (by revision). For the **library**, the user chooses whether to keep the local version or import the file's version. For a **hall plan**, the embedded modules stay as they are until the planner updates them (HP-16). |
 | EX-6 | S | Export and import of the whole local workspace (backup). |
 | EX-7 | M | The **module and end profile file formats are public contracts**. The Module Registry will accept module files and end profile drawings for upload in a coming release. The formats are documented, have published JSON Schemas, and are versioned with backward-compatible changes only within a major schema version (§6). |
@@ -259,7 +267,8 @@ Validation runs continuously and its results appear in a **problems list** and a
 
 ## 6. Data storage and file formats
 
-- **Local storage**: IndexedDB with object stores for end profiles, modules (with their variants), halls, hall plans, catalogue (user part) and settings. Each drawing is stored as one JSON document with `id` (GUID), `schemaVersion`, `revision` (incremented per save) and `modified` (UTC).
+- **Files are primary.** The JSON file is the result of every drawing. Users keep, share and upload files.
+- **IndexedDB is the workbench** for work in progress: autosaved **drafts** (one per open drawing, with an "unsaved changes" flag), **recent files** (with file handles where the File System Access API allows re-opening), the **module collections** of hall plans, the user part of the catalogue, and settings. Each stored drawing is one JSON document with `id` (GUID), `schemaVersion`, `revision` (incremented per save) and `modified` (UTC). The app reminds the user to save a file when a draft has unsaved changes.
 - **File format**: UTF-8 JSON with an envelope `{ "format": "tellurian-drawing", "kind": "endProfile|module|hall|hallPlan|catalogue", "schemaVersion": n, "appVersion": "...", "content": {...} }`.
   File extensions: `.tdendprofile`, `.tdmodule`, `.tdhall`, `.tdhallplan`, `.tdcatalogue` (JSON content; the extension is what the OS uses to associate files).
 - **Self-contained files**:
@@ -275,7 +284,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 | ID | Requirement |
 |---|---|
 | NF-1 | Blazor WebAssembly **standalone** on **.NET 11**, **AOT compiled**, deployed as static files to **Azure Static Web Apps**. No server code. |
-| NF-2 | Performance: a hall plan with 300 modules pans and zooms smoothly (≥ 30 fps on a mid-range laptop). Dragging and snapping respond within 50 ms. Validation of 300 modules finishes in under 200 ms. |
+| NF-2 | Performance: a hall plan with 300 modules pans and zooms smoothly (≥ 30 fps on a mid-range laptop). Reordering, flipping and dragging a line redraw within 100 ms. Validation of 300 modules finishes in under 200 ms. |
 | NF-3 | The first load on broadband is under ~10 s. Later starts work offline from the cache. |
 | NF-4 | Supported browsers: current Chrome, Edge, Firefox and Safari (desktop and iPadOS). |
 | NF-5 | Geometry and validation logic sit in a UI-independent .NET library with unit tests (MSTest). |
