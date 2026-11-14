@@ -183,4 +183,13 @@
   <data name="SelectedCount" xml:space="preserve"><value>{0} markerade</value></data>
   <data name="RailTop" xml:space="preserve"><value>RÖK</value></data>
   <data name="CannotShow" xml:space="preserve"><value>Ritningen kan inte visas.</value></data>
+  <data name="Tool_Select" xml:space="preserve"><value>Markera</value></data>
+  <data name="Tool_Path" xml:space="preserve"><value>Rita</value></data>
+  <data name="Tool_Measure" xml:space="preserve"><value>Mät</value></data>
+  <data name="Tool_Dimension" xml:space="preserve"><value>Måttsätt</value></data>
+  <data name="ArcMode" xml:space="preserve"><value>Bågar</value></data>
+  <data name="PathHelp" xml:space="preserve"><value>Klicka för att börja en linje.</value></data>
+  <data name="PathHelpDrawing" xml:space="preserve"><value>Klicka för att lägga till punkter; klicka på början för att sluta, Enter för att avsluta, Backsteg för att ta bort en punkt, Escape för att avbryta.</value></data>
+  <data name="DimensionHelp" xml:space="preserve"><value>Klicka på två punkter och sedan där måttlinjen ska ligga.</value></data>
+  <data name="MeasureResult" xml:space="preserve"><value>Avstånd {0} mm (dx {1}, dy {2}), riktning {3}°</value></data>
 </root>

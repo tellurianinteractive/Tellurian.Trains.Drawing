@@ -116,6 +116,20 @@ public sealed partial class ReadOnlyViewTests
     }
 
     [TestMethod]
+    public async Task DimensionLineShowsTheValueOrItsText()
+    {
+        var dimension = Dimension.Place(new(0, 0), new(1234.4, 0), new(600, 100));
+        var html = await StaticRendering.RenderAsync<Rendering.DimensionLine>(new Dictionary<string, object?> { [nameof(Rendering.DimensionLine.Dimension)] = dimension });
+        Assert.AreEqual(2, Count(html, "dimension-extension"));
+        Assert.AreEqual(2, Count(html, "dimension-tick"));
+        StringAssert.Contains(html, ">1234</text>");
+
+        var labelled = await StaticRendering.RenderAsync<Rendering.DimensionLine>(new Dictionary<string, object?> { [nameof(Rendering.DimensionLine.Dimension)] = dimension with { Text = "c/c" } });
+        StringAssert.Contains(labelled, ">c/c</text>");
+        Assert.AreEqual("45.3", Rendering.DimensionLine.Value(45.26));
+    }
+
+    [TestMethod]
     public async Task HallView()
     {
         var hall = Hall.Rectangle("Club hall", 12000, 8000) with

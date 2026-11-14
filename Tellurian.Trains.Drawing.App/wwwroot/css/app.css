@@ -386,3 +386,33 @@ a.button {
     border: 1px solid var(--app-border);
     border-radius: 4px;
 }
+
+.sandbox-preview {
+    fill: none;
+    stroke: #1b6ec2;
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+}
+
+.sandbox-measure {
+    stroke: #c24b1b;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+}
+
+.sandbox-close {
+    fill: none;
+    stroke: #2f8f46;
+    stroke-width: 2;
+}
+
+label.inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.sandbox-status {
+    min-height: 2.6em;
+    margin: 0.4rem 0 0;
+}

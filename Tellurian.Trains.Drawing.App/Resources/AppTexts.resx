@@ -183,4 +183,13 @@
   <data name="SelectedCount" xml:space="preserve"><value>{0} selected</value></data>
   <data name="RailTop" xml:space="preserve"><value>Top of rail</value></data>
   <data name="CannotShow" xml:space="preserve"><value>The drawing can't be shown.</value></data>
+  <data name="Tool_Select" xml:space="preserve"><value>Select</value></data>
+  <data name="Tool_Path" xml:space="preserve"><value>Draw</value></data>
+  <data name="Tool_Measure" xml:space="preserve"><value>Measure</value></data>
+  <data name="Tool_Dimension" xml:space="preserve"><value>Dimension</value></data>
+  <data name="ArcMode" xml:space="preserve"><value>Arcs</value></data>
+  <data name="PathHelp" xml:space="preserve"><value>Click to start a path.</value></data>
+  <data name="PathHelpDrawing" xml:space="preserve"><value>Click to add points; click the start to close, Enter to finish, Backspace to undo a point, Escape to cancel.</value></data>
+  <data name="DimensionHelp" xml:space="preserve"><value>Click two points, then where the dimension line goes.</value></data>
+  <data name="MeasureResult" xml:space="preserve"><value>Distance {0} mm (dx {1}, dy {2}), direction {3}°</value></data>
 </root>
