@@ -175,4 +175,7 @@
   <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} må være forskjellig fra den første endeprofilen.</value></data>
   <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} må ha samme skala som den første endeprofilen.</value></data>
   <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: det finnes allerede et unntak for disse endeprofilene.</value></data>
+  <data name="Sandbox" xml:space="preserve"><value>Testflate for tegneflaten</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>En testtegning for tegneflaten: dra med midtknappen eller mellomrom + dra for å panorere, bruk hjulet eller knip for å zoome.</value></data>
+  <data name="ZoomToFit" xml:space="preserve"><value>Zoom til alt</value></data>
 </root>

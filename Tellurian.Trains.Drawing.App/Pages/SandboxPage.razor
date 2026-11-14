@@ -1,0 +1,44 @@
+@page "/sandbox"
+@using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+
+<PageTitle>@T["Sandbox"]</PageTitle>
+
+<h1>@T["Sandbox"]</h1>
+<p class="note">@T["SandboxIntro"]</p>
+
+<div class="toolbar">
+    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(Bounds)">@T["ZoomToFit"]</button>
+    <span class="detail" id="pointer">@_pointer</span>
+</div>
+
+<div class="sandbox-canvas">
+    <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]" OnPointerMove="OnMove">
+        @foreach (var shape in Shapes)
+        {
+            <path class="@(shape.IsClosed ? "sandbox-shape" : "sandbox-shape open")" d="@SvgPath.From(shape)" />
+        }
+    </DrawingCanvas>
+</div>
+
+@code {
+    private static readonly PathDrawing[] Shapes =
+    [
+        PathDrawing.Rectangle(new(600, 250), 1200, 500, Angle.Zero),
+        PathDrawing.Rectangle(new(2000, 600), 800, 300, new(30)),
+        PathDrawing.Circle(new(3200, 300), 400),
+        PathDrawing.From(new PathBuilder(new Pose(new(0, 1200), Angle.Zero)).Straight(1000).Curve(2000, 30).Build()),
+    ];
+
+    private static BoundingBox Bounds => Shapes.Select(s => s.ToPath().Bounds).Aggregate((a, b) => a.Union(b));
+
+    private DrawingCanvas? _canvas;
+    private Viewport _view = Viewport.Fit(Bounds, 900, 500);
+    private string _pointer = string.Empty;
+
+    private void OnMove(CanvasPointerEventArgs e) =>
+        _pointer = $"x {SvgPath.Number(Math.Round(e.World.X))} mm, y {SvgPath.Number(Math.Round(e.World.Y))} mm, {SvgPath.Number(_view.Scale)} px/mm";
+}

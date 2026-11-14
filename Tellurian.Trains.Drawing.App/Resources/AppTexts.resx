@@ -175,4 +175,7 @@
   <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} must differ from the first end profile.</value></data>
   <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} must be of the same scale as the first end profile.</value></data>
   <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: there already is an override for these end profiles.</value></data>
+  <data name="Sandbox" xml:space="preserve"><value>Canvas sandbox</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>A test drawing for the canvas: drag with the middle button or Space + drag to pan, use the wheel or pinch to zoom.</value></data>
+  <data name="ZoomToFit" xml:space="preserve"><value>Zoom to fit</value></data>
 </root>

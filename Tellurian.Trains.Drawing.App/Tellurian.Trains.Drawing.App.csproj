@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tellurian.Trains.Drawing.Editing\Tellurian.Trains.Drawing.Editing.csproj" />
+    <ProjectReference Include="..\Tellurian.Trains.Drawing.Components\Tellurian.Trains.Drawing.Components.csproj" />
   </ItemGroup>
 
   <ItemGroup>

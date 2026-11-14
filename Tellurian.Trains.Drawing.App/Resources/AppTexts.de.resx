@@ -175,4 +175,7 @@
   <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} muss sich vom ersten Endprofil unterscheiden.</value></data>
   <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} muss denselben Maßstab wie das erste Endprofil haben.</value></data>
   <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: für diese Endprofile gibt es bereits eine Ausnahme.</value></data>
+  <data name="Sandbox" xml:space="preserve"><value>Zeichenflächen-Test</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>Eine Testzeichnung für die Zeichenfläche: mit der mittleren Taste oder Leertaste + Ziehen verschieben, mit dem Mausrad oder zwei Fingern zoomen.</value></data>
+  <data name="ZoomToFit" xml:space="preserve"><value>Alles anzeigen</value></data>
 </root>

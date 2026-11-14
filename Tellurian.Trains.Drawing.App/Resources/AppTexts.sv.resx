@@ -175,4 +175,7 @@
   <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} måste skilja sig från den första ändprofilen.</value></data>
   <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} måste ha samma skala som den första ändprofilen.</value></data>
   <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: det finns redan ett undantag för de här ändprofilerna.</value></data>
+  <data name="Sandbox" xml:space="preserve"><value>Testyta för ritytan</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>En testritning för ritytan: dra med mittenknappen eller mellanslag + dra för att panorera, använd hjulet eller nyp för att zooma.</value></data>
+  <data name="ZoomToFit" xml:space="preserve"><value>Zooma till allt</value></data>
 </root>

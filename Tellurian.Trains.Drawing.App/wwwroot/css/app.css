@@ -336,3 +336,19 @@ a.button {
 .app-main:has(.table) {
     max-width: 75rem;
 }
+
+.sandbox-canvas {
+    height: 60vh;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}
+
+.sandbox-shape {
+    fill: rgba(27, 110, 194, 0.08);
+    stroke: #1b6ec2;
+    stroke-width: 2;
+}
+
+.sandbox-shape.open {
+    fill: none;
+}
