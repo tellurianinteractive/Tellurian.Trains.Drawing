@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
@@ -41,6 +42,7 @@ public sealed record ModuleVariant
     /// <summary>Set while the variant is as auto-draw generated it (MD-20); null once edited by hand.</summary>
     public AutoDrawRecord? AutoDraw { get; init; }
 
+    [JsonIgnore]
     public ModuleKind Kind => Exits.Count switch
     {
         0 => ModuleKind.Invalid,

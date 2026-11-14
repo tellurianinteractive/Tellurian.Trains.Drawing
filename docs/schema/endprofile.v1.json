@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tellurian Trains Drawing EndProfile file",
+  "description": "A .tdendprofile file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "tellurian-drawing"
+    },
+    "kind": {
+      "const": "endProfile"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "appVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "content": {
+      "$ref": "#/$defs/EndProfile"
+    }
+  },
+  "required": [
+    "format",
+    "kind",
+    "schemaVersion",
+    "content"
+  ],
+  "$defs": {
+    "CatalogueReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Circle": {
+      "type": "object",
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/Point"
+        },
+        "diameter": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "center",
+        "diameter"
+      ]
+    },
+    "DocumentReference": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "EndProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "designation": {
+          "type": "string"
+        },
+        "scale": {
+          "type": "string"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueReference"
+          }
+        },
+        "outline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groundLine": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileTrack"
+          }
+        },
+        "screwHoles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Circle"
+          }
+        },
+        "dowels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Circle"
+          }
+        },
+        "screwHolePattern": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "registryId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "designation",
+        "scale"
+      ]
+    },
+    "EndProfileTrack": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "number"
+        },
+        "gauge": {
+          "type": "number"
+        },
+        "railSystem": {
+          "enum": [
+            "twoRail",
+            "threeRail"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "offset",
+        "gauge"
+      ]
+    },
+    "PathDrawing": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PathStep"
+          }
+        },
+        "isClosed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start",
+        "steps"
+      ]
+    },
+    "PathStep": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "line"
+            },
+            "end": {
+              "$ref": "#/$defs/Point"
+            }
+          },
+          "required": [
+            "end"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "arc"
+            },
+            "center": {
+              "$ref": "#/$defs/Point"
+            },
+            "sweep": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "center",
+            "sweep"
+          ]
+        }
+      ]
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    }
+  }
+}

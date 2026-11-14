@@ -42,4 +42,6 @@ public sealed record LineSegment : Segment
     }
 
     public override void AppendTessellation(List<Point> points, double chordTolerance) => points.Add(_end);
+
+    public override double ClosestDistance(Point point) => Clamp((point - _start).Dot((_end - _start).Normalized));
 }

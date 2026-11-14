@@ -55,5 +55,8 @@ public abstract record Segment
     /// </summary>
     public abstract void AppendTessellation(List<Point> points, double chordTolerance);
 
+    /// <summary>The distance from the start to the point on the segment closest to <paramref name="point"/>.</summary>
+    public abstract double ClosestDistance(Point point);
+
     protected double Clamp(double distance) => Math.Clamp(distance, 0, Length);
 }

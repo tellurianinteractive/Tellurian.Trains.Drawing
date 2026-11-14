@@ -1,0 +1,368 @@
+{
+  "format": "tellurian-drawing",
+  "kind": "module",
+  "schemaVersion": 1,
+  "appVersion": "0.1.0",
+  "content": {
+    "module": {
+      "id": "04f7210a-fff4-40c5-b98e-630f79879d3b",
+      "name": "Curve R2000 30\u00B0",
+      "standard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+        "name": "FREMO/H0-RE"
+      },
+      "scale": "H0",
+      "addOns": [],
+      "owners": [],
+      "numberOfThroughTracks": 1,
+      "hasNormalGauge": true,
+      "hasNarrowGauge": false,
+      "isDuckunder": false,
+      "isTurntable": false,
+      "isEndOfLine": false,
+      "isEndProfileSwitcher": false,
+      "isSignalModule": false,
+      "isStandAlone": false,
+      "revision": 0,
+      "variants": [
+        {
+          "id": "aec5e739-1eb1-40c9-be21-2dc11de63762",
+          "name": "",
+          "isDefault": true,
+          "exits": [
+            {
+              "label": "W",
+              "direction": "west",
+              "endProfile": {
+                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                "name": "FREMO-H0-B96"
+              },
+              "orientation": "normal",
+              "railTopOffset": 0,
+              "pose": {
+                "x": 1.2246467991473532E-13,
+                "y": 0,
+                "heading": 180
+              },
+              "isPositionProvisional": false
+            },
+            {
+              "label": "E",
+              "direction": "east",
+              "endProfile": {
+                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                "name": "FREMO-H0-B96"
+              },
+              "orientation": "normal",
+              "railTopOffset": 0,
+              "pose": {
+                "x": 1000.0000000000002,
+                "y": 267.9491924311228,
+                "heading": 30
+              },
+              "isPositionProvisional": false
+            }
+          ],
+          "mainPath": {
+            "start": {
+              "x": 1.2246467991473532E-13,
+              "y": 0
+            },
+            "steps": [
+              {
+                "type": "arc",
+                "center": {
+                  "x": 0,
+                  "y": 2000
+                },
+                "sweep": 30
+              }
+            ],
+            "isClosed": false
+          },
+          "sides": [
+            {
+              "fromExit": "W",
+              "toExit": "E",
+              "mode": "auto",
+              "path": {
+                "start": {
+                  "x": 1.3777276490407724E-13,
+                  "y": -250
+                },
+                "steps": [
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 0,
+                      "y": 2000
+                    },
+                    "sweep": 29.999999999999996
+                  }
+                ],
+                "isClosed": false
+              }
+            },
+            {
+              "fromExit": "E",
+              "toExit": "W",
+              "mode": "auto",
+              "path": {
+                "start": {
+                  "x": 875.0000000000002,
+                  "y": 484.4555433772325
+                },
+                "steps": [
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 0,
+                      "y": 2000
+                    },
+                    "sweep": -29.999999999999996
+                  }
+                ],
+                "isClosed": false
+              }
+            }
+          ],
+          "sections": [
+            {
+              "label": "1",
+              "outline": {
+                "start": {
+                  "x": 1.3777276490407724E-13,
+                  "y": -250
+                },
+                "steps": [
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 0,
+                      "y": 2000
+                    },
+                    "sweep": 29.999999999999996
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 875.0000000000002,
+                      "y": 484.4555433772325
+                    }
+                  },
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 0,
+                      "y": 2000
+                    },
+                    "sweep": -29.999999999999996
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1.3777276490407724E-13,
+                      "y": -250
+                    }
+                  }
+                ],
+                "isClosed": true
+              }
+            }
+          ],
+          "internalJoints": [],
+          "tracks": [
+            {
+              "type": "flex",
+              "path": {
+                "start": {
+                  "x": 1.2246467991473532E-13,
+                  "y": 0
+                },
+                "steps": [
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 0,
+                      "y": 2000
+                    },
+                    "sweep": 30
+                  }
+                ],
+                "isClosed": false
+              },
+              "id": "35ca8075-5cdc-4ee1-88e7-580e87579c0e",
+              "isMainTrack": true,
+              "isNarrowGauge": false,
+              "isGenerated": true
+            }
+          ],
+          "operatorSpaces": [],
+          "publicSides": [],
+          "duckUnderAreas": [],
+          "labels": [],
+          "registryMeasures": {
+            "radius": 2000,
+            "angle": 30,
+            "length": 1047
+          },
+          "autoDraw": {
+            "generatorVersion": "1.0",
+            "parameters": {
+              "name": "Curve R2000 30\u00B0",
+              "standard": "FREMO/H0-RE",
+              "radius": 2000,
+              "angle": 30,
+              "length": 1047,
+              "numberOfThroughTracks": 1,
+              "exits": [
+                {
+                  "label": "W",
+                  "direction": "west",
+                  "endProfile": "FREMO-H0-B96"
+                },
+                {
+                  "label": "E",
+                  "direction": "east",
+                  "endProfile": "FREMO-H0-B96"
+                }
+              ],
+              "isEndOfLine": false,
+              "isDuckunder": false,
+              "isTurntable": false,
+              "isOperationPlace": false,
+              "curveDirection": "left",
+              "straightPosition": "before",
+              "wideningSide": "left",
+              "taperAngle": 45
+            }
+          }
+        }
+      ]
+    },
+    "endProfiles": [
+      {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+        "designation": "FREMO-H0-B96",
+        "scale": "H0",
+        "standards": [
+          {
+            "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+            "name": "FREMO/H0-RE"
+          }
+        ],
+        "outline": {
+          "start": {
+            "x": -250,
+            "y": -140
+          },
+          "steps": [
+            {
+              "type": "line",
+              "end": {
+                "x": 250,
+                "y": -140
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 250,
+                "y": -40
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -250,
+                "y": -40
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -250,
+                "y": -140
+              }
+            }
+          ],
+          "isClosed": true
+        },
+        "groundLine": {
+          "start": {
+            "x": -250,
+            "y": -40
+          },
+          "steps": [
+            {
+              "type": "line",
+              "end": {
+                "x": 250,
+                "y": -40
+              }
+            }
+          ],
+          "isClosed": false
+        },
+        "tracks": [
+          {
+            "offset": 0,
+            "gauge": 16.5,
+            "railSystem": "twoRail"
+          }
+        ],
+        "screwHoles": [
+          {
+            "center": {
+              "x": -150,
+              "y": -70
+            },
+            "diameter": 8
+          },
+          {
+            "center": {
+              "x": 150,
+              "y": -70
+            },
+            "diameter": 8
+          },
+          {
+            "center": {
+              "x": -150,
+              "y": -110
+            },
+            "diameter": 8
+          },
+          {
+            "center": {
+              "x": 150,
+              "y": -110
+            },
+            "diameter": 8
+          }
+        ],
+        "dowels": [],
+        "screwHolePattern": "FREMO-H0",
+        "source": {
+          "title": "FREMO: H0 end profile B96. Provisional values, to be drawn from the published FREMO PDF.",
+          "revision": "provisional"
+        },
+        "revision": 0
+      }
+    ],
+    "measures": [
+      {
+        "variantId": "aec5e739-1eb1-40c9-be21-2dc11de63762",
+        "measures": {
+          "length": 1047.1975511965977,
+          "straight": 0,
+          "radius": 2000,
+          "angle": 30,
+          "width": 500.00000000000045,
+          "trackLength": 1047.1975511965977,
+          "numberOfSections": 1
+        }
+      }
+    ]
+  }
+}

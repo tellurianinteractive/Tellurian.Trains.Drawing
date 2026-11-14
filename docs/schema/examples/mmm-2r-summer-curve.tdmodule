@@ -1,0 +1,430 @@
+{
+  "format": "tellurian-drawing",
+  "kind": "module",
+  "schemaVersion": 1,
+  "appVersion": "0.1.0",
+  "content": {
+    "module": {
+      "id": "6a86006a-c9f4-4b68-830c-faa674723b0b",
+      "name": "Summer curve",
+      "standard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
+        "name": "MMM-2R"
+      },
+      "scale": "H0",
+      "addOns": [
+        {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4c01",
+          "name": "MMM-Summer"
+        }
+      ],
+      "owners": [],
+      "hasNormalGauge": true,
+      "hasNarrowGauge": false,
+      "isDuckunder": false,
+      "isTurntable": false,
+      "isEndOfLine": false,
+      "isEndProfileSwitcher": false,
+      "isSignalModule": false,
+      "isStandAlone": false,
+      "revision": 0,
+      "variants": [
+        {
+          "id": "5d4ad8b8-55f1-4adc-bf5a-3c387ef4699a",
+          "name": "",
+          "isDefault": true,
+          "exits": [
+            {
+              "label": "W",
+              "direction": "west",
+              "endProfile": {
+                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
+                "name": "MMM480"
+              },
+              "orientation": "normal",
+              "railTopOffset": 0,
+              "pose": {
+                "x": 0,
+                "y": 0,
+                "heading": 180
+              },
+              "isPositionProvisional": false
+            },
+            {
+              "label": "E",
+              "direction": "east",
+              "endProfile": {
+                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
+                "name": "MMM480"
+              },
+              "orientation": "normal",
+              "railTopOffset": 0,
+              "pose": {
+                "x": 1316.7261889578035,
+                "y": 545.4058453981606,
+                "heading": 45
+              },
+              "isPositionProvisional": false
+            }
+          ],
+          "mainPath": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "steps": [
+              {
+                "type": "line",
+                "end": {
+                  "x": 150,
+                  "y": 0
+                }
+              },
+              {
+                "type": "arc",
+                "center": {
+                  "x": 150,
+                  "y": 1500
+                },
+                "sweep": 45
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 1316.7261889578035,
+                  "y": 545.4058453981606
+                }
+              }
+            ],
+            "isClosed": false
+          },
+          "sides": [
+            {
+              "fromExit": "W",
+              "toExit": "E",
+              "mode": "auto",
+              "path": {
+                "start": {
+                  "x": 0,
+                  "y": -240
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 150,
+                      "y": -240
+                    }
+                  },
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 150,
+                      "y": 1500
+                    },
+                    "sweep": 45
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1486.431816442575,
+                      "y": 375.7002179133892
+                    }
+                  }
+                ],
+                "isClosed": false
+              }
+            },
+            {
+              "fromExit": "E",
+              "toExit": "W",
+              "mode": "auto",
+              "path": {
+                "start": {
+                  "x": 1147.020561473032,
+                  "y": 715.111472882932
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1040.95454429505,
+                      "y": 609.04545570495
+                    }
+                  },
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 150,
+                      "y": 1500
+                    },
+                    "sweep": -45
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 0,
+                      "y": 240
+                    }
+                  }
+                ],
+                "isClosed": false
+              }
+            }
+          ],
+          "sections": [
+            {
+              "label": "1",
+              "outline": {
+                "start": {
+                  "x": 0,
+                  "y": -240
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 150,
+                      "y": -240
+                    }
+                  },
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 150,
+                      "y": 1500
+                    },
+                    "sweep": 45
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1486.431816442575,
+                      "y": 375.7002179133892
+                    }
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1147.020561473032,
+                      "y": 715.111472882932
+                    }
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1040.95454429505,
+                      "y": 609.04545570495
+                    }
+                  },
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 150,
+                      "y": 1500
+                    },
+                    "sweep": -45
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 0,
+                      "y": 240
+                    }
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 0,
+                      "y": -240
+                    }
+                  }
+                ],
+                "isClosed": true
+              }
+            }
+          ],
+          "internalJoints": [],
+          "tracks": [
+            {
+              "type": "flex",
+              "path": {
+                "start": {
+                  "x": 0,
+                  "y": 0
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 150,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 150,
+                      "y": 1500
+                    },
+                    "sweep": 45
+                  },
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1316.7261889578035,
+                      "y": 545.4058453981606
+                    }
+                  }
+                ],
+                "isClosed": false
+              },
+              "id": "eb353188-657d-4a89-be25-d3ef3879f5a3",
+              "isMainTrack": true,
+              "isNarrowGauge": false,
+              "isGenerated": true
+            }
+          ],
+          "operatorSpaces": [],
+          "publicSides": [],
+          "duckUnderAreas": [],
+          "labels": [],
+          "registryMeasures": {
+            "straight": 300,
+            "radius": 1500,
+            "angle": 45
+          },
+          "autoDraw": {
+            "generatorVersion": "1.0",
+            "parameters": {
+              "name": "Summer curve",
+              "standard": "MMM-2R/SSM",
+              "straight": 300,
+              "radius": 1500,
+              "angle": 45,
+              "exits": [],
+              "isEndOfLine": false,
+              "isDuckunder": false,
+              "isTurntable": false,
+              "isOperationPlace": false,
+              "curveDirection": "left",
+              "straightPosition": "split",
+              "wideningSide": "left",
+              "taperAngle": 45
+            }
+          }
+        }
+      ]
+    },
+    "endProfiles": [
+      {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
+        "designation": "MMM480",
+        "scale": "H0",
+        "standards": [
+          {
+            "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
+            "name": "MMM-2R"
+          }
+        ],
+        "outline": {
+          "start": {
+            "x": -240,
+            "y": -120
+          },
+          "steps": [
+            {
+              "type": "line",
+              "end": {
+                "x": 240,
+                "y": -120
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 240,
+                "y": -40
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -240,
+                "y": -40
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -240,
+                "y": -120
+              }
+            }
+          ],
+          "isClosed": true
+        },
+        "groundLine": {
+          "start": {
+            "x": -240,
+            "y": -40
+          },
+          "steps": [
+            {
+              "type": "line",
+              "end": {
+                "x": 240,
+                "y": -40
+              }
+            }
+          ],
+          "isClosed": false
+        },
+        "tracks": [
+          {
+            "offset": 0,
+            "gauge": 16.5,
+            "railSystem": "twoRail"
+          }
+        ],
+        "screwHoles": [
+          {
+            "center": {
+              "x": -200,
+              "y": -80
+            },
+            "diameter": 8
+          },
+          {
+            "center": {
+              "x": 200,
+              "y": -80
+            },
+            "diameter": 8
+          }
+        ],
+        "dowels": [],
+        "screwHolePattern": "MMM",
+        "source": {
+          "title": "MMM: MMM-2R end profile 480. Provisional values, to be drawn from the published MMM PDF.",
+          "revision": "provisional"
+        },
+        "revision": 0
+      }
+    ],
+    "measures": [
+      {
+        "variantId": "5d4ad8b8-55f1-4adc-bf5a-3c387ef4699a",
+        "measures": {
+          "length": 1478.0972450961724,
+          "straight": 299.9999999999999,
+          "radius": 1500,
+          "angle": 45,
+          "width": 480.0000000000002,
+          "trackLength": 1478.0972450961724,
+          "numberOfSections": 1
+        }
+      }
+    ]
+  }
+}

@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Tellurian.Trains.Drawing.Model\Tellurian.Trains.Drawing.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="JsonSchema.Net" Version="9.7.0" />
+  </ItemGroup>
+
 </Project>

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 
 namespace Tellurian.Trains.Drawing.Model.EndProfiles;
@@ -41,6 +42,7 @@ public sealed record EndProfile
     /// <summary>Incremented on every save.</summary>
     public int Revision { get; init; }
 
+    [JsonIgnore]
     public bool HasScrewHoles => ScrewHoles.Count > 0;
 
     /// <summary>The drawing mirrored about its centre line (X → −X).</summary>

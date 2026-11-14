@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Geometry;
 
 namespace Tellurian.Trains.Drawing.Model.Tracks;
@@ -13,6 +14,7 @@ public sealed record DoubleSlip : TrackElement
     public required double Length { get; init; }
     public required double Angle { get; init; }
 
+    [JsonIgnore]
     public double SlipRadius => Length / 2 / Math.Tan(Math.Abs(Angle) * Math.PI / 360);
 
     public override IReadOnlyList<SegmentPath> Routes()

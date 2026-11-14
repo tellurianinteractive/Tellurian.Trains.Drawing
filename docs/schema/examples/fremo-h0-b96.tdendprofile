@@ -1,0 +1,114 @@
+{
+  "format": "tellurian-drawing",
+  "kind": "endProfile",
+  "schemaVersion": 1,
+  "appVersion": "0.1.0",
+  "content": {
+    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+    "designation": "FREMO-H0-B96",
+    "scale": "H0",
+    "standards": [
+      {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+        "name": "FREMO/H0-RE"
+      }
+    ],
+    "outline": {
+      "start": {
+        "x": -250,
+        "y": -140
+      },
+      "steps": [
+        {
+          "type": "line",
+          "end": {
+            "x": 250,
+            "y": -140
+          }
+        },
+        {
+          "type": "line",
+          "end": {
+            "x": 250,
+            "y": -40
+          }
+        },
+        {
+          "type": "line",
+          "end": {
+            "x": -250,
+            "y": -40
+          }
+        },
+        {
+          "type": "line",
+          "end": {
+            "x": -250,
+            "y": -140
+          }
+        }
+      ],
+      "isClosed": true
+    },
+    "groundLine": {
+      "start": {
+        "x": -250,
+        "y": -40
+      },
+      "steps": [
+        {
+          "type": "line",
+          "end": {
+            "x": 250,
+            "y": -40
+          }
+        }
+      ],
+      "isClosed": false
+    },
+    "tracks": [
+      {
+        "offset": 0,
+        "gauge": 16.5,
+        "railSystem": "twoRail"
+      }
+    ],
+    "screwHoles": [
+      {
+        "center": {
+          "x": -150,
+          "y": -70
+        },
+        "diameter": 8
+      },
+      {
+        "center": {
+          "x": 150,
+          "y": -70
+        },
+        "diameter": 8
+      },
+      {
+        "center": {
+          "x": -150,
+          "y": -110
+        },
+        "diameter": 8
+      },
+      {
+        "center": {
+          "x": 150,
+          "y": -110
+        },
+        "diameter": 8
+      }
+    ],
+    "dowels": [],
+    "screwHolePattern": "FREMO-H0",
+    "source": {
+      "title": "FREMO: H0 end profile B96. Provisional values, to be drawn from the published FREMO PDF.",
+      "revision": "provisional"
+    },
+    "revision": 0
+  }
+}

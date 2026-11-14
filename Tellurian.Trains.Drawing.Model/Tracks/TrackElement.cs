@@ -38,5 +38,6 @@ public abstract record TrackElement
     public abstract IReadOnlyList<Pose> ConnectionPoints();
 
     /// <summary>The sum of the route lengths. Parts shared by several routes, such as the points of a turnout, count once per route.</summary>
+    [JsonIgnore]
     public virtual double TrackLength => Routes().Sum(r => r.Length);
 }

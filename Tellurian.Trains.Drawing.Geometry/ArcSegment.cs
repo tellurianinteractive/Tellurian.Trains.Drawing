@@ -93,6 +93,17 @@ public sealed record ArcSegment : Segment
         }
     }
 
+    public override double ClosestDistance(Point point)
+    {
+        var direction = point - Center;
+        if (direction.Length >= Tolerance.Length && Covers(direction.Direction))
+        {
+            var delta = IsCounterClockwise ? (direction.Direction - StartAngle).Normalized.Degrees : (StartAngle - direction.Direction).Normalized.Degrees;
+            return Clamp(delta * Math.PI / 180.0 * Radius);
+        }
+        return point.DistanceTo(Start) <= point.DistanceTo(End) ? 0 : Length;
+    }
+
     /// <summary>True if the direction <paramref name="angle"/> from the centre lies within the arc.</summary>
     public bool Covers(Angle angle)
     {

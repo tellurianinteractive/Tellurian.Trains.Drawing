@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 
 namespace Tellurian.Trains.Drawing.Model.Modules;
@@ -53,6 +54,7 @@ public sealed record Module
     public required IReadOnlyList<ModuleVariant> Variants { get; init; }
 
     /// <summary>The variant marked as default, otherwise the first.</summary>
+    [JsonIgnore]
     public ModuleVariant DefaultVariant => Variants.FirstOrDefault(v => v.IsDefault) ?? Variants[0];
 
     public override string ToString() => Name;

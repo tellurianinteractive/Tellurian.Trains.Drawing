@@ -72,6 +72,31 @@ public sealed class SegmentPath
         return new(parts);
     }
 
+    /// <summary>
+    /// Projects <paramref name="point"/> onto the path: the closest point on it, the distance along the
+    /// path to there, and the lateral offset of the point (positive to the left of the direction of travel).
+    /// Beyond the ends of an open path the offset is measured across the end pose.
+    /// </summary>
+    public PathProjection Project(Point point)
+    {
+        var best = default(PathProjection);
+        var bestDistance = double.PositiveInfinity;
+        var start = 0.0;
+        foreach (var segment in Segments)
+        {
+            var along = segment.ClosestDistance(point);
+            var pose = segment.PoseAt(along);
+            var distance = point.DistanceTo(pose.Position);
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                best = new(start + along, (point - pose.Position).Dot(pose.Left), pose);
+            }
+            start += segment.Length;
+        }
+        return best;
+    }
+
     public SegmentPath Reversed() => new(Segments.Reverse().Select(s => s.Reversed()), IsClosed);
 
     public SegmentPath Transformed(Transform transform) => new(Segments.Select(s => s.Transformed(transform)), IsClosed);

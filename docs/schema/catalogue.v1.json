@@ -1,0 +1,517 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tellurian Trains Drawing Catalogue file",
+  "description": "A .tdcatalogue file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "tellurian-drawing"
+    },
+    "kind": {
+      "const": "catalogue"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "appVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "content": {
+      "$ref": "#/$defs/DrawingCatalogue"
+    }
+  },
+  "required": [
+    "format",
+    "kind",
+    "schemaVersion",
+    "content"
+  ],
+  "$defs": {
+    "CatalogueReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Circle": {
+      "type": "object",
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/Point"
+        },
+        "diameter": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "center",
+        "diameter"
+      ]
+    },
+    "DocumentReference": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "DrawingCatalogue": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scales": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Scale"
+          }
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModuleStandard"
+          }
+        },
+        "addOns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StandardAddOn"
+          }
+        },
+        "endProfiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfile"
+          }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileCompatibilityOverride"
+          }
+        }
+      }
+    },
+    "EndProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "designation": {
+          "type": "string"
+        },
+        "scale": {
+          "type": "string"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueReference"
+          }
+        },
+        "outline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groundLine": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileTrack"
+          }
+        },
+        "screwHoles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Circle"
+          }
+        },
+        "dowels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Circle"
+          }
+        },
+        "screwHolePattern": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "registryId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "designation",
+        "scale"
+      ]
+    },
+    "EndProfileCompatibilityOverride": {
+      "type": "object",
+      "properties": {
+        "firstEndProfileId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "secondEndProfileId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fit": {
+          "enum": [
+            "fits",
+            "fitsWithMismatch",
+            "fitsWithClamps",
+            "incompatible"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "firstEndProfileId",
+        "secondEndProfileId",
+        "fit"
+      ]
+    },
+    "EndProfileTrack": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "number"
+        },
+        "gauge": {
+          "type": "number"
+        },
+        "railSystem": {
+          "enum": [
+            "twoRail",
+            "threeRail"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "offset",
+        "gauge"
+      ]
+    },
+    "ModuleStandard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "scale": {
+          "type": "string"
+        },
+        "trackSystem": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "railSystem": {
+          "enum": [
+            "twoRail",
+            "threeRail"
+          ]
+        },
+        "normalGauge": {
+          "type": "number"
+        },
+        "narrowGauge": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "couplings": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "electricity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wheelset": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "railTopHeight": {
+          "type": "number"
+        },
+        "minimumClearance": {
+          "type": "number"
+        },
+        "operatorSpaceDepth": {
+          "type": "number"
+        },
+        "trackColor": {
+          "type": "string"
+        },
+        "minimumReverseCurveRadius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "defaultCurveRadius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "defaultSingleTrackEndProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "defaultDoubleTrackEndProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "registryId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "shortName",
+        "scale",
+        "normalGauge"
+      ]
+    },
+    "PathDrawing": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PathStep"
+          }
+        },
+        "isClosed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start",
+        "steps"
+      ]
+    },
+    "PathStep": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "line"
+            },
+            "end": {
+              "$ref": "#/$defs/Point"
+            }
+          },
+          "required": [
+            "end"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "arc"
+            },
+            "center": {
+              "$ref": "#/$defs/Point"
+            },
+            "sweep": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "center",
+            "sweep"
+          ]
+        }
+      ]
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
+    "Scale": {
+      "type": "object",
+      "properties": {
+        "shortName": {
+          "type": "string"
+        },
+        "denominator": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "shortName",
+        "denominator"
+      ]
+    },
+    "StandardAddOn": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "baseStandardId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "shortName",
+        "baseStandardId"
+      ]
+    }
+  }
+}

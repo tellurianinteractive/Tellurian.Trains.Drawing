@@ -10,6 +10,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Catalogue\BuiltInCatalogue.tdcatalogue" LogicalName="Tellurian.Trains.Drawing.Model.BuiltInCatalogue.tdcatalogue" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Tellurian.Trains.Drawing.Model.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Tellurian.Trains.Drawing.Geometry\Tellurian.Trains.Drawing.Geometry.csproj" />
   </ItemGroup>
 </Project>
