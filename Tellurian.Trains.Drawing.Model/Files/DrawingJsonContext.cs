@@ -42,6 +42,8 @@ namespace Tellurian.Trains.Drawing.Model.Files;
         typeof(CamelCaseEnumConverter<ReferencePointKind>),
         typeof(CamelCaseEnumConverter<PlateSide>),
         typeof(CamelCaseEnumConverter<HallElementKind>),
+        typeof(CamelCaseEnumConverter<PlateSegmentKind>),
+        typeof(CamelCaseEnumConverter<FilletSide>),
     ])]
 [JsonSerializable(typeof(DrawingFile<EndProfile>))]
 [JsonSerializable(typeof(DrawingFile<ModuleFileContent>))]

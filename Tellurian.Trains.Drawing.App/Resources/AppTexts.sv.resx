@@ -263,4 +263,15 @@
   <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plattans nedre vänstra hörn</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Måttsätt skruvhål och punkter</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Avstånd från vänsterkanten (mm)</value></data>
+  <data name="SegmentType" xml:space="preserve"><value>Typ</value></data>
+  <data name="SegmentStart" xml:space="preserve"><value>Början</value></data>
+  <data name="SegmentKind_Line" xml:space="preserve"><value>Linje</value></data>
+  <data name="SegmentKind_Arc" xml:space="preserve"><value>Båge</value></data>
+  <data name="SegmentKind_Fillet" xml:space="preserve"><value>Avrundning</value></data>
+  <data name="ArcCentre" xml:space="preserve"><value>Centrum</value></data>
+  <data name="FilletEnd" xml:space="preserve"><value>Slutar vid</value></data>
+  <data name="FilletSide_Above" xml:space="preserve"><value>Centrum ovanför</value></data>
+  <data name="FilletSide_Below" xml:space="preserve"><value>Centrum nedanför</value></data>
+  <data name="FilletSide_Auto" xml:space="preserve"><value>Centrum: bästa passning</value></data>
+  <data name="Print" xml:space="preserve"><value>Skriv ut</value></data>
 </root>

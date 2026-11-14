@@ -263,4 +263,15 @@
   <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Pladens nederste venstre hjørne</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Målsæt skruehuller og punkter</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Afstand fra venstre kant (mm)</value></data>
+  <data name="SegmentType" xml:space="preserve"><value>Type</value></data>
+  <data name="SegmentStart" xml:space="preserve"><value>Start</value></data>
+  <data name="SegmentKind_Line" xml:space="preserve"><value>Linje</value></data>
+  <data name="SegmentKind_Arc" xml:space="preserve"><value>Bue</value></data>
+  <data name="SegmentKind_Fillet" xml:space="preserve"><value>Afrunding</value></data>
+  <data name="ArcCentre" xml:space="preserve"><value>Centrum</value></data>
+  <data name="FilletEnd" xml:space="preserve"><value>Ender ved</value></data>
+  <data name="FilletSide_Above" xml:space="preserve"><value>Centrum over</value></data>
+  <data name="FilletSide_Below" xml:space="preserve"><value>Centrum under</value></data>
+  <data name="FilletSide_Auto" xml:space="preserve"><value>Centrum: bedste pasning</value></data>
+  <data name="Print" xml:space="preserve"><value>Udskriv</value></data>
 </root>

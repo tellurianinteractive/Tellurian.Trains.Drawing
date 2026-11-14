@@ -263,4 +263,15 @@
   <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Untere linke Ecke des Kopfstücks</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Schraubenlöcher und Punkte bemaßen</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Abstand von der linken Kante (mm)</value></data>
+  <data name="SegmentType" xml:space="preserve"><value>Art</value></data>
+  <data name="SegmentStart" xml:space="preserve"><value>Anfang</value></data>
+  <data name="SegmentKind_Line" xml:space="preserve"><value>Linie</value></data>
+  <data name="SegmentKind_Arc" xml:space="preserve"><value>Bogen</value></data>
+  <data name="SegmentKind_Fillet" xml:space="preserve"><value>Rundung</value></data>
+  <data name="ArcCentre" xml:space="preserve"><value>Mittelpunkt</value></data>
+  <data name="FilletEnd" xml:space="preserve"><value>Endet bei</value></data>
+  <data name="FilletSide_Above" xml:space="preserve"><value>Mittelpunkt oben</value></data>
+  <data name="FilletSide_Below" xml:space="preserve"><value>Mittelpunkt unten</value></data>
+  <data name="FilletSide_Auto" xml:space="preserve"><value>Mittelpunkt: beste Passung</value></data>
+  <data name="Print" xml:space="preserve"><value>Drucken</value></data>
 </root>

@@ -187,6 +187,54 @@ public sealed class EndProfileEditingTests
         Assert.HasCount(2, PlateShape.From(tooFew)!.UpperEdge, "An upper edge keeps at least two points.");
     }
 
+    /// <summary>The template plate with its upper edge as a line to the middle, a 20 mm fillet and a line up to the right.</summary>
+    private static EndProfile FilletedProfile() =>
+        EndProfileCommands.SetPlate(new(new(-250, -10), [PlateSegment.Line(new(0, -10)), PlateSegment.Fillet(20), PlateSegment.Line(new(250, 40))], -200)).Apply(Profile());
+
+    [TestMethod]
+    public void SegmentCanBecomeAnArcAndBeSplitOnTheArc()
+    {
+        var arc = EndProfileCommands.SetPlateSegment(0, PlateSegment.Arc(new(0, -510), new(250, -10))).Apply(Profile());
+        var plate = PlateShape.From(arc)!;
+        Assert.AreEqual(PlateSegmentKind.Arc, plate.Segments[0].Kind);
+        Assert.IsInstanceOfType<ArcSegment>(arc.Outline!.ToPath().Segments.Single(s => s is ArcSegment));
+
+        var split = PlateShape.From(EndProfileCommands.AddPlatePoint(0).Apply(arc))!;
+        Assert.HasCount(2, split.Segments);
+        Assert.IsTrue(split.Segments.All(s => s.Kind == PlateSegmentKind.Arc && s.Center == new Point(0, -510)), "Both halves keep the centre.");
+        Assert.IsTrue(split.UpperEdge[1].IsCloseTo(new(0, plate.Edge.Bounds.Max.Y)), "The new point is on the arc's middle.");
+    }
+
+    [TestMethod]
+    public void FilletEndIsWorkedOutAndCantBeMovedOrSplit()
+    {
+        var profile = FilletedProfile();
+        var plate = PlateShape.From(profile)!;
+        Assert.HasCount(4, plate.UpperEdge);
+        Assert.AreSame(profile, EndProfileCommands.SetPlatePoint(2, new(10, 0)).Apply(profile), "A fillet's end can't be moved.");
+        Assert.AreSame(profile, EndProfileCommands.AddPlatePoint(1).Apply(profile), "A fillet can't be split.");
+
+        var withoutFillet = PlateShape.From(EndProfileCommands.Delete([EndProfileItem.PlatePoint(2)]).Apply(profile))!;
+        Assert.IsTrue(withoutFillet.Segments.All(s => s.Kind == PlateSegmentKind.Line), "Deleting the fillet's end deletes the fillet.");
+    }
+
+    [TestMethod]
+    public void MovingThePlateKeepsItsSegments()
+    {
+        var moved = PlateShape.From(EndProfileCommands.Move([EndProfileItem.Outline], new(5, 3)).Apply(FilletedProfile()))!;
+        Assert.AreEqual(PlateSegmentKind.Fillet, moved.Segments[1].Kind);
+        Assert.AreEqual(new Point(-245, -7), moved.Start);
+        Assert.AreEqual(-197, moved.Bottom, Precision);
+    }
+
+    [TestMethod]
+    public void DrawnOutlineReplacesTheEnteredPlate()
+    {
+        var drawn = EndProfileCommands.SetOutline(PathDrawing.Polyline([new(-100, -100), new(100, -100), new(100, 0), new(-100, 0)], isClosed: true)).Apply(FilletedProfile());
+        Assert.IsNull(drawn.Plate);
+        Assert.AreEqual(200, PlateShape.From(drawn)!.Width, Precision);
+    }
+
     [TestMethod]
     public void BottomMustStayBelowTheUpperEdge()
     {

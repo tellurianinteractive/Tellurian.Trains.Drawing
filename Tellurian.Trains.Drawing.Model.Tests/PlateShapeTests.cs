@@ -58,13 +58,13 @@ public sealed class PlateShapeTests
     }
 
     [TestMethod]
-    public void ArcsOfABuiltInOutlineBecomePoints()
+    public void BuiltInOutlineKeepsItsSize()
     {
         var b96 = BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
         var read = PlateShape.From(b96);
         Assert.IsNotNull(read);
         Assert.AreEqual(b96.Outline!.ToPath().Bounds.Width, read.Width, Precision);
         Assert.AreEqual(b96.Outline.ToPath().Bounds.Min.Y, read.Bottom, Precision);
-        Assert.IsTrue(read.UpperEdge.Count > 10, "The arcs are approximated by points.");
+        Assert.IsTrue(read.Segments.Any(s => s.Kind == PlateSegmentKind.Arc), "The arcs are kept.");
     }
 }

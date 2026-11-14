@@ -263,4 +263,15 @@
   <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plate's lower left corner</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Dimension screw holes and points</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Distance from left edge (mm)</value></data>
+  <data name="SegmentType" xml:space="preserve"><value>Type</value></data>
+  <data name="SegmentStart" xml:space="preserve"><value>Start</value></data>
+  <data name="SegmentKind_Line" xml:space="preserve"><value>Line</value></data>
+  <data name="SegmentKind_Arc" xml:space="preserve"><value>Arc</value></data>
+  <data name="SegmentKind_Fillet" xml:space="preserve"><value>Fillet</value></data>
+  <data name="ArcCentre" xml:space="preserve"><value>Centre</value></data>
+  <data name="FilletEnd" xml:space="preserve"><value>Ends at</value></data>
+  <data name="FilletSide_Above" xml:space="preserve"><value>Centre above</value></data>
+  <data name="FilletSide_Below" xml:space="preserve"><value>Centre below</value></data>
+  <data name="FilletSide_Auto" xml:space="preserve"><value>Centre: best fit</value></data>
+  <data name="Print" xml:space="preserve"><value>Print</value></data>
 </root>

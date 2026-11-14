@@ -25,6 +25,7 @@ public static class EndProfileDimensions
             dimensions.Add(Dimension.Place(rightBottom, plate.UpperEdge[^1], new(plate.Right + gap, 0), DimensionKind.Vertical));
             dimensions.Add(Dimension.Place(new(plate.Left, 0), leftBottom, new(plate.Left - 2.2 * gap, 0), DimensionKind.Vertical));
             if (details) dimensions.AddRange(PointDimensions(plate, frame, gap));
+            dimensions.AddRange(RadiusDimensions(plate, gap));
         }
         if (details) dimensions.AddRange(ScrewHoleDimensions(profile, frame));
         return dimensions;
@@ -45,6 +46,24 @@ public static class EndProfileDimensions
                 yield return new() { Start = new(center.X, frame.Origin.Y), End = center, Kind = DimensionKind.Vertical, Offset = 0 };
         }
     }
+
+    /// <summary>
+    /// For each arc of the upper edge (arcs and fillets): its radius, as a short line from the middle of the arc
+    /// towards its centre, labelled "R" and the radius.
+    /// </summary>
+    private static IEnumerable<Dimension> RadiusDimensions(PlateShape plate, double gap)
+    {
+        foreach (var arc in plate.Edge.Segments.OfType<ArcSegment>())
+        {
+            var middle = arc.PointAt(arc.Length / 2);
+            var length = Math.Min(arc.Radius, gap * 1.5);
+            var towardsCentre = middle + (arc.Center - middle).Normalized * length;
+            yield return new() { Start = towardsCentre, End = middle, Kind = DimensionKind.Aligned, Offset = 0, Text = $"R {Format(arc.Radius)}" };
+        }
+    }
+
+    private static string Format(double radius) =>
+        Math.Round(radius, radius < 100 ? 1 : 0).ToString(System.Globalization.CultureInfo.InvariantCulture);
 
     /// <summary>Heights closer than this share one dimension, mm.</summary>
     public const double SameHeight = 0.05;

@@ -27,10 +27,11 @@ public static class EndProfileCommands
             };
             if (PlateShape.From(profile) is not { } plate)
                 return moved with { Outline = ids.Contains(EndProfileItem.Outline) ? Moved(profile.Outline, offset) : profile.Outline };
-            var whole = ids.Contains(EndProfileItem.Outline);
-            if (!whole && !ids.Any(i => i.Kind == EndProfileItemKind.PlatePoint)) return moved;
-            var points = plate.UpperEdge.Select((p, i) => whole || ids.Contains(EndProfileItem.PlatePoint(i)) ? p + offset : p);
-            return PlateShape.TryCreate(points, whole ? plate.Bottom + offset.Y : plate.Bottom) is { } shape ? WithPlate(moved, shape) : moved;
+            if (ids.Contains(EndProfileItem.Outline)) return plate.Moved(offset) is { } whole ? WithPlate(moved, whole) : moved;
+            var shape = plate;
+            foreach (var index in ids.Where(i => i.Kind == EndProfileItemKind.PlatePoint).Select(i => i.Index).Order())
+                if (index < shape.UpperEdge.Count && shape.WithVertex(index, shape.UpperEdge[index] + offset) is { } changed) shape = changed;
+            return ReferenceEquals(shape, plate) ? moved : WithPlate(moved, shape);
         });
 
     /// <summary>Sets the plate's shape: its outline and, from its upper edge, the ground line.</summary>
@@ -51,20 +52,36 @@ public static class EndProfileCommands
             return PlateShape.TryCreate(edge, bottom) is { } shape ? WithPlate(profile, shape) : profile;
         });
 
+    /// <summary>Moves vertex <paramref name="index"/> of the upper edge (0 the start); a fillet's worked-out end can't be moved.</summary>
     public static IEditCommand<EndProfile> SetPlatePoint(int index, Point point) =>
-        ChangePlate("Change plate point", plate => PlateShape.TryCreate(Replace(plate.UpperEdge, index, point), plate.Bottom));
+        ChangePlate("Change plate point", plate => plate.WithVertex(index, point));
+
+    /// <summary>Replaces segment <paramref name="index"/> of the upper edge, e.g. to make a line an arc or a fillet.</summary>
+    public static IEditCommand<EndProfile> SetPlateSegment(int index, PlateSegment segment) =>
+        ChangePlate("Change plate segment", plate => plate.WithSegment(index, segment));
 
     /// <summary>Sets the Y of the plate's bottom edge; refused if it isn't below the upper edge.</summary>
     public static IEditCommand<EndProfile> SetPlateBottom(double bottom) =>
-        ChangePlate("Change plate bottom", plate => PlateShape.TryCreate(plate.UpperEdge, bottom));
+        ChangePlate("Change plate bottom", plate => plate.WithBottom(bottom));
 
-    /// <summary>Inserts a point halfway between point <paramref name="index"/> and the next, or before the last point.</summary>
+    /// <summary>
+    /// Splits the segment after vertex <paramref name="index"/> in two: a line at its middle, an arc at the middle of
+    /// the arc, keeping its centre. A fillet can't be split, as its end is worked out.
+    /// </summary>
     public static IEditCommand<EndProfile> AddPlatePoint(int index) =>
         ChangePlate("Add plate point", plate =>
         {
-            var at = Math.Clamp(index, 0, plate.UpperEdge.Count - 2);
-            var middle = Point.Lerp(plate.UpperEdge[at], plate.UpperEdge[at + 1], 0.5);
-            return PlateShape.TryCreate([.. plate.UpperEdge.Take(at + 1), middle, .. plate.UpperEdge.Skip(at + 1)], plate.Bottom);
+            var at = Math.Clamp(index, 0, plate.Segments.Count - 1);
+            var segment = plate.Segments[at];
+            Point from = plate.UpperEdge[at], to = plate.UpperEdge[at + 1];
+            var middle = Point.Lerp(from, to, 0.5);
+            return segment.Kind switch
+            {
+                PlateSegmentKind.Arc when segment.Center is { } center && (middle - center).Length > Tolerance.Length =>
+                    plate.WithSegmentInserted(at, PlateSegment.Arc(center, center + (middle - center).Normalized * segment.EffectiveRadius)),
+                PlateSegmentKind.Fillet => null,
+                _ => plate.WithSegmentInserted(at, PlateSegment.Line(middle)),
+            };
         });
 
     private static IEditCommand<EndProfile> ChangePlate(string description, Func<PlateShape, PlateShape?> change) =>
@@ -72,10 +89,11 @@ public static class EndProfileCommands
             PlateShape.From(profile) is { } plate && change(plate) is { } changed ? WithPlate(profile, changed) : profile);
 
     private static EndProfile WithPlate(EndProfile profile, PlateShape plate) =>
-        profile with { Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        profile with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
 
     public static IEditCommand<EndProfile> SetOutline(PathDrawing outline) =>
-        new EditCommand<EndProfile>("Draw outline", profile => profile with { Outline = outline });
+        // A drawn outline replaces the entered plate; the plate is read from the outline again when needed.
+        new EditCommand<EndProfile>("Draw outline", profile => profile with { Outline = outline, Plate = null });
 
     public static IEditCommand<EndProfile> SetGroundLine(PathDrawing groundLine) =>
         new EditCommand<EndProfile>("Draw ground line", profile => profile with { GroundLine = groundLine });
@@ -111,12 +129,23 @@ public static class EndProfileCommands
                 ScrewHoles = Keep(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids),
                 Dowels = Keep(profile.Dowels, EndProfileItemKind.Dowel, ids),
                 Outline = ids.Contains(EndProfileItem.Outline) ? null : profile.Outline,
+                Plate = ids.Contains(EndProfileItem.Outline) ? null : profile.Plate,
                 GroundLine = ids.Contains(EndProfileItem.GroundLine) || ids.Contains(EndProfileItem.Outline) ? null : profile.GroundLine,
             };
             // Plate points can be deleted as long as the upper edge keeps two points.
-            if (deleted.Outline is not null && ids.Any(i => i.Kind == EndProfileItemKind.PlatePoint) && PlateShape.From(profile) is { } plate &&
-                PlateShape.TryCreate(plate.UpperEdge.Where((_, i) => !ids.Contains(EndProfileItem.PlatePoint(i))), plate.Bottom) is { } shape)
+            if (deleted.Outline is not null && ids.Any(i => i.Kind == EndProfileItemKind.PlatePoint) && PlateShape.From(profile) is { } plate)
+            {
+                // From the last vertex backwards, so the indexes of the remaining ones stay valid.
+                var shape = plate;
+                foreach (var index in ids.Where(i => i.Kind == EndProfileItemKind.PlatePoint).Select(i => i.Index).OrderDescending())
+                {
+                    var without = index == 0
+                        ? shape.Segments.Count > 1 && shape.Segments[0].Kind != PlateSegmentKind.Fillet ? PlateShape.TryCreate(shape.UpperEdge[1], shape.Segments.Skip(1), shape.Bottom) : null
+                        : index <= shape.Segments.Count && shape.Segments.Count > 1 ? shape.WithoutSegment(index - 1) : null;
+                    if (without is not null) shape = without;
+                }
                 deleted = WithPlate(deleted, shape);
+            }
             return deleted;
         });
 

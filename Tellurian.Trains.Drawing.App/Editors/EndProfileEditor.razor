@@ -18,6 +18,7 @@
 @inject IWorkbench Workbench
 @inject SafeReload Reload
 @inject TimeProvider Time
+@inject IJSRuntime JS
 
 @* The end profile editor (Phase 5, EP-1…EP-7): end view with tools, a property panel and live derived properties. *@
 @if (_document is not null)
@@ -31,7 +32,11 @@
                                        ShowPlatePoints="true" HandleSize="_view.ToWorld(8)" />
                     @foreach (var dimension in PlateDimensions)
                     {
-                        <DimensionLine Dimension="dimension" TextSize="_view.ToWorld(11)" />
+                        <DimensionLine Dimension="dimension" TextSize="_view.ToWorld(DimensionTextPixels)" />
+                    }
+                    @if (Title is { } title)
+                    {
+                        <WorldText At="title.Center" Text="@title.Text" Size="title.Size" Class="ep-title" />
                     }
                 </ChildContent>
                 <Overlay>
@@ -78,7 +83,8 @@
                     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
                     <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
                     <button type="button" id="mirror-holes" @onclick="MirrorHoles">@T["MirrorScrewHoles"]</button>
-                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ViewBounds(_document.Current))">@T["ZoomToFit"]</button>
+                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ZoomBounds)">@T["ZoomToFit"]</button>
+                    <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
                 </div>
                 <p class="pane-help" aria-live="polite">@Status</p>
             </section>
@@ -101,18 +107,69 @@
                         <NumberField Label="@T["PlateWidth"]" Value="plate.Width" ReadOnly="true" />
                     </div>
                     <table class="plate-points">
-                        <thead><tr><th>#</th><th>X</th><th>Y</th></tr></thead>
+                        <thead><tr><th>#</th><th>@T["SegmentType"]</th><th>X</th><th>Y</th></tr></thead>
                         <tbody>
-                            @for (var i = 0; i < plate.UpperEdge.Count; i++)
+                            @{
+                                var startShown = Frame.ToDisplay(plate.Start);
+                            }
+                            <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(0)) ? "selected" : null)">
+                                <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(0))">1</button></td>
+                                <td class="detail">@T["SegmentStart"]</td>
+                                <td><NumberField Label="" Unit="@null" Value="startShown.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(0, Frame.FromDisplay(new(v, startShown.Y))))" /></td>
+                                <td><NumberField Label="" Unit="@null" Value="startShown.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(0, Frame.FromDisplay(new(startShown.X, v))))" /></td>
+                            </tr>
+                            @for (var i = 0; i < plate.Segments.Count; i++)
                             {
                                 var index = i;
-                                var point = plate.UpperEdge[i];
-                                var shown = Frame.ToDisplay(point);
-                                <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(i)) ? "selected" : null)">
-                                    <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(index))">@(i + 1)</button></td>
-                                    <td><NumberField Label="" Unit="@null" Value="shown.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, Frame.FromDisplay(new(v, shown.Y))))" /></td>
-                                    <td><NumberField Label="" Unit="@null" Value="shown.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, Frame.FromDisplay(new(shown.X, v))))" /></td>
+                                var segment = plate.Segments[i];
+                                var vertex = Frame.ToDisplay(plate.UpperEdge[i + 1]);
+                                <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(i + 1)) ? "selected" : null)">
+                                    <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(index + 1))">@(i + 2)</button></td>
+                                    <td>
+                                        <select class="segment-kind" aria-label="@T["SegmentType"]" value="@segment.Kind" @onchange="e => ChangeSegmentKind(index, e)">
+                                            @foreach (var kind in Enum.GetValues<PlateSegmentKind>())
+                                            {
+                                                <option value="@kind">@T[$"SegmentKind_{kind}"]</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    @if (segment.Kind == PlateSegmentKind.Fillet)
+                                    {
+                                        <td><NumberField Label="" Unit="R" Value="segment.EffectiveRadius" Min="0.1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Fillet(v, segment.Side)))" /></td>
+                                        <td>
+                                            <select class="segment-kind" aria-label="@T["FilletSide_Auto"]" value="@(segment.Side?.ToString() ?? "")"
+                                                    @onchange="e => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Fillet(segment.EffectiveRadius, Enum.TryParse<FilletSide>(e.Value as string, out var side) ? side : null)))">
+                                                <option value="">@T["FilletSide_Auto"]</option>
+                                                <option value="@FilletSide.Above">@T["FilletSide_Above"]</option>
+                                                <option value="@FilletSide.Below">@T["FilletSide_Below"]</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td><NumberField Label="" Unit="@null" Value="vertex.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index + 1, Frame.FromDisplay(new(v, vertex.Y))))" /></td>
+                                        <td><NumberField Label="" Unit="@null" Value="vertex.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index + 1, Frame.FromDisplay(new(vertex.X, v))))" /></td>
+                                    }
                                 </tr>
+                                @if (segment.Kind == PlateSegmentKind.Arc && segment.Center is { } centre)
+                                {
+                                    var centreShown = Frame.ToDisplay(centre);
+                                    <tr class="arc-centre">
+                                        <td></td>
+                                        <td class="detail">@T["ArcCentre"] (R @Mm(segment.EffectiveRadius))</td>
+                                        <td><NumberField Label="" Unit="@null" Value="centreShown.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Arc(Frame.FromDisplay(new(v, centreShown.Y)), segment.End!.Value)))" /></td>
+                                        <td><NumberField Label="" Unit="@null" Value="centreShown.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Arc(Frame.FromDisplay(new(centreShown.X, v)), segment.End!.Value)))" /></td>
+                                    </tr>
+                                }
+                                @if (segment.Kind == PlateSegmentKind.Fillet)
+                                {
+                                    <tr class="arc-centre">
+                                        <td></td>
+                                        <td class="detail">@T["FilletEnd"]</td>
+                                        <td class="detail number">@Mm(vertex.X)</td>
+                                        <td class="detail number">@Mm(vertex.Y)</td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -186,6 +243,22 @@
             </section>
         </aside>
     </div>
+    var sheet = Sheet;
+    <div class="print-sheet" aria-hidden="true">
+        <svg class="print-drawing" viewBox="@sheet.ViewBox" preserveAspectRatio="xMidYMid meet">
+            <g transform="scale(1,-1)">
+                <EndProfileContent Profile="_document.Current" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="sheet.TextSize" />
+                @foreach (var dimension in sheet.Dimensions)
+                {
+                    <DimensionLine Dimension="dimension" TextSize="sheet.TextSize" />
+                }
+                @if (sheet.Title is { } printedTitle)
+                {
+                    <WorldText At="printedTitle.Center" Text="@printedTitle.Text" Size="printedTitle.Size" Class="ep-title" />
+                }
+            </g>
+        </svg>
+    </div>
 }
 
 @code {
@@ -243,14 +316,29 @@
 
     private SnapResult? Snapped => ActivePathOrNull?.Snapped ?? ActivePlaceOrNull?.Snapped ?? (_activeTool == EndProfileTool.Select ? _select.Snapped : null);
 
-    /// <summary>Room around the drawing for its dimensions, relative to the drawing's size.</summary>
-    private const double DimensionRoom = 0.18;
+    /// <summary>Zoom to fit: the drawing, its dimensions and the title, with a little room around them.</summary>
+    private BoundingBox ZoomBounds =>
+        EndProfileSheet.Bounds(Shown, PlateDimensions, Title, _view.ToWorld(DimensionTextPixels)).Inflated(_view.ToWorld(ZoomMarginPixels));
 
-    /// <summary>The area zoom to fit shows: the drawing with room for the dimension columns and rows around it.</summary>
-    private static BoundingBox ViewBounds(EndProfile profile)
+    private const double DimensionTextPixels = 11;
+    private const double ZoomMarginPixels = 16;
+
+    /// <summary>The title, "Standard Scale Designation", centred below the lowest dimension.</summary>
+    private LabelPlacement? Title => EndProfileLabel.Place(Shown, PlateDimensions, _view.ToWorld(DimensionTextPixels));
+
+    /// <summary>The drawing as printed, sized for the page whatever the zoom; the print styles show it instead of the editor.</summary>
+    private SheetLayout Sheet => EndProfileSheet.Create(_document!.Current, MeasureFrame.For(_document.Current, _origin), _detailDimensions);
+
+    private async Task PrintAsync()
     {
-        var bounds = EndProfileContent.Bounds(profile);
-        return bounds.Inflated(Math.Max(bounds.Width, bounds.Height) * DimensionRoom);
+        try
+        {
+            await JS.InvokeVoidAsync("print");
+        }
+        catch (JSException)
+        {
+            // Printing isn't available, e.g. in a restricted browser; nothing is lost.
+        }
     }
 
     /// <summary>A new upper edge without a plate gets a plate this deep below its lowest point, mm.</summary>
@@ -282,6 +370,27 @@
         {
             // Only the preference is lost; the editor still measures from the chosen origin.
         }
+    }
+
+    /// <summary>Default radius of a new fillet, mm.</summary>
+    private const double DefaultFilletRadius = 10;
+
+    /// <summary>
+    /// Changes the kind of segment <paramref name="index"/>, keeping where it ends: a new arc gets a centre below the
+    /// chord with the chord's length as radius, so it bulges up; a new fillet gets the default radius.
+    /// </summary>
+    private void ChangeSegmentKind(int index, ChangeEventArgs e)
+    {
+        if (Plate is not { } plate || !Enum.TryParse<PlateSegmentKind>(e.Value as string, out var kind) || kind == plate.Segments[index].Kind) return;
+        var from = plate.UpperEdge[index];
+        var to = plate.UpperEdge[index + 1];
+        var segment = kind switch
+        {
+            PlateSegmentKind.Arc when (to - from).Length > 0 => PlateSegment.Arc(Point.Lerp(from, to, 0.5) - (to - from).LeftNormal * (Math.Sqrt(3) / 2), to),
+            PlateSegmentKind.Fillet => PlateSegment.Fillet(DefaultFilletRadius),
+            _ => PlateSegment.Line(to),
+        };
+        Apply(EndProfileCommands.SetPlateSegment(index, segment));
     }
 
     /// <summary>Adds a point after the selected point, or in the middle of the upper edge.</summary>
@@ -321,8 +430,10 @@
     protected override async Task OnInitializedAsync()
     {
         var profile = Model.Files.DrawingFileSerializer.DeserializeEndProfile(Draft.Json);
+        // The stored plate is the source; its outline and ground line are generated, so they always match it.
+        if (profile.Plate is { } storedPlate) profile = profile with { Outline = storedPlate.Outline(), GroundLine = storedPlate.GroundLine() };
         _document = new(profile);
-        _view = Viewport.Fit(ViewBounds(profile), 800, 400);
+        _view = Viewport.Fit(EndProfileSheet.Create(profile, MeasureFrame.For(profile, _origin), _detailDimensions).Bounds, 800, 400);
         _select = new(_document, _selection, _scene, _snap);
         _upperEdge = new(_document, _snap, path => EndProfileCommands.SetUpperEdge(path.Tessellate(PlateShape.ArcTolerance).Points, DefaultPlateDepth))
         {

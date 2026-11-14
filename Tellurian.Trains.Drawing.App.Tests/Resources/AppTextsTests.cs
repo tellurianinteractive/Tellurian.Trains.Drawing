@@ -56,7 +56,9 @@ public sealed partial class AppTextsTests
             .Concat(Keys<JointFit>("Fit"))
             .Concat(Keys<RailSystem>("RailSystem"))
             .Concat(Keys<CatalogueProblemCode>("Problem"))
-            .Concat(Keys<Editing.EndProfiles.MeasureOrigin>("MeasureOrigin"));
+            .Concat(Keys<Editing.EndProfiles.MeasureOrigin>("MeasureOrigin"))
+            .Concat(Keys<Model.EndProfiles.PlateSegmentKind>("SegmentKind"))
+            .Concat(Keys<Model.EndProfiles.FilletSide>("FilletSide"));
         foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
     }
 

@@ -30,6 +30,6 @@ internal static class StaticRendering
             throw new InvalidOperationException($"Static rendering must not call JS ({identifier}).");
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args) =>
-            InvokeAsync<TValue>(identifier, args);
+            throw new InvalidOperationException($"Static rendering must not call JS ({identifier}).");
     }
 }
