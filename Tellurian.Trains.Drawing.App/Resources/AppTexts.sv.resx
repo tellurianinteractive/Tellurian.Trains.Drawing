@@ -176,6 +176,9 @@
   <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} måste ha samma skala som den första ändprofilen.</value></data>
   <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: det finns redan ett undantag för de här ändprofilerna.</value></data>
   <data name="Sandbox" xml:space="preserve"><value>Testyta för ritytan</value></data>
-  <data name="SandboxIntro" xml:space="preserve"><value>En testritning för ritytan: dra med mittenknappen eller mellanslag + dra för att panorera, använd hjulet eller nyp för att zooma.</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>En testritning för redigeraren: klicka eller dra en ruta för att markera, dra för att flytta (Skift: rakt, Alt: utan fästning), Ctrl+Z för att ångra. Panorera med mittenknappen eller mellanslag + dra, zooma med hjulet eller genom att nypa.</value></data>
   <data name="ZoomToFit" xml:space="preserve"><value>Zooma till allt</value></data>
+  <data name="Undo" xml:space="preserve"><value>Ångra</value></data>
+  <data name="Redo" xml:space="preserve"><value>Gör om</value></data>
+  <data name="SelectedCount" xml:space="preserve"><value>{0} markerade</value></data>
 </root>

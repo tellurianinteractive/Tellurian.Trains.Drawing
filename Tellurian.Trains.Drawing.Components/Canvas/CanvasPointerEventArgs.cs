@@ -1,3 +1,4 @@
+using Tellurian.Trains.Drawing.Editing.Tools;
 using Tellurian.Trains.Drawing.Geometry;
 
 namespace Tellurian.Trains.Drawing.Components.Canvas;
@@ -24,4 +25,13 @@ public sealed record CanvasPointerEventArgs
 
     /// <summary>Ctrl on Windows and Linux, Cmd on macOS: adds to a selection.</summary>
     public bool IsAdditive => CtrlKey || MetaKey;
+
+    /// <summary>The event for an editor tool, with a hit and snap reach of <paramref name="tolerance"/> millimetres.</summary>
+    public ToolPointer ToToolPointer(double tolerance) => new(World, tolerance)
+    {
+        Button = Button switch { 1 => PointerButton.Middle, 2 => PointerButton.Secondary, _ => PointerButton.Primary },
+        IsAdditive = IsAdditive,
+        IsConstrained = ShiftKey,
+        IsSnapSuppressed = AltKey,
+    };
 }

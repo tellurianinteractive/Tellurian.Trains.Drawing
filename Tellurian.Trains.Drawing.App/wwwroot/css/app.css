@@ -352,3 +352,30 @@ a.button {
 .sandbox-shape.open {
     fill: none;
 }
+
+.sandbox-shape {
+    cursor: pointer;
+}
+
+.sandbox-shape.selected {
+    stroke: #c24b1b;
+    stroke-width: 3;
+    fill: rgba(194, 75, 27, 0.08);
+}
+
+.sandbox-shape.open.selected {
+    fill: none;
+}
+
+.sandbox-rubber-band {
+    fill: rgba(27, 110, 194, 0.08);
+    stroke: #1b6ec2;
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+}
+
+.sandbox-snap {
+    fill: none;
+    stroke: #c24b1b;
+    stroke-width: 2;
+}

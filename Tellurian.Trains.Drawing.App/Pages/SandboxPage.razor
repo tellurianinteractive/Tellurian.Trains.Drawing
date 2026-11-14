@@ -1,9 +1,14 @@
 @page "/sandbox"
+@using Tellurian.Trains.Drawing.App.Sandbox
 @using Tellurian.Trains.Drawing.Components.Canvas
 @using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Commands
+@using Tellurian.Trains.Drawing.Editing.Selection
+@using Tellurian.Trains.Drawing.Editing.Snapping
+@using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Drawing.Geometry
-@using Tellurian.Trains.Drawing.Model
+@implements IDisposable
 
 <PageTitle>@T["Sandbox"]</PageTitle>
 
@@ -11,34 +16,98 @@
 <p class="note">@T["SandboxIntro"]</p>
 
 <div class="toolbar">
-    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(Bounds)">@T["ZoomToFit"]</button>
+    <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
+    <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
+    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(_document.Current.Bounds)">@T["ZoomToFit"]</button>
     <span class="detail" id="pointer">@_pointer</span>
+    <span class="detail" id="selection">@T.Format("SelectedCount", _selection.Count)</span>
 </div>
 
 <div class="sandbox-canvas">
-    <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]" OnPointerMove="OnMove">
-        @foreach (var shape in Shapes)
-        {
-            <path class="@(shape.IsClosed ? "sandbox-shape" : "sandbox-shape open")" d="@SvgPath.From(shape)" />
-        }
+    <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
+                   OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+        <ChildContent>
+            @foreach (var shape in _document.Current.Shapes)
+            {
+                var selected = _selection.Contains(shape.Id);
+                var path = selected && _tool.DragOffset is { } offset ? SandboxScene.Moved(shape.Path, offset) : shape.Path;
+                <path @key="shape.Id" class="@ShapeClass(shape, selected)" d="@SvgPath.From(path)" />
+            }
+        </ChildContent>
+        <Overlay>
+            @if (_tool.RubberBand is { } band)
+            {
+                <rect class="sandbox-rubber-band" x="@SvgPath.Number(band.Min.X)" y="@SvgPath.Number(band.Min.Y)"
+                      width="@SvgPath.Number(band.Width)" height="@SvgPath.Number(band.Height)" />
+            }
+            @if (_tool.Snapped is { } snap)
+            {
+                <circle class="sandbox-snap" cx="@SvgPath.Number(snap.Point.X)" cy="@SvgPath.Number(snap.Point.Y)" r="@SvgPath.Number(_view.ToWorld(5))" />
+            }
+        </Overlay>
     </DrawingCanvas>
 </div>
 
 @code {
-    private static readonly PathDrawing[] Shapes =
-    [
-        PathDrawing.Rectangle(new(600, 250), 1200, 500, Angle.Zero),
-        PathDrawing.Rectangle(new(2000, 600), 800, 300, new(30)),
-        PathDrawing.Circle(new(3200, 300), 400),
-        PathDrawing.From(new PathBuilder(new Pose(new(0, 1200), Angle.Zero)).Straight(1000).Curve(2000, 30).Build()),
-    ];
-
-    private static BoundingBox Bounds => Shapes.Select(s => s.ToPath().Bounds).Aggregate((a, b) => a.Union(b));
-
+    private readonly EditorDocument<SandboxDocument> _document = new(SandboxDocument.Sample);
+    private readonly SelectionSet<Guid> _selection = new();
+    private readonly SandboxScene _scene = new();
+    private readonly SnapEngine _snap = new(SandboxScene.IndexCellSize);
+    private SelectMoveTool<SandboxDocument, Guid> _tool = default!;
     private DrawingCanvas? _canvas;
-    private Viewport _view = Viewport.Fit(Bounds, 900, 500);
+    private Viewport _view = Viewport.Fit(SandboxDocument.Sample.Bounds, 900, 500);
     private string _pointer = string.Empty;
 
-    private void OnMove(CanvasPointerEventArgs e) =>
-        _pointer = $"x {SvgPath.Number(Math.Round(e.World.X))} mm, y {SvgPath.Number(Math.Round(e.World.Y))} mm, {SvgPath.Number(_view.Scale)} px/mm";
+    private double Tolerance => _view.ToWorld(SnapEngine.DefaultTolerancePixels);
+
+    protected override void OnInitialized()
+    {
+        _tool = new(_document, _selection, _scene, _snap);
+        _document.Changed += OnDocumentChanged;
+        RefreshSnapTargets();
+    }
+
+    private void OnDown(CanvasPointerEventArgs e) => _tool.PointerDown(e.ToToolPointer(Tolerance));
+
+    private void OnMove(CanvasPointerEventArgs e)
+    {
+        _snap.GridSpacing = NiceSteps.GridSpacing(_view.Scale);
+        _tool.PointerMove(e.ToToolPointer(Tolerance));
+        _pointer = $"x {SvgPath.Number(Math.Round(e.World.X))} mm, y {SvgPath.Number(Math.Round(e.World.Y))} mm";
+    }
+
+    private void OnUp(CanvasPointerEventArgs e) => _tool.PointerUp(e.ToToolPointer(Tolerance));
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        var command = e.CtrlKey || e.MetaKey;
+        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
+        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
+        else _tool.KeyDown(e.Key);
+    }
+
+    private void Undo()
+    {
+        _tool.Cancel();
+        _document.Undo();
+    }
+
+    private void Redo()
+    {
+        _tool.Cancel();
+        _document.Redo();
+    }
+
+    private void OnDocumentChanged(object? sender, EventArgs e) => RefreshSnapTargets();
+
+    private void RefreshSnapTargets()
+    {
+        _snap.Clear();
+        foreach (var shape in _document.Current.Shapes) _snap.AddRange(_scene.SnapTargetsOf(_document.Current, shape.Id));
+    }
+
+    private static string ShapeClass(SandboxShape shape, bool selected) =>
+        string.Join(' ', new[] { "sandbox-shape", shape.Path.IsClosed ? null : "open", selected ? "selected" : null }.OfType<string>());
+
+    public void Dispose() => _document.Changed -= OnDocumentChanged;
 }
