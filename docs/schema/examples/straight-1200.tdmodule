@@ -5,7 +5,7 @@
   "appVersion": "0.1.0",
   "content": {
     "module": {
-      "id": "9033cfd2-9283-4761-b467-755bea18d94e",
+      "id": "2a4e2fa0-0ec3-4e92-936d-ebaad31513d1",
       "name": "Straight 1200",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -26,7 +26,7 @@
       "revision": 0,
       "variants": [
         {
-          "id": "6fedfa5f-7e72-48ca-b223-1a4095e9a5fe",
+          "id": "c4b645d9-7f26-4ac8-9c83-8a16b8a29bec",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -87,14 +87,14 @@
               "path": {
                 "start": {
                   "x": 0,
-                  "y": -250
+                  "y": -250.0000000000001
                 },
                 "steps": [
                   {
                     "type": "line",
                     "end": {
                       "x": 1200,
-                      "y": -250
+                      "y": -250.0000000000001
                     }
                   }
                 ],
@@ -108,14 +108,14 @@
               "path": {
                 "start": {
                   "x": 1200,
-                  "y": 250
+                  "y": 250.0000000000001
                 },
                 "steps": [
                   {
                     "type": "line",
                     "end": {
                       "x": 0,
-                      "y": 250
+                      "y": 250.0000000000001
                     }
                   }
                 ],
@@ -129,35 +129,35 @@
               "outline": {
                 "start": {
                   "x": 0,
-                  "y": -250
+                  "y": -250.0000000000001
                 },
                 "steps": [
                   {
                     "type": "line",
                     "end": {
                       "x": 1200,
-                      "y": -250
+                      "y": -250.0000000000001
                     }
                   },
                   {
                     "type": "line",
                     "end": {
                       "x": 1200,
-                      "y": 250
+                      "y": 250.0000000000001
                     }
                   },
                   {
                     "type": "line",
                     "end": {
                       "x": 0,
-                      "y": 250
+                      "y": 250.0000000000001
                     }
                   },
                   {
                     "type": "line",
                     "end": {
                       "x": 0,
-                      "y": -250
+                      "y": -250.0000000000001
                     }
                   }
                 ],
@@ -185,7 +185,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "8849e784-5cf1-4f25-9522-d98d822960c8",
+              "id": "f73767ca-a6ba-48ab-af47-12556f883e8e",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -248,35 +248,121 @@
         "outline": {
           "start": {
             "x": -250,
-            "y": -140
+            "y": -195
           },
           "steps": [
             {
               "type": "line",
               "end": {
                 "x": 250,
-                "y": -140
+                "y": -195
               }
             },
             {
               "type": "line",
               "end": {
-                "x": 250,
-                "y": -40
+                "x": 250.00000000000023,
+                "y": 46.55332147444176
+              }
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 327,
+                "y": -495
+              },
+              "sweep": 18.9734982539195
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 73.55769887408297,
+                "y": 1
+              },
+              "sweep": -27.065777620219407
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 60,
+                "y": -9
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 55,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 45,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -61,
+                "y": -30
               }
             },
             {
               "type": "line",
               "end": {
                 "x": -250,
-                "y": -40
+                "y": -58
               }
             },
             {
               "type": "line",
               "end": {
                 "x": -250,
-                "y": -140
+                "y": -195
               }
             }
           ],
@@ -285,15 +371,101 @@
         "groundLine": {
           "start": {
             "x": -250,
-            "y": -40
+            "y": -58
           },
           "steps": [
             {
               "type": "line",
               "end": {
-                "x": 250,
-                "y": -40
+                "x": -61,
+                "y": -30
               }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 45,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 55,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 60,
+                "y": -9
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 73.55769887408297,
+                "y": -9
+              }
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 73.55769887408297,
+                "y": 1
+              },
+              "sweep": 27.065777620219407
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 327,
+                "y": -495
+              },
+              "sweep": -18.9734982539195
             }
           ],
           "isClosed": false
@@ -308,50 +480,58 @@
         "screwHoles": [
           {
             "center": {
-              "x": -150,
-              "y": -70
+              "x": -180,
+              "y": -145
             },
-            "diameter": 8
+            "diameter": 12
           },
           {
             "center": {
-              "x": 150,
-              "y": -70
+              "x": 180,
+              "y": -145
             },
-            "diameter": 8
+            "diameter": 12
           },
           {
             "center": {
-              "x": -150,
-              "y": -110
+              "x": -180,
+              "y": -79
             },
-            "diameter": 8
+            "diameter": 12
           },
           {
             "center": {
-              "x": 150,
-              "y": -110
+              "x": 180,
+              "y": -79
             },
-            "diameter": 8
+            "diameter": 12
+          },
+          {
+            "center": {
+              "x": 0,
+              "y": -65
+            },
+            "diameter": 12
           }
         ],
         "dowels": [],
         "screwHolePattern": "FREMO-H0",
         "source": {
-          "title": "FREMO: H0 end profile B96. Provisional values, to be drawn from the published FREMO PDF.",
-          "revision": "provisional"
+          "title": "FREMO H0-B96 dimensioned drawing, high and low profile (track at 195 / 104 mm above the plate bottom).",
+          "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
+          "revision": "drawing-2026-11-14"
         },
         "revision": 0
       }
     ],
     "measures": [
       {
-        "variantId": "6fedfa5f-7e72-48ca-b223-1a4095e9a5fe",
+        "variantId": "c4b645d9-7f26-4ac8-9c83-8a16b8a29bec",
         "measures": {
           "length": 1200,
           "straight": 1200,
           "angle": 0,
-          "width": 500,
+          "width": 500.0000000000002,
           "trackLength": 1200,
           "numberOfSections": 1
         }

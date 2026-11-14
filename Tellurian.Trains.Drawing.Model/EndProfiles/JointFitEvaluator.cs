@@ -27,12 +27,10 @@ public static class JointFitEvaluator
         if (facingA.HasScrewHoles && endB.HasScrewHoles)
         {
             var match = EndProfileComparison.MatchCircles(facingA.ScrewHoles, endB.ScrewHoles, tolerances.Joint);
-            if (!match.IsComplete)
-            {
+            unmatchedA = match.UnmatchedFirst;
+            unmatchedB = match.UnmatchedSecond;
+            if (!match.IsComplete && match.Pairs.Count < tolerances.MinimumBoltedScrewHoles)
                 differences |= FitDifferences.ScrewHoles;
-                unmatchedA = match.UnmatchedFirst;
-                unmatchedB = match.UnmatchedSecond;
-            }
         }
         else if (!string.IsNullOrWhiteSpace(a.ScrewHolePattern) && !string.IsNullOrWhiteSpace(b.ScrewHolePattern))
         {

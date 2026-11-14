@@ -5,7 +5,7 @@
   "appVersion": "0.1.0",
   "content": {
     "module": {
-      "id": "a10fcaf9-4944-4e2b-85e5-f435c21c66b8",
+      "id": "cc309144-af35-4363-b3d2-687af4e92d2f",
       "name": "Terminus",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -26,7 +26,7 @@
       "revision": 0,
       "variants": [
         {
-          "id": "af297d1d-f725-455d-8e03-a6d017daab44",
+          "id": "445f169d-6c68-4cf8-9094-1affcab1fe04",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -162,7 +162,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "d7a78846-6cd1-4f7b-9f75-52064adcd62b",
+              "id": "247f77d0-bb86-4cd7-97e1-5e2647416627",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -174,7 +174,7 @@
                 "y": -25,
                 "heading": 180
               },
-              "id": "d4daff14-fd86-4a57-af56-70661a7de837",
+              "id": "0cca4198-f1d1-47b3-9807-0750bf2d05e7",
               "isMainTrack": false,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -197,7 +197,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "791068f4-5d9c-496f-9ced-4224960cb568",
+              "id": "4fe6b571-dc39-47d0-bb58-c51c860a13e3",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -209,7 +209,7 @@
                 "y": 25,
                 "heading": 180
               },
-              "id": "7a96651d-c5ce-4c56-bdf8-ae84e8d8527b",
+              "id": "88658c88-6be1-4a2d-93ce-082ea65c9fd0",
               "isMainTrack": false,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -366,7 +366,7 @@
     ],
     "measures": [
       {
-        "variantId": "af297d1d-f725-455d-8e03-a6d017daab44",
+        "variantId": "445f169d-6c68-4cf8-9094-1affcab1fe04",
         "measures": {
           "length": 1200,
           "straight": 1200,

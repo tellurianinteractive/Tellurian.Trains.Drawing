@@ -5,7 +5,7 @@
   "appVersion": "0.1.0",
   "content": {
     "module": {
-      "id": "04f7210a-fff4-40c5-b98e-630f79879d3b",
+      "id": "96debd35-a386-4a29-a012-ca7325cfd5e3",
       "name": "Curve R2000 30\u00B0",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -26,7 +26,7 @@
       "revision": 0,
       "variants": [
         {
-          "id": "aec5e739-1eb1-40c9-be21-2dc11de63762",
+          "id": "aa4c8b3e-450d-4463-833e-6ae6bef92950",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -191,7 +191,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "35ca8075-5cdc-4ee1-88e7-580e87579c0e",
+              "id": "b52e7cfb-3999-4865-88e0-6829b485eb0d",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -254,35 +254,121 @@
         "outline": {
           "start": {
             "x": -250,
-            "y": -140
+            "y": -195
           },
           "steps": [
             {
               "type": "line",
               "end": {
                 "x": 250,
-                "y": -140
+                "y": -195
               }
             },
             {
               "type": "line",
               "end": {
-                "x": 250,
-                "y": -40
+                "x": 250.00000000000023,
+                "y": 46.55332147444176
+              }
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 327,
+                "y": -495
+              },
+              "sweep": 18.9734982539195
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 73.55769887408297,
+                "y": 1
+              },
+              "sweep": -27.065777620219407
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 60,
+                "y": -9
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 55,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 45,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -61,
+                "y": -30
               }
             },
             {
               "type": "line",
               "end": {
                 "x": -250,
-                "y": -40
+                "y": -58
               }
             },
             {
               "type": "line",
               "end": {
                 "x": -250,
-                "y": -140
+                "y": -195
               }
             }
           ],
@@ -291,15 +377,101 @@
         "groundLine": {
           "start": {
             "x": -250,
-            "y": -40
+            "y": -58
           },
           "steps": [
             {
               "type": "line",
               "end": {
-                "x": 250,
-                "y": -40
+                "x": -61,
+                "y": -30
               }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": -20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 20,
+                "y": 0
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 24,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 35,
+                "y": -4
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 45,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 55,
+                "y": -14
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 60,
+                "y": -9
+              }
+            },
+            {
+              "type": "line",
+              "end": {
+                "x": 73.55769887408297,
+                "y": -9
+              }
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 73.55769887408297,
+                "y": 1
+              },
+              "sweep": 27.065777620219407
+            },
+            {
+              "type": "arc",
+              "center": {
+                "x": 327,
+                "y": -495
+              },
+              "sweep": -18.9734982539195
             }
           ],
           "isClosed": false
@@ -314,45 +486,53 @@
         "screwHoles": [
           {
             "center": {
-              "x": -150,
-              "y": -70
+              "x": -180,
+              "y": -145
             },
-            "diameter": 8
+            "diameter": 12
           },
           {
             "center": {
-              "x": 150,
-              "y": -70
+              "x": 180,
+              "y": -145
             },
-            "diameter": 8
+            "diameter": 12
           },
           {
             "center": {
-              "x": -150,
-              "y": -110
+              "x": -180,
+              "y": -79
             },
-            "diameter": 8
+            "diameter": 12
           },
           {
             "center": {
-              "x": 150,
-              "y": -110
+              "x": 180,
+              "y": -79
             },
-            "diameter": 8
+            "diameter": 12
+          },
+          {
+            "center": {
+              "x": 0,
+              "y": -65
+            },
+            "diameter": 12
           }
         ],
         "dowels": [],
         "screwHolePattern": "FREMO-H0",
         "source": {
-          "title": "FREMO: H0 end profile B96. Provisional values, to be drawn from the published FREMO PDF.",
-          "revision": "provisional"
+          "title": "FREMO H0-B96 dimensioned drawing, high and low profile (track at 195 / 104 mm above the plate bottom).",
+          "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
+          "revision": "drawing-2026-11-14"
         },
         "revision": 0
       }
     ],
     "measures": [
       {
-        "variantId": "aec5e739-1eb1-40c9-be21-2dc11de63762",
+        "variantId": "aa4c8b3e-450d-4463-833e-6ae6bef92950",
         "measures": {
           "length": 1047.1975511965977,
           "straight": 0,

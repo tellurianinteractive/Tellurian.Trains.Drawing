@@ -66,6 +66,39 @@ public sealed class JointFitEvaluatorTests
         }
     }
 
+    // Spec §3.2: three holes that line up are enough to bolt the ends together.
+    [TestMethod]
+    [DataRow(2, JointFit.FitsWithClamps)]
+    [DataRow(3, JointFit.Fits)]
+    [DataRow(4, JointFit.Fits)]
+    public void EnoughCommonScrewHolesAreBolted(int commonHoles, JointFit expected)
+    {
+        Point[] holes = [new(-150, -70), new(150, -70), new(-150, -110), new(150, -110)];
+        var a = TestProfiles.FremoSingle() with { ScrewHoles = [.. holes.Take(commonHoles).Select(p => new Circle(p, 8)), new Circle(new(0, -60), 8)] };
+        var b = TestProfiles.FremoSingle() with { ScrewHoles = [.. holes.Select(p => new Circle(p, 8))] };
+        var result = Evaluate(a, b);
+        Assert.AreEqual(expected, result.Fit);
+        Assert.HasCount(1, result.UnmatchedScrewHolesA, "The extra hole is reported even when the ends are bolted.");
+        Assert.HasCount(holes.Length - commonHoles, result.UnmatchedScrewHolesB);
+    }
+
+    [TestMethod]
+    public void MinimumNumberOfBoltedHolesIsConfigurable()
+    {
+        var a = TestProfiles.FremoSingle() with { ScrewHoles = [.. TestProfiles.FremoSingle().ScrewHoles.Take(3)] };
+        var b = TestProfiles.FremoSingle();
+        Assert.AreEqual(JointFit.Fits, JointFitEvaluator.Evaluate(a, Normal, b, Normal).Fit);
+        Assert.AreEqual(JointFit.FitsWithClamps, JointFitEvaluator.Evaluate(a, Normal, b, Normal, tolerances: new() { MinimumBoltedScrewHoles = 4 }).Fit);
+    }
+
+    [TestMethod]
+    public void TwoHolesThatAllMatchAreBolted()
+    {
+        var mmm = TestProfiles.MmmSingle();
+        Assert.HasCount(2, mmm.ScrewHoles);
+        Assert.AreEqual(JointFit.Fits, Evaluate(mmm, mmm).Fit);
+    }
+
     [TestMethod]
     public void SingleTrackAcrossStandardsNeedsClamps()
     {

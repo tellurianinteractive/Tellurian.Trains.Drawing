@@ -19,8 +19,8 @@ public sealed record JointFitResult
     public EndProfileCompatibilityOverride? Override { get; init; }
 
     /// <summary>
-    /// Screw holes without a partner, as indices into the screw holes of each end.
-    /// Empty when the holes match or weren't compared geometrically.
+    /// Screw holes without a partner, as indices into the screw holes of each end. There can be some
+    /// even when the ends are bolted (enough other holes line up). Empty when the holes weren't compared geometrically.
     /// </summary>
     public IReadOnlyList<int> UnmatchedScrewHolesA { get; init; } = [];
     public IReadOnlyList<int> UnmatchedScrewHolesB { get; init; } = [];

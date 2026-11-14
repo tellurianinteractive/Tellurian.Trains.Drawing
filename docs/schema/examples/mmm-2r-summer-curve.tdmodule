@@ -5,7 +5,7 @@
   "appVersion": "0.1.0",
   "content": {
     "module": {
-      "id": "6a86006a-c9f4-4b68-830c-faa674723b0b",
+      "id": "479964a1-8c5b-4f8e-af05-3b2413d2b8a9",
       "name": "Summer curve",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
@@ -30,7 +30,7 @@
       "revision": 0,
       "variants": [
         {
-          "id": "5d4ad8b8-55f1-4adc-bf5a-3c387ef4699a",
+          "id": "136d92a1-4b02-4036-ac22-bf17c1494a29",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -279,7 +279,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "eb353188-657d-4a89-be25-d3ef3879f5a3",
+              "id": "41e3859e-79f9-4c67-a799-0da5eec4ad10",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -414,7 +414,7 @@
     ],
     "measures": [
       {
-        "variantId": "5d4ad8b8-55f1-4adc-bf5a-3c387ef4699a",
+        "variantId": "136d92a1-4b02-4036-ac22-bf17c1494a29",
         "measures": {
           "length": 1478.0972450961724,
           "straight": 299.9999999999999,

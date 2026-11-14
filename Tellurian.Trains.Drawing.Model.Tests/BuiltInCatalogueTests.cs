@@ -58,11 +58,24 @@ public sealed class BuiltInCatalogueTests
 
     // Phase 5 replaces the hand-entered profiles with drawings from the FREMO and MMM PDFs.
     [TestMethod]
-    public void HandEnteredProfilesAreMarkedProvisional() =>
-        Assert.IsTrue(Catalogue.EndProfiles.All(p => p.Source!.Revision == BuiltInCatalogue.ProvisionalRevision));
+    public void EveryProfileIsDrawnOrMarkedProvisional()
+    {
+        Assert.IsTrue(Catalogue.EndProfiles.All(p => !string.IsNullOrWhiteSpace(p.Source!.Revision)));
+        Assert.AreNotEqual(BuiltInCatalogue.ProvisionalRevision, Profile("FREMO-H0-B96").Source!.Revision);
+        Assert.AreNotEqual(BuiltInCatalogue.ProvisionalRevision, Profile("FREMO-H0-B96f").Source!.Revision);
+    }
 
     [TestMethod]
-    public void SameProfileFits() => Assert.AreEqual(JointFit.Fits, Fit("FREMO-H0-B96", "FREMO-H0-B96"));
+    public void SameSymmetricProfileFits() => Assert.AreEqual(JointFit.Fits, Fit("MMM480", "MMM480"));
+
+    // B96 is a mountain profile: two ends fit only when one of them is built mirrored.
+    [TestMethod]
+    public void AsymmetricProfileFitsWhenOneEndIsMirrored()
+    {
+        var b96 = Profile("FREMO-H0-B96");
+        Assert.AreEqual(JointFit.Fits, JointFitEvaluator.Evaluate(b96, ProfileOrientation.Normal, b96, ProfileOrientation.Mirrored).Fit);
+        Assert.AreEqual(JointFit.FitsWithMismatch, JointFitEvaluator.Evaluate(b96, ProfileOrientation.Normal, b96, ProfileOrientation.Normal).Fit);
+    }
 
     // Exit criterion of Phase 2: the built-in pairs are classified as expected.
     [TestMethod]
@@ -87,8 +100,12 @@ public sealed class BuiltInCatalogueTests
     public void DifferentScalesAreIncompatible() => Assert.AreEqual(JointFit.Incompatible, Fit("FREMO-H0-B96", "FREMO-N-RE", "N"));
 
     [TestMethod]
-    public void BuiltInProfilesAreSymmetric() =>
-        Assert.IsTrue(Catalogue.EndProfiles.All(p => EndProfileAnalysis.Analyze(p).IsSymmetric));
+    public void OnlyTheMountainProfilesAreAsymmetric()
+    {
+        var asymmetric = Catalogue.EndProfiles.Where(p => !EndProfileAnalysis.Analyze(p).IsSymmetric).Select(p => p.Designation).ToArray();
+        CollectionAssert.AreEquivalent(new[] { "FREMO-H0-B96", "FREMO-H0-B96f" }, asymmetric);
+        Assert.AreEqual(FitDifferences.GroundLine, EndProfileAnalysis.AsymmetricElements(Profile("FREMO-H0-B96")) & ~FitDifferences.Outline);
+    }
 
     [TestMethod]
     [DataRow("FREMO/H0-RE", 1, "FREMO-H0-B96")]
