@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Tellurian.Localization;
 using Tellurian.Localization.DependencyInjection;
 using Tellurian.Trains.Drawing.App;
+using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Resources;
@@ -30,6 +31,7 @@ builder.Services.AddSingleton<IFileService>(sp => sp.GetRequiredService<BrowserE
     : new UploadDownloadFileService(sp.GetRequiredService<FilesInterop>()));
 builder.Services.AddSingleton<IWorkbench, IndexedDbWorkbench>();
 builder.Services.AddSingleton<DrawingDocuments>();
+builder.Services.AddSingleton<CatalogueService>();
 builder.Services.AddSingleton<SafeReload>();
 
 var host = builder.Build();

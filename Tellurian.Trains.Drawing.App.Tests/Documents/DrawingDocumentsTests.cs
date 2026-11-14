@@ -141,6 +141,16 @@ public sealed class DrawingDocumentsTests
     }
 
     [TestMethod]
+    public async Task NewDrawingIsAnUnsavedDraftWithoutAFile()
+    {
+        var (id, json) = TestDrawings.Hall("New hall");
+        var draft = await Documents(new FakeFileService()).CreateAsync(json);
+        Assert.AreEqual((id, "New hall", true, (string?)null), (draft.Id, draft.Name, draft.HasUnsavedChanges, draft.FileName));
+        Assert.AreSame(draft, _workbench.Drafts[id]);
+        Assert.IsEmpty(_workbench.Recent);
+    }
+
+    [TestMethod]
     public async Task RecentFileWithHandleIsReopened()
     {
         var (id, json) = TestDrawings.Hall();

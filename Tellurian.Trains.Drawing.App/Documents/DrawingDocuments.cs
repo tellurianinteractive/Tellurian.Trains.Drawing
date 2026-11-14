@@ -81,6 +81,24 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
         return (draft, null);
     }
 
+    /// <summary>Starts a draft for a new drawing, given as a complete drawing file; it isn't saved to a file yet.</summary>
+    public async Task<Draft> CreateAsync(string json, CancellationToken cancellationToken = default)
+    {
+        var identity = DrawingIdentity.Read(json);
+        var draft = new Draft
+        {
+            Id = identity.Id ?? throw new ArgumentException("A new drawing must have an id.", nameof(json)),
+            Kind = identity.Kind,
+            Name = identity.Name,
+            Json = json,
+            HasUnsavedChanges = true,
+            Revision = identity.Revision,
+            Modified = time.GetUtcNow(),
+        };
+        await workbench.SaveDraftAsync(draft, cancellationToken);
+        return draft;
+    }
+
     /// <summary>Stores a changed drawing in its draft and marks it as having unsaved changes (autosave).</summary>
     public async Task<Draft> UpdateAsync(Draft draft, string json, CancellationToken cancellationToken = default)
     {

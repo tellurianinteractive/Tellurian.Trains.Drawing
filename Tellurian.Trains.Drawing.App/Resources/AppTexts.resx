@@ -38,4 +38,37 @@
   <data name="Kind_Hall" xml:space="preserve"><value>Hall</value></data>
   <data name="Kind_HallPlan" xml:space="preserve"><value>Hall plan</value></data>
   <data name="Kind_Catalogue" xml:space="preserve"><value>Catalogue</value></data>
+  <data name="NewModule" xml:space="preserve"><value>New module…</value></data>
+  <data name="NewModuleTitle" xml:space="preserve"><value>New module</value></data>
+  <data name="NewModuleName" xml:space="preserve"><value>New module</value></data>
+  <data name="Template" xml:space="preserve"><value>Template</value></data>
+  <data name="Template_Straight" xml:space="preserve"><value>Straight</value></data>
+  <data name="Template_Curve" xml:space="preserve"><value>Curve</value></data>
+  <data name="Template_StraightAndCurve" xml:space="preserve"><value>Straight and curve</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Standard" xml:space="preserve"><value>Standard</value></data>
+  <data name="EndProfile" xml:space="preserve"><value>End profile</value></data>
+  <data name="OneTrack" xml:space="preserve"><value>1 track</value></data>
+  <data name="TrackCount" xml:space="preserve"><value>{0} tracks</value></data>
+  <data name="StraightLength" xml:space="preserve"><value>Straight length (mm)</value></data>
+  <data name="Radius" xml:space="preserve"><value>Radius (mm)</value></data>
+  <data name="Angle" xml:space="preserve"><value>Angle (°)</value></data>
+  <data name="Width" xml:space="preserve"><value>Width (mm)</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Empty: the end plate's width</value></data>
+  <data name="CurveDirection" xml:space="preserve"><value>Curve direction</value></data>
+  <data name="CurveDirection_Left" xml:space="preserve"><value>Left</value></data>
+  <data name="CurveDirection_Right" xml:space="preserve"><value>Right</value></data>
+  <data name="StraightPosition" xml:space="preserve"><value>Straight part</value></data>
+  <data name="StraightPosition_Before" xml:space="preserve"><value>Before the curve</value></data>
+  <data name="StraightPosition_After" xml:space="preserve"><value>After the curve</value></data>
+  <data name="StraightPosition_Split" xml:space="preserve"><value>Half before, half after</value></data>
+  <data name="Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="NotDrawn" xml:space="preserve"><value>The module couldn't be drawn:</value></data>
+  <data name="DrawnWithNotes" xml:space="preserve"><value>The module was drawn. Check these notes:</value></data>
+  <data name="OpenDrawing" xml:space="preserve"><value>Open the drawing</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Enter a name.</value></data>
+  <data name="EndProfileRequired" xml:space="preserve"><value>Choose an end profile.</value></data>
+  <data name="MustBePositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
+  <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
 </root>

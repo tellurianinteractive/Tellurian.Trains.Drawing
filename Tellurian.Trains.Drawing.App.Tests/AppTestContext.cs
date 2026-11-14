@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Tellurian.Localization.DependencyInjection;
+using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Resources;
@@ -23,6 +24,7 @@ internal sealed class AppTestContext : BunitContext
         Services.AddSingleton<IWorkbench>(Workbench);
         Services.AddSingleton<IFileService>(Files);
         Services.AddSingleton<DrawingDocuments>();
+        Services.AddSingleton<CatalogueService>();
         Services.AddSingleton<SafeReload>();
         JSInterop.Mode = JSRuntimeMode.Loose;
     }
