@@ -168,6 +168,7 @@ public sealed class DrawingDocumentsTests
     [TestMethod]
     [DataRow("Club hall", null, "Club hall.tdhall")]
     [DataRow("A/B: C", null, "A-B- C.tdhall")]
+    [DataRow("a<b>c\"d\\e|f?g*h", null, "a-b-c-d-e-f-g-h.tdhall")]
     [DataRow("  ", null, "Hall.tdhall")]
     [DataRow("Club hall", "old.tdhall", "old.tdhall")]
     public void SuggestedFileNames(string name, string? fileName, string expected)

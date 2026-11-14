@@ -149,12 +149,17 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
         return updated;
     }
 
+    /// <summary>
+    /// Characters not allowed in file names on Windows, the strictest of the common systems. A fixed list, as
+    /// <see cref="Path.GetInvalidFileNameChars"/> in the browser is the Unix one, which allows most of them.
+    /// </summary>
+    private const string InvalidFileNameCharacters = "<>:\"/\\|?*";
+
     /// <summary>The previous file name, or one made from the drawing's name, so the browser can offer to replace the old file.</summary>
     public static string SuggestedFileName(Draft draft)
     {
         if (!string.IsNullOrWhiteSpace(draft.FileName)) return draft.FileName;
-        var invalid = Path.GetInvalidFileNameChars().Append('/').Append('\\').ToHashSet();
-        var name = new string([.. draft.Name.Trim().Select(c => invalid.Contains(c) ? '-' : c)]);
+        var name = new string([.. draft.Name.Trim().Select(c => char.IsControl(c) || InvalidFileNameCharacters.Contains(c) ? '-' : c)]);
         return $"{(name.Length == 0 ? draft.Kind.ToString() : name)}{DrawingFileFormat.Extension(draft.Kind)}";
     }
 }
