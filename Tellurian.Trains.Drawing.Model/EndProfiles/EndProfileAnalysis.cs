@@ -19,6 +19,16 @@ public static class EndProfileAnalysis
         };
     }
 
+    /// <summary>
+    /// The width of the end plate, as in <see cref="Analyze"/> but without its symmetry check, which compares the
+    /// outline and ground line with their mirror images and is far slower.
+    /// </summary>
+    public static double PlateWidth(EndProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+        return (profile.Outline?.ToPath().Bounds ?? BoundingBox.Empty).Width;
+    }
+
     /// <summary>The elements of <paramref name="profile"/> that differ from their mirror image.</summary>
     public static FitDifferences AsymmetricElements(EndProfile profile, FitTolerances? tolerances = null)
     {
@@ -32,10 +42,10 @@ public static class EndProfileAnalysis
         if (!EndProfileComparison.MatchCircles(profile.Dowels, mirrored.Dowels, tolerances.Joint).IsComplete)
             result |= FitDifferences.Dowels;
         if (profile.GroundLine is not null && mirrored.GroundLine is not null &&
-            !ShapeComparison.MaximumDeviation(profile.GroundLine.Tessellate(), mirrored.GroundLine.Tessellate(), tolerances.Landscape / 4).IsWithin(tolerances.Landscape))
+            !ShapeComparison.IsWithin(profile.GroundLine.Tessellate(), mirrored.GroundLine.Tessellate(), tolerances.Landscape, tolerances.Landscape / 4))
             result |= FitDifferences.GroundLine;
         if (profile.Outline is not null && mirrored.Outline is not null &&
-            !ShapeComparison.MaximumDeviation(profile.Outline.Tessellate(), mirrored.Outline.Tessellate(), tolerances.Joint / 2).IsWithin(tolerances.Joint))
+            !ShapeComparison.IsWithin(profile.Outline.Tessellate(), mirrored.Outline.Tessellate(), tolerances.Joint, tolerances.Joint / 2))
             result |= FitDifferences.Outline;
         return result;
     }

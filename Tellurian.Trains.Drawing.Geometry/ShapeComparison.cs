@@ -19,6 +19,31 @@ public static class ShapeComparison
         return fromFirst.Maximum >= fromSecond.Maximum ? fromFirst : fromSecond;
     }
 
+    /// <summary>
+    /// True if <see cref="MaximumDeviation"/> would be within <paramref name="tolerance"/>, found much faster: each
+    /// sample first tries the edge nearest the previous sample, which for matching shapes is almost always within
+    /// the tolerance, and the check stops at the first sample that isn't.
+    /// </summary>
+    public static bool IsWithin(Polyline first, Polyline second, double tolerance, double sampleSpacing = 1.0)
+    {
+        if (sampleSpacing <= 0) throw new ArgumentOutOfRangeException(nameof(sampleSpacing), sampleSpacing, "The sample spacing must be positive.");
+        return OneWayWithin(first, second, tolerance, sampleSpacing) && OneWayWithin(second, first, tolerance, sampleSpacing);
+    }
+
+    private static bool OneWayWithin(Polyline from, Polyline to, double tolerance, double sampleSpacing)
+    {
+        var edges = to.Edges().ToList();
+        if (edges.Count == 0) return false;
+        var nearest = 0;
+        foreach (var point in Samples(from, sampleSpacing))
+        {
+            if (Measure.PointToSegment(point, edges[nearest].Start, edges[nearest].End) <= tolerance) continue;
+            nearest = edges.FindIndex(e => Measure.PointToSegment(point, e.Start, e.End) <= tolerance);
+            if (nearest < 0) return false;
+        }
+        return true;
+    }
+
     private static ShapeDeviation OneWay(Polyline from, Polyline to, double sampleSpacing)
     {
         var worst = new ShapeDeviation(0, from.Points[0]);

@@ -22,7 +22,7 @@ public static class ModuleGeometry
         new(exit, plateWidth, ToPlan(exit, -plateWidth / 2), ToPlan(exit, plateWidth / 2));
 
     public static EndPlate EndPlate(ModuleExit exit, EndProfile profile) =>
-        EndPlate(exit, EndProfileAnalysis.Analyze(profile).PlateWidth);
+        EndPlate(exit, EndProfileAnalysis.PlateWidth(profile));
 
     /// <summary>
     /// The track centre positions where tracks cross the exit's end plate, from the end profile as built
