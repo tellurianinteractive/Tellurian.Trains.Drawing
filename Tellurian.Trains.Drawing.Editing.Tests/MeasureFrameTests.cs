@@ -75,9 +75,23 @@ public sealed class MeasureFrameTests
     {
         var profile = Profile();
         var dimensions = EndProfileDimensions.Create(profile, MeasureFrame.For(profile, MeasureOrigin.PlateLowerLeft), 20, details: true);
-        var centre = dimensions.Where(d => d.End == new Point(0, 0)).ToList();
-        CollectionAssert.AreEquivalent(new[] { 104.0, 250.0 }, centre.Select(d => d.Length).ToArray());
-        var rows = dimensions.Where(d => d.Kind == DimensionKind.Horizontal && d.Line().Start.Y > 0).Select(d => d.Line().Start.Y).ToList();
-        Assert.AreEqual(rows.Count, rows.Distinct().Count(), "Each point's horizontal dimension has its own row.");
+        var rows = dimensions.Where(d => d.Kind == DimensionKind.Horizontal && d.Line().Start.Y > 0).ToList();
+        CollectionAssert.AreEquivalent(new[] { 250.0, 500.0 }, rows.Select(d => d.Length).ToArray());
+        Assert.AreEqual(rows.Count, rows.Select(d => d.Line().Start.Y).Distinct().Count(), "Each point's horizontal dimension has its own row.");
+    }
+
+    [TestMethod]
+    public void PointsAtTheSameHeightShareOneHeightDimension()
+    {
+        var plate = new PlateShape([new(-250, -10), new(-100, -4), new(0, 0), new(100, -4), new(250, -10)], -104);
+        var profile = Profile() with { Outline = plate.Outline(), GroundLine = plate.GroundLine(), ScrewHoles = [] };
+
+        var fromRailTop = EndProfileDimensions.Create(profile, MeasureFrame.RailTopCentre, 20, details: true);
+        var heights = fromRailTop.Where(d => d.Kind == DimensionKind.Vertical && d.Line().Start.X > plate.Right + 20 + Precision).Select(d => d.Length).ToList();
+        CollectionAssert.AreEqual(new[] { 10.0, 4.0 }, heights, "From rail top: 10 for both sides, 4 for both shoulders; the centre point is at rail top.");
+
+        var fromCorner = EndProfileDimensions.Create(profile, MeasureFrame.For(profile, MeasureOrigin.PlateLowerLeft), 20, details: true);
+        var cornerHeights = fromCorner.Where(d => d.Kind == DimensionKind.Vertical && d.Line().Start.X > plate.Right + 20 + Precision).Select(d => d.Length).ToList();
+        CollectionAssert.AreEqual(new[] { 100.0, 104.0 }, cornerHeights, "From the corner: the sides' 94 is dimensioned by the sides; the shoulders and the centre get one each.");
     }
 }

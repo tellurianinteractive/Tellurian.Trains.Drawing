@@ -46,27 +46,38 @@ public static class EndProfileDimensions
         }
     }
 
+    /// <summary>Heights closer than this share one dimension, mm.</summary>
+    public const double SameHeight = 0.05;
+
     /// <summary>
-    /// For each point of the upper edge: its height from the origin's horizontal line, drawn through the point, and
-    /// its distance from the origin's vertical line, in rows above the plate so they don't overlap.
+    /// For the points of the upper edge: their heights above the origin's horizontal line, in columns to the right of
+    /// the plate, one per distinct height, so points at the same height share a dimension; and their distances from
+    /// the origin's vertical line, in rows above the plate. Measured from the corner, the sides' heights are
+    /// dimensioned already, so points at those heights share them.
     /// </summary>
     private static IEnumerable<Dimension> PointDimensions(PlateShape plate, MeasureFrame frame, double gap)
     {
+        var shared = frame.Kind == MeasureOrigin.PlateLowerLeft ? new[] { plate.UpperEdge[0].Y, plate.UpperEdge[^1].Y } : [];
+        var heights = plate.UpperEdge
+            .Where(p => Math.Abs(p.Y - frame.Origin.Y) > SameHeight && !shared.Any(y => Math.Abs(p.Y - y) <= SameHeight))
+            .GroupBy(p => Math.Round(p.Y / SameHeight / 2) * SameHeight * 2)
+            .OrderBy(g => g.Key)
+            .ToList();
+        var column = 0;
+        foreach (var group in heights)
+        {
+            column++;
+            var nearest = group.MaxBy(p => p.X);
+            yield return Dimension.Place(new(plate.Right, frame.Origin.Y), nearest, new(plate.Right + gap * (1 + column), 0), DimensionKind.Vertical);
+        }
+
         var top = plate.UpperEdge.Max(p => p.Y);
         var row = 0;
-        for (var i = 0; i < plate.UpperEdge.Count; i++)
+        foreach (var point in plate.UpperEdge.Where(p => Math.Abs(p.X - frame.Origin.X) > Tolerance.Length))
         {
-            var point = plate.UpperEdge[i];
-            var isSide = i == 0 || i == plate.UpperEdge.Count - 1;
-            // The sides' heights are dimensioned already when measuring from the bottom.
-            if (!(isSide && frame.Kind == MeasureOrigin.PlateLowerLeft) && Math.Abs(point.Y - frame.Origin.Y) > Tolerance.Length)
-                yield return new() { Start = new(point.X, frame.Origin.Y), End = point, Kind = DimensionKind.Vertical, Offset = 0 };
-            if (Math.Abs(point.X - frame.Origin.X) > Tolerance.Length)
-            {
-                row++;
-                var start = new Point(frame.Origin.X, frame.Kind == MeasureOrigin.PlateLowerLeft ? plate.UpperEdge[0].Y : point.Y);
-                yield return Dimension.Place(start, point, new(0, top + gap * row), DimensionKind.Horizontal);
-            }
+            row++;
+            var start = new Point(frame.Origin.X, frame.Kind == MeasureOrigin.PlateLowerLeft ? plate.UpperEdge[0].Y : point.Y);
+            yield return Dimension.Place(start, point, new(0, top + gap * row), DimensionKind.Horizontal);
         }
     }
 }

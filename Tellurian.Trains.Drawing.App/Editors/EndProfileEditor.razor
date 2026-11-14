@@ -78,7 +78,7 @@
                     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
                     <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
                     <button type="button" id="mirror-holes" @onclick="MirrorHoles">@T["MirrorScrewHoles"]</button>
-                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(EndProfileContent.Bounds(_document.Current))">@T["ZoomToFit"]</button>
+                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ViewBounds(_document.Current))">@T["ZoomToFit"]</button>
                 </div>
                 <p class="pane-help" aria-live="polite">@Status</p>
             </section>
@@ -243,6 +243,16 @@
 
     private SnapResult? Snapped => ActivePathOrNull?.Snapped ?? ActivePlaceOrNull?.Snapped ?? (_activeTool == EndProfileTool.Select ? _select.Snapped : null);
 
+    /// <summary>Room around the drawing for its dimensions, relative to the drawing's size.</summary>
+    private const double DimensionRoom = 0.18;
+
+    /// <summary>The area zoom to fit shows: the drawing with room for the dimension columns and rows around it.</summary>
+    private static BoundingBox ViewBounds(EndProfile profile)
+    {
+        var bounds = EndProfileContent.Bounds(profile);
+        return bounds.Inflated(Math.Max(bounds.Width, bounds.Height) * DimensionRoom);
+    }
+
     /// <summary>A new upper edge without a plate gets a plate this deep below its lowest point, mm.</summary>
     private const double DefaultPlateDepth = 100;
 
@@ -312,7 +322,7 @@
     {
         var profile = Model.Files.DrawingFileSerializer.DeserializeEndProfile(Draft.Json);
         _document = new(profile);
-        _view = Viewport.Fit(EndProfileContent.Bounds(profile), 800, 400);
+        _view = Viewport.Fit(ViewBounds(profile), 800, 400);
         _select = new(_document, _selection, _scene, _snap);
         _upperEdge = new(_document, _snap, path => EndProfileCommands.SetUpperEdge(path.Tessellate(PlateShape.ArcTolerance).Points, DefaultPlateDepth))
         {
