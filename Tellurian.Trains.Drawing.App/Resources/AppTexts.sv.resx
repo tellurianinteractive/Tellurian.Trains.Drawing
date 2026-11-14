@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppName" xml:space="preserve"><value>Tellurian Trains Drawing</value></data>
+  <data name="AppDescription" xml:space="preserve"><value>Rita ändprofiler, moduler och hallplaner för modulträffar med modelljärnväg.</value></data>
+  <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Language" xml:space="preserve"><value>Språk</value></data>
+  <data name="Open" xml:space="preserve"><value>Öppna…</value></data>
+  <data name="Drafts" xml:space="preserve"><value>Fortsätt arbeta</value></data>
+  <data name="NoDrafts" xml:space="preserve"><value>Det finns inget pågående arbete.</value></data>
+  <data name="RecentFiles" xml:space="preserve"><value>Senaste filer</value></data>
+  <data name="NoRecentFiles" xml:space="preserve"><value>Inga filer har öppnats ännu.</value></data>
+  <data name="UnsavedChanges" xml:space="preserve"><value>Osparade ändringar</value></data>
+  <data name="Saved" xml:space="preserve"><value>Sparad</value></data>
+  <data name="NotSavedToFile" xml:space="preserve"><value>Inte sparad till fil</value></data>
+  <data name="SaveReminder" xml:space="preserve"><value>Utkast finns bara i den här webbläsaren. Spara ditt arbete till en fil.</value></data>
+  <data name="PickAgain" xml:space="preserve"><value>Den här webbläsaren kan inte öppna filer igen på egen hand. Använd Öppna… och välj {0}.</value></data>
+  <data name="FileNotAvailable" xml:space="preserve"><value>{0} finns inte längre tillgänglig. Använd Öppna… för att välja den.</value></data>
+  <data name="CouldNotOpen" xml:space="preserve"><value>De här filerna kunde inte öppnas:</value></data>
+  <data name="Save" xml:space="preserve"><value>Spara</value></data>
+  <data name="SaveDownload" xml:space="preserve"><value>Spara (ladda ner)</value></data>
+  <data name="SaveAs" xml:space="preserve"><value>Spara som…</value></data>
+  <data name="DownloadNote" xml:space="preserve"><value>Den här webbläsaren kan inte spara i den befintliga filen: Spara laddar ner en ny fil. Välj den gamla filen för att ersätta den.</value></data>
+  <data name="Discard" xml:space="preserve"><value>Släng utkastet</value></data>
+  <data name="DiscardUnsaved" xml:space="preserve"><value>Släng de osparade ändringarna i {0}?</value></data>
+  <data name="Changed" xml:space="preserve"><value>Ändrad</value></data>
+  <data name="File" xml:space="preserve"><value>Fil</value></data>
+  <data name="DraftNotFound" xml:space="preserve"><value>Den här ritningen är inte öppen längre.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>Redigeraren för den här typen av ritning finns inte ännu.</value></data>
+  <data name="StorageError" xml:space="preserve"><value>Webbläsarens lagring kunde inte användas: {0}</value></data>
+  <data name="FileError" xml:space="preserve"><value>Filåtgärden misslyckades: {0}</value></data>
+  <data name="Kind_EndProfile" xml:space="preserve"><value>Ändprofil</value></data>
+  <data name="Kind_Module" xml:space="preserve"><value>Modul</value></data>
+  <data name="Kind_Hall" xml:space="preserve"><value>Hall</value></data>
+  <data name="Kind_HallPlan" xml:space="preserve"><value>Hallplan</value></data>
+  <data name="Kind_Catalogue" xml:space="preserve"><value>Katalog</value></data>
+  <data name="NewModule" xml:space="preserve"><value>Ny modul…</value></data>
+  <data name="NewModuleTitle" xml:space="preserve"><value>Ny modul</value></data>
+  <data name="NewModuleName" xml:space="preserve"><value>Ny modul</value></data>
+  <data name="Template" xml:space="preserve"><value>Mall</value></data>
+  <data name="Template_Straight" xml:space="preserve"><value>Rak</value></data>
+  <data name="Template_Curve" xml:space="preserve"><value>Kurva</value></data>
+  <data name="Template_StraightAndCurve" xml:space="preserve"><value>Rak och kurva</value></data>
+  <data name="Name" xml:space="preserve"><value>Namn</value></data>
+  <data name="Standard" xml:space="preserve"><value>Standard</value></data>
+  <data name="EndProfile" xml:space="preserve"><value>Ändprofil</value></data>
+  <data name="OneTrack" xml:space="preserve"><value>1 spår</value></data>
+  <data name="TrackCount" xml:space="preserve"><value>{0} spår</value></data>
+  <data name="StraightLength" xml:space="preserve"><value>Rak längd (mm)</value></data>
+  <data name="Radius" xml:space="preserve"><value>Radie (mm)</value></data>
+  <data name="Angle" xml:space="preserve"><value>Vinkel (°)</value></data>
+  <data name="Width" xml:space="preserve"><value>Bredd (mm)</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Tomt: ändplattans bredd</value></data>
+  <data name="CurveDirection" xml:space="preserve"><value>Kurvriktning</value></data>
+  <data name="CurveDirection_Left" xml:space="preserve"><value>Vänster</value></data>
+  <data name="CurveDirection_Right" xml:space="preserve"><value>Höger</value></data>
+  <data name="StraightPosition" xml:space="preserve"><value>Rak del</value></data>
+  <data name="StraightPosition_Before" xml:space="preserve"><value>Före kurvan</value></data>
+  <data name="StraightPosition_After" xml:space="preserve"><value>Efter kurvan</value></data>
+  <data name="StraightPosition_Split" xml:space="preserve"><value>Hälften före, hälften efter</value></data>
+  <data name="Create" xml:space="preserve"><value>Skapa</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+  <data name="NotDrawn" xml:space="preserve"><value>Modulen kunde inte ritas:</value></data>
+  <data name="DrawnWithNotes" xml:space="preserve"><value>Modulen ritades. Kontrollera de här anmärkningarna:</value></data>
+  <data name="OpenDrawing" xml:space="preserve"><value>Öppna ritningen</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Ange ett namn.</value></data>
+  <data name="EndProfileRequired" xml:space="preserve"><value>Välj en ändprofil.</value></data>
+  <data name="MustBePositive" xml:space="preserve"><value>{0} måste vara större än 0.</value></data>
+  <data name="AngleRange" xml:space="preserve"><value>{0} måste vara större än 0 och högst 360.</value></data>
+  <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillägg och ändprofiler. De inbyggda posterna följer med appen; dina egna poster sparas i den här webbläsaren och kan exporteras som en fil.</value></data>
+  <data name="ImportFiles" xml:space="preserve"><value>Importera filer…</value></data>
+  <data name="ImportArchive" xml:space="preserve"><value>Importera ZIP…</value></data>
+  <data name="ImportFolder" xml:space="preserve"><value>Importera mapp…</value></data>
+  <data name="ExportCatalogue" xml:space="preserve"><value>Exportera din katalog…</value></data>
+  <data name="ImportPreview" xml:space="preserve"><value>Ändprofiler att importera</value></data>
+  <data name="NoEndProfilesFound" xml:space="preserve"><value>Filerna innehåller inga ändprofiler.</value></data>
+  <data name="Import" xml:space="preserve"><value>Importera</value></data>
+  <data name="ImportStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Differences" xml:space="preserve"><value>Skillnader</value></data>
+  <data name="ImportStatus_New" xml:space="preserve"><value>Ny</value></data>
+  <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Finns redan i katalogen</value></data>
+  <data name="ImportStatus_Changed" xml:space="preserve"><value>Skiljer sig från katalogen</value></data>
+  <data name="ImportChoiceNote" xml:space="preserve"><value>Markerade profiler läggs till i din katalog. En profil som skiljer sig ersätter den i katalogen och behåller dess id, så moduler som använder den får den importerade ritningen.</value></data>
+  <data name="ImportSelected" xml:space="preserve"><value>Importera {0} markerade</value></data>
+  <data name="Imported" xml:space="preserve"><value>{0} ändprofil(er) importerades.</value></data>
+  <data name="Exported" xml:space="preserve"><value>Din katalog sparades som {0}.</value></data>
+  <data name="Change_Designation" xml:space="preserve"><value>beteckning</value></data>
+  <data name="Change_Scale" xml:space="preserve"><value>skala</value></data>
+  <data name="Change_Standards" xml:space="preserve"><value>standarder</value></data>
+  <data name="Change_Tracks" xml:space="preserve"><value>spår</value></data>
+  <data name="Change_ScrewHoles" xml:space="preserve"><value>skruvhål</value></data>
+  <data name="Change_Dowels" xml:space="preserve"><value>styrpinnar</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>plattans kontur</value></data>
+  <data name="Change_GroundLine" xml:space="preserve"><value>marklinje</value></data>
+  <data name="Change_Source" xml:space="preserve"><value>källa</value></data>
+  <data name="EndProfiles" xml:space="preserve"><value>Ändprofiler</value></data>
+  <data name="Scale" xml:space="preserve"><value>Skala</value></data>
+  <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
+  <data name="Tracks" xml:space="preserve"><value>Spår</value></data>
+  <data name="Origin" xml:space="preserve"><value>Ursprung</value></data>
+  <data name="Origin_BuiltIn" xml:space="preserve"><value>Inbyggd</value></data>
+  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
+  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, ersätter inbyggd</value></data>
+  <data name="Copy" xml:space="preserve"><value>Kopiera</value></data>
+  <data name="CopySuffix" xml:space="preserve"><value>kopia</value></data>
+  <data name="Copied" xml:space="preserve"><value>Kopierad som {0}.</value></data>
+  <data name="Delete" xml:space="preserve"><value>Ta bort</value></data>
+  <data name="RestoreBuiltIn" xml:space="preserve"><value>Återställ inbyggd</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Ta bort {0} från din katalog?</value></data>
+  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Ta bort din version av {0} och använda den inbyggda igen?</value></data>
+  <data name="Gauge" xml:space="preserve"><value>Spårvidd (mm)</value></data>
+  <data name="RailTopHeight" xml:space="preserve"><value>RÖK (mm)</value></data>
+  <data name="AddOns" xml:space="preserve"><value>Tillägg</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>En ny version finns.</value></data>
+  <data name="UpdateNow" xml:space="preserve"><value>Uppdatera</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Uppdateringen sköts upp eftersom ditt arbete inte kunde sparas: {0}</value></data>
+  <data name="Edit" xml:space="preserve"><value>Redigera</value></data>
+  <data name="EditEntry" xml:space="preserve"><value>Redigera {0}</value></data>
+  <data name="NewStandard" xml:space="preserve"><value>Ny standard…</value></data>
+  <data name="NewAddOn" xml:space="preserve"><value>Nytt tillägg…</value></data>
+  <data name="NewOverride" xml:space="preserve"><value>Nytt undantag…</value></data>
+  <data name="EditOverride" xml:space="preserve"><value>Redigera undantag</value></data>
+  <data name="AddOn" xml:space="preserve"><value>Tillägg</value></data>
+  <data name="Overrides" xml:space="preserve"><value>Undantag för passning</value></data>
+  <data name="NoOverrides" xml:space="preserve"><value>Det finns inga undantag. Skarvar bedöms enbart enligt reglerna.</value></data>
+  <data name="OverrideIntro" xml:space="preserve"><value>Ett undantag ersätter regelns resultat för ett par ändprofiler, för kända undantagsfall. Använd det bara där reglerna ger fel svar.</value></data>
+  <data name="EditBuiltInNote" xml:space="preserve"><value>Den här posten är inbyggd. När du sparar skapas din egen version, som ersätter den inbyggda tills du återställer den.</value></data>
+  <data name="EntryNotFound" xml:space="preserve"><value>Katalogposten finns inte.</value></data>
+  <data name="None" xml:space="preserve"><value>(ingen)</value></data>
+  <data name="RailSystem_TwoRail" xml:space="preserve"><value>Tvåräls</value></data>
+  <data name="RailSystem_ThreeRail" xml:space="preserve"><value>Treräls</value></data>
+  <data name="Fit_Fits" xml:space="preserve"><value>Passar</value></data>
+  <data name="Fit_FitsWithMismatch" xml:space="preserve"><value>Passar med avvikelse</value></data>
+  <data name="Fit_FitsWithClamps" xml:space="preserve"><value>Passar med tvingar</value></data>
+  <data name="Fit_Incompatible" xml:space="preserve"><value>Passar inte</value></data>
+  <data name="Field_ShortName" xml:space="preserve"><value>Kortnamn</value></data>
+  <data name="Field_Scale" xml:space="preserve"><value>Skala</value></data>
+  <data name="Field_RailSystem" xml:space="preserve"><value>Rälssystem</value></data>
+  <data name="Field_NormalGauge" xml:space="preserve"><value>Normalspårvidd (mm)</value></data>
+  <data name="Field_NarrowGauge" xml:space="preserve"><value>Smalspårvidd (mm)</value></data>
+  <data name="Field_RailTopHeight" xml:space="preserve"><value>RÖK över golv (mm)</value></data>
+  <data name="Field_MinimumClearance" xml:space="preserve"><value>Minsta avstånd (mm)</value></data>
+  <data name="Field_OperatorSpaceDepth" xml:space="preserve"><value>Djup för operatörsyta (mm)</value></data>
+  <data name="Field_DefaultCurveRadius" xml:space="preserve"><value>Standardradie (mm)</value></data>
+  <data name="Field_MinimumReverseCurveRadius" xml:space="preserve"><value>Minsta radie för S-kurvor (mm)</value></data>
+  <data name="Field_DefaultSingleTrackEndProfileId" xml:space="preserve"><value>Standardändprofil, enkelspår</value></data>
+  <data name="Field_DefaultDoubleTrackEndProfileId" xml:space="preserve"><value>Standardändprofil, dubbelspår</value></data>
+  <data name="Field_TrackColor" xml:space="preserve"><value>Spårfärg</value></data>
+  <data name="Field_TrackSystem" xml:space="preserve"><value>Spårsystem</value></data>
+  <data name="Field_Couplings" xml:space="preserve"><value>Koppel</value></data>
+  <data name="Field_Electricity" xml:space="preserve"><value>Strömförsörjning</value></data>
+  <data name="Field_Wheelset" xml:space="preserve"><value>Hjulprofil</value></data>
+  <data name="Field_SourceTitle" xml:space="preserve"><value>Källdokument</value></data>
+  <data name="Field_SourceUrl" xml:space="preserve"><value>Käll-URL</value></data>
+  <data name="Field_SourceRevision" xml:space="preserve"><value>Källans revision</value></data>
+  <data name="Field_BaseStandardId" xml:space="preserve"><value>Grundstandard</value></data>
+  <data name="Field_Description" xml:space="preserve"><value>Beskrivning</value></data>
+  <data name="Field_FirstEndProfileId" xml:space="preserve"><value>Första ändprofil</value></data>
+  <data name="Field_SecondEndProfileId" xml:space="preserve"><value>Andra ändprofil</value></data>
+  <data name="Field_Fit" xml:space="preserve"><value>Resultat</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Anteckning</value></data>
+  <data name="Problem_ShortNameMissing" xml:space="preserve"><value>{0}: ange ett namn.</value></data>
+  <data name="Problem_ShortNameInUse" xml:space="preserve"><value>{0}: namnet används redan.</value></data>
+  <data name="Problem_ScaleUnknown" xml:space="preserve"><value>{0}: välj en skala ur katalogen.</value></data>
+  <data name="Problem_NotPositive" xml:space="preserve"><value>{0} måste vara större än 0.</value></data>
+  <data name="Problem_EndProfileNotOfStandard" xml:space="preserve"><value>{0}: välj en ändprofil för den här standarden.</value></data>
+  <data name="Problem_TrackColorInvalid" xml:space="preserve"><value>{0} måste vara en färg som #1f5fbf.</value></data>
+  <data name="Problem_BaseStandardUnknown" xml:space="preserve"><value>{0}: välj en standard ur katalogen.</value></data>
+  <data name="Problem_EndProfileUnknown" xml:space="preserve"><value>{0}: välj en ändprofil ur katalogen.</value></data>
+  <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} måste skilja sig från den första ändprofilen.</value></data>
+  <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} måste ha samma skala som den första ändprofilen.</value></data>
+  <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: det finns redan ett undantag för de här ändprofilerna.</value></data>
+</root>

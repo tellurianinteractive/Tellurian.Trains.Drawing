@@ -74,6 +74,28 @@ public sealed partial class AppTextsTests
         Enum.GetNames<TEnum>().Select(n => string.Join("_", prefix, n));
 
     [TestMethod]
+    [DataRow("sv"), DataRow("de"), DataRow("da"), DataRow("nb")]
+    public void EveryLanguageHasEveryTextWithTheSamePlaceholders(string language)
+    {
+        var neutral = ReadResx("AppTexts.resx");
+        var translated = ReadResx($"AppTexts.{language}.resx");
+        CollectionAssert.AreEquivalent(neutral.Keys.ToArray(), translated.Keys.ToArray(), $"The {language} texts don't have the same keys as the English ones.");
+        foreach (var (key, text) in neutral)
+            CollectionAssert.AreEquivalent(Placeholders(text), Placeholders(translated[key]), $"{language} {key}: the placeholders differ.");
+    }
+
+    [TestMethod]
+    [DataRow("sv-SE", "Fortsätt arbeta"), DataRow("de", "Weiterarbeiten"), DataRow("da-DK", "Fortsæt arbejdet"), DataRow("nb-NO", "Fortsett arbeidet"), DataRow("en", "Resume work")]
+    public void TextsAreLookedUpInTheUiCulture(string culture, string expected) =>
+        Assert.AreEqual(expected, Resources.GetString("Drafts", CultureInfo.GetCultureInfo(culture)));
+
+    private static Dictionary<string, string> ReadResx(string fileName) =>
+        System.Xml.Linq.XDocument.Load(Path.Combine(AppDirectory, "Resources", fileName)).Root!.Elements("data")
+            .ToDictionary(d => (string)d.Attribute("name")!, d => (string)d.Element("value")!);
+
+    private static string[] Placeholders(string text) => [.. Regex.Matches(text, @"\{\d+\}").Select(m => m.Value).Order()];
+
+    [TestMethod]
     public void EveryFileKindHasAName()
     {
         foreach (var kind in Enum.GetValues<DrawingFileKind>())

@@ -147,7 +147,7 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 **Exit criteria:** end profiles and a module can be created from templates in code, saved to a file and loaded back identically. The fit evaluator classifies the built-in profile pairs as expected.
 **Requirements:** CA-1, CA-2 (logic), EP-2/EP-7 (logic), MD-3 (logic), MD-10 (logic), §6 file format, EX-4 (logic), EX-7.
 
-### Phase 3 – Files, workbench storage and app shell (≈1–2 weeks)
+### Phase 3 – Files, workbench storage and app shell (≈1–2 weeks) — code complete 2026-11-14; manual exit check pending
 **Files are the primary result; IndexedDB is the workbench** (UseCases.md, spec §6).
 1. File service: open, save, save as for all file kinds, using the File System Access API with a fallback. Import from **ZIP archives** and **folders** (EX-9).
 2. Workbench over IndexedDB:
@@ -164,6 +164,8 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 7. **Safe reload (AP-7)**: one `SafeReload` service that is used for every reload the app starts itself (language change, update). It flushes all open drafts to IndexedDB, waits for confirmation, stores the editor state (open documents, variant, selection, view), then reloads. On start it restores the editor state. If flushing fails, it cancels the reload and offers Save. Tests cover: a language change with unsaved edits in two open drawings, an update with an unsaved hall plan, and blocked storage.
 
 **Exit criteria:** create a module from a template via the UI and save it as a file. Close the app with unsaved changes and resume the draft. Re-open the saved file from the recent files. Import end profiles from a ZIP archive.
+
+*As built:* the file service has two implementations chosen at start-up (File System Access API; upload/download). ZIP and folder import, drawing identity, module templates (MD-3), end profile import with a choice per profile (UC-2) and catalogue validation live in `Model`. The app has the start page, a placeholder drawing page, the new-module page, the catalogue page with editors for standards, add-ons and overrides, export of the user catalogue (CA-3), the update prompt and `SafeReload`, and texts in all five languages. Restoring the editor state after a reload (AP-7) comes with the editors from Phase 4: until then, drafts are kept and offered on the start page. The exit criteria are covered by unit and bUnit tests with fake files; the real file pickers still need a manual check in Chromium and in Firefox or Safari.
 **Requirements:** EP-1 (library part), MD-1, CA-2, CA-3, EX-4, EX-9, AP-1, AP-2 (infrastructure), AP-7.
 
 ### Phase 4 – Shared drawing canvas and editor framework (≈2–3 weeks)
