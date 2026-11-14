@@ -63,3 +63,14 @@
     stroke-width: 2.5;
     fill: #fbe9e1;
 }
+
+.ep-plate-point {
+    fill: #ffffff;
+    stroke: var(--drawing-baseboard, #6b5a3e);
+    stroke-width: 1.5;
+}
+
+    .ep-plate-point.selected {
+        fill: var(--drawing-selected, #c24b1b);
+        stroke: var(--drawing-selected, #c24b1b);
+    }

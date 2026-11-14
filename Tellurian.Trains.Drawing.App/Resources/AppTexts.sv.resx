@@ -249,4 +249,13 @@
   <data name="EditAsDraft" xml:space="preserve"><value>Redigera</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Redigera</value></data>
+  <data name="EpTool_UpperEdge" xml:space="preserve"><value>Överkant</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klicka på plattans överkant från vänster till höger; tryck Enter för att avsluta. Sidorna följer första och sista punkten.</value></data>
+  <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klicka för att lägga till punkter; Enter avslutar, Backsteg tar bort en punkt, Escape avbryter.</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Platta</value></data>
+  <data name="PlateDepth" xml:space="preserve"><value>Underkant under RÖK (mm)</value></data>
+  <data name="AddPoint" xml:space="preserve"><value>Lägg till punkt</value></data>
+  <data name="DeletePoint" xml:space="preserve"><value>Ta bort punkt</value></data>
+  <data name="PlateHelp" xml:space="preserve"><value>Överkanten är också marklinjen som jämförs vid skarvar. Dra punkterna i ritningen eller skriv in dem i mm; Y är negativt under RÖK.</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plattpunkt</value></data>
 </root>

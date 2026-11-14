@@ -11,6 +11,7 @@ public readonly record struct EndProfileItem(EndProfileItemKind Kind, int Index 
     public static EndProfileItem Track(int index) => new(EndProfileItemKind.Track, index);
     public static EndProfileItem ScrewHole(int index) => new(EndProfileItemKind.ScrewHole, index);
     public static EndProfileItem Dowel(int index) => new(EndProfileItemKind.Dowel, index);
+    public static EndProfileItem PlatePoint(int index) => new(EndProfileItemKind.PlatePoint, index);
 
     public override string ToString() => $"{Kind}:{Index}";
 

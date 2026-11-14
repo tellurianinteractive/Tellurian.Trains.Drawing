@@ -249,4 +249,13 @@
   <data name="EditAsDraft" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Archiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="EpTool_UpperEdge" xml:space="preserve"><value>Oberkante</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klicke die Punkte der Oberkante des Kopfstücks von links nach rechts an; Eingabe beendet. Die Seiten folgen dem ersten und letzten Punkt.</value></data>
+  <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klicken fügt Punkte hinzu; Eingabe beendet, Rücktaste entfernt einen Punkt, Escape bricht ab.</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Kopfstück</value></data>
+  <data name="PlateDepth" xml:space="preserve"><value>Unterkante unter SOK (mm)</value></data>
+  <data name="AddPoint" xml:space="preserve"><value>Punkt hinzufügen</value></data>
+  <data name="DeletePoint" xml:space="preserve"><value>Punkt löschen</value></data>
+  <data name="PlateHelp" xml:space="preserve"><value>Die Oberkante ist auch die Geländelinie, die an Übergängen verglichen wird. Ziehe die Punkte in der Zeichnung oder gib sie in mm ein; Y ist unter SOK negativ.</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Punkt des Kopfstücks</value></data>
 </root>

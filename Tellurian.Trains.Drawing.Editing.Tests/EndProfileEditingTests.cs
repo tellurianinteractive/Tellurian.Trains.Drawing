@@ -42,10 +42,10 @@ public sealed class EndProfileEditingTests
     }
 
     [TestMethod]
-    public void GroundLineIsHitNearItAboveTheOutline()
+    public void PlatePointsAreHitFirst()
     {
-        Assert.IsTrue(Scene.TryHitTest(Profile(), new(200, -10.5), Reach, out var item));
-        Assert.AreEqual(EndProfileItem.GroundLine, item);
+        Assert.IsTrue(Scene.TryHitTest(Profile(), new(249, -11), Reach, out var item));
+        Assert.AreEqual(EndProfileItem.PlatePoint(1), item);
     }
 
     [TestMethod]
@@ -59,12 +59,12 @@ public sealed class EndProfileEditingTests
     }
 
     [TestMethod]
-    public void OutlineAndGroundLineMoveAsAWhole()
+    public void OutlineMovesTheWholePlate()
     {
         var profile = Profile();
         var moved = EndProfileCommands.Move([EndProfileItem.Outline], new(0, -20)).Apply(profile);
         Assert.AreEqual(profile.Outline!.ToPath().Bounds.Min.Y - 20, moved.Outline!.ToPath().Bounds.Min.Y, Precision);
-        Assert.AreSame(profile.GroundLine, moved.GroundLine);
+        Assert.AreEqual(-30, moved.GroundLine!.ToPath().Start.Y, Precision, "The ground line is the plate's upper edge, so it moves with the plate.");
     }
 
     [TestMethod]
@@ -147,5 +147,61 @@ public sealed class EndProfileEditingTests
         var profile = Profile();
         selection.SelectInside(new(new(-200, -120), new(-100, -80)), Scene.Index(profile), id => Scene.BoundsOf(profile, id));
         Assert.AreEqual(EndProfileItem.ScrewHole(0), selection.Single);
+    }
+
+    [TestMethod]
+    public void DraggingAPlatePointReshapesTheUpperEdgeAndTheSides()
+    {
+        var document = new EditorDocument<EndProfile>(Profile());
+        var snap = new SnapEngine();
+        snap.AddRange(Scene.AllSnapTargets(document.Current));
+        var tool = new SelectMoveTool<EndProfile, EndProfileItem>(document, new SelectionSet<EndProfileItem>(), Scene, snap);
+
+        // The right end of the upper edge, (250, -10), dragged up to (250, 20): the right side gets taller.
+        tool.PointerDown(new(new(250, -10), Reach));
+        tool.PointerMove(new(new(250, 5), Reach) { IsSnapSuppressed = true });
+        tool.PointerMove(new(new(250, 20), Reach) { IsSnapSuppressed = true });
+        tool.PointerUp(new(new(250, 20), Reach) { IsSnapSuppressed = true });
+
+        var plate = PlateShape.From(document.Current)!;
+        Assert.AreEqual(new Point(250, 20), plate.UpperEdge[1]);
+        Assert.AreEqual(220, plate.RightHeight, Precision);
+        Assert.AreEqual(190, plate.LeftHeight, Precision);
+    }
+
+    [TestMethod]
+    public void PlatePointsCanBeAddedChangedAndDeleted()
+    {
+        var withPoint = EndProfileCommands.AddPlatePoint(0).Apply(Profile());
+        var plate = PlateShape.From(withPoint)!;
+        CollectionAssert.AreEqual(new Point[] { new(-250, -10), new(0, -10), new(250, -10) }, plate.UpperEdge.ToArray());
+
+        var raised = EndProfileCommands.SetPlatePoint(1, new(0, -4)).Apply(withPoint);
+        Assert.AreEqual(new Point(0, -4), PlateShape.From(raised)!.UpperEdge[1]);
+        Assert.AreEqual(new Point(0, -4), raised.GroundLine!.ToPath().Segments[0].End, "The ground line follows the upper edge.");
+
+        var deleted = EndProfileCommands.Delete([EndProfileItem.PlatePoint(1)]).Apply(raised);
+        Assert.HasCount(2, PlateShape.From(deleted)!.UpperEdge);
+
+        var tooFew = EndProfileCommands.Delete([EndProfileItem.PlatePoint(0)]).Apply(deleted);
+        Assert.HasCount(2, PlateShape.From(tooFew)!.UpperEdge, "An upper edge keeps at least two points.");
+    }
+
+    [TestMethod]
+    public void BottomMustStayBelowTheUpperEdge()
+    {
+        var lower = EndProfileCommands.SetPlateBottom(-250).Apply(Profile());
+        Assert.AreEqual(-250, PlateShape.From(lower)!.Bottom, Precision);
+        var refused = EndProfileCommands.SetPlateBottom(0).Apply(lower);
+        Assert.AreSame(lower, refused);
+    }
+
+    [TestMethod]
+    public void DrawnUpperEdgeKeepsTheBottomAndIsSortedLeftToRight()
+    {
+        var drawn = EndProfileCommands.SetUpperEdge([new(250, -4), new(0, 0), new(-250, -4)], defaultDepth: 100).Apply(Profile());
+        var plate = PlateShape.From(drawn)!;
+        Assert.AreEqual(new Point(-250, -4), plate.UpperEdge[0]);
+        Assert.AreEqual(-200, plate.Bottom, Precision, "The existing bottom is kept.");
     }
 }

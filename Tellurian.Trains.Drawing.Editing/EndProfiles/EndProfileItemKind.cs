@@ -8,4 +8,7 @@ public enum EndProfileItemKind
     Dowel,
     Outline,
     GroundLine,
+
+    /// <summary>A point of the plate's upper edge.</summary>
+    PlatePoint,
 }

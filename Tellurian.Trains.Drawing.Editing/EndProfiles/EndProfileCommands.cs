@@ -11,16 +11,68 @@ public static class EndProfileCommands
     public const double DefaultScrewHoleDiameter = 8;
     public const double DefaultDowelDiameter = 6;
 
-    /// <summary>Moves items; tracks move only sideways, keeping their rail top at Y = 0.</summary>
+    /// <summary>
+    /// Moves items; tracks move only sideways, keeping their rail top at Y = 0. Moving the outline moves the whole
+    /// plate; moving plate points reshapes its upper edge, unless the points would no longer go from left to right.
+    /// </summary>
     public static IEditCommand<EndProfile> Move(IReadOnlyList<EndProfileItem> ids, Vector offset) =>
-        new EditCommand<EndProfile>("Move", profile => profile with
+        new EditCommand<EndProfile>("Move", profile =>
         {
-            Tracks = Map(profile.Tracks, EndProfileItemKind.Track, ids, t => t with { Offset = t.Offset + offset.X }),
-            ScrewHoles = Map(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids, h => h with { Center = h.Center + offset }),
-            Dowels = Map(profile.Dowels, EndProfileItemKind.Dowel, ids, d => d with { Center = d.Center + offset }),
-            Outline = ids.Contains(EndProfileItem.Outline) ? Moved(profile.Outline, offset) : profile.Outline,
-            GroundLine = ids.Contains(EndProfileItem.GroundLine) ? Moved(profile.GroundLine, offset) : profile.GroundLine,
+            var moved = profile with
+            {
+                Tracks = Map(profile.Tracks, EndProfileItemKind.Track, ids, t => t with { Offset = t.Offset + offset.X }),
+                ScrewHoles = Map(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids, h => h with { Center = h.Center + offset }),
+                Dowels = Map(profile.Dowels, EndProfileItemKind.Dowel, ids, d => d with { Center = d.Center + offset }),
+                GroundLine = ids.Contains(EndProfileItem.GroundLine) ? Moved(profile.GroundLine, offset) : profile.GroundLine,
+            };
+            if (PlateShape.From(profile) is not { } plate)
+                return moved with { Outline = ids.Contains(EndProfileItem.Outline) ? Moved(profile.Outline, offset) : profile.Outline };
+            var whole = ids.Contains(EndProfileItem.Outline);
+            if (!whole && !ids.Any(i => i.Kind == EndProfileItemKind.PlatePoint)) return moved;
+            var points = plate.UpperEdge.Select((p, i) => whole || ids.Contains(EndProfileItem.PlatePoint(i)) ? p + offset : p);
+            return PlateShape.TryCreate(points, whole ? plate.Bottom + offset.Y : plate.Bottom) is { } shape ? WithPlate(moved, shape) : moved;
         });
+
+    /// <summary>Sets the plate's shape: its outline and, from its upper edge, the ground line.</summary>
+    public static IEditCommand<EndProfile> SetPlate(PlateShape plate) =>
+        new EditCommand<EndProfile>("Change plate", profile => WithPlate(profile, plate));
+
+    /// <summary>
+    /// Sets the plate's upper edge drawn from left to right (points are sorted by X), keeping the bottom if it
+    /// is below the new edge, otherwise putting it <paramref name="defaultDepth"/> below the edge's lowest point.
+    /// </summary>
+    public static IEditCommand<EndProfile> SetUpperEdge(IReadOnlyList<Point> points, double defaultDepth) =>
+        new EditCommand<EndProfile>("Draw upper edge", profile =>
+        {
+            var edge = points.Count > 0 && points[^1].X < points[0].X ? points.Reverse().ToList() : points.ToList();
+            if (edge.Count < 2) return profile;
+            var lowest = edge.Min(p => p.Y);
+            var bottom = PlateShape.From(profile)?.Bottom is { } current && current < lowest ? current : lowest - defaultDepth;
+            return PlateShape.TryCreate(edge, bottom) is { } shape ? WithPlate(profile, shape) : profile;
+        });
+
+    public static IEditCommand<EndProfile> SetPlatePoint(int index, Point point) =>
+        ChangePlate("Change plate point", plate => PlateShape.TryCreate(Replace(plate.UpperEdge, index, point), plate.Bottom));
+
+    /// <summary>Sets the Y of the plate's bottom edge; refused if it isn't below the upper edge.</summary>
+    public static IEditCommand<EndProfile> SetPlateBottom(double bottom) =>
+        ChangePlate("Change plate bottom", plate => PlateShape.TryCreate(plate.UpperEdge, bottom));
+
+    /// <summary>Inserts a point halfway between point <paramref name="index"/> and the next, or before the last point.</summary>
+    public static IEditCommand<EndProfile> AddPlatePoint(int index) =>
+        ChangePlate("Add plate point", plate =>
+        {
+            var at = Math.Clamp(index, 0, plate.UpperEdge.Count - 2);
+            var middle = Point.Lerp(plate.UpperEdge[at], plate.UpperEdge[at + 1], 0.5);
+            return PlateShape.TryCreate([.. plate.UpperEdge.Take(at + 1), middle, .. plate.UpperEdge.Skip(at + 1)], plate.Bottom);
+        });
+
+    private static IEditCommand<EndProfile> ChangePlate(string description, Func<PlateShape, PlateShape?> change) =>
+        new EditCommand<EndProfile>(description, profile =>
+            PlateShape.From(profile) is { } plate && change(plate) is { } changed ? WithPlate(profile, changed) : profile);
+
+    private static EndProfile WithPlate(EndProfile profile, PlateShape plate) =>
+        profile with { Outline = plate.Outline(), GroundLine = plate.GroundLine() };
 
     public static IEditCommand<EndProfile> SetOutline(PathDrawing outline) =>
         new EditCommand<EndProfile>("Draw outline", profile => profile with { Outline = outline });
@@ -51,13 +103,21 @@ public static class EndProfileCommands
 
     /// <summary>Deletes items; the outline and ground line are removed, tracks and holes dropped from their lists.</summary>
     public static IEditCommand<EndProfile> Delete(IReadOnlyList<EndProfileItem> ids) =>
-        new EditCommand<EndProfile>("Delete", profile => profile with
+        new EditCommand<EndProfile>("Delete", profile =>
         {
-            Tracks = Keep(profile.Tracks, EndProfileItemKind.Track, ids),
-            ScrewHoles = Keep(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids),
-            Dowels = Keep(profile.Dowels, EndProfileItemKind.Dowel, ids),
-            Outline = ids.Contains(EndProfileItem.Outline) ? null : profile.Outline,
-            GroundLine = ids.Contains(EndProfileItem.GroundLine) ? null : profile.GroundLine,
+            var deleted = profile with
+            {
+                Tracks = Keep(profile.Tracks, EndProfileItemKind.Track, ids),
+                ScrewHoles = Keep(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids),
+                Dowels = Keep(profile.Dowels, EndProfileItemKind.Dowel, ids),
+                Outline = ids.Contains(EndProfileItem.Outline) ? null : profile.Outline,
+                GroundLine = ids.Contains(EndProfileItem.GroundLine) || ids.Contains(EndProfileItem.Outline) ? null : profile.GroundLine,
+            };
+            // Plate points can be deleted as long as the upper edge keeps two points.
+            if (deleted.Outline is not null && ids.Any(i => i.Kind == EndProfileItemKind.PlatePoint) && PlateShape.From(profile) is { } plate &&
+                PlateShape.TryCreate(plate.UpperEdge.Where((_, i) => !ids.Contains(EndProfileItem.PlatePoint(i))), plate.Bottom) is { } shape)
+                deleted = WithPlate(deleted, shape);
+            return deleted;
         });
 
     public static IEditCommand<EndProfile> SetTrack(int index, EndProfileTrack track) =>

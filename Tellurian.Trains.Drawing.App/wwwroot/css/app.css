@@ -569,3 +569,32 @@ label.inline {
     stroke-width: 2;
 }
 
+
+.plate-points {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.4rem;
+}
+
+    .plate-points th {
+        text-align: left;
+        font-weight: 500;
+        color: var(--app-muted);
+        font-size: 0.8rem;
+    }
+
+    .plate-points td {
+        padding: 0.1rem 0.15rem;
+    }
+
+    .plate-points td:first-child {
+        width: 1.6rem;
+    }
+
+    .plate-points label {
+        display: none;
+    }
+
+    .plate-points tr.selected {
+        background: #fbe9e1;
+    }

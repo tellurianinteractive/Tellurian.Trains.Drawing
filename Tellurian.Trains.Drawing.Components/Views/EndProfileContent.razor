@@ -48,6 +48,15 @@
         <circle class="@Classes("ep-screw-hole", EndProfileItem.ScrewHole(i))" cx="@SvgPath.Number(hole.Center.X)" cy="@SvgPath.Number(hole.Center.Y)" r="@SvgPath.Number(hole.Diameter / 2)" />
     }
 }
+@if (ShowPlatePoints && PlateShape.From(Profile) is { } plate)
+{
+    var half = HandleSize / 2;
+    @for (var i = 0; i < plate.UpperEdge.Count; i++)
+    {
+        var point = plate.UpperEdge[i];
+        <rect class="@Classes("ep-plate-point", EndProfileItem.PlatePoint(i))" x="@SvgPath.Number(point.X - half)" y="@SvgPath.Number(point.Y - half)" width="@SvgPath.Number(HandleSize)" height="@SvgPath.Number(HandleSize)" />
+    }
+}
 @if (Show(EndProfileLayers.Dowels))
 {
     @for (var i = 0; i < Profile.Dowels.Count; i++)
@@ -67,6 +76,12 @@
 
     /// <summary>The text height in millimetres.</summary>
     [Parameter] public double TextSize { get; set; } = 10;
+
+    /// <summary>Shows handles on the points of the plate's upper edge, for editing.</summary>
+    [Parameter] public bool ShowPlatePoints { get; set; }
+
+    /// <summary>The size of the point handles in millimetres; the editor passes a few pixels at its zoom.</summary>
+    [Parameter] public double HandleSize { get; set; } = 3;
 
     /// <summary>Highlighted items, e.g. the editor's selection.</summary>
     [Parameter] public IReadOnlyCollection<EndProfileItem>? Selected { get; set; }

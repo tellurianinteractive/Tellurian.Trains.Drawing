@@ -27,7 +27,12 @@
             <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@_document.Current.Designation"
                            OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
                 <ChildContent>
-                    <EndProfileContent Profile="Shown" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="_view.ToWorld(12)" Selected="_selection.Items" />
+                    <EndProfileContent Profile="Shown" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="_view.ToWorld(12)" Selected="_selection.Items"
+                                       ShowPlatePoints="true" HandleSize="_view.ToWorld(8)" />
+                    @foreach (var dimension in PlateDimensions)
+                    {
+                        <DimensionLine Dimension="dimension" TextSize="_view.ToWorld(11)" />
+                    }
                 </ChildContent>
                 <Overlay>
                     @if (_select.RubberBand is { } band)
@@ -64,7 +69,7 @@
                                 aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
                     }
                 </div>
-                @if (_activeTool is EndProfileTool.Outline or EndProfileTool.GroundLine)
+                @if (_activeTool == EndProfileTool.UpperEdge)
                 {
                     <label class="inline"><input type="checkbox" id="arc-mode" checked="@(ActivePath.Mode == PathStepMode.TangentArc)" @onchange="ToggleArc" /> @T["ArcMode"]</label>
                 }
@@ -77,6 +82,36 @@
                 </div>
                 <p class="pane-help" aria-live="polite">@Status</p>
             </section>
+            @if (Plate is { } plate)
+            {
+                <section class="pane plate-pane" aria-label="@T["PlatePane"]">
+                    <h2>@T["PlatePane"]</h2>
+                    <div class="property-grid">
+                        <NumberField Label="@T["PlateDepth"]" Value="-plate.Bottom" Min="0" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateBottom(-v))" />
+                        <NumberField Label="@T["PlateWidth"]" Value="plate.Width" ReadOnly="true" />
+                    </div>
+                    <table class="plate-points">
+                        <thead><tr><th>#</th><th>X</th><th>Y</th></tr></thead>
+                        <tbody>
+                            @for (var i = 0; i < plate.UpperEdge.Count; i++)
+                            {
+                                var index = i;
+                                var point = plate.UpperEdge[i];
+                                <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(i)) ? "selected" : null)">
+                                    <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(index))">@(i + 1)</button></td>
+                                    <td><NumberField Label="" Unit="@null" Value="point.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, new(v, point.Y)))" /></td>
+                                    <td><NumberField Label="" Unit="@null" Value="point.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, new(point.X, v)))" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pane-buttons">
+                        <button type="button" id="add-point" @onclick="AddPlatePoint">@T["AddPoint"]</button>
+                        <button type="button" id="delete-point" disabled="@(!_selection.Items.Any(i => i.Kind == EndProfileItemKind.PlatePoint) || plate.UpperEdge.Count <= 2)" @onclick="DeleteSelection">@T["DeletePoint"]</button>
+                    </div>
+                    <p class="pane-help">@T["PlateHelp"]</p>
+                </section>
+            }
             <PropertyPanel Title="@SelectionTitle" Class="pane">
                 @switch (SingleSelected)
                 {
@@ -151,8 +186,7 @@
     private EditorDocument<EndProfile>? _document;
     private EditorSession<EndProfile>? _session;
     private SelectMoveTool<EndProfile, EndProfileItem> _select = default!;
-    private PathTool<EndProfile> _outline = default!;
-    private PathTool<EndProfile> _ground = default!;
+    private PathTool<EndProfile> _upperEdge = default!;
     private PlaceTool<EndProfile> _screwHole = default!;
     private PlaceTool<EndProfile> _track = default!;
     private EndProfileTool _activeTool = EndProfileTool.Select;
@@ -186,18 +220,46 @@
 
     private ITool Active => _activeTool switch
     {
-        EndProfileTool.Outline => _outline,
-        EndProfileTool.GroundLine => _ground,
+        EndProfileTool.UpperEdge => _upperEdge,
         EndProfileTool.ScrewHole => _screwHole,
         EndProfileTool.Track => _track,
         _ => _select,
     };
 
-    private PathTool<EndProfile> ActivePath => _activeTool == EndProfileTool.GroundLine ? _ground : _outline;
-    private PathTool<EndProfile>? ActivePathOrNull => _activeTool is EndProfileTool.Outline or EndProfileTool.GroundLine ? ActivePath : null;
+    private PathTool<EndProfile> ActivePath => _upperEdge;
+    private PathTool<EndProfile>? ActivePathOrNull => _activeTool == EndProfileTool.UpperEdge ? _upperEdge : null;
     private PlaceTool<EndProfile>? ActivePlaceOrNull => _activeTool switch { EndProfileTool.ScrewHole => _screwHole, EndProfileTool.Track => _track, _ => null };
 
     private SnapResult? Snapped => ActivePathOrNull?.Snapped ?? ActivePlaceOrNull?.Snapped ?? (_activeTool == EndProfileTool.Select ? _select.Snapped : null);
+
+    /// <summary>A new upper edge without a plate gets a plate this deep below its lowest point, mm.</summary>
+    private const double DefaultPlateDepth = 100;
+
+    private PlateShape? Plate => _document is null ? null : PlateShape.From(_document.Current);
+
+    /// <summary>The plate's dimensions, drawn automatically: width, side heights and depth below rail top.</summary>
+    private IEnumerable<Dimension> PlateDimensions
+    {
+        get
+        {
+            if (PlateShape.From(Shown) is not { } plate) yield break;
+            var gap = _view.ToWorld(28);
+            Point leftBottom = new(plate.Left, plate.Bottom), rightBottom = new(plate.Right, plate.Bottom);
+            yield return Dimension.Place(leftBottom, rightBottom, new(0, plate.Bottom - gap), DimensionKind.Horizontal);
+            yield return Dimension.Place(leftBottom, plate.UpperEdge[0], new(plate.Left - gap, 0), DimensionKind.Vertical);
+            yield return Dimension.Place(rightBottom, plate.UpperEdge[^1], new(plate.Right + gap, 0), DimensionKind.Vertical);
+            yield return Dimension.Place(new(plate.Left, 0), leftBottom, new(plate.Left - 2.2 * gap, 0), DimensionKind.Vertical);
+        }
+    }
+
+    /// <summary>Adds a point after the selected point, or in the middle of the upper edge.</summary>
+    private void AddPlatePoint()
+    {
+        if (Plate is not { } plate) return;
+        var selected = _selection.Items.Where(i => i.Kind == EndProfileItemKind.PlatePoint).Select(i => i.Index).DefaultIfEmpty((plate.UpperEdge.Count - 1) / 2).Max();
+        Apply(EndProfileCommands.AddPlatePoint(Math.Min(selected, plate.UpperEdge.Count - 2)));
+        _selection.Select(EndProfileItem.PlatePoint(Math.Min(selected, plate.UpperEdge.Count - 2) + 1));
+    }
 
     private EndProfileItem? SingleSelected => _selection.Count == 1 ? _selection.Items[0] : null;
 
@@ -212,8 +274,7 @@
 
     private string Status => _activeTool switch
     {
-        EndProfileTool.Outline => T[_outline.IsDrawing ? "PathHelpDrawing" : "OutlineHelp"],
-        EndProfileTool.GroundLine => T[_ground.IsDrawing ? "PathHelpDrawing" : "GroundLineHelp"],
+        EndProfileTool.UpperEdge => T[_upperEdge.IsDrawing ? "UpperEdgeHelpDrawing" : "UpperEdgeHelp"],
         EndProfileTool.ScrewHole => T["ScrewHoleHelp"],
         EndProfileTool.Track => T["TrackHelp"],
         _ => T["EndProfileSelectHelp"],
@@ -231,8 +292,10 @@
         _document = new(profile);
         _view = Viewport.Fit(EndProfileContent.Bounds(profile), 800, 400);
         _select = new(_document, _selection, _scene, _snap);
-        _outline = new(_document, _snap, EndProfileCommands.SetOutline) { RequiresClosed = true };
-        _ground = new(_document, _snap, EndProfileCommands.SetGroundLine) { AllowsClosed = false };
+        _upperEdge = new(_document, _snap, path => EndProfileCommands.SetUpperEdge(path.Tessellate(PlateShape.ArcTolerance).Points, DefaultPlateDepth))
+        {
+            AllowsClosed = false,
+        };
         _screwHole = new(_document, _snap, EndProfileCommands.AddScrewHole);
         _track = new(_document, _snap, p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauge = profile.Tracks.FirstOrDefault()?.Gauge ?? 16.5 }))
         {
@@ -281,8 +344,7 @@
     private void ToggleArc(ChangeEventArgs e)
     {
         var mode = e.Value is true ? PathStepMode.TangentArc : PathStepMode.Line;
-        _outline.Mode = mode;
-        _ground.Mode = mode;
+        _upperEdge.Mode = mode;
     }
 
     private void OnDown(CanvasPointerEventArgs e) => Active.PointerDown(e.ToToolPointer(Tolerance));
@@ -369,8 +431,7 @@
     private enum EndProfileTool
     {
         Select,
-        Outline,
-        GroundLine,
+        UpperEdge,
         Track,
         ScrewHole,
     }

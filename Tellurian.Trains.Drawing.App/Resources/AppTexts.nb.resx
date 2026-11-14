@@ -249,4 +249,13 @@
   <data name="EditAsDraft" xml:space="preserve"><value>Rediger</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Rediger</value></data>
+  <data name="EpTool_UpperEdge" xml:space="preserve"><value>Overkant</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klikk på platens overkant fra venstre mot høyre; trykk Enter for å avslutte. Sidene følger første og siste punkt.</value></data>
+  <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klikk for å legge til punkter; Enter avslutter, Tilbake fjerner et punkt, Escape avbryter.</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Plate</value></data>
+  <data name="PlateDepth" xml:space="preserve"><value>Underkant under skinnetopp (mm)</value></data>
+  <data name="AddPoint" xml:space="preserve"><value>Legg til punkt</value></data>
+  <data name="DeletePoint" xml:space="preserve"><value>Slett punkt</value></data>
+  <data name="PlateHelp" xml:space="preserve"><value>Overkanten er også terrenglinjen som sammenlignes ved skjøter. Dra punktene i tegningen eller skriv dem inn i mm; Y er negativ under skinnetopp.</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Platepunkt</value></data>
 </root>

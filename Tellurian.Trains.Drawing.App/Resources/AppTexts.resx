@@ -249,4 +249,13 @@
   <data name="EditAsDraft" xml:space="preserve"><value>Edit</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Archive</value></data>
   <data name="EditPane" xml:space="preserve"><value>Edit</value></data>
+  <data name="EpTool_UpperEdge" xml:space="preserve"><value>Upper edge</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Click the points of the plate's upper edge from left to right; press Enter to finish. The sides follow the first and last points.</value></data>
+  <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Click to add points; Enter finishes, Backspace removes a point, Escape cancels.</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Plate</value></data>
+  <data name="PlateDepth" xml:space="preserve"><value>Bottom below rail top (mm)</value></data>
+  <data name="AddPoint" xml:space="preserve"><value>Add point</value></data>
+  <data name="DeletePoint" xml:space="preserve"><value>Delete point</value></data>
+  <data name="PlateHelp" xml:space="preserve"><value>The upper edge is also the ground line compared at joints. Drag the points in the drawing or type them in mm; Y is negative below rail top.</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plate point</value></data>
 </root>

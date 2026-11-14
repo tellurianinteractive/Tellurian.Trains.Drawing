@@ -18,13 +18,15 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
 
     public bool TryHitTest(EndProfile document, Point point, double tolerance, out EndProfileItem id)
     {
+        if (PlateShape.From(document) is { } plate)
+            for (var i = plate.UpperEdge.Count - 1; i >= 0; i--)
+                if (point.DistanceTo(plate.UpperEdge[i]) <= tolerance) return Found(EndProfileItem.PlatePoint(i), out id);
         for (var i = document.ScrewHoles.Count - 1; i >= 0; i--)
             if (point.DistanceTo(document.ScrewHoles[i].Center) <= document.ScrewHoles[i].Diameter / 2 + tolerance) return Found(EndProfileItem.ScrewHole(i), out id);
         for (var i = document.Dowels.Count - 1; i >= 0; i--)
             if (point.DistanceTo(document.Dowels[i].Center) <= document.Dowels[i].Diameter / 2 + tolerance) return Found(EndProfileItem.Dowel(i), out id);
         for (var i = document.Tracks.Count - 1; i >= 0; i--)
             if (TrackBounds(document.Tracks[i]).Inflated(tolerance).Contains(point)) return Found(EndProfileItem.Track(i), out id);
-        if (document.GroundLine is { } ground && Measure.PointToPolyline(point, ground.Tessellate()) <= tolerance) return Found(EndProfileItem.GroundLine, out id);
         if (document.Outline is { } outline)
         {
             var polyline = outline.Tessellate();
@@ -41,6 +43,8 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
         EndProfileItemKind.Dowel when id.Index < document.Dowels.Count => CircleBounds(document.Dowels[id.Index]),
         EndProfileItemKind.Outline when document.Outline is { } outline => outline.ToPath().Bounds,
         EndProfileItemKind.GroundLine when document.GroundLine is { } ground => ground.ToPath().Bounds,
+        EndProfileItemKind.PlatePoint when PlateShape.From(document) is { } plate && id.Index < plate.UpperEdge.Count =>
+            new BoundingBox(plate.UpperEdge[id.Index], plate.UpperEdge[id.Index]),
         _ => BoundingBox.Empty,
     };
 
@@ -71,11 +75,24 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
             case EndProfileItemKind.Dowel when id.Index < document.Dowels.Count:
                 yield return new PointTarget(document.Dowels[id.Index].Center, id);
                 break;
+            case EndProfileItemKind.Outline when PlateShape.From(document) is { } plate:
+                // The upper edge's points are targets of their own, which a drag of them can leave out.
+                Point leftCorner = new(plate.Left, plate.Bottom), rightCorner = new(plate.Right, plate.Bottom);
+                yield return new PointTarget(leftCorner, id);
+                yield return new PointTarget(rightCorner, id);
+                yield return new EdgeTarget(leftCorner, rightCorner, id);
+                // A side belongs to its end point, so a drag of that point doesn't snap to its own side.
+                yield return new EdgeTarget(leftCorner, plate.UpperEdge[0], EndProfileItem.PlatePoint(0));
+                yield return new EdgeTarget(rightCorner, plate.UpperEdge[^1], EndProfileItem.PlatePoint(plate.UpperEdge.Count - 1));
+                break;
             case EndProfileItemKind.Outline when document.Outline is { } outline:
                 foreach (var target in PathTargets(outline, id)) yield return target;
                 break;
             case EndProfileItemKind.GroundLine when document.GroundLine is { } ground:
                 foreach (var target in PathTargets(ground, id)) yield return target;
+                break;
+            case EndProfileItemKind.PlatePoint when PlateShape.From(document) is { } plate && id.Index < plate.UpperEdge.Count:
+                yield return new PointTarget(plate.UpperEdge[id.Index], id);
                 break;
         }
     }
@@ -96,7 +113,8 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
     public static IEnumerable<EndProfileItem> Items(EndProfile document)
     {
         if (document.Outline is not null) yield return EndProfileItem.Outline;
-        if (document.GroundLine is not null) yield return EndProfileItem.GroundLine;
+        if (PlateShape.From(document) is { } plate)
+            for (var i = 0; i < plate.UpperEdge.Count; i++) yield return EndProfileItem.PlatePoint(i);
         for (var i = 0; i < document.Tracks.Count; i++) yield return EndProfileItem.Track(i);
         for (var i = 0; i < document.ScrewHoles.Count; i++) yield return EndProfileItem.ScrewHole(i);
         for (var i = 0; i < document.Dowels.Count; i++) yield return EndProfileItem.Dowel(i);
