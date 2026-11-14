@@ -198,4 +198,53 @@
   <data name="NothingSelected" xml:space="preserve"><value>Intet er markeret.</value></data>
   <data name="InvalidNumber" xml:space="preserve"><value>Ikke et gyldigt tal.</value></data>
   <data name="Depth" xml:space="preserve"><value>Dybde (mm)</value></data>
+  <data name="NewEndProfile" xml:space="preserve"><value>Ny endeprofil…</value></data>
+  <data name="NewEndProfileTitle" xml:space="preserve"><value>Ny endeprofil</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start med en rektangulær endeplade med spor; tegn derefter omrids, terrænlinje og skruehuller i editoren.</value></data>
+  <data name="Designation" xml:space="preserve"><value>Betegnelse</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Pladens bredde (mm)</value></data>
+  <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Overkant under skinneoverkant (mm)</value></data>
+  <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Underkant under skinneoverkant (mm)</value></data>
+  <data name="NumberOfTracks" xml:space="preserve"><value>Antal spor</value></data>
+  <data name="CentreDistance" xml:space="preserve"><value>Sporafstand, c/c (mm)</value></data>
+  <data name="CopyScrewHolesFrom" xml:space="preserve"><value>Kopiér skruehuller fra</value></data>
+  <data name="DesignationRequired" xml:space="preserve"><value>Angiv en betegnelse.</value></data>
+  <data name="PlateEdgesOrder" xml:space="preserve"><value>Underkanten skal ligge længere under skinneoverkant end overkanten.</value></data>
+  <data name="TrackCountRange" xml:space="preserve"><value>Antallet af spor skal være 0–8.</value></data>
+  <data name="EpTool_Select" xml:space="preserve"><value>Markér</value></data>
+  <data name="EpTool_Outline" xml:space="preserve"><value>Omrids</value></data>
+  <data name="EpTool_GroundLine" xml:space="preserve"><value>Terrænlinje</value></data>
+  <data name="EpTool_Track" xml:space="preserve"><value>Spor</value></data>
+  <data name="EpTool_ScrewHole" xml:space="preserve"><value>Skruehul</value></data>
+  <data name="EpItem_Track" xml:space="preserve"><value>Spor</value></data>
+  <data name="EpItem_ScrewHole" xml:space="preserve"><value>Skruehul</value></data>
+  <data name="EpItem_Dowel" xml:space="preserve"><value>Styrestift</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>Endepladens omrids</value></data>
+  <data name="EpItem_GroundLine" xml:space="preserve"><value>Terrænlinje</value></data>
+  <data name="EndProfileProperties" xml:space="preserve"><value>Endeprofil</value></data>
+  <data name="MirrorScrewHoles" xml:space="preserve"><value>Spejl skruehuller</value></data>
+  <data name="Offset" xml:space="preserve"><value>Afstand fra midten (mm)</value></data>
+  <data name="Diameter" xml:space="preserve"><value>Diameter (mm)</value></data>
+  <data name="Label" xml:space="preserve"><value>Etiket</value></data>
+  <data name="ScrewHolePattern" xml:space="preserve"><value>Skruehulsmønster</value></data>
+  <data name="Derived" xml:space="preserve"><value>Afledte egenskaber</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Pladens størrelse</value></data>
+  <data name="Offsets" xml:space="preserve"><value>Sporenes placering</value></data>
+  <data name="ScrewHoles" xml:space="preserve"><value>Skruehuller</value></data>
+  <data name="Symmetry" xml:space="preserve"><value>Symmetri</value></data>
+  <data name="Symmetric" xml:space="preserve"><value>Symmetrisk</value></data>
+  <data name="AsymmetricIn" xml:space="preserve"><value>Asymmetrisk: {0}</value></data>
+  <data name="Difference_TrackPositions" xml:space="preserve"><value>spor</value></data>
+  <data name="Difference_ScrewHoles" xml:space="preserve"><value>skruehuller</value></data>
+  <data name="Difference_GroundLine" xml:space="preserve"><value>terrænlinje</value></data>
+  <data name="Difference_Outline" xml:space="preserve"><value>omrids</value></data>
+  <data name="Difference_Dowels" xml:space="preserve"><value>styrestifter</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Klik på endepladens hjørner; klik på det første hjørne for at lukke omridset. Det nye omrids erstatter det gamle.</value></data>
+  <data name="GroundLineHelp" xml:space="preserve"><value>Klik på terrænets punkter fra venstre mod højre; tryk Enter for at afslutte. Den erstatter den gamle terrænlinje.</value></data>
+  <data name="ScrewHoleHelp" xml:space="preserve"><value>Klik hvor et skruehul skal sidde; det fastgøres til kanter, andre huller og gitteret.</value></data>
+  <data name="TrackHelp" xml:space="preserve"><value>Klik hvor et spor skal ligge; dets skinneoverkant ligger altid på referencelinjen.</value></data>
+  <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klik for at markere, træk for at flytte (Skift: lige, Alt: uden fastgørelse), Delete for at slette. Set udefra modulet.</value></data>
+  <data name="SaveToCatalogue" xml:space="preserve"><value>Gem i mit katalog</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} er gemt i dit katalog.</value></data>
+  <data name="EditAsDraft" xml:space="preserve"><value>Redigér</value></data>
 </root>

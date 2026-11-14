@@ -50,6 +50,9 @@ public sealed record DrawingCatalogue
         Overrides = [.. Overrides.Where(o => o != replacing && !o.Applies(entry.FirstEndProfileId, entry.SecondEndProfileId)), entry],
     };
 
+    /// <summary>The catalogue with <paramref name="profile"/> added, or replacing the end profile with the same id.</summary>
+    public DrawingCatalogue With(EndProfile profile) => this with { EndProfiles = [.. EndProfiles.Where(p => p.Id != profile.Id), profile] };
+
     public DrawingCatalogue WithoutStandard(Guid id) => this with { Standards = [.. Standards.Where(s => s.Id != id)] };
 
     public DrawingCatalogue WithoutAddOn(Guid id) => this with { AddOns = [.. AddOns.Where(a => a.Id != id)] };

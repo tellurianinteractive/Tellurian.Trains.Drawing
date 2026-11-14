@@ -435,3 +435,82 @@ label.inline {
     padding: 0.75rem;
     align-self: start;
 }
+
+/* ---------- Editors ---------- */
+.editor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 17rem;
+    gap: 1rem;
+}
+
+@media (max-width: 55rem) {
+    .editor-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.editor-canvas {
+    height: 62vh;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}
+
+.editor-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+    .editor-side > * {
+        border: 1px solid var(--app-border);
+        border-radius: 4px;
+        padding: 0.75rem;
+    }
+
+.derived h2 {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+}
+
+.derived .symmetric {
+    color: #1d6b33;
+}
+
+.derived .asymmetric {
+    color: #a05a00;
+}
+
+.editor-status {
+    min-height: 2.6em;
+    margin: 0.4rem 0 0;
+}
+
+.editor-rubber-band {
+    fill: rgba(27, 110, 194, 0.08);
+    stroke: #1b6ec2;
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+}
+
+.editor-preview {
+    fill: none;
+    stroke: #1b6ec2;
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+}
+
+.editor-place {
+    fill: rgba(27, 110, 194, 0.15);
+    stroke: #1b6ec2;
+    stroke-width: 1.5;
+}
+
+.editor-snap {
+    fill: none;
+    stroke: #c24b1b;
+    stroke-width: 2;
+}
+
+.app-main:has(.editor-layout) {
+    max-width: 85rem;
+}

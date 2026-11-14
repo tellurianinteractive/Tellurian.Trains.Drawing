@@ -198,4 +198,53 @@
   <data name="NothingSelected" xml:space="preserve"><value>Nothing is selected.</value></data>
   <data name="InvalidNumber" xml:space="preserve"><value>Not a valid number.</value></data>
   <data name="Depth" xml:space="preserve"><value>Depth (mm)</value></data>
+  <data name="NewEndProfile" xml:space="preserve"><value>New end profile…</value></data>
+  <data name="NewEndProfileTitle" xml:space="preserve"><value>New end profile</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start from a rectangular end plate with tracks; then draw the outline, ground line and screw holes in the editor.</value></data>
+  <data name="Designation" xml:space="preserve"><value>Designation</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Plate width (mm)</value></data>
+  <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Top edge below rail top (mm)</value></data>
+  <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Bottom edge below rail top (mm)</value></data>
+  <data name="NumberOfTracks" xml:space="preserve"><value>Number of tracks</value></data>
+  <data name="CentreDistance" xml:space="preserve"><value>Track centre distance, c/c (mm)</value></data>
+  <data name="CopyScrewHolesFrom" xml:space="preserve"><value>Copy screw holes from</value></data>
+  <data name="DesignationRequired" xml:space="preserve"><value>Enter a designation.</value></data>
+  <data name="PlateEdgesOrder" xml:space="preserve"><value>The bottom edge must be further below rail top than the top edge.</value></data>
+  <data name="TrackCountRange" xml:space="preserve"><value>The number of tracks must be 0–8.</value></data>
+  <data name="EpTool_Select" xml:space="preserve"><value>Select</value></data>
+  <data name="EpTool_Outline" xml:space="preserve"><value>Outline</value></data>
+  <data name="EpTool_GroundLine" xml:space="preserve"><value>Ground line</value></data>
+  <data name="EpTool_Track" xml:space="preserve"><value>Track</value></data>
+  <data name="EpTool_ScrewHole" xml:space="preserve"><value>Screw hole</value></data>
+  <data name="EpItem_Track" xml:space="preserve"><value>Track</value></data>
+  <data name="EpItem_ScrewHole" xml:space="preserve"><value>Screw hole</value></data>
+  <data name="EpItem_Dowel" xml:space="preserve"><value>Dowel</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>End-plate outline</value></data>
+  <data name="EpItem_GroundLine" xml:space="preserve"><value>Ground line</value></data>
+  <data name="EndProfileProperties" xml:space="preserve"><value>End profile</value></data>
+  <data name="MirrorScrewHoles" xml:space="preserve"><value>Mirror screw holes</value></data>
+  <data name="Offset" xml:space="preserve"><value>Offset from centre (mm)</value></data>
+  <data name="Diameter" xml:space="preserve"><value>Diameter (mm)</value></data>
+  <data name="Label" xml:space="preserve"><value>Label</value></data>
+  <data name="ScrewHolePattern" xml:space="preserve"><value>Screw-hole pattern</value></data>
+  <data name="Derived" xml:space="preserve"><value>Derived properties</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Plate size</value></data>
+  <data name="Offsets" xml:space="preserve"><value>Track offsets</value></data>
+  <data name="ScrewHoles" xml:space="preserve"><value>Screw holes</value></data>
+  <data name="Symmetry" xml:space="preserve"><value>Symmetry</value></data>
+  <data name="Symmetric" xml:space="preserve"><value>Symmetric</value></data>
+  <data name="AsymmetricIn" xml:space="preserve"><value>Asymmetric: {0}</value></data>
+  <data name="Difference_TrackPositions" xml:space="preserve"><value>tracks</value></data>
+  <data name="Difference_ScrewHoles" xml:space="preserve"><value>screw holes</value></data>
+  <data name="Difference_GroundLine" xml:space="preserve"><value>ground line</value></data>
+  <data name="Difference_Outline" xml:space="preserve"><value>outline</value></data>
+  <data name="Difference_Dowels" xml:space="preserve"><value>dowels</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Click the corners of the end plate; click the first corner to close it. The new outline replaces the old one.</value></data>
+  <data name="GroundLineHelp" xml:space="preserve"><value>Click the points of the landscape surface from left to right; press Enter to finish. It replaces the old ground line.</value></data>
+  <data name="ScrewHoleHelp" xml:space="preserve"><value>Click where a screw hole goes; it snaps to edges, other holes and the grid.</value></data>
+  <data name="TrackHelp" xml:space="preserve"><value>Click where a track goes; its rail top is always at the rail-top line.</value></data>
+  <data name="EndProfileSelectHelp" xml:space="preserve"><value>Click to select, drag to move (Shift: straight, Alt: no snapping), Delete to remove. Seen from outside the module.</value></data>
+  <data name="SaveToCatalogue" xml:space="preserve"><value>Save to my catalogue</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} is saved in your catalogue.</value></data>
+  <data name="EditAsDraft" xml:space="preserve"><value>Edit</value></data>
 </root>

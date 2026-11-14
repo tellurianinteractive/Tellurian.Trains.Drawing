@@ -100,12 +100,35 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
     }
 
     /// <summary>Stores a changed drawing in its draft and marks it as having unsaved changes (autosave).</summary>
-    public async Task<Draft> UpdateAsync(Draft draft, string json, CancellationToken cancellationToken = default)
+    public Task<Draft> UpdateAsync(Draft draft, string json, CancellationToken cancellationToken = default) =>
+        UpdateAsync(draft.Id, json, cancellationToken);
+
+    /// <summary>
+    /// Stores a changed drawing in the stored draft with <paramref name="draftId"/>, keeping its file name and handle,
+    /// so an editor never overwrites what a save to a file has recorded meanwhile.
+    /// </summary>
+    /// <exception cref="KeyNotFoundException">The draft doesn't exist any more.</exception>
+    public async Task<Draft> UpdateAsync(Guid draftId, string json, CancellationToken cancellationToken = default)
     {
+        var draft = await workbench.GetDraftAsync(draftId, cancellationToken) ?? throw new KeyNotFoundException($"There is no draft {draftId}.");
         var identity = DrawingIdentity.Read(json);
         var updated = draft with { Json = json, Name = identity.Name, HasUnsavedChanges = true, Modified = time.GetUtcNow() };
         await workbench.SaveDraftAsync(updated, cancellationToken);
         return updated;
+    }
+
+    /// <summary>
+    /// Opens a drawing that isn't in a file, e.g. a profile from the user's catalogue, for editing: its existing draft
+    /// if there is one, otherwise a new draft without unsaved changes.
+    /// </summary>
+    public async Task<Draft> EditAsync(string json, CancellationToken cancellationToken = default)
+    {
+        var identity = DrawingIdentity.Read(json);
+        var id = identity.Id ?? throw new ArgumentException("A drawing to edit must have an id.", nameof(json));
+        if (await workbench.GetDraftAsync(id, cancellationToken) is { } existing) return existing;
+        var draft = await CreateAsync(json, cancellationToken) with { HasUnsavedChanges = false };
+        await workbench.SaveDraftAsync(draft, cancellationToken);
+        return draft;
     }
 
     /// <summary>Saves a draft to a file; null if the user cancelled.</summary>

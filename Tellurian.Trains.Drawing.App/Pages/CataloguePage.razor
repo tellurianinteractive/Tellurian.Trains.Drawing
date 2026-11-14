@@ -4,6 +4,8 @@
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @inject CatalogueService Catalogues
 @inject BrowserDialogs Dialogs
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
 
 <PageTitle>@T["Catalogue"]</PageTitle>
 
@@ -98,6 +100,7 @@
                             <button type="button" class="link" @onclick="() => CopyAsync(profile)">@T["Copy"]</button>
                             @if (origin != CatalogueOrigin.BuiltIn)
                             {
+                                <button type="button" class="link edit-profile" @onclick="() => EditAsync(profile)">@T["EditAsDraft"]</button>
                                 <button type="button" class="link" @onclick="() => DeleteAsync(profile, origin)">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
                             }
                         </td>
@@ -265,6 +268,13 @@
     {
         var copy = await Catalogues.CopyEndProfileAsync(profile.Id, CatalogueService.CopyName(profile.Designation, profile.Scale, catalogue!, T["CopySuffix"]));
         status = T.Format("Copied", copy.Designation);
+    });
+
+    /// <summary>Opens one of the user's end profiles in the editor, as a draft (EP-1).</summary>
+    private async Task EditAsync(EndProfile profile) => await RunAsync(async () =>
+    {
+        var draft = await Documents.EditAsync(DrawingFileSerializer.Serialize(profile));
+        Navigation.NavigateTo(DrawingPage.Url(draft.Id));
     });
 
     private Task DeleteAsync(EndProfile profile, CatalogueOrigin origin) =>

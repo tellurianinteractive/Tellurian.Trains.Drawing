@@ -85,6 +85,10 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files)
         return copy;
     }
 
+    /// <summary>Saves an end profile in the user's catalogue, replacing one with the same id (EP-1, CA-2).</summary>
+    public async Task SaveEndProfileAsync(Model.EndProfiles.EndProfile profile, CancellationToken cancellationToken = default) =>
+        await SaveUserAsync((await GetUserAsync(cancellationToken)).With(profile), cancellationToken);
+
     /// <summary>Removes a user end profile; a replaced built-in profile becomes visible again.</summary>
     public async Task DeleteEndProfileAsync(Guid id, CancellationToken cancellationToken = default)
     {

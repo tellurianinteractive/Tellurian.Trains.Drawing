@@ -198,4 +198,53 @@
   <data name="NothingSelected" xml:space="preserve"><value>Nichts ist ausgewählt.</value></data>
   <data name="InvalidNumber" xml:space="preserve"><value>Keine gültige Zahl.</value></data>
   <data name="Depth" xml:space="preserve"><value>Tiefe (mm)</value></data>
+  <data name="NewEndProfile" xml:space="preserve"><value>Neues Endprofil…</value></data>
+  <data name="NewEndProfileTitle" xml:space="preserve"><value>Neues Endprofil</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Beginne mit einem rechteckigen Kopfstück mit Gleisen; zeichne dann Umriss, Geländelinie und Schraubenlöcher im Editor.</value></data>
+  <data name="Designation" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Breite des Kopfstücks (mm)</value></data>
+  <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Oberkante unter SOK (mm)</value></data>
+  <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Unterkante unter SOK (mm)</value></data>
+  <data name="NumberOfTracks" xml:space="preserve"><value>Anzahl Gleise</value></data>
+  <data name="CentreDistance" xml:space="preserve"><value>Gleisabstand, c/c (mm)</value></data>
+  <data name="CopyScrewHolesFrom" xml:space="preserve"><value>Schraubenlöcher kopieren von</value></data>
+  <data name="DesignationRequired" xml:space="preserve"><value>Gib eine Bezeichnung ein.</value></data>
+  <data name="PlateEdgesOrder" xml:space="preserve"><value>Die Unterkante muss tiefer unter SOK liegen als die Oberkante.</value></data>
+  <data name="TrackCountRange" xml:space="preserve"><value>Die Anzahl der Gleise muss 0–8 sein.</value></data>
+  <data name="EpTool_Select" xml:space="preserve"><value>Auswählen</value></data>
+  <data name="EpTool_Outline" xml:space="preserve"><value>Umriss</value></data>
+  <data name="EpTool_GroundLine" xml:space="preserve"><value>Geländelinie</value></data>
+  <data name="EpTool_Track" xml:space="preserve"><value>Gleis</value></data>
+  <data name="EpTool_ScrewHole" xml:space="preserve"><value>Schraubenloch</value></data>
+  <data name="EpItem_Track" xml:space="preserve"><value>Gleis</value></data>
+  <data name="EpItem_ScrewHole" xml:space="preserve"><value>Schraubenloch</value></data>
+  <data name="EpItem_Dowel" xml:space="preserve"><value>Passstift</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>Umriss des Kopfstücks</value></data>
+  <data name="EpItem_GroundLine" xml:space="preserve"><value>Geländelinie</value></data>
+  <data name="EndProfileProperties" xml:space="preserve"><value>Endprofil</value></data>
+  <data name="MirrorScrewHoles" xml:space="preserve"><value>Schraubenlöcher spiegeln</value></data>
+  <data name="Offset" xml:space="preserve"><value>Abstand von der Mitte (mm)</value></data>
+  <data name="Diameter" xml:space="preserve"><value>Durchmesser (mm)</value></data>
+  <data name="Label" xml:space="preserve"><value>Beschriftung</value></data>
+  <data name="ScrewHolePattern" xml:space="preserve"><value>Lochbild</value></data>
+  <data name="Derived" xml:space="preserve"><value>Abgeleitete Eigenschaften</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Größe des Kopfstücks</value></data>
+  <data name="Offsets" xml:space="preserve"><value>Gleislagen</value></data>
+  <data name="ScrewHoles" xml:space="preserve"><value>Schraubenlöcher</value></data>
+  <data name="Symmetry" xml:space="preserve"><value>Symmetrie</value></data>
+  <data name="Symmetric" xml:space="preserve"><value>Symmetrisch</value></data>
+  <data name="AsymmetricIn" xml:space="preserve"><value>Asymmetrisch: {0}</value></data>
+  <data name="Difference_TrackPositions" xml:space="preserve"><value>Gleise</value></data>
+  <data name="Difference_ScrewHoles" xml:space="preserve"><value>Schraubenlöcher</value></data>
+  <data name="Difference_GroundLine" xml:space="preserve"><value>Geländelinie</value></data>
+  <data name="Difference_Outline" xml:space="preserve"><value>Umriss</value></data>
+  <data name="Difference_Dowels" xml:space="preserve"><value>Passstifte</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Klicke die Ecken des Kopfstücks an; ein Klick auf die erste Ecke schließt den Umriss. Der neue Umriss ersetzt den alten.</value></data>
+  <data name="GroundLineHelp" xml:space="preserve"><value>Klicke die Punkte der Geländeoberfläche von links nach rechts an; Eingabe beendet. Sie ersetzt die alte Geländelinie.</value></data>
+  <data name="ScrewHoleHelp" xml:space="preserve"><value>Klicke dorthin, wo ein Schraubenloch hinkommt; es rastet an Kanten, anderen Löchern und am Raster ein.</value></data>
+  <data name="TrackHelp" xml:space="preserve"><value>Klicke dorthin, wo ein Gleis liegt; seine SOK liegt immer auf der SOK-Linie.</value></data>
+  <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klicken wählt aus, Ziehen verschiebt (Umschalt: gerade, Alt: ohne Fangen), Entf löscht. Von außen auf das Modul gesehen.</value></data>
+  <data name="SaveToCatalogue" xml:space="preserve"><value>In meinem Katalog speichern</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} ist in deinem Katalog gespeichert.</value></data>
+  <data name="EditAsDraft" xml:space="preserve"><value>Bearbeiten</value></data>
 </root>
