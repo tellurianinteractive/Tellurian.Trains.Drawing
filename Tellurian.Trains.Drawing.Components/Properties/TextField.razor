@@ -1,0 +1,42 @@
+@* A text property, committed on Enter or when leaving the field; Escape restores the value. *@
+<label class="property-label" for="@_id">@Label</label>
+<input id="@_id" class="text-field-input" type="text" value="@_text" placeholder="@Placeholder" readonly="@ReadOnly"
+       @oninput="e => _text = e.Value as string ?? string.Empty" @onchange="OnChange" @onkeydown="OnKeyDown" />
+
+@code {
+    private readonly string _id = $"text-{Guid.NewGuid():N}";
+    private string _text = string.Empty;
+    private string? _shown;
+
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Value == _shown) return;
+        _shown = Value;
+        _text = Value ?? string.Empty;
+    }
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        _text = e.Value as string ?? string.Empty;
+        await CommitAsync();
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") _text = Value ?? string.Empty;
+        else if (e.Key == "Enter") await CommitAsync();
+    }
+
+    private async Task CommitAsync()
+    {
+        if (ReadOnly) return;
+        var value = string.IsNullOrWhiteSpace(_text) ? null : _text.Trim();
+        if (value != Value) await ValueChanged.InvokeAsync(value);
+    }
+}

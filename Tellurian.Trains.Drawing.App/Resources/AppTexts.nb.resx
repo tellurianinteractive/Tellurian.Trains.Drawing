@@ -194,4 +194,8 @@
   <data name="MeasureResult" xml:space="preserve"><value>Avstand {0} mm (dx {1}, dy {2}), retning {3}°</value></data>
   <data name="ResetSandbox" xml:space="preserve"><value>Tilbakestill</value></data>
   <data name="SavedInBrowser" xml:space="preserve"><value>Lagret i nettleseren</value></data>
+  <data name="Properties" xml:space="preserve"><value>Egenskaper</value></data>
+  <data name="NothingSelected" xml:space="preserve"><value>Ingenting er merket.</value></data>
+  <data name="InvalidNumber" xml:space="preserve"><value>Ikke et gyldig tall.</value></data>
+  <data name="Depth" xml:space="preserve"><value>Dybde (mm)</value></data>
 </root>

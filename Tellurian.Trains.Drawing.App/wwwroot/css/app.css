@@ -416,3 +416,22 @@ label.inline {
     min-height: 2.6em;
     margin: 0.4rem 0 0;
 }
+
+.sandbox-editor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    gap: 1rem;
+}
+
+@media (max-width: 50rem) {
+    .sandbox-editor {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sandbox-properties {
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    padding: 0.75rem;
+    align-self: start;
+}

@@ -1,0 +1,16 @@
+.property-label {
+    color: var(--property-muted, #5f6b7a);
+}
+
+.text-field-input {
+    font: inherit;
+    width: 100%;
+    min-width: 0;
+    padding: 0.2rem 0.35rem;
+    border: 1px solid var(--property-border, #d6dbe1);
+    border-radius: 3px;
+}
+
+    .text-field-input[readonly] {
+        background: var(--property-readonly, #f5f7fa);
+    }

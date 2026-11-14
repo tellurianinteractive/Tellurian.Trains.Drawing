@@ -1,6 +1,7 @@
 @page "/sandbox"
 @using Tellurian.Trains.Drawing.App.Sandbox
 @using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Editing.Commands
 @using Tellurian.Trains.Drawing.Editing.Selection
@@ -39,6 +40,7 @@
     <span class="detail" id="pointer">@_pointer</span>
 </div>
 
+<div class="sandbox-editor">
 <div class="sandbox-canvas">
     <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
                    OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
@@ -84,6 +86,18 @@
         </Overlay>
     </DrawingCanvas>
 </div>
+<aside class="sandbox-properties">
+    <PropertyPanel Title="@T["Properties"]" EmptyText="@T["NothingSelected"]" IsEmpty="_selection.IsEmpty">
+        @if (SelectionBounds is { } bounds)
+        {
+            <NumberField Label="X" Value="bounds.Min.X" ValueChanged="x => MoveSelection(new(x - bounds.Min.X, 0))" InvalidText="@T["InvalidNumber"]" />
+            <NumberField Label="Y" Value="bounds.Min.Y" ValueChanged="y => MoveSelection(new(0, y - bounds.Min.Y))" InvalidText="@T["InvalidNumber"]" />
+            <NumberField Label="@T["Width"]" Value="bounds.Width" ReadOnly="true" />
+            <NumberField Label="@T["Depth"]" Value="bounds.Height" ReadOnly="true" />
+        }
+    </PropertyPanel>
+</aside>
+</div>
 @* Below the canvas, so a changing status text never moves the drawing. *@
 <p class="detail sandbox-status" id="status" aria-live="polite">@Status</p>
 
@@ -105,6 +119,18 @@
 
     /// <summary>Text of dimensions about 12 px high at the current zoom.</summary>
     private double TextSize => _view.ToWorld(12);
+
+    /// <summary>The bounds of the selected shapes together; null when nothing is selected.</summary>
+    private BoundingBox? SelectionBounds =>
+        _selection.IsEmpty ? null : _selection.Items.Select(id => _scene.BoundsOf(_document.Current, id)).Aggregate(BoundingBox.Empty, (a, b) => a.Union(b));
+
+    /// <summary>A change in the property panel is one undoable command, like a drag.</summary>
+    private void MoveSelection(Vector offset)
+    {
+        if (_selection.IsEmpty || offset.Length < Tellurian.Trains.Drawing.Geometry.Tolerance.Length) return;
+        Active.Cancel();
+        _document.Apply(_scene.Move([.. _selection.Items], offset));
+    }
 
     private EditorSession<SandboxDocument>? _session;
     private string? _storageError;

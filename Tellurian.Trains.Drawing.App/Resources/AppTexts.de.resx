@@ -194,4 +194,8 @@
   <data name="MeasureResult" xml:space="preserve"><value>Abstand {0} mm (dx {1}, dy {2}), Richtung {3}°</value></data>
   <data name="ResetSandbox" xml:space="preserve"><value>Zurücksetzen</value></data>
   <data name="SavedInBrowser" xml:space="preserve"><value>Im Browser gespeichert</value></data>
+  <data name="Properties" xml:space="preserve"><value>Eigenschaften</value></data>
+  <data name="NothingSelected" xml:space="preserve"><value>Nichts ist ausgewählt.</value></data>
+  <data name="InvalidNumber" xml:space="preserve"><value>Keine gültige Zahl.</value></data>
+  <data name="Depth" xml:space="preserve"><value>Tiefe (mm)</value></data>
 </root>
