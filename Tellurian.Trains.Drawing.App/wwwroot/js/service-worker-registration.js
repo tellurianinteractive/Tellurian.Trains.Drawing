@@ -1,22 +1,22 @@
-// Registers the service worker and shows the "update available" banner (AP-1)
-// when a new version has been installed and is waiting to take over.
+// Registers the service worker and keeps track of a new version that is waiting to take over (AP-1).
+// The app shows the prompt (UpdatePrompt.razor) and applies the update through SafeReload (AP-7),
+// so unsaved work is flushed before the page reloads.
 (function () {
+    const state = window.tellurianDrawingUpdate = { waiting: null };
     if (!('serviceWorker' in navigator)) return;
-    const banner = document.getElementById('update-available');
-    const button = document.getElementById('update-now');
     let reloading = false;
 
-    function showBanner(worker) {
-        banner.hidden = false;
-        button.onclick = () => worker.postMessage({ type: 'SKIP_WAITING' });
+    function available(worker) {
+        state.waiting = worker;
+        window.dispatchEvent(new CustomEvent('tellurian-update-available'));
     }
 
     navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' }).then(registration => {
-        if (registration.waiting && navigator.serviceWorker.controller) showBanner(registration.waiting);
+        if (registration.waiting && navigator.serviceWorker.controller) available(registration.waiting);
         registration.addEventListener('updatefound', () => {
             const installing = registration.installing;
             installing?.addEventListener('statechange', () => {
-                if (installing.state === 'installed' && navigator.serviceWorker.controller) showBanner(installing);
+                if (installing.state === 'installed' && navigator.serviceWorker.controller) available(installing);
             });
         });
     });

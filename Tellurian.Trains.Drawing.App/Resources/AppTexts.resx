@@ -116,4 +116,7 @@
   <data name="Gauge" xml:space="preserve"><value>Gauge (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>Rail top (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Add-ons</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>A new version is available.</value></data>
+  <data name="UpdateNow" xml:space="preserve"><value>Update</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>The update was postponed because your work couldn't be stored: {0}</value></data>
 </root>
