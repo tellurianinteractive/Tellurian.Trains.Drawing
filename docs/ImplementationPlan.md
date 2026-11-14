@@ -262,6 +262,12 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 
    **Inspect joint (HP-12):** opens the compare view for the joint's two exits in their actual orientations.
 8. Embedding of module drawings (with revision), end profiles and catalogue entries in the hall plan file. Difference resolution on open (EX-5).
+   **Lean hall plan drafts.** The embedded modules are read-only, so autosave must not rewrite them on every change (a 300-module plan is several MB):
+   - module drawings and their end profiles are stored once in IndexedDB, keyed by module id and revision, when a module is added to the plan or updated to a newer revision (HP-16);
+   - the hall plan draft holds only the plan's own data (layouts, lines, entries with flips and leg adjustments, joints, public areas, walking paths, acknowledgements, settings), referring to modules by id and revision;
+   - the complete, self-contained file is assembled only when saving to a file, and split again when a file is opened as a draft;
+   - `AutosaveScheduler` and `EditorSession` need no change: the hall plan editor passes a save function that writes the lean draft. `DrawingDocuments` learns the two-part draft for save and open;
+   - tests: autosave after a move writes only the lean draft; adding or updating a module writes its snapshot once; save to file and reopen round-trips identically.
 9. **Read-only modules (HP-16)**:
    - placements reference an immutable embedded module snapshot;
    - the hall plan editor exposes only placement and joint commands, so there are no module-editing commands in the plan;
