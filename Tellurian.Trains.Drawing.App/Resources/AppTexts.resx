@@ -192,4 +192,6 @@
   <data name="PathHelpDrawing" xml:space="preserve"><value>Click to add points; click the start to close, Enter to finish, Backspace to undo a point, Escape to cancel.</value></data>
   <data name="DimensionHelp" xml:space="preserve"><value>Click two points, then where the dimension line goes.</value></data>
   <data name="MeasureResult" xml:space="preserve"><value>Distance {0} mm (dx {1}, dy {2}), direction {3}°</value></data>
+  <data name="ResetSandbox" xml:space="preserve"><value>Reset</value></data>
+  <data name="SavedInBrowser" xml:space="preserve"><value>Saved in this browser</value></data>
 </root>

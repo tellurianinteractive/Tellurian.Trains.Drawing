@@ -192,4 +192,6 @@
   <data name="PathHelpDrawing" xml:space="preserve"><value>Klikk for å legge til punkter; klikk på starten for å lukke, Enter for å avslutte, Tilbake for å fjerne et punkt, Escape for å avbryte.</value></data>
   <data name="DimensionHelp" xml:space="preserve"><value>Klikk på to punkter og deretter der mållinjen skal ligge.</value></data>
   <data name="MeasureResult" xml:space="preserve"><value>Avstand {0} mm (dx {1}, dy {2}), retning {3}°</value></data>
+  <data name="ResetSandbox" xml:space="preserve"><value>Tilbakestill</value></data>
+  <data name="SavedInBrowser" xml:space="preserve"><value>Lagret i nettleseren</value></data>
 </root>

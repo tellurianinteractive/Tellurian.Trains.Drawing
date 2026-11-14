@@ -54,6 +54,7 @@
     private IJSObjectReference? _module;
     private IJSObjectReference? _instance;
     private DotNetObjectReference<DrawingCanvas>? _self;
+    /// <summary>The view the script has: attached with, reported or pushed.</summary>
     private Viewport? _jsView;
 
     /// <summary>The visible part of the drawing. Pan and zoom report the new view through <see cref="ViewportChanged"/>.</summary>
@@ -107,7 +108,7 @@
     protected override async Task OnParametersSetAsync()
     {
         // A view set by the parent, rather than reported by JS, must reach the JS state too.
-        if (_instance is not null && _jsView is not null && Viewport != _jsView) await PushViewAsync(Viewport);
+        if (_instance is not null && Viewport != _jsView) await PushViewAsync(Viewport);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -118,7 +119,11 @@
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Tellurian.Trains.Drawing.Components/Canvas/DrawingCanvas.razor.js");
             if (_module is null) return;
             _self = DotNetObjectReference.Create(this);
-            _instance = await _module.InvokeAsync<IJSObjectReference>("attach", _host, _svg, _self, ViewState(Viewport), PanWithPrimaryButton);
+            var view = Viewport;
+            _instance = await _module.InvokeAsync<IJSObjectReference>("attach", _host, _svg, _self, ViewState(view), PanWithPrimaryButton);
+            _jsView = view;
+            // The parent may have set another view while the script was loading, e.g. a restored one.
+            if (Viewport != view) await PushViewAsync(Viewport);
         }
         catch (JSException)
         {
@@ -163,6 +168,7 @@
     private async Task PushViewAsync(Viewport view)
     {
         if (_instance is null) return;
+        _jsView = view;
         try
         {
             await _instance.InvokeVoidAsync("setView", ViewState(view));

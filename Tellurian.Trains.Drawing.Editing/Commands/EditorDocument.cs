@@ -72,6 +72,16 @@ public sealed class EditorDocument<TDocument> where TDocument : class
     /// <summary>Records that the current document is saved, e.g. to a draft or a file.</summary>
     public void MarkSaved() => _saved = Current;
 
+    /// <summary>
+    /// Records that <paramref name="document"/>, a version of this document, is saved. If it has been changed
+    /// since that version was taken, it stays modified.
+    /// </summary>
+    public void MarkSaved(TDocument document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        _saved = document;
+    }
+
     /// <summary>Replaces the document and clears the history, e.g. after updating an embedded module (HP-16).</summary>
     public void Replace(TDocument document)
     {

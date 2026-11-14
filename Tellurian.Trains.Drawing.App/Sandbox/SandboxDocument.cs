@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Geometry;
 using Tellurian.Trains.Drawing.Model;
 
@@ -18,6 +19,7 @@ public sealed record SandboxDocument(IReadOnlyList<SandboxShape> Shapes)
 
     public SandboxShape? Find(Guid id) => Shapes.FirstOrDefault(s => s.Id == id);
 
+    [JsonIgnore]
     public BoundingBox Bounds => Shapes.Select(s => s.Path.ToPath().Bounds).Aggregate(BoundingBox.Empty, (a, b) => a.Union(b));
 
     public SandboxDocument WithShape(PathDrawing path) => this with { Shapes = [.. Shapes, new(Guid.NewGuid(), path)] };

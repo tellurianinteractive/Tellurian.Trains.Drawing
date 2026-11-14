@@ -192,4 +192,6 @@
   <data name="PathHelpDrawing" xml:space="preserve"><value>Klicka för att lägga till punkter; klicka på början för att sluta, Enter för att avsluta, Backsteg för att ta bort en punkt, Escape för att avbryta.</value></data>
   <data name="DimensionHelp" xml:space="preserve"><value>Klicka på två punkter och sedan där måttlinjen ska ligga.</value></data>
   <data name="MeasureResult" xml:space="preserve"><value>Avstånd {0} mm (dx {1}, dy {2}), riktning {3}°</value></data>
+  <data name="ResetSandbox" xml:space="preserve"><value>Återställ</value></data>
+  <data name="SavedInBrowser" xml:space="preserve"><value>Sparad i webbläsaren</value></data>
 </root>

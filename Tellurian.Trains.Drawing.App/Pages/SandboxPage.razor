@@ -9,7 +9,10 @@
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Drawing.Geometry
 @using Tellurian.Trains.Drawing.Model
-@implements IDisposable
+@implements IAsyncDisposable
+@inject IWorkbench Workbench
+@inject SafeReload Reload
+@inject TimeProvider Time
 
 <PageTitle>@T["Sandbox"]</PageTitle>
 
@@ -31,6 +34,8 @@
     <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
     <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(_document.Current.Bounds)">@T["ZoomToFit"]</button>
+    <button type="button" id="reset" @onclick="Reset">@T["ResetSandbox"]</button>
+    <span class="detail" id="autosave">@AutosaveText</span>
     <span class="detail" id="pointer">@_pointer</span>
 </div>
 
@@ -101,6 +106,28 @@
     /// <summary>Text of dimensions about 12 px high at the current zoom.</summary>
     private double TextSize => _view.ToWorld(12);
 
+    private EditorSession<SandboxDocument>? _session;
+    private string? _storageError;
+
+    private string AutosaveText =>
+        _storageError is not null ? T.Format("StorageError", _storageError)
+        : _session is null ? string.Empty
+        : _session.Autosave.LastError is { } error ? T.Format("StorageError", error.Message)
+        : _session.Autosave.IsPending ? T["UnsavedChanges"]
+        : T["SavedInBrowser"];
+
+    private void OnAutosaveChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnAutosaveFailed(object? sender, Exception e) => _ = InvokeAsync(StateHasChanged);
+
+    /// <summary>Back to the sample drawing, as an undoable change.</summary>
+    private void Reset()
+    {
+        Active.Cancel();
+        _selection.Clear();
+        _document.Apply(new EditCommand<SandboxDocument>("Reset", _ => SandboxDocument.Sample));
+    }
+
     private ITool Active => _activeTool switch
     {
         SandboxTool.Path => _path,
@@ -125,7 +152,7 @@
         _ => T.Format("SelectedCount", _selection.Count),
     };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _select = new(_document, _selection, _scene, _snap);
         _path = new(_document, _snap, path => new EditCommand<SandboxDocument>("Add shape", d => d.WithShape(path)));
@@ -133,6 +160,27 @@
         _dimension = new(_document, _snap, dimension => new EditCommand<SandboxDocument>("Add dimension", d => d.WithDimension(dimension)));
         _document.Changed += OnDocumentChanged;
         RefreshSnapTargets();
+        try
+        {
+            // Reopen as it was left (AP-7): the autosaved document, the view and the selection.
+            var store = new SandboxStore(Workbench);
+            if (await store.LoadAsync() is { } stored) _document.Replace(stored);
+            if (await EditorSession<SandboxDocument>.LoadStateAsync(Workbench, SandboxStore.Key) is { } state)
+            {
+                _view = _view with { Center = new(state.CenterX, state.CenterY), Scale = state.Scale };
+                _selection.Set(state.Selection.Select(s => Guid.TryParse(s, out var id) ? id : Guid.Empty).Where(id => _document.Current.Find(id) is not null));
+            }
+            _session = new(SandboxStore.Key, _document, store.SaveAsync, Workbench, Reload, Time)
+            {
+                CaptureState = () => new(_view.Center.X, _view.Center.Y, _view.Scale, [.. _selection.Items.Select(id => id.ToString())]),
+            };
+            _session.Autosave.Saved += OnAutosaveChanged;
+            _session.Autosave.SaveFailed += OnAutosaveFailed;
+        }
+        catch (StorageException ex)
+        {
+            _storageError = ex.Message;
+        }
     }
 
     private void Choose(SandboxTool tool)
@@ -185,7 +233,16 @@
     private static string ShapeClass(SandboxShape shape, bool selected) =>
         string.Join(' ', new[] { "sandbox-shape", shape.Path.IsClosed ? null : "open", selected ? "selected" : null }.OfType<string>());
 
-    public void Dispose() => _document.Changed -= OnDocumentChanged;
+    public async ValueTask DisposeAsync()
+    {
+        _document.Changed -= OnDocumentChanged;
+        if (_session is not null)
+        {
+            _session.Autosave.Saved -= OnAutosaveChanged;
+            _session.Autosave.SaveFailed -= OnAutosaveFailed;
+            await _session.DisposeAsync();
+        }
+    }
 
     private enum SandboxTool
     {

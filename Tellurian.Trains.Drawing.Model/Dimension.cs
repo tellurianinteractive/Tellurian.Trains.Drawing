@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Geometry;
 
 namespace Tellurian.Trains.Drawing.Model;
@@ -20,6 +21,7 @@ public sealed record Dimension
     public string? Text { get; init; }
 
     /// <summary>The measured length, mm.</summary>
+    [JsonIgnore]
     public double Length => Kind switch
     {
         DimensionKind.Horizontal => Math.Abs(End.X - Start.X),
