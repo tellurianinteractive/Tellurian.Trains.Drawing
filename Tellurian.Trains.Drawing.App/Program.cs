@@ -33,6 +33,7 @@ builder.Services.AddSingleton<IWorkbench, IndexedDbWorkbench>();
 builder.Services.AddSingleton<DrawingDocuments>();
 builder.Services.AddSingleton<CatalogueService>();
 builder.Services.AddSingleton<SafeReload>();
+builder.Services.AddSingleton<BrowserDialogs>();
 
 var host = builder.Build();
 await host.Services.GetRequiredService<BrowserEnvironment>().InitializeAsync();

@@ -2,7 +2,7 @@
 @inject IWorkbench Workbench
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
-@inject IJSRuntime JS
+@inject BrowserDialogs Dialogs
 
 <PageTitle>@(draft?.Name ?? T["AppName"])</PageTitle>
 
@@ -96,11 +96,11 @@ else if (draft is not null)
         if (draft is null) return;
         try
         {
-            if (draft.HasUnsavedChanges && !await JS.InvokeAsync<bool>("confirm", T.Format("DiscardUnsaved", draft.Name))) return;
+            if (draft.HasUnsavedChanges && !await Dialogs.ConfirmAsync(T.Format("DiscardUnsaved", draft.Name))) return;
             await Workbench.DeleteDraftAsync(draft.Id);
             Navigation.NavigateTo("");
         }
-        catch (Exception ex) when (ex is JSException or StorageException)
+        catch (StorageException ex)
         {
             message = T.Format("StorageError", ex.Message);
         }

@@ -59,5 +59,11 @@ public sealed record EndProfile
     public EndProfile Oriented(ProfileOrientation orientation) =>
         orientation == ProfileOrientation.Mirrored ? MirroredX() : this;
 
+    /// <summary>
+    /// A copy to edit as a user profile (CA-2): a new id, no Registry id and revision 0; the source is kept
+    /// so the copy still says where it came from.
+    /// </summary>
+    public EndProfile Copy(string designation) => this with { Id = Guid.NewGuid(), Designation = designation, RegistryId = null, Revision = 0 };
+
     public override string ToString() => Designation;
 }

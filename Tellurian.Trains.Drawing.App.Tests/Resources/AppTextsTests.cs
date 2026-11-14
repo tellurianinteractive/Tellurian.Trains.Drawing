@@ -1,7 +1,10 @@
 using System.Globalization;
 using System.Resources;
 using System.Text.RegularExpressions;
+using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Resources;
+using Tellurian.Trains.Drawing.Model.AutoDraw;
+using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Resources;
@@ -34,6 +37,26 @@ public sealed partial class AppTextsTests
         foreach (var (file, key) in keys)
             Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), $"{file} uses the text {key}, which isn't in AppTexts.resx.");
     }
+
+    [TestMethod]
+    [DataRow("RestoreBuiltIn"), DataRow("Delete"), DataRow("ConfirmRestoreBuiltIn"), DataRow("ConfirmDelete")]
+    public void TextsChosenInCodeExist(string key) =>
+        Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
+
+    [TestMethod]
+    public void EveryEnumValueShownInTheUiHasAText()
+    {
+        var keys = Keys<CatalogueOrigin>("Origin")
+            .Concat(Keys<EndProfileImportStatus>("ImportStatus"))
+            .Concat(Keys<EndProfileChanges>("Change").Where(k => k != "Change_None"))
+            .Concat(Keys<ModuleTemplateKind>("Template"))
+            .Concat(Keys<CurveDirection>("CurveDirection"))
+            .Concat(Keys<StraightPosition>("StraightPosition"));
+        foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
+    }
+
+    private static IEnumerable<string> Keys<TEnum>(string prefix) where TEnum : struct, Enum =>
+        Enum.GetNames<TEnum>().Select(n => string.Join("_", prefix, n));
 
     [TestMethod]
     public void EveryFileKindHasAName()

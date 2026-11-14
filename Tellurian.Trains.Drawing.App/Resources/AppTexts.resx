@@ -71,4 +71,49 @@
   <data name="EndProfileRequired" xml:space="preserve"><value>Choose an end profile.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
+  <data name="Catalogue" xml:space="preserve"><value>Catalogue</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standards, add-ons and end profiles. The built-in entries come with the app; your own entries are kept in this browser and can be exported as a file.</value></data>
+  <data name="ImportFiles" xml:space="preserve"><value>Import files…</value></data>
+  <data name="ImportArchive" xml:space="preserve"><value>Import ZIP…</value></data>
+  <data name="ImportFolder" xml:space="preserve"><value>Import folder…</value></data>
+  <data name="ExportCatalogue" xml:space="preserve"><value>Export your catalogue…</value></data>
+  <data name="ImportPreview" xml:space="preserve"><value>End profiles to import</value></data>
+  <data name="NoEndProfilesFound" xml:space="preserve"><value>The files contain no end profiles.</value></data>
+  <data name="Import" xml:space="preserve"><value>Import</value></data>
+  <data name="ImportStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Differences" xml:space="preserve"><value>Differences</value></data>
+  <data name="ImportStatus_New" xml:space="preserve"><value>New</value></data>
+  <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Already in the catalogue</value></data>
+  <data name="ImportStatus_Changed" xml:space="preserve"><value>Differs from the catalogue</value></data>
+  <data name="ImportChoiceNote" xml:space="preserve"><value>Ticked profiles are added to your catalogue. A profile that differs replaces the one in the catalogue, keeping its id, so modules that use it get the imported drawing.</value></data>
+  <data name="ImportSelected" xml:space="preserve"><value>Import {0} selected</value></data>
+  <data name="Imported" xml:space="preserve"><value>{0} end profile(s) imported.</value></data>
+  <data name="Exported" xml:space="preserve"><value>Your catalogue was saved as {0}.</value></data>
+  <data name="Change_Designation" xml:space="preserve"><value>designation</value></data>
+  <data name="Change_Scale" xml:space="preserve"><value>scale</value></data>
+  <data name="Change_Standards" xml:space="preserve"><value>standards</value></data>
+  <data name="Change_Tracks" xml:space="preserve"><value>tracks</value></data>
+  <data name="Change_ScrewHoles" xml:space="preserve"><value>screw holes</value></data>
+  <data name="Change_Dowels" xml:space="preserve"><value>dowels</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>plate outline</value></data>
+  <data name="Change_GroundLine" xml:space="preserve"><value>ground line</value></data>
+  <data name="Change_Source" xml:space="preserve"><value>source</value></data>
+  <data name="EndProfiles" xml:space="preserve"><value>End profiles</value></data>
+  <data name="Scale" xml:space="preserve"><value>Scale</value></data>
+  <data name="Standards" xml:space="preserve"><value>Standards</value></data>
+  <data name="Tracks" xml:space="preserve"><value>Tracks</value></data>
+  <data name="Origin" xml:space="preserve"><value>Origin</value></data>
+  <data name="Origin_BuiltIn" xml:space="preserve"><value>Built in</value></data>
+  <data name="Origin_User" xml:space="preserve"><value>Yours</value></data>
+  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Yours, replaces built-in</value></data>
+  <data name="Copy" xml:space="preserve"><value>Copy</value></data>
+  <data name="CopySuffix" xml:space="preserve"><value>copy</value></data>
+  <data name="Copied" xml:space="preserve"><value>Copied as {0}.</value></data>
+  <data name="Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="RestoreBuiltIn" xml:space="preserve"><value>Restore built-in</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Delete {0} from your catalogue?</value></data>
+  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Remove your version of {0} and use the built-in one again?</value></data>
+  <data name="Gauge" xml:space="preserve"><value>Gauge (mm)</value></data>
+  <data name="RailTopHeight" xml:space="preserve"><value>Rail top (mm)</value></data>
+  <data name="AddOns" xml:space="preserve"><value>Add-ons</value></data>
 </root>

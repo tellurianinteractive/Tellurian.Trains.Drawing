@@ -289,3 +289,48 @@ a.button {
     padding: 0.5rem 0.75rem;
     border-radius: 4px;
 }
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .table th, .table td {
+        text-align: left;
+        padding: 0.3rem 0.6rem 0.3rem 0;
+        border-bottom: 1px solid var(--app-border);
+        vertical-align: baseline;
+    }
+
+    .table th {
+        color: var(--app-muted);
+        font-weight: 500;
+    }
+
+    .table .actions {
+        white-space: nowrap;
+    }
+
+        .table .actions button + button {
+            margin-left: 0.75rem;
+        }
+
+    .table tr.unchanged {
+        color: var(--app-muted);
+    }
+
+.badge.builtin {
+    background: #eef1f5;
+}
+
+.badge.user, .badge.replacesbuiltin {
+    background: #e3eefb;
+}
+
+.status {
+    color: #1d6b33;
+}
+
+.app-main:has(.table) {
+    max-width: 75rem;
+}

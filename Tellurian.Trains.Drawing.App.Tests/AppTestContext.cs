@@ -26,6 +26,7 @@ internal sealed class AppTestContext : BunitContext
         Services.AddSingleton<DrawingDocuments>();
         Services.AddSingleton<CatalogueService>();
         Services.AddSingleton<SafeReload>();
+        Services.AddSingleton<BrowserDialogs>();
         JSInterop.Mode = JSRuntimeMode.Loose;
     }
 

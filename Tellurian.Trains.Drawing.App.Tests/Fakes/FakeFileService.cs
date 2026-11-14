@@ -21,7 +21,11 @@ internal sealed class FakeFileService(bool canSaveInPlace = true) : IFileService
     public Task<IReadOnlyList<OpenedFile>?> OpenAsync(IReadOnlyList<string> extensions, bool multiple, CancellationToken cancellationToken = default) =>
         Task.FromResult(FilesToOpen);
 
-    public Task<Stream?> OpenArchiveAsync(CancellationToken cancellationToken = default) => Task.FromResult<Stream?>(null);
+    /// <summary>The ZIP archive the next archive pick returns; null simulates a cancelled picker.</summary>
+    public byte[]? ArchiveToOpen { get; set; }
+
+    public Task<Stream?> OpenArchiveAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<Stream?>(ArchiveToOpen is null ? null : new MemoryStream(ArchiveToOpen));
 
     public Task<OpenedFolder?> OpenFolderAsync(IReadOnlyList<string> extensions, CancellationToken cancellationToken = default) =>
         Task.FromResult<OpenedFolder?>(null);
