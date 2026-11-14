@@ -180,9 +180,9 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 4. Autosave (debounced, per document) and recovery of unsaved work on start.
 5. Property panel framework (forms bound to the selected object, numeric input with units).
 
-6. All components live in the `Components` library. **Read-only display components** for end profiles, modules and hall plans (EX-8), taking the model or the file JSON, with layer options. A minimal Blazor Server test host (in the Components test project or a sample) verifies that the display components render in Interactive Server mode without JS (NF-10).
+6. All components live in the `Components` library. **Read-only display components** for end profiles, modules and hall plans (EX-8), taking the model or the file JSON, with layer options. The library stays render-mode agnostic so that this app (static WebAssembly) and the Module Registry (Blazor Server) can both use it (NF-10): no WebAssembly-only APIs, only asynchronous JS interop and only after first render, and read-only display without JS. A static-rendering test in the Components tests (`HtmlRenderer`, a JS runtime that fails on any call) checks every display component.
 
-**Exit criteria:** a test document of simple shapes can be panned, zoomed, selected, moved with snapping and undone, with the mouse; pan and pinch-zoom also work with touch, for viewing. A module drawing renders read-only in both a WebAssembly and a Server host.
+**Exit criteria:** a test document of simple shapes can be panned, zoomed, selected, moved with snapping and undone, with the mouse; pan and pinch-zoom also work with touch, for viewing. A module drawing renders read-only in the app and in the static-rendering test, without JS.
 **Requirements:** AP-3, AP-4, MD-11, MD-12, EP-10 (dimensions), HP-6 (framework), EX-8 (framework), NF-10.
 
 ### Phase 5 – End profile editor and compare view (≈2 weeks)
