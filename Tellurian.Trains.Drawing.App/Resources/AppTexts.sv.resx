@@ -4,7 +4,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="AppName" xml:space="preserve"><value>Tellurian Trains Drawing</value></data>
+  <data name="AppName" xml:space="preserve"><value>Module Draw</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Rita ändprofiler, moduler och hallplaner för modulträffar med modelljärnväg.</value></data>
   <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
@@ -274,4 +274,11 @@
   <data name="FilletSide_Below" xml:space="preserve"><value>Centrum nedanför</value></data>
   <data name="FilletSide_Auto" xml:space="preserve"><value>Centrum: bästa passning</value></data>
   <data name="Print" xml:space="preserve"><value>Skriv ut</value></data>
+  <data name="CreatingModule" xml:space="preserve"><value>Vänta. Skapar modulen {0}…</value></data>
+  <data name="InformationTitle" xml:space="preserve"><value>Välkommen till Module Draw</value></data>
+  <data name="InformationIntro" xml:space="preserve"><value>Module Draw är till för att rita ändprofiler, moduler och hallplaner för modulträffar.</value></data>
+  <data name="InformationPreRelease" xml:space="preserve"><value>Detta är en förhandsversion att prova på. Du kan rita ändprofiler och skapa moduler från mallar. Redigering av moduler, hallar och hallplaner kommer senare.</value></data>
+  <data name="InformationStorage" xml:space="preserve"><value>Utkast sparas automatiskt i den här webbläsaren medan du arbetar. Spara dina ritningar som filer för att behålla dem och dela dem.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Använd en dator, helst med Chrome eller Edge. Module Draw fungerar utan uppkoppling och kan installeras som en app.</value></data>
+  <data name="InformationContinue" xml:space="preserve"><value>Kom igång</value></data>
 </root>

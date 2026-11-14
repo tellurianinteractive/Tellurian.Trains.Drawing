@@ -13,7 +13,7 @@ export function capabilities() {
 }
 
 function pickerTypes(extensions) {
-    return [{ description: 'Tellurian Trains Drawing', accept: { 'application/json': extensions } }];
+    return [{ description: 'Module Draw', accept: { 'application/json': extensions } }];
 }
 
 function isAbort(e) {

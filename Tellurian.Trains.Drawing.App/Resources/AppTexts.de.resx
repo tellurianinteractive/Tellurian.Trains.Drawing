@@ -4,7 +4,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="AppName" xml:space="preserve"><value>Tellurian Trains Drawing</value></data>
+  <data name="AppName" xml:space="preserve"><value>Module Draw</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Zeichne Endprofile, Module und Hallenpläne für Modelleisenbahn-Modultreffen.</value></data>
   <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
@@ -274,4 +274,11 @@
   <data name="FilletSide_Below" xml:space="preserve"><value>Mittelpunkt unten</value></data>
   <data name="FilletSide_Auto" xml:space="preserve"><value>Mittelpunkt: beste Passung</value></data>
   <data name="Print" xml:space="preserve"><value>Drucken</value></data>
+  <data name="CreatingModule" xml:space="preserve"><value>Bitte warten. Modul {0} wird erstellt…</value></data>
+  <data name="InformationTitle" xml:space="preserve"><value>Willkommen bei Module Draw</value></data>
+  <data name="InformationIntro" xml:space="preserve"><value>Module Draw dient zum Zeichnen von Endprofilen, Modulen und Hallenplänen für Modultreffen.</value></data>
+  <data name="InformationPreRelease" xml:space="preserve"><value>Dies ist eine Vorabversion zum Ausprobieren. Sie können Endprofile zeichnen und Module aus Vorlagen erstellen. Das Bearbeiten von Modulen, Hallen und Hallenplänen folgt später.</value></data>
+  <data name="InformationStorage" xml:space="preserve"><value>Entwürfe werden während der Arbeit automatisch in diesem Browser gespeichert. Speichern Sie Ihre Zeichnungen als Dateien, um sie zu behalten und weiterzugeben.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Verwenden Sie einen Computer, am besten mit Chrome oder Edge. Module Draw funktioniert offline und kann als App installiert werden.</value></data>
+  <data name="InformationContinue" xml:space="preserve"><value>Loslegen</value></data>
 </root>

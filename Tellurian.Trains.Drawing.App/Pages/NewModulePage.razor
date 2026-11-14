@@ -126,7 +126,7 @@ else
         <div class="toolbar">
             @if (created is null)
             {
-                <button type="submit" class="primary">@T["Create"]</button>
+                <button type="submit" class="primary" disabled="@(creating is not null)">@T["Create"]</button>
             }
             else
             {
@@ -135,6 +135,12 @@ else
             <a class="button" href="">@T["Cancel"]</a>
         </div>
     </form>
+    @if (creating is not null)
+    {
+        <div class="busy-overlay">
+            <p class="busy-message" role="status" aria-live="polite">@T.Format("CreatingModule", creating)</p>
+        </div>
+    }
 }
 
 @code {
@@ -144,6 +150,11 @@ else
     private IReadOnlyList<AutoDrawNote> notes = [];
     private Draft? created;
     private string? message;
+    /// <summary>The name of the module being created, while it is.</summary>
+    private string? creating;
+
+    /// <summary>Long enough for the browser to show the wait message before the work starts.</summary>
+    private static readonly TimeSpan ShowMessageDelay = TimeSpan.FromMilliseconds(1);
 
     private IEnumerable<EndProfile> EndProfiles =>
         catalogue is null ? [] : catalogue.EndProfilesOf(form.StandardId).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
@@ -183,6 +194,22 @@ else
         errors = Validate().ToList();
         if (errors.Count > 0 || catalogue is null) return;
 
+        creating = form.Name.Trim();
+        StateHasChanged();
+        // Drawing a module takes a while in the browser; let it show the wait message first.
+        await Task.Delay(ShowMessageDelay);
+        try
+        {
+            await CreateModuleAsync(catalogue);
+        }
+        finally
+        {
+            creating = null;
+        }
+    }
+
+    private async Task CreateModuleAsync(DrawingCatalogue catalogue)
+    {
         var template = new ModuleTemplate
         {
             Kind = form.Kind,
@@ -198,7 +225,12 @@ else
         };
         var result = template.Create(catalogue);
         notes = result.Notes;
-        if (result.Module is null) return;
+        if (result.Module is null)
+        {
+            // Never fail silently: without notes, at least say that nothing was drawn.
+            if (notes.Count == 0) errors = [T["NotDrawn"]];
+            return;
+        }
         try
         {
             var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(result.Module, catalogue.FindEndProfile));

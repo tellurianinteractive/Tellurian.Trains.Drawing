@@ -2,6 +2,8 @@
 @inject IWorkbench Workbench
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
+@inject BrowserDialogs Dialogs
+@inject StartupInformation Startup
 
 <PageTitle>@T["AppName"]</PageTitle>
 
@@ -58,6 +60,14 @@
                     }
                     <span class="detail">@(draft.FileName ?? T["NotSavedToFile"])</span>
                     <time class="detail" datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time>
+                    <span class="actions">
+                        @if (draft.HasUnsavedChanges)
+                        {
+                            <button type="button" class="primary save" @onclick="() => SaveAsync(draft)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
+                        }
+                        <a class="button primary edit" href="@DrawingPage.Url(draft.Id)">@T["Edit"]</a>
+                        <button type="button" class="danger discard" @onclick="() => DiscardAsync(draft)">@T["Discard"]</button>
+                    </span>
                 </li>
             }
         </ul>
@@ -89,7 +99,7 @@
     }
 </section>
 
-<p class="version">@T.Format("Version", Version)</p>
+<p class="version">@T.Format("Version", AppVersion.Current)</p>
 
 @code {
     private IReadOnlyList<Draft>? drafts;
@@ -97,9 +107,27 @@
     private IReadOnlyList<ImportProblem> problems = [];
     private string? message;
 
-    private static string Version => typeof(Home).Assembly.GetName().Version?.ToString(3) ?? "?";
+    protected override async Task OnInitializedAsync()
+    {
+        // When the app starts, the information page comes first.
+        if (await Startup.ShowOnceAsync())
+        {
+            Navigation.NavigateTo(InformationPage.Url, replace: true);
+            return;
+        }
+        await LoadAsync();
+    }
 
-    protected override async Task OnInitializedAsync() => await LoadAsync();
+    private async Task SaveAsync(Draft draft)
+    {
+        await RunAsync(async () => await Documents.SaveAsync(draft.Id, saveAs: false));
+    }
+
+    private async Task DiscardAsync(Draft draft)
+    {
+        if (draft.HasUnsavedChanges && !await Dialogs.ConfirmAsync(T.Format("DiscardUnsaved", draft.Name))) return;
+        await RunAsync(() => Workbench.DeleteDraftAsync(draft.Id));
+    }
 
     private async Task LoadAsync()
     {

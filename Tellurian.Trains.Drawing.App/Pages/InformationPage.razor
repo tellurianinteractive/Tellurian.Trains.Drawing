@@ -1,0 +1,20 @@
+@page "/information"
+
+@* The information page: shown when the app starts and from the app name in the top menu. *@
+<PageTitle>@T["AppName"]</PageTitle>
+
+<article class="information">
+    <h1>@T["InformationTitle"]</h1>
+    <p class="version">@T.Format("Version", AppVersion.Current)</p>
+    <p>@T["InformationIntro"]</p>
+    <p>@T["InformationPreRelease"]</p>
+    <p>@T["InformationStorage"]</p>
+    <p>@T["InformationBrowsers"]</p>
+    <div class="toolbar">
+        <a class="button primary" id="get-started" href="">@T["InformationContinue"]</a>
+    </div>
+</article>
+
+@code {
+    public const string Url = "information";
+}

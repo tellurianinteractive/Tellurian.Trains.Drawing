@@ -17,7 +17,9 @@ public sealed class NewModulePageTests
 
         page.Find("#name").Change("Straight 1000");
         page.Find("form").Submit();
+        page.WaitForAssertion(() => Assert.HasCount(1, context.Workbench.Drafts));
 
+        Assert.IsEmpty(page.FindAll(".busy-message"), "The wait message is gone when the module is created.");
         var draft = context.Workbench.Drafts.Values.Single();
         Assert.AreEqual(DrawingFileKind.Module, draft.Kind);
         Assert.AreEqual("Straight 1000", draft.Name);

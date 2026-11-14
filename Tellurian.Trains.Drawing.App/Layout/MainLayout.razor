@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <header class="app-header">
-    <a class="app-name" href="">@T["AppName"]</a>
+    <a class="app-name" href="@Pages.InformationPage.Url">@T["AppName"] <span class="app-version">@AppVersion.Current</span></a>
     <nav class="app-nav">
         <NavLink href="" Match="NavLinkMatch.All">@T["Start"]</NavLink>
         <NavLink href="catalogue">@T["Catalogue"]</NavLink>
