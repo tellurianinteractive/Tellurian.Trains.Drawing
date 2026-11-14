@@ -85,6 +85,14 @@
 
     [Parameter] public string? Class { get; set; }
 
+    /// <summary>
+    /// The area to keep in view: when the canvas gets its real size, or is resized, the view is fitted to it again,
+    /// until the user pans or zooms. Read-only views use it, since their size isn't known when they are rendered.
+    /// </summary>
+    [Parameter] public BoundingBox? AutoFit { get; set; }
+
+    private bool _userMovedView;
+
     /// <summary>Shows <paramref name="area"/> (zoom to fit, zoom to selection).</summary>
     public Task ZoomToAsync(BoundingBox area) => SetViewAsync(Viewport.ZoomTo(area));
 
@@ -126,6 +134,13 @@
     public async Task ViewChanged(double centerX, double centerY, double scale, double width, double height)
     {
         var view = Viewport with { Center = new(centerX, centerY), Scale = scale, Width = width, Height = height };
+        var isResizeOnly = view.Center.IsCloseTo(Viewport.Center) && Math.Abs(view.Scale - Viewport.Scale) <= Tolerance.Length * Viewport.Scale;
+        if (!isResizeOnly) _userMovedView = true;
+        if (AutoFit is { } area && isResizeOnly && !_userMovedView && (width != Viewport.Width || height != Viewport.Height))
+        {
+            await SetViewAsync(Viewport.Fit(area, width, height));
+            return;
+        }
         _jsView = view;
         if (view != Viewport) await ViewportChanged.InvokeAsync(view);
     }

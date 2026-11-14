@@ -1,0 +1,42 @@
+@using Tellurian.Trains.Drawing.Geometry
+
+@* Text in world coordinates, upright although the world group is flipped (Y up). The size is in millimetres. *@
+<text class="@Class" transform="@Transform" font-size="@SvgPath.Number(Size)" font-family="system-ui, sans-serif" fill="@Fill" text-anchor="@Anchor" dominant-baseline="@Baseline">@Text</text>
+
+@code {
+    [Parameter, EditorRequired] public Point At { get; set; }
+    [Parameter, EditorRequired] public string? Text { get; set; }
+
+    /// <summary>The text height in millimetres.</summary>
+    [Parameter] public double Size { get; set; } = 20;
+
+    /// <summary>The text direction, counter-clockwise from the X axis.</summary>
+    [Parameter] public Angle Rotation { get; set; }
+
+    /// <summary>"start", "middle" or "end".</summary>
+    [Parameter] public string Anchor { get; set; } = "middle";
+
+    /// <summary>"auto", "middle", "hanging"…</summary>
+    [Parameter] public string Baseline { get; set; } = "middle";
+
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>
+    /// The text colour, as a presentation attribute: scoped CSS of the view doesn't reach this component's
+    /// element, but a host's global CSS can still override it through <see cref="Class"/>.
+    /// </summary>
+    [Parameter] public string Fill { get; set; } = "#1d232b";
+
+    private string Transform =>
+        $"translate({SvgPath.Number(At.X)} {SvgPath.Number(At.Y)}) scale(1,-1) rotate({SvgPath.Number(-UprightDegrees)})";
+
+    /// <summary>The rotation turned so that the text never reads upside down.</summary>
+    private double UprightDegrees
+    {
+        get
+        {
+            var degrees = Rotation.Signed.Degrees;
+            return degrees > 90 ? degrees - 180 : degrees < -90 ? degrees + 180 : degrees;
+        }
+    }
+}

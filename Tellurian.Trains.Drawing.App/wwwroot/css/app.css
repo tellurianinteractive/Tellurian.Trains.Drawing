@@ -379,3 +379,10 @@ a.button {
     stroke: #c24b1b;
     stroke-width: 2;
 }
+
+.drawing-view {
+    height: 55vh;
+    margin: 1rem 0;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}

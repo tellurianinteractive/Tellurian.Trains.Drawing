@@ -1,0 +1,186 @@
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@using Tellurian.Trains.Drawing.Model.Files
+@using Tellurian.Trains.Drawing.Model.Modules
+
+@* Read-only plan view of a module variant (EX-8), in module coordinates. Works without JS. *@
+@if (_variant is null)
+{
+    <p class="drawing-view-error">@Error</p>
+}
+else
+{
+    <DrawingCanvas Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+                   PanWithPrimaryButton="true" Label="@(Label ?? _module?.Name)" Class="module-view">
+        @if (Show(ModuleLayers.OperatorSpaces))
+        {
+            @foreach (var space in _variant.OperatorSpaces)
+            {
+                <path class="md-operator-space" d="@SvgPath.From(space.Area)" />
+            }
+        }
+        @if (Show(ModuleLayers.Sections))
+        {
+            @foreach (var section in _variant.Sections)
+            {
+                <path class="md-section" d="@SvgPath.From(section.Outline)" />
+            }
+            @foreach (var joint in _variant.InternalJoints)
+            {
+                <line class="md-internal-joint" x1="@SvgPath.Number(joint.Start.X)" y1="@SvgPath.Number(joint.Start.Y)" x2="@SvgPath.Number(joint.End.X)" y2="@SvgPath.Number(joint.End.Y)" />
+            }
+        }
+        @if (Show(ModuleLayers.DuckUnderAreas))
+        {
+            @foreach (var area in _variant.DuckUnderAreas)
+            {
+                <path class="md-duck-under" d="@SvgPath.From(area.Area)" />
+            }
+        }
+        @if (Show(ModuleLayers.PublicSides))
+        {
+            @foreach (var side in PublicSidePaths())
+            {
+                <path class="md-public-side" d="@SvgPath.From(side)" />
+            }
+        }
+        @if (Show(ModuleLayers.EndPlates))
+        {
+            @foreach (var plate in _plates)
+            {
+                <line class="md-end-plate" x1="@SvgPath.Number(plate.LeftCorner.X)" y1="@SvgPath.Number(plate.LeftCorner.Y)" x2="@SvgPath.Number(plate.RightCorner.X)" y2="@SvgPath.Number(plate.RightCorner.Y)" />
+            }
+        }
+        @if (Show(ModuleLayers.Tracks))
+        {
+            <g class="md-tracks" style="@($"--track-color: {TrackColor}")">
+                @foreach (var track in _variant.Tracks)
+                {
+                    @foreach (var route in track.Routes())
+                    {
+                        <path class="@(track.IsNarrowGauge ? "md-track narrow" : "md-track")" d="@SvgPath.From(route)" />
+                    }
+                }
+            </g>
+        }
+        @if (Show(ModuleLayers.Exits))
+        {
+            @foreach (var exit in _variant.Exits)
+            {
+                var pose = exit.Pose;
+                var size = MarkerSize;
+                var tip = pose.Position + pose.Forward * size;
+                var left = pose.Position + pose.Left * (size * 0.6);
+                var right = pose.Position - pose.Left * (size * 0.6);
+                <path class="md-exit" d="@SvgPath.Polyline([left, tip, right], isClosed: true)" />
+                <WorldText At="pose.Position + pose.Forward * (size * 2)" Text="@exit.Label" Size="size" Class="md-label" />
+            }
+        }
+        @if (Show(ModuleLayers.Labels))
+        {
+            @foreach (var label in _variant.Labels.Where(l => !string.IsNullOrWhiteSpace(l.Text)))
+            {
+                <WorldText At="label.Pose.Position" Text="@label.Text" Rotation="label.Pose.Heading" Size="MarkerSize" Class="md-label" />
+            }
+        }
+    </DrawingCanvas>
+}
+
+@code {
+    private const double MarkerSizePerExtent = 0.03;
+    private const double MinimumMarkerSize = 20;
+    private const double MarginPerExtent = 0.06;
+
+    private Module? _module;
+    private ModuleVariant? _variant;
+    private IReadOnlyList<EndPlate> _plates = [];
+    private BoundingBox _bounds;
+    private Viewport _view = default!;
+    private object? _source;
+
+    /// <summary>The module to show; or give <see cref="Json"/>.</summary>
+    [Parameter] public Module? Module { get; set; }
+
+    /// <summary>A module file (<c>.tdmodule</c>), as an alternative to <see cref="Module"/>; it brings its end profiles.</summary>
+    [Parameter] public string? Json { get; set; }
+
+    /// <summary>The variant to show; the default variant if null.</summary>
+    [Parameter] public Guid? VariantId { get; set; }
+
+    /// <summary>Looks up end profiles for the end plates; not needed with <see cref="Json"/>.</summary>
+    [Parameter] public Func<Guid, EndProfile?>? EndProfiles { get; set; }
+
+    /// <summary>The module's standard, for the track colour.</summary>
+    [Parameter] public ModuleStandard? Standard { get; set; }
+
+    [Parameter] public ModuleLayers Layers { get; set; } = ModuleLayers.All;
+    [Parameter] public bool ShowGrid { get; set; }
+    [Parameter] public bool ShowScaleBar { get; set; } = true;
+    [Parameter] public string Error { get; set; } = "The module can't be shown.";
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public double Width { get; set; } = 800;
+    [Parameter] public double Height { get; set; } = 400;
+
+    private string TrackColor => Standard?.TrackColor ?? ModuleStandard.DefaultTrackColor;
+    private double MarkerSize => Math.Max(Math.Max(_bounds.Width, _bounds.Height) * MarkerSizePerExtent, MinimumMarkerSize);
+
+    protected override void OnParametersSet()
+    {
+        object? source = Module ?? (object?)Json;
+        if (ReferenceEquals(source, _source) && _variant is not null && (VariantId is null || _variant.Id == VariantId)) return;
+        _source = source;
+        Func<Guid, EndProfile?>? lookup = EndProfiles;
+        _module = Module;
+        if (_module is null && Json is not null)
+        {
+            try
+            {
+                var file = DrawingFileSerializer.DeserializeModule(Json);
+                _module = file.Module;
+                lookup ??= file.FindEndProfile;
+            }
+            catch (DrawingFileException)
+            {
+                _module = null;
+            }
+        }
+        _variant = _module is null ? null : VariantId is { } id ? _module.Variants.FirstOrDefault(v => v.Id == id) : _module.DefaultVariant;
+        if (_variant is null) return;
+        _plates = Plates(_variant, lookup);
+        _bounds = Bounds(_variant, _plates);
+        _view = Viewport.Fit(_bounds, Width, Height);
+    }
+
+    private bool Show(ModuleLayers layer) => Layers.HasFlag(layer);
+
+    private IEnumerable<SegmentPath> PublicSidePaths()
+    {
+        foreach (var side in _variant!.PublicSides)
+        {
+            if (side.Attachment.SideIndex < 0 || side.Attachment.SideIndex >= _variant.Sides.Count) continue;
+            var path = _variant.Sides[side.Attachment.SideIndex].Path.ToPath();
+            var to = Math.Min(side.Attachment.To ?? path.Length, path.Length);
+            if (to - side.Attachment.From > Tolerance.Length) yield return path.Between(side.Attachment.From, to);
+        }
+    }
+
+    private static IReadOnlyList<EndPlate> Plates(ModuleVariant variant, Func<Guid, EndProfile?>? lookup) =>
+        lookup is null
+            ? []
+            : [.. variant.Exits.Select(e => lookup(e.EndProfile.Id) is { } profile ? ModuleGeometry.EndPlate(e, profile) : null).OfType<EndPlate>()];
+
+    private static BoundingBox Bounds(ModuleVariant variant, IReadOnlyList<EndPlate> plates)
+    {
+        var box = BoundingBox.Empty;
+        foreach (var path in variant.Sections.Select(s => s.Outline).Concat(variant.Sides.Select(s => s.Path)).Concat(variant.OperatorSpaces.Select(o => o.Area)))
+            box = box.Union(path.ToPath().Bounds);
+        foreach (var track in variant.Tracks) box = track.Routes().Aggregate(box, (b, r) => b.Union(r.Bounds));
+        foreach (var exit in variant.Exits) box = box.Including(exit.Pose.Position);
+        foreach (var plate in plates) box = box.Including(plate.LeftCorner).Including(plate.RightCorner);
+        if (box.IsEmpty) box = new(Point.Origin, Point.Origin);
+        return box.Inflated(Math.Max(Math.Max(box.Width, box.Height) * MarginPerExtent, MinimumMarkerSize * 3));
+    }
+}

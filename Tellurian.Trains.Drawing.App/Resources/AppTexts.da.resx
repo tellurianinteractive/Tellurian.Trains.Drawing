@@ -30,7 +30,7 @@
   <data name="Changed" xml:space="preserve"><value>Ændret</value></data>
   <data name="File" xml:space="preserve"><value>Fil</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Denne tegning er ikke længere åben.</value></data>
-  <data name="EditorComing" xml:space="preserve"><value>Editoren til denne type tegning findes ikke endnu.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>Dette er en skrivebeskyttet visning. Editoren til denne type tegning kommer i en senere version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Browserens lager kunne ikke bruges: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Filhandlingen mislykkedes: {0}</value></data>
   <data name="Kind_EndProfile" xml:space="preserve"><value>Endeprofil</value></data>
@@ -181,4 +181,6 @@
   <data name="Undo" xml:space="preserve"><value>Fortryd</value></data>
   <data name="Redo" xml:space="preserve"><value>Gentag</value></data>
   <data name="SelectedCount" xml:space="preserve"><value>{0} markeret</value></data>
+  <data name="RailTop" xml:space="preserve"><value>Skinneoverkant</value></data>
+  <data name="CannotShow" xml:space="preserve"><value>Tegningen kan ikke vises.</value></data>
 </root>

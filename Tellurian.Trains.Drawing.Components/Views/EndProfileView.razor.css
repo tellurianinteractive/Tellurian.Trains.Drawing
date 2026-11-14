@@ -1,0 +1,45 @@
+.ep-outline {
+    fill: var(--drawing-baseboard-fill, #f3eee4);
+    stroke: var(--drawing-baseboard, #6b5a3e);
+    stroke-width: 2;
+}
+
+.ep-ground {
+    fill: none;
+    stroke: var(--drawing-ground, #4f7f3a);
+    stroke-width: 2;
+}
+
+.ep-rail-top {
+    stroke: var(--drawing-reference, #c24b1b);
+    stroke-width: 1;
+    stroke-dasharray: 6 4;
+}
+
+.ep-rail {
+    fill: var(--track-color, #1f5fbf);
+}
+
+.ep-track-centre {
+    stroke: var(--track-color, #1f5fbf);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+}
+
+.ep-screw-hole {
+    fill: #ffffff;
+    stroke: var(--drawing-hole, #1d232b);
+    stroke-width: 1.5;
+}
+
+.ep-dowel {
+    fill: none;
+    stroke: var(--drawing-hole, #1d232b);
+    stroke-width: 1;
+    stroke-dasharray: 2 2;
+}
+
+
+.drawing-view-error {
+    color: var(--drawing-error, #b32121);
+}

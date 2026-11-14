@@ -30,7 +30,7 @@
   <data name="Changed" xml:space="preserve"><value>Changed</value></data>
   <data name="File" xml:space="preserve"><value>File</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>This drawing isn't open any more.</value></data>
-  <data name="EditorComing" xml:space="preserve"><value>The editor for this kind of drawing isn't available yet.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>This is a read-only view. The editor for this kind of drawing comes in a later version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>The browser's storage couldn't be used: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>The file operation failed: {0}</value></data>
   <data name="Kind_EndProfile" xml:space="preserve"><value>End profile</value></data>
@@ -181,4 +181,6 @@
   <data name="Undo" xml:space="preserve"><value>Undo</value></data>
   <data name="Redo" xml:space="preserve"><value>Redo</value></data>
   <data name="SelectedCount" xml:space="preserve"><value>{0} selected</value></data>
+  <data name="RailTop" xml:space="preserve"><value>Top of rail</value></data>
+  <data name="CannotShow" xml:space="preserve"><value>The drawing can't be shown.</value></data>
 </root>

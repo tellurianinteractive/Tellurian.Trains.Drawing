@@ -1,0 +1,143 @@
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@using Tellurian.Trains.Drawing.Model.Files
+
+@* Read-only end view of an end profile (EX-8): seen from outside the module, rail top at Y = 0. Works without JS. *@
+@if (_profile is null)
+{
+    <p class="drawing-view-error">@Error</p>
+}
+else
+{
+    <DrawingCanvas Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+                   PanWithPrimaryButton="true" Label="@(Label ?? _profile.Designation)" Class="end-profile-view">
+        @if (Show(EndProfileLayers.Outline) && _profile.Outline is { } outline)
+        {
+            <path class="ep-outline" d="@SvgPath.From(outline)" />
+        }
+        @if (Show(EndProfileLayers.GroundLine) && _profile.GroundLine is { } ground)
+        {
+            <path class="ep-ground" d="@SvgPath.From(ground)" />
+        }
+        @if (Show(EndProfileLayers.RailTop))
+        {
+            <line class="ep-rail-top" x1="@SvgPath.Number(_bounds.Min.X)" y1="0" x2="@SvgPath.Number(_bounds.Max.X)" y2="0" />
+            @if (Show(EndProfileLayers.Labels))
+            {
+                <WorldText At="new(_bounds.Max.X, TextSize * 0.6)" Text="@RailTopText" Size="TextSize" Anchor="end" Baseline="auto" Class="ep-label" />
+            }
+        }
+        @if (Show(EndProfileLayers.Tracks))
+        {
+            @foreach (var track in _profile.Tracks)
+            {
+                var railWidth = track.Gauge * RailWidthPerGauge;
+                var railHeight = track.Gauge * RailHeightPerGauge;
+                <g class="ep-track" style="@($"--track-color: {TrackColor}")">
+                    <rect class="ep-rail" x="@SvgPath.Number(track.Offset - track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-railHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(railHeight)" />
+                    <rect class="ep-rail" x="@SvgPath.Number(track.Offset + track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-railHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(railHeight)" />
+                    <line class="ep-track-centre" x1="@SvgPath.Number(track.Offset)" y1="@SvgPath.Number(-railHeight * 2)" x2="@SvgPath.Number(track.Offset)" y2="@SvgPath.Number(railHeight)" />
+                </g>
+                @if (Show(EndProfileLayers.Labels) && track.Label is { } label)
+                {
+                    <WorldText At="new(track.Offset, railHeight + TextSize)" Text="@label" Size="TextSize" Class="ep-label" />
+                }
+            }
+        }
+        @if (Show(EndProfileLayers.ScrewHoles))
+        {
+            @foreach (var hole in _profile.ScrewHoles)
+            {
+                <circle class="ep-screw-hole" cx="@SvgPath.Number(hole.Center.X)" cy="@SvgPath.Number(hole.Center.Y)" r="@SvgPath.Number(hole.Diameter / 2)" />
+            }
+        }
+        @if (Show(EndProfileLayers.Dowels))
+        {
+            @foreach (var dowel in _profile.Dowels)
+            {
+                <circle class="ep-dowel" cx="@SvgPath.Number(dowel.Center.X)" cy="@SvgPath.Number(dowel.Center.Y)" r="@SvgPath.Number(dowel.Diameter / 2)" />
+            }
+        }
+    </DrawingCanvas>
+}
+
+@code {
+    private const double RailWidthPerGauge = 0.1;
+    private const double RailHeightPerGauge = 0.15;
+    private const double TextSizePerHeight = 0.06;
+    private const double MarginPerSize = 0.05;
+
+    private EndProfile? _profile;
+    private BoundingBox _bounds;
+    private Viewport _view = default!;
+
+    /// <summary>The profile to show; or give <see cref="Json"/>.</summary>
+    [Parameter] public EndProfile? Profile { get; set; }
+
+    /// <summary>An end profile file (<c>.tdendprofile</c>), as an alternative to <see cref="Profile"/>.</summary>
+    [Parameter] public string? Json { get; set; }
+
+    /// <summary>The standard, for the track colour; the default colour is used without it.</summary>
+    [Parameter] public ModuleStandard? Standard { get; set; }
+
+    [Parameter] public EndProfileLayers Layers { get; set; } = EndProfileLayers.All;
+    [Parameter] public bool ShowGrid { get; set; }
+    [Parameter] public bool ShowScaleBar { get; set; } = true;
+
+    /// <summary>The label of the rail-top line; the host passes its translation.</summary>
+    [Parameter] public string RailTopText { get; set; } = "Top of rail";
+
+    /// <summary>Shown when the file can't be read.</summary>
+    [Parameter] public string Error { get; set; } = "The end profile can't be shown.";
+
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>The initial size in pixels, before the real size is known.</summary>
+    [Parameter] public double Width { get; set; } = 600;
+    [Parameter] public double Height { get; set; } = 300;
+
+    private string TrackColor => Standard?.TrackColor ?? ModuleStandard.DefaultTrackColor;
+    private double TextSize => Math.Max(_bounds.Height, _bounds.Width / 3) * TextSizePerHeight;
+
+    private object? _source;
+
+    protected override void OnParametersSet()
+    {
+        // The view is fitted again only when another drawing is shown, so a re-render keeps the user's pan and zoom.
+        object? source = Profile ?? (object?)Json;
+        if (ReferenceEquals(source, _source) && _profile is not null) return;
+        _source = source;
+        _profile = Profile ?? Read(Json);
+        if (_profile is null) return;
+        _bounds = Bounds(_profile);
+        _view = Viewport.Fit(_bounds, Width, Height);
+    }
+
+    private bool Show(EndProfileLayers layer) => Layers.HasFlag(layer);
+
+    private static EndProfile? Read(string? json)
+    {
+        if (json is null) return null;
+        try
+        {
+            return DrawingFileSerializer.DeserializeEndProfile(json);
+        }
+        catch (DrawingFileException)
+        {
+            return null;
+        }
+    }
+
+    private static BoundingBox Bounds(EndProfile profile)
+    {
+        var box = BoundingBox.Empty.Including(Point.Origin);
+        if (profile.Outline is { } outline) box = box.Union(outline.ToPath().Bounds);
+        if (profile.GroundLine is { } ground) box = box.Union(ground.ToPath().Bounds);
+        foreach (var track in profile.Tracks) box = box.Including(new(track.Offset - track.Gauge, 0)).Including(new(track.Offset + track.Gauge, 0));
+        foreach (var hole in profile.ScrewHoles.Concat(profile.Dowels)) box = box.Including(hole.Center);
+        return box.Inflated(Math.Max(box.Width, box.Height) * MarginPerSize);
+    }
+}

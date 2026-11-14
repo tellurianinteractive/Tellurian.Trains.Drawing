@@ -12,6 +12,7 @@ namespace Tellurian.Trains.Drawing.Components.Tests;
 /// </summary>
 internal static class StaticRendering
 {
+    /// <summary>The HTML, decoded so that tests can look for texts as they are shown.</summary>
     public static async Task<string> RenderAsync<TComponent>(IDictionary<string, object?> parameters) where TComponent : IComponent
     {
         var services = new ServiceCollection();
@@ -20,7 +21,7 @@ internal static class StaticRendering
         await using var provider = services.BuildServiceProvider();
         await using var renderer = new HtmlRenderer(provider, provider.GetRequiredService<ILoggerFactory>());
         return await renderer.Dispatcher.InvokeAsync(async () =>
-            (await renderer.RenderComponentAsync<TComponent>(ParameterView.FromDictionary(parameters))).ToHtmlString());
+            System.Net.WebUtility.HtmlDecode((await renderer.RenderComponentAsync<TComponent>(ParameterView.FromDictionary(parameters))).ToHtmlString()));
     }
 
     private sealed class NoJSRuntime : IJSRuntime

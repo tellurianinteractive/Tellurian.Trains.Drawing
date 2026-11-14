@@ -28,6 +28,19 @@ public sealed class NewModulePageTests
     }
 
     [TestMethod]
+    public void DefaultStandardHasEndProfiles()
+    {
+        using var context = new AppTestContext();
+        var empty = new Model.Catalogue.ModuleStandard { Id = Guid.NewGuid(), ShortName = "AAA-FIRST", Scale = "H0", NormalGauge = 16.5 };
+        context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().SaveUserAsync(Model.Catalogue.DrawingCatalogue.Empty with { Standards = [empty] }).Wait();
+
+        var page = context.Render<NewModulePage>();
+
+        Assert.AreNotEqual(empty.Id.ToString(), page.Find("#standard").GetAttribute("value"));
+        Assert.IsNotEmpty(page.FindAll("#endProfile option"));
+    }
+
+    [TestMethod]
     public void CurveHidesTheStraightLength()
     {
         using var context = new AppTestContext();

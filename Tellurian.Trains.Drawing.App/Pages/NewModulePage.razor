@@ -154,7 +154,9 @@ else
         {
             catalogue = await Catalogues.GetAsync();
             form.Name = T["NewModuleName"];
-            var standard = catalogue.Standards.OrderBy(s => s.ShortName).FirstOrDefault();
+            // Start with a standard that has end profiles, so the form can be submitted as it is.
+            var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
+            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id).Any()) ?? standards.FirstOrDefault();
             if (standard is not null) UseStandard(standard);
         }
         catch (StorageException ex)

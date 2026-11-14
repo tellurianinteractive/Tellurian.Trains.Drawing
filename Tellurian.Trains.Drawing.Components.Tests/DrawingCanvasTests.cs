@@ -90,6 +90,27 @@ public sealed class DrawingCanvasTests
     }
 
     [TestMethod]
+    public void AutoFitRefitsOnResizeUntilTheUserMovesTheView()
+    {
+        using var context = Context();
+        var area = new BoundingBox(new(0, 0), new(4000, 1000));
+        var view = Viewport.Fit(area, 800, 600);
+        var canvas = context.Render<DrawingCanvas>(p => p
+            .Add(c => c.Viewport, view)
+            .Add(c => c.AutoFit, area)
+            .Add(c => c.ViewportChanged, EventCallback.Factory.Create<Viewport>(this, v => view = v)));
+
+        canvas.InvokeAsync(() => canvas.Instance.ViewChanged(view.Center.X, view.Center.Y, view.Scale, 1640, 600)).Wait();
+        Assert.AreEqual(0.4, view.Scale, Precision, "Fitted to the real width: 4000 mm across 1600 px.");
+
+        canvas.Render(p => p.Add(c => c.Viewport, view));
+        canvas.InvokeAsync(() => canvas.Instance.ViewChanged(100, 100, 1, 1640, 600)).Wait();
+        canvas.Render(p => p.Add(c => c.Viewport, view));
+        canvas.InvokeAsync(() => canvas.Instance.ViewChanged(100, 100, 1, 800, 600)).Wait();
+        Assert.AreEqual(1, view.Scale, Precision, "After a pan or zoom, a resize keeps the user's view.");
+    }
+
+    [TestMethod]
     public void PointerEventsArriveInWorldCoordinates()
     {
         using var context = Context();

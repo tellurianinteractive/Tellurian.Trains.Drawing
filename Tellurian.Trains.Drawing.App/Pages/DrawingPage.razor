@@ -3,6 +3,8 @@
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
+@inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
+@using Tellurian.Trains.Drawing.Components.Views
 
 <PageTitle>@(draft?.Name ?? T["AppName"])</PageTitle>
 
@@ -49,6 +51,20 @@ else if (draft is not null)
         }
     </p>
 
+    <div class="drawing-view">
+        @switch (draft.Kind)
+        {
+            case DrawingFileKind.EndProfile:
+                <EndProfileView Json="@draft.Json" RailTopText="@T["RailTop"]" Error="@T["CannotShow"]" />
+                break;
+            case DrawingFileKind.Module:
+                <ModuleView Json="@draft.Json" Standard="@_standard" Error="@T["CannotShow"]" />
+                break;
+            case DrawingFileKind.Hall:
+                <HallView Json="@draft.Json" Error="@T["CannotShow"]" />
+                break;
+        }
+    </div>
     <p class="note">@T["EditorComing"]</p>
 }
 
@@ -61,12 +77,30 @@ else if (draft is not null)
 
     public static string Url(Guid id) => $"drawing/{id}";
 
+    private Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard? _standard;
+
+    /// <summary>The standard of a module draft, for its track colour.</summary>
+    private async Task<Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard?> StandardOfAsync(Draft? draft)
+    {
+        if (draft?.Kind != DrawingFileKind.Module) return null;
+        try
+        {
+            var module = DrawingFileSerializer.DeserializeModule(draft.Json).Module;
+            return (await Catalogues.GetAsync()).FindStandard(module.Standard.Id);
+        }
+        catch (DrawingFileException)
+        {
+            return null;
+        }
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         try
         {
             draft = await Workbench.GetDraftAsync(Id);
             notFound = draft is null;
+            _standard = await StandardOfAsync(draft);
         }
         catch (StorageException ex)
         {

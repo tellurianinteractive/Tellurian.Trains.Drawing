@@ -30,7 +30,7 @@
   <data name="Changed" xml:space="preserve"><value>Ändrad</value></data>
   <data name="File" xml:space="preserve"><value>Fil</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Den här ritningen är inte öppen längre.</value></data>
-  <data name="EditorComing" xml:space="preserve"><value>Redigeraren för den här typen av ritning finns inte ännu.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>Det här är en skrivskyddad vy. Redigeraren för den här typen av ritning kommer i en senare version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Webbläsarens lagring kunde inte användas: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Filåtgärden misslyckades: {0}</value></data>
   <data name="Kind_EndProfile" xml:space="preserve"><value>Ändprofil</value></data>
@@ -181,4 +181,6 @@
   <data name="Undo" xml:space="preserve"><value>Ångra</value></data>
   <data name="Redo" xml:space="preserve"><value>Gör om</value></data>
   <data name="SelectedCount" xml:space="preserve"><value>{0} markerade</value></data>
+  <data name="RailTop" xml:space="preserve"><value>RÖK</value></data>
+  <data name="CannotShow" xml:space="preserve"><value>Ritningen kan inte visas.</value></data>
 </root>

@@ -30,7 +30,7 @@
   <data name="Changed" xml:space="preserve"><value>Geändert</value></data>
   <data name="File" xml:space="preserve"><value>Datei</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Diese Zeichnung ist nicht mehr geöffnet.</value></data>
-  <data name="EditorComing" xml:space="preserve"><value>Der Editor für diese Art von Zeichnung ist noch nicht verfügbar.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>Dies ist eine schreibgeschützte Ansicht. Der Editor für diese Art von Zeichnung kommt in einer späteren Version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Der Speicher des Browsers konnte nicht verwendet werden: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Der Dateivorgang ist fehlgeschlagen: {0}</value></data>
   <data name="Kind_EndProfile" xml:space="preserve"><value>Endprofil</value></data>
@@ -181,4 +181,6 @@
   <data name="Undo" xml:space="preserve"><value>Rückgängig</value></data>
   <data name="Redo" xml:space="preserve"><value>Wiederholen</value></data>
   <data name="SelectedCount" xml:space="preserve"><value>{0} ausgewählt</value></data>
+  <data name="RailTop" xml:space="preserve"><value>SOK</value></data>
+  <data name="CannotShow" xml:space="preserve"><value>Die Zeichnung kann nicht angezeigt werden.</value></data>
 </root>
