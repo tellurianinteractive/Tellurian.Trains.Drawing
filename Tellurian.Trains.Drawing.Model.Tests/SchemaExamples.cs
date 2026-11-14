@@ -28,6 +28,8 @@ internal static class SchemaExamples
         Module(directory, "station-3-sections", new() { Name = "Station", Standard = "FREMO/H0-RE", Straight = 3000, Width = 600, NumberOfSections = 3, NumberOfThroughTracks = 1, IsOperationPlace = true, Exits = [West, East] });
         Module(directory, "terminus-double-track", new() { Name = "Terminus", Standard = "FREMO/H0-RE", Straight = 1200, NumberOfThroughTracks = 2, IsEndOfLine = true, Exits = [West with { EndProfile = "FREMO-H0-2E96" }] });
         Module(directory, "mmm-2r-summer-curve", new() { Name = "Summer curve", Standard = "MMM-2R/SSM", Radius = 1500, Angle = 45, Straight = 300, StraightPosition = StraightPosition.Split });
+        Save(directory, "club-hall", DrawingFileKind.Hall, DrawingFileSerializer.Serialize(TestHalls.Club()));
+        Save(directory, "club-meeting", DrawingFileKind.HallPlan, DrawingFileSerializer.Serialize(TestHalls.Plan(Catalogue)));
     }
 
     private static void Module(string directory, string name, AutoDrawParameters parameters)

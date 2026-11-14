@@ -106,13 +106,15 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 **Exit criteria:** ≥ 90 % line coverage on Geometry. Benchmarks for the distance checks on 300 tessellated outlines are under the NF-2 budget.
 **Requirements:** foundation for EP-7/8, MD-4..7, VA-1, VA-3, VA-5..7, NF-2, NF-5, NF-8.
 
-### Phase 2 – Domain model, fit evaluator, catalogue and file format (≈2–3 weeks)
+### Phase 2 – Domain model, fit evaluator, catalogue and file format (≈2–3 weeks) — ✅ done 2026-11-14
 1. Model records:
    - Scale, ModuleStandard, **StandardAddOn** (base standard), EndProfileCompatibilityOverride;
    - **EndProfile drawing**: outline, ground line, tracks (offset, gauge, rail top), screw holes, dowels, dimensions, labels, and the fallback screw-hole pattern identifier;
    - Owner, Module (shared properties, incl. add-ons met) → **ModuleVariant** (configuration label, default flag, optional Registry id) → **Section** (outline), **InternalJoint** (optional free internal end profile), Exit (outer ends only, with profile orientation and rail-top offset, 0 = standard height), TrackElement hierarchy (straight, arc, turnout variants, crossing, double slip, buffer stop), **OperatorSpace** (polygon), **PublicSide** (edge references), **DuckUnderArea** (polygon, optional clear height), Label;
    - Hall, Obstacle, Door, NoGoZone;
    - HallPlan (primary + accepted standards, preferred add-ons), Placement (with leg adjustment), Joint (fit, join method Bolted/Clamped, override flag, number of clamps), **PublicArea** (polygon), **WalkingPath** (centre line + width), **Acknowledgement** (finding type, involved placements, state fingerprint, note, time).
+
+   *As built:* the stored placement properties (variant, entry/exit exit, leg adjustment, note) are on `LineEntry`, inside `Layout` → `Line`, because poses are computed from the layout's anchor (spec §3). A computed `Placement` comes with the layout engine in Phase 9. `Joint` stores only the planner's choices (join-method override, number of clamps, note); the fit is evaluated, not stored. The anchor lock is on `Layout`.
 2. **End profile analysis**: derive plate width/height, track offsets and c/c, screw-hole positions and symmetry (drawing vs its own mirror image, listing the asymmetric elements) (EP-7 logic).
 3. **Joint fit evaluator** (spec §3.2), a pure function `(endA + orientation, endB + orientation, overrides, tolerances) → (Fit, JoinMethod, differences)`.
    - Rules are evaluated in order: mirror A → tracks → screw holes (with identifier fallback) → ground line → fits (plate outline/height is ignored; all positions relative to rail top). Overrides are applied last.

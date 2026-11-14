@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tellurian Trains Drawing Hall file",
+  "description": "A .tdhall file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "tellurian-drawing"
+    },
+    "kind": {
+      "const": "hall"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "appVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "content": {
+      "$ref": "#/$defs/Hall"
+    }
+  },
+  "required": [
+    "format",
+    "kind",
+    "schemaVersion",
+    "content"
+  ],
+  "$defs": {
+    "Door": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "enum": [
+            "door",
+            "emergencyExit"
+          ]
+        },
+        "position": {
+          "$ref": "#/$defs/Pose"
+        },
+        "width": {
+          "type": "number"
+        },
+        "keepFreeDepth": {
+          "type": "number"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "position",
+        "width"
+      ]
+    },
+    "Hall": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outline": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "minimumAisleWidth": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "obstacles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Obstacle"
+          }
+        },
+        "doors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Door"
+          }
+        },
+        "noGoZones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NoGoZone"
+          }
+        },
+        "revision": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "outline"
+      ]
+    },
+    "NoGoZone": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "area",
+        "reason"
+      ]
+    },
+    "Obstacle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "enum": [
+            "pillar",
+            "furniture"
+          ]
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "area"
+      ]
+    },
+    "PathDrawing": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PathStep"
+          }
+        },
+        "isClosed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start",
+        "steps"
+      ]
+    },
+    "PathStep": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "line"
+            },
+            "end": {
+              "$ref": "#/$defs/Point"
+            }
+          },
+          "required": [
+            "end"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "arc"
+            },
+            "center": {
+              "$ref": "#/$defs/Point"
+            },
+            "sweep": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "center",
+            "sweep"
+          ]
+        }
+      ]
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
+    "Pose": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "heading": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "heading"
+      ]
+    }
+  }
+}

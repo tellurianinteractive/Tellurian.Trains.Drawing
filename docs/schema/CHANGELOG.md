@@ -8,3 +8,5 @@ until then it may still change.
 ### 2026-11-14
 - First version of the end profile, module and catalogue schemas, with the file envelope.
 - Module files embed their end profiles and include the derived measures per variant.
+- First version of the hall and hall plan schemas. Hall plans embed the hall, modules, end profiles,
+  standards and overrides; module poses are computed from each layout's anchor and not stored.
