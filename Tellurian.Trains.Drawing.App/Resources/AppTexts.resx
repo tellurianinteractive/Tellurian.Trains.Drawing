@@ -119,4 +119,60 @@
   <data name="UpdateAvailable" xml:space="preserve"><value>A new version is available.</value></data>
   <data name="UpdateNow" xml:space="preserve"><value>Update</value></data>
   <data name="UpdateFailed" xml:space="preserve"><value>The update was postponed because your work couldn't be stored: {0}</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="EditEntry" xml:space="preserve"><value>Edit {0}</value></data>
+  <data name="NewStandard" xml:space="preserve"><value>New standard…</value></data>
+  <data name="NewAddOn" xml:space="preserve"><value>New add-on…</value></data>
+  <data name="NewOverride" xml:space="preserve"><value>New override…</value></data>
+  <data name="EditOverride" xml:space="preserve"><value>Edit override</value></data>
+  <data name="AddOn" xml:space="preserve"><value>Add-on</value></data>
+  <data name="Overrides" xml:space="preserve"><value>Compatibility overrides</value></data>
+  <data name="NoOverrides" xml:space="preserve"><value>There are no overrides. Joints are classified by the rules alone.</value></data>
+  <data name="OverrideIntro" xml:space="preserve"><value>An override replaces the rule result for one pair of end profiles, for known exceptions. Use it only where the rules give the wrong answer.</value></data>
+  <data name="EditBuiltInNote" xml:space="preserve"><value>This entry is built in. Saving it creates your own version, which replaces the built-in one until you restore it.</value></data>
+  <data name="EntryNotFound" xml:space="preserve"><value>The catalogue entry doesn't exist.</value></data>
+  <data name="None" xml:space="preserve"><value>(none)</value></data>
+  <data name="RailSystem_TwoRail" xml:space="preserve"><value>Two-rail</value></data>
+  <data name="RailSystem_ThreeRail" xml:space="preserve"><value>Three-rail</value></data>
+  <data name="Fit_Fits" xml:space="preserve"><value>Fits</value></data>
+  <data name="Fit_FitsWithMismatch" xml:space="preserve"><value>Fits with mismatch</value></data>
+  <data name="Fit_FitsWithClamps" xml:space="preserve"><value>Fits with clamps</value></data>
+  <data name="Fit_Incompatible" xml:space="preserve"><value>Incompatible</value></data>
+  <data name="Field_ShortName" xml:space="preserve"><value>Short name</value></data>
+  <data name="Field_Scale" xml:space="preserve"><value>Scale</value></data>
+  <data name="Field_RailSystem" xml:space="preserve"><value>Rail system</value></data>
+  <data name="Field_NormalGauge" xml:space="preserve"><value>Normal gauge (mm)</value></data>
+  <data name="Field_NarrowGauge" xml:space="preserve"><value>Narrow gauge (mm)</value></data>
+  <data name="Field_RailTopHeight" xml:space="preserve"><value>Rail top above floor (mm)</value></data>
+  <data name="Field_MinimumClearance" xml:space="preserve"><value>Minimum clearance (mm)</value></data>
+  <data name="Field_OperatorSpaceDepth" xml:space="preserve"><value>Operator space depth (mm)</value></data>
+  <data name="Field_DefaultCurveRadius" xml:space="preserve"><value>Default curve radius (mm)</value></data>
+  <data name="Field_MinimumReverseCurveRadius" xml:space="preserve"><value>Minimum reverse curve radius (mm)</value></data>
+  <data name="Field_DefaultSingleTrackEndProfileId" xml:space="preserve"><value>Default single-track end profile</value></data>
+  <data name="Field_DefaultDoubleTrackEndProfileId" xml:space="preserve"><value>Default double-track end profile</value></data>
+  <data name="Field_TrackColor" xml:space="preserve"><value>Track colour</value></data>
+  <data name="Field_TrackSystem" xml:space="preserve"><value>Track system</value></data>
+  <data name="Field_Couplings" xml:space="preserve"><value>Couplings</value></data>
+  <data name="Field_Electricity" xml:space="preserve"><value>Electricity</value></data>
+  <data name="Field_Wheelset" xml:space="preserve"><value>Wheelset</value></data>
+  <data name="Field_SourceTitle" xml:space="preserve"><value>Source document</value></data>
+  <data name="Field_SourceUrl" xml:space="preserve"><value>Source URL</value></data>
+  <data name="Field_SourceRevision" xml:space="preserve"><value>Source revision</value></data>
+  <data name="Field_BaseStandardId" xml:space="preserve"><value>Base standard</value></data>
+  <data name="Field_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Field_FirstEndProfileId" xml:space="preserve"><value>First end profile</value></data>
+  <data name="Field_SecondEndProfileId" xml:space="preserve"><value>Second end profile</value></data>
+  <data name="Field_Fit" xml:space="preserve"><value>Result</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Problem_ShortNameMissing" xml:space="preserve"><value>{0}: enter a name.</value></data>
+  <data name="Problem_ShortNameInUse" xml:space="preserve"><value>{0}: the name is already used.</value></data>
+  <data name="Problem_ScaleUnknown" xml:space="preserve"><value>{0}: choose a scale from the catalogue.</value></data>
+  <data name="Problem_NotPositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
+  <data name="Problem_EndProfileNotOfStandard" xml:space="preserve"><value>{0}: choose an end profile of this standard.</value></data>
+  <data name="Problem_TrackColorInvalid" xml:space="preserve"><value>{0} must be a colour such as #1f5fbf.</value></data>
+  <data name="Problem_BaseStandardUnknown" xml:space="preserve"><value>{0}: choose a standard from the catalogue.</value></data>
+  <data name="Problem_EndProfileUnknown" xml:space="preserve"><value>{0}: choose an end profile from the catalogue.</value></data>
+  <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} must differ from the first end profile.</value></data>
+  <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} must be of the same scale as the first end profile.</value></data>
+  <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: there already is an override for these end profiles.</value></data>
 </root>

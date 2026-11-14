@@ -5,6 +5,7 @@ using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Resources;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Resources;
@@ -51,8 +52,22 @@ public sealed partial class AppTextsTests
             .Concat(Keys<EndProfileChanges>("Change").Where(k => k != "Change_None"))
             .Concat(Keys<ModuleTemplateKind>("Template"))
             .Concat(Keys<CurveDirection>("CurveDirection"))
-            .Concat(Keys<StraightPosition>("StraightPosition"));
+            .Concat(Keys<StraightPosition>("StraightPosition"))
+            .Concat(Keys<JointFit>("Fit"))
+            .Concat(Keys<RailSystem>("RailSystem"))
+            .Concat(Keys<CatalogueProblemCode>("Problem"));
         foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
+    }
+
+    [TestMethod]
+    public void EveryCatalogueFieldHasALabel()
+    {
+        string[] notShown = ["Id", "Source", "RegistryId"];
+        var properties = new[] { typeof(ModuleStandard), typeof(StandardAddOn), typeof(EndProfileCompatibilityOverride) }
+            .SelectMany(t => t.GetProperties().Where(p => p.CanWrite).Select(p => p.Name))
+            .Except(notShown);
+        foreach (var property in properties)
+            Assert.IsNotNull(Resources.GetString(string.Join("_", "Field", property), CultureInfo.InvariantCulture), property);
     }
 
     private static IEnumerable<string> Keys<TEnum>(string prefix) where TEnum : struct, Enum =>

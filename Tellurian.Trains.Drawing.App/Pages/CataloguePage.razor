@@ -109,9 +109,10 @@
 
     <section class="standards">
         <h2>@T["Standards"]</h2>
+        <div class="toolbar"><a class="button" id="new-standard" href="catalogue/standard/new">@T["NewStandard"]</a></div>
         <table class="table">
             <thead>
-                <tr><th>@T["Standard"]</th><th>@T["Scale"]</th><th>@T["Gauge"]</th><th>@T["RailTopHeight"]</th><th>@T["AddOns"]</th><th>@T["Origin"]</th></tr>
+                <tr><th>@T["Standard"]</th><th>@T["Scale"]</th><th>@T["Gauge"]</th><th>@T["RailTopHeight"]</th><th>@T["Origin"]</th><th></th></tr>
             </thead>
             <tbody>
                 @foreach (var standard in catalogue.Standards.OrderBy(s => s.Scale).ThenBy(s => s.ShortName))
@@ -122,12 +123,87 @@
                         <td>@standard.Scale</td>
                         <td>@standard.NormalGauge.ToString("0.#")</td>
                         <td>@standard.RailTopHeight.ToString("0")</td>
-                        <td>@string.Join(", ", catalogue.AddOnsOf(standard.Id).Select(a => a.ShortName))</td>
                         <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                        <td class="actions">
+                            <a href="catalogue/standard/@standard.Id">@T["Edit"]</a>
+                            @if (origin != CatalogueOrigin.BuiltIn)
+                            {
+                                <button type="button" class="link" @onclick="() => RemoveAsync(standard.ShortName, origin, () => Catalogues.DeleteStandardAsync(standard.Id))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
+    </section>
+
+    <section class="add-ons">
+        <h2>@T["AddOns"]</h2>
+        <div class="toolbar"><a class="button" id="new-addon" href="catalogue/addon/new">@T["NewAddOn"]</a></div>
+        <table class="table">
+            <thead>
+                <tr><th>@T["AddOn"]</th><th>@T["Field_BaseStandardId"]</th><th>@T["Field_Description"]</th><th>@T["Origin"]</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var addOn in catalogue.AddOns.OrderBy(a => a.ShortName))
+                {
+                    var origin = CatalogueService.Origin(CatalogueService.BuiltIn.AddOns.Any(a => a.Id == addOn.Id), user.AddOns.Any(a => a.Id == addOn.Id));
+                    <tr>
+                        <td>@addOn.ShortName</td>
+                        <td>@catalogue.FindStandard(addOn.BaseStandardId)?.ShortName</td>
+                        <td>@addOn.Description</td>
+                        <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                        <td class="actions">
+                            <a href="catalogue/addon/@addOn.Id">@T["Edit"]</a>
+                            @if (origin != CatalogueOrigin.BuiltIn)
+                            {
+                                <button type="button" class="link" @onclick="() => RemoveAsync(addOn.ShortName, origin, () => Catalogues.DeleteAddOnAsync(addOn.Id))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section class="overrides">
+        <h2>@T["Overrides"]</h2>
+        <div class="toolbar"><a class="button" id="new-override" href="catalogue/override">@T["NewOverride"]</a></div>
+        @if (catalogue.Overrides.Count == 0)
+        {
+            <p class="empty">@T["NoOverrides"]</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr><th>@T["Field_FirstEndProfileId"]</th><th>@T["Field_SecondEndProfileId"]</th><th>@T["Field_Fit"]</th><th>@T["Field_Note"]</th><th>@T["Origin"]</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in catalogue.Overrides)
+                    {
+                        var origin = CatalogueService.Origin(
+                            CatalogueService.BuiltIn.Overrides.Any(o => o.Applies(entry.FirstEndProfileId, entry.SecondEndProfileId)),
+                            user.Overrides.Contains(entry));
+                        var name = $"{catalogue.FindEndProfile(entry.FirstEndProfileId)?.Designation} – {catalogue.FindEndProfile(entry.SecondEndProfileId)?.Designation}";
+                        <tr>
+                            <td>@catalogue.FindEndProfile(entry.FirstEndProfileId)?.Designation</td>
+                            <td>@catalogue.FindEndProfile(entry.SecondEndProfileId)?.Designation</td>
+                            <td>@T[$"Fit_{entry.Fit}"]</td>
+                            <td>@entry.Note</td>
+                            <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                            <td class="actions">
+                                <a href="@OverrideEditorPage.Url(entry)">@T["Edit"]</a>
+                                @if (origin != CatalogueOrigin.BuiltIn)
+                                {
+                                    <button type="button" class="link" @onclick="() => RemoveAsync(name, origin, () => Catalogues.DeleteOverrideAsync(entry))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
     </section>
 }
 
@@ -191,11 +267,15 @@
         status = T.Format("Copied", copy.Designation);
     });
 
-    private async Task DeleteAsync(EndProfile profile, CatalogueOrigin origin) => await RunAsync(async () =>
+    private Task DeleteAsync(EndProfile profile, CatalogueOrigin origin) =>
+        RemoveAsync(profile.Designation, origin, () => Catalogues.DeleteEndProfileAsync(profile.Id));
+
+    /// <summary>Removes a user entry after asking; for a replacement, the built-in entry is used again.</summary>
+    private async Task RemoveAsync(string name, CatalogueOrigin origin, Func<Task> remove) => await RunAsync(async () =>
     {
-        var question = T.Format(origin == CatalogueOrigin.ReplacesBuiltIn ? "ConfirmRestoreBuiltIn" : "ConfirmDelete", profile.Designation);
+        var question = T.Format(origin == CatalogueOrigin.ReplacesBuiltIn ? "ConfirmRestoreBuiltIn" : "ConfirmDelete", name);
         if (!await Dialogs.ConfirmAsync(question)) return;
-        await Catalogues.DeleteEndProfileAsync(profile.Id);
+        await remove();
     });
 
     private async Task RunAsync(Func<Task> action)

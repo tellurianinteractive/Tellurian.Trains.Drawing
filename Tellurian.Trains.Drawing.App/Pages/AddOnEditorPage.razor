@@ -1,0 +1,109 @@
+@page "/catalogue/addon/new"
+@page "/catalogue/addon/{Id:guid}"
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@inject CatalogueService Catalogues
+@inject NavigationManager Navigation
+
+<PageTitle>@Title</PageTitle>
+
+<h1>@Title</h1>
+@if (isBuiltIn)
+{
+    <p class="note">@T["EditBuiltInNote"]</p>
+}
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (catalogue is not null)
+{
+    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+        <label><span>@T["Field_ShortName"]</span><input id="shortName" @bind="shortName" /></label>
+        <label>
+            <span>@T["Field_BaseStandardId"]</span>
+            <select id="baseStandard" @bind="baseStandardId">
+                @foreach (var standard in catalogue.Standards.OrderBy(s => s.ShortName))
+                {
+                    <option value="@standard.Id">@standard.ShortName</option>
+                }
+            </select>
+        </label>
+        <label><span>@T["Field_Description"]</span><textarea rows="3" @bind="description"></textarea></label>
+        <label><span>@T["Field_SourceTitle"]</span><input @bind="sourceTitle" /></label>
+        <label><span>@T["Field_SourceUrl"]</span><input type="url" @bind="sourceUrl" /></label>
+
+        <ProblemList Problems="problems" />
+
+        <div class="toolbar">
+            <button type="submit" class="primary">@T["Save"]</button>
+            <a class="button" href="catalogue">@T["Cancel"]</a>
+        </div>
+    </form>
+}
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private DrawingCatalogue? catalogue;
+    private StandardAddOn? original;
+    private bool isBuiltIn;
+    private string shortName = string.Empty;
+    private Guid baseStandardId;
+    private string? description;
+    private string? sourceTitle;
+    private string? sourceUrl;
+    private IReadOnlyList<CatalogueProblem> problems = [];
+    private string? message;
+
+    private string Title => Id is null ? T["NewAddOn"] : T.Format("EditEntry", original?.ShortName ?? string.Empty);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            catalogue = await Catalogues.GetAsync();
+            var user = await Catalogues.GetUserAsync();
+            original = Id is { } id ? catalogue.AddOns.FirstOrDefault(a => a.Id == id) : null;
+            if (Id is not null && original is null)
+            {
+                message = T["EntryNotFound"];
+                catalogue = null;
+                return;
+            }
+            isBuiltIn = original is not null && CatalogueService.BuiltIn.AddOns.Any(a => a.Id == original.Id) && !user.AddOns.Any(a => a.Id == original.Id);
+            shortName = original?.ShortName ?? string.Empty;
+            baseStandardId = original?.BaseStandardId ?? catalogue.Standards.OrderBy(s => s.ShortName).FirstOrDefault()?.Id ?? Guid.Empty;
+            description = original?.Description;
+            sourceTitle = original?.Source?.Title;
+            sourceUrl = original?.Source?.Url;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        var addOn = (original ?? new StandardAddOn { Id = Guid.NewGuid(), ShortName = string.Empty, BaseStandardId = baseStandardId }) with
+        {
+            ShortName = shortName.Trim(),
+            BaseStandardId = baseStandardId,
+            Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim(),
+            Source = string.IsNullOrWhiteSpace(sourceTitle) && string.IsNullOrWhiteSpace(sourceUrl)
+                ? null
+                : (original?.Source ?? new DocumentReference()) with { Title = sourceTitle?.Trim(), Url = sourceUrl?.Trim() },
+        };
+        try
+        {
+            problems = await Catalogues.SaveAddOnAsync(addOn);
+            if (problems.Count == 0) Navigation.NavigateTo("catalogue");
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+}

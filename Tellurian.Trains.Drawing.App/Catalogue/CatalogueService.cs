@@ -92,6 +92,39 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files)
         await SaveUserAsync(user with { EndProfiles = [.. user.EndProfiles.Where(p => p.Id != id)] }, cancellationToken);
     }
 
+    /// <summary>Saves a standard as a user entry, replacing a built-in one with the same id; returns the problems if it isn't valid.</summary>
+    public async Task<IReadOnlyList<CatalogueProblem>> SaveStandardAsync(ModuleStandard standard, CancellationToken cancellationToken = default)
+    {
+        var problems = CatalogueValidation.Validate(standard, await GetAsync(cancellationToken));
+        if (problems.Count == 0) await SaveUserAsync((await GetUserAsync(cancellationToken)).With(standard), cancellationToken);
+        return problems;
+    }
+
+    public async Task<IReadOnlyList<CatalogueProblem>> SaveAddOnAsync(StandardAddOn addOn, CancellationToken cancellationToken = default)
+    {
+        var problems = CatalogueValidation.Validate(addOn, await GetAsync(cancellationToken));
+        if (problems.Count == 0) await SaveUserAsync((await GetUserAsync(cancellationToken)).With(addOn), cancellationToken);
+        return problems;
+    }
+
+    /// <summary>Saves an override; <paramref name="replacing"/> is the override being edited, if any.</summary>
+    public async Task<IReadOnlyList<CatalogueProblem>> SaveOverrideAsync(EndProfileCompatibilityOverride entry, EndProfileCompatibilityOverride? replacing, CancellationToken cancellationToken = default)
+    {
+        var problems = CatalogueValidation.Validate(entry, await GetAsync(cancellationToken), replacing);
+        if (problems.Count == 0) await SaveUserAsync((await GetUserAsync(cancellationToken)).With(entry, replacing), cancellationToken);
+        return problems;
+    }
+
+    /// <summary>Removes a user standard; a replaced built-in standard becomes visible again.</summary>
+    public async Task DeleteStandardAsync(Guid id, CancellationToken cancellationToken = default) =>
+        await SaveUserAsync((await GetUserAsync(cancellationToken)).WithoutStandard(id), cancellationToken);
+
+    public async Task DeleteAddOnAsync(Guid id, CancellationToken cancellationToken = default) =>
+        await SaveUserAsync((await GetUserAsync(cancellationToken)).WithoutAddOn(id), cancellationToken);
+
+    public async Task DeleteOverrideAsync(EndProfileCompatibilityOverride entry, CancellationToken cancellationToken = default) =>
+        await SaveUserAsync((await GetUserAsync(cancellationToken)).WithoutOverride(entry), cancellationToken);
+
     /// <summary>Saves the user's part of the catalogue as a file (CA-3); null if the user cancelled.</summary>
     public async Task<SavedFile?> ExportAsync(CancellationToken cancellationToken = default) =>
         await files.SaveAsync(DrawingFileSerializer.Serialize(await GetUserAsync(cancellationToken)), ExportFileName, handleId: null, saveAs: true, cancellationToken);
