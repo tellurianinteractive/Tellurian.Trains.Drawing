@@ -247,4 +247,6 @@
   <data name="SaveToCatalogue" xml:space="preserve"><value>Spara i min katalog</value></data>
   <data name="SavedToCatalogue" xml:space="preserve"><value>{0} är sparad i din katalog.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Redigera</value></data>
+  <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
+  <data name="EditPane" xml:space="preserve"><value>Redigera</value></data>
 </root>

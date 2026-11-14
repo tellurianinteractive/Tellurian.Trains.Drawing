@@ -247,4 +247,6 @@
   <data name="SaveToCatalogue" xml:space="preserve"><value>In meinem Katalog speichern</value></data>
   <data name="SavedToCatalogue" xml:space="preserve"><value>{0} ist in deinem Katalog gespeichert.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="ArchivePane" xml:space="preserve"><value>Archiv</value></data>
+  <data name="EditPane" xml:space="preserve"><value>Bearbeiten</value></data>
 </root>

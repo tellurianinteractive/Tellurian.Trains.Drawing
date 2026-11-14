@@ -13,6 +13,46 @@
 {
     <p class="error">@T["DraftNotFound"]</p>
 }
+else if (draft is not null && draft.Kind == DrawingFileKind.EndProfile)
+{
+    <EndProfileEditor @ref="_endProfileEditor" @key="draft.Id" Draft="draft" TrackColor="@_trackColor" DraftChanged="d => draft = d">
+        <ArchiveContent>
+            <p class="archive-name"><b>@draft.Name</b> <span class="kind">@T[$"Kind_{draft.Kind}"]</span></p>
+            <p class="detail">@(draft.FileName ?? T["NotSavedToFile"])</p>
+            <div class="pane-buttons">
+                <button type="button" class="primary" id="save" @onclick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
+                @if (Documents.CanSaveInPlace)
+                {
+                    <button type="button" id="save-as" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
+                }
+                <button type="button" id="save-to-catalogue" @onclick="SaveToCatalogueAsync">@T["SaveToCatalogue"]</button>
+                <button type="button" id="discard" @onclick="DiscardAsync">@T["Discard"]</button>
+            </div>
+            <p>
+                @if (draft.HasUnsavedChanges)
+                {
+                    <span class="badge unsaved">@T["UnsavedChanges"]</span>
+                }
+                else
+                {
+                    <span class="badge saved">@T["Saved"]</span>
+                }
+            </p>
+            @if (!Documents.CanSaveInPlace)
+            {
+                <p class="note">@T["DownloadNote"]</p>
+            }
+            @if (message is not null)
+            {
+                <p class="error" role="alert">@message</p>
+            }
+            @if (_status is not null)
+            {
+                <p class="status" role="status">@_status</p>
+            }
+        </ArchiveContent>
+    </EndProfileEditor>
+}
 else if (draft is not null)
 {
     <h1>@draft.Name</h1>
@@ -24,10 +64,6 @@ else if (draft is not null)
         {
             <button type="button" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
         }
-        @if (draft.Kind == DrawingFileKind.EndProfile)
-        {
-            <button type="button" id="save-to-catalogue" @onclick="SaveToCatalogueAsync">@T["SaveToCatalogue"]</button>
-        }
         <button type="button" @onclick="DiscardAsync">@T["Discard"]</button>
     </div>
     @if (!Documents.CanSaveInPlace)
@@ -37,10 +73,6 @@ else if (draft is not null)
     @if (message is not null)
     {
         <p class="error" role="alert">@message</p>
-    }
-    @if (_status is not null)
-    {
-        <p class="status" role="status">@_status</p>
     }
 
     <dl class="properties">
@@ -60,25 +92,18 @@ else if (draft is not null)
         }
     </p>
 
-    @if (draft.Kind == DrawingFileKind.EndProfile)
-    {
-        <EndProfileEditor @ref="_endProfileEditor" @key="draft.Id" Draft="draft" TrackColor="@_trackColor" DraftChanged="d => draft = d" />
-    }
-    else
-    {
-        <div class="drawing-view">
-            @switch (draft.Kind)
-            {
-                case DrawingFileKind.Module:
-                    <ModuleView Json="@draft.Json" Standard="@_standard" Error="@T["CannotShow"]" />
-                    break;
-                case DrawingFileKind.Hall:
-                    <HallView Json="@draft.Json" Error="@T["CannotShow"]" />
-                    break;
-            }
-        </div>
-        <p class="note">@T["EditorComing"]</p>
-    }
+    <div class="drawing-view">
+        @switch (draft.Kind)
+        {
+            case DrawingFileKind.Module:
+                <ModuleView Json="@draft.Json" Standard="@_standard" Error="@T["CannotShow"]" />
+                break;
+            case DrawingFileKind.Hall:
+                <HallView Json="@draft.Json" Error="@T["CannotShow"]" />
+                break;
+        }
+    </div>
+    <p class="note">@T["EditorComing"]</p>
 }
 
 @code {

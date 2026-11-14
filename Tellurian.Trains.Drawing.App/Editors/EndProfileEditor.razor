@@ -22,26 +22,6 @@
 @* The end profile editor (Phase 5, EP-1…EP-7): end view with tools, a property panel and live derived properties. *@
 @if (_document is not null)
 {
-    <div class="toolbar" role="toolbar">
-        @foreach (var tool in Enum.GetValues<EndProfileTool>())
-        {
-            <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                    aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
-        }
-        @if (_activeTool is EndProfileTool.Outline or EndProfileTool.GroundLine)
-        {
-            <label class="inline"><input type="checkbox" id="arc-mode" checked="@(ActivePath.Mode == PathStepMode.TangentArc)" @onchange="ToggleArc" /> @T["ArcMode"]</label>
-        }
-    </div>
-    <div class="toolbar">
-        <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
-        <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
-        <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
-        <button type="button" id="mirror-holes" @onclick="MirrorHoles">@T["MirrorScrewHoles"]</button>
-        <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(EndProfileContent.Bounds(_document.Current))">@T["ZoomToFit"]</button>
-        <span class="detail" id="autosave">@AutosaveText</span>
-    </div>
-
     <div class="editor-layout">
         <div class="editor-canvas">
             <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@_document.Current.Designation"
@@ -70,7 +50,34 @@
             </DrawingCanvas>
         </div>
         <aside class="editor-side">
-            <PropertyPanel Title="@SelectionTitle">
+            <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+                <h2>@T["ArchivePane"]</h2>
+                @ArchiveContent
+                <p class="detail" id="autosave">@AutosaveText</p>
+            </section>
+            <section class="pane edit-pane" aria-label="@T["EditPane"]">
+                <h2>@T["EditPane"]</h2>
+                <div class="pane-buttons" role="toolbar">
+                    @foreach (var tool in Enum.GetValues<EndProfileTool>())
+                    {
+                        <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
+                                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
+                    }
+                </div>
+                @if (_activeTool is EndProfileTool.Outline or EndProfileTool.GroundLine)
+                {
+                    <label class="inline"><input type="checkbox" id="arc-mode" checked="@(ActivePath.Mode == PathStepMode.TangentArc)" @onchange="ToggleArc" /> @T["ArcMode"]</label>
+                }
+                <div class="pane-buttons">
+                    <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
+                    <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
+                    <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
+                    <button type="button" id="mirror-holes" @onclick="MirrorHoles">@T["MirrorScrewHoles"]</button>
+                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(EndProfileContent.Bounds(_document.Current))">@T["ZoomToFit"]</button>
+                </div>
+                <p class="pane-help" aria-live="polite">@Status</p>
+            </section>
+            <PropertyPanel Title="@SelectionTitle" Class="pane">
                 @switch (SingleSelected)
                 {
                     case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
@@ -106,7 +113,7 @@
                 }
             </PropertyPanel>
 
-            <section class="derived" aria-label="@T["Derived"]">
+            <section class="pane derived" aria-label="@T["Derived"]">
                 <h2>@T["Derived"]</h2>
                 <dl class="properties">
                     <dt>@T["PlateSize"]</dt>
@@ -133,7 +140,6 @@
             </section>
         </aside>
     </div>
-    <p class="detail editor-status" aria-live="polite">@Status</p>
 }
 
 @code {
@@ -160,6 +166,9 @@
 
     /// <summary>The standard's track colour; the default without it.</summary>
     [Parameter] public string? TrackColor { get; set; }
+
+    /// <summary>The host's file actions and status, shown in the Archive pane.</summary>
+    [Parameter] public RenderFragment? ArchiveContent { get; set; }
 
     /// <summary>Raised after each autosave with the updated draft, e.g. for an unsaved-changes badge.</summary>
     [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
