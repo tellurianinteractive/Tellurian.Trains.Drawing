@@ -39,7 +39,7 @@ public sealed class EndProfileEditorTests
         using var context = new AppTestContext();
         var page = context.Render<NewEndProfilePage>();
         var top = double.Parse(page.Find("#plate-top").GetAttribute("value")!, System.Globalization.CultureInfo.InvariantCulture);
-        Assert.IsTrue(top >= 0, "The top edge is at or below rail top.");
+        Assert.IsTrue(top >= Model.EndProfiles.TrackCrossSection.Height, "The top edge is below the sleepers: the track stands on the plate.");
     }
 
     [TestMethod]

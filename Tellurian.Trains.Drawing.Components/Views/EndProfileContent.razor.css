@@ -20,6 +20,10 @@
     fill: var(--track-color, #1f5fbf);
 }
 
+.ep-sleeper {
+    fill: var(--drawing-sleeper, #8a6a4a);
+}
+
 .ep-track-centre {
     stroke: var(--track-color, #1f5fbf);
     stroke-width: 1;
@@ -46,7 +50,7 @@
     stroke-width: 3;
 }
 
-.ep-track.selected .ep-rail {
+.ep-track.selected .ep-rail, .ep-track.selected .ep-sleeper {
     fill: var(--drawing-selected, #c24b1b);
 }
 

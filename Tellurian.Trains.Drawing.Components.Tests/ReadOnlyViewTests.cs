@@ -49,6 +49,7 @@ public sealed partial class ReadOnlyViewTests
         });
         Assert.AreEqual(1, Count(html, "ep-outline"));
         Assert.AreEqual(profile.Tracks.Count * 2, Count(html, "ep-rail"));
+        Assert.AreEqual(profile.Tracks.Count, Count(html, "ep-sleeper"));
         Assert.AreEqual(profile.ScrewHoles.Count, Count(html, "ep-screw-hole"));
         Assert.AreEqual(1, Count(html, "ep-rail-top"));
         StringAssert.Contains(html, ">RÖK</text>");

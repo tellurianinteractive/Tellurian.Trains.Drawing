@@ -102,11 +102,11 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
         for (var i = 0; i < document.Dowels.Count; i++) yield return EndProfileItem.Dowel(i);
     }
 
-    /// <summary>The area a track is drawn in: the gauge wide, a little above and below rail top.</summary>
+    /// <summary>The area a track is drawn in: its sleeper, from the sleeper's underside to rail top.</summary>
     public static BoundingBox TrackBounds(EndProfileTrack track)
     {
-        var height = track.Gauge * 0.3;
-        return new(new(track.Offset - track.Gauge / 2 - track.Gauge * 0.1, -height), new(track.Offset + track.Gauge / 2 + track.Gauge * 0.1, height));
+        var half = Math.Max(TrackCrossSection.SleeperLength(track.Gauge), track.Gauge + TrackCrossSection.RailWidth(track.Gauge)) / 2;
+        return new(new(track.Offset - half, -TrackCrossSection.Height), new(track.Offset + half, 0));
     }
 
     private static BoundingBox CircleBounds(Circle circle) =>

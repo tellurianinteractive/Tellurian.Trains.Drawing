@@ -107,7 +107,9 @@
         var single = Find(standard.DefaultSingleTrackEndProfileId) ?? ProfilesOfStandard.FirstOrDefault(p => p.Tracks.Count == 1);
         var bounds = single?.Outline?.ToPath().Bounds;
         form.PlateWidth = bounds is { IsEmpty: false } b1 ? Math.Round(b1.Width, 1) : FallbackPlateWidth;
-        form.TopBelowRailTop = single?.Outline is { } outline && TopAtCentre(outline) is { } top ? Rounded(-top) : FallbackTop;
+        // The track stands on the plate: rails on sleepers, so the top edge is at least that far below rail top.
+        var topBelowRailTop = single?.Outline is { } outline && TopAtCentre(outline) is { } top ? Rounded(-top) : FallbackTop;
+        form.TopBelowRailTop = Math.Max(topBelowRailTop, TrackCrossSection.Height);
         form.BottomBelowRailTop = bounds is { IsEmpty: false } b3 ? Math.Round(-b3.Min.Y, 1) : FallbackBottom;
         var doubleTrack = Find(standard.DefaultDoubleTrackEndProfileId);
         form.CentreDistance = doubleTrack is not null && EndProfileAnalysis.Analyze(doubleTrack).TrackCentreDistances is [var cc, ..]

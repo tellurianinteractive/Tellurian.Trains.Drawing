@@ -26,16 +26,17 @@
     @for (var i = 0; i < Profile.Tracks.Count; i++)
     {
         var track = Profile.Tracks[i];
-        var railWidth = track.Gauge * RailWidthPerGauge;
-        var railHeight = track.Gauge * RailHeightPerGauge;
+        var railWidth = TrackCrossSection.RailWidth(track.Gauge);
+        var sleeperLength = TrackCrossSection.SleeperLength(track.Gauge);
         <g class="@Classes("ep-track", EndProfileItem.Track(i))" style="@($"--track-color: {TrackColor}")">
-            <rect class="ep-rail" x="@SvgPath.Number(track.Offset - track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-railHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(railHeight)" />
-            <rect class="ep-rail" x="@SvgPath.Number(track.Offset + track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-railHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(railHeight)" />
-            <line class="ep-track-centre" x1="@SvgPath.Number(track.Offset)" y1="@SvgPath.Number(-railHeight * 2)" x2="@SvgPath.Number(track.Offset)" y2="@SvgPath.Number(railHeight)" />
+            <rect class="ep-sleeper" x="@SvgPath.Number(track.Offset - sleeperLength / 2)" y="@SvgPath.Number(-TrackCrossSection.Height)" width="@SvgPath.Number(sleeperLength)" height="@SvgPath.Number(TrackCrossSection.SleeperHeight)" />
+            <rect class="ep-rail" x="@SvgPath.Number(track.Offset - track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+            <rect class="ep-rail" x="@SvgPath.Number(track.Offset + track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+            <line class="ep-track-centre" x1="@SvgPath.Number(track.Offset)" y1="@SvgPath.Number(-TrackCrossSection.Height)" x2="@SvgPath.Number(track.Offset)" y2="@SvgPath.Number(TrackCrossSection.RailHeight)" />
         </g>
         @if (Show(EndProfileLayers.Labels) && track.Label is { } label)
         {
-            <WorldText At="new(track.Offset, railHeight + TextSize)" Text="@label" Size="TextSize" />
+            <WorldText At="new(track.Offset, TrackCrossSection.RailHeight + TextSize)" Text="@label" Size="TextSize" />
         }
     }
 }
@@ -57,8 +58,6 @@
 }
 
 @code {
-    public const double RailWidthPerGauge = 0.1;
-    public const double RailHeightPerGauge = 0.15;
     private const double MarginPerSize = 0.05;
 
     [Parameter, EditorRequired] public EndProfile Profile { get; set; } = default!;
@@ -86,7 +85,7 @@
         var box = BoundingBox.Empty.Including(Point.Origin);
         if (profile.Outline is { } outline) box = box.Union(outline.ToPath().Bounds);
         if (profile.GroundLine is { } ground) box = box.Union(ground.ToPath().Bounds);
-        foreach (var track in profile.Tracks) box = box.Including(new(track.Offset - track.Gauge, 0)).Including(new(track.Offset + track.Gauge, 0));
+        foreach (var track in profile.Tracks) box = box.Union(Editing.EndProfiles.EndProfileScene.TrackBounds(track));
         foreach (var hole in profile.ScrewHoles.Concat(profile.Dowels)) box = box.Including(hole.Center);
         return box.Inflated(Math.Max(Math.Max(box.Width, box.Height) * MarginPerSize, 10));
     }
