@@ -55,7 +55,8 @@ public sealed partial class AppTextsTests
             .Concat(Keys<StraightPosition>("StraightPosition"))
             .Concat(Keys<JointFit>("Fit"))
             .Concat(Keys<RailSystem>("RailSystem"))
-            .Concat(Keys<CatalogueProblemCode>("Problem"));
+            .Concat(Keys<CatalogueProblemCode>("Problem"))
+            .Concat(Keys<Editing.EndProfiles.MeasureOrigin>("MeasureOrigin"));
         foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
     }
 

@@ -86,6 +86,16 @@
             {
                 <section class="pane plate-pane" aria-label="@T["PlatePane"]">
                     <h2>@T["PlatePane"]</h2>
+                    <label class="stacked">
+                        <span>@T["MeasureFrom"]</span>
+                        <select id="measure-origin" value="@_origin" @onchange="ChooseOriginAsync">
+                            @foreach (var origin in Enum.GetValues<MeasureOrigin>())
+                            {
+                                <option value="@origin">@T[$"MeasureOrigin_{origin}"]</option>
+                            }
+                        </select>
+                    </label>
+                    <label class="inline"><input type="checkbox" id="detail-dimensions" @bind="_detailDimensions" /> @T["DetailDimensions"]</label>
                     <div class="property-grid">
                         <NumberField Label="@T["PlateDepth"]" Value="-plate.Bottom" Min="0" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateBottom(-v))" />
                         <NumberField Label="@T["PlateWidth"]" Value="plate.Width" ReadOnly="true" />
@@ -97,10 +107,11 @@
                             {
                                 var index = i;
                                 var point = plate.UpperEdge[i];
+                                var shown = Frame.ToDisplay(point);
                                 <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(i)) ? "selected" : null)">
                                     <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(index))">@(i + 1)</button></td>
-                                    <td><NumberField Label="" Unit="@null" Value="point.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, new(v, point.Y)))" /></td>
-                                    <td><NumberField Label="" Unit="@null" Value="point.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, new(point.X, v)))" /></td>
+                                    <td><NumberField Label="" Unit="@null" Value="shown.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, Frame.FromDisplay(new(v, shown.Y))))" /></td>
+                                    <td><NumberField Label="" Unit="@null" Value="shown.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index, Frame.FromDisplay(new(shown.X, v))))" /></td>
                                 </tr>
                             }
                         </tbody>
@@ -117,20 +128,20 @@
                 {
                     case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
                         var track = _document.Current.Tracks[item.Index];
-                        <NumberField Label="@T["Offset"]" Value="track.Offset" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Offset = v }))" />
+                        <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Offset = Frame.FromDisplayX(v) }))" />
                         <NumberField Label="@T["Gauge"]" Value="track.Gauge" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Gauge = v }))" />
                         <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Label = v }))" />
                         break;
                     case { Kind: EndProfileItemKind.ScrewHole } item when item.Index < _document.Current.ScrewHoles.Count:
                         var hole = _document.Current.ScrewHoles[item.Index];
-                        <NumberField Label="X" Value="hole.Center.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Center = new(v, hole.Center.Y) }))" />
-                        <NumberField Label="Y" Value="hole.Center.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Center = new(hole.Center.X, v) }))" />
+                        <NumberField Label="X" Value="Frame.ToDisplayX(hole.Center.X)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Center = new(Frame.FromDisplayX(v), hole.Center.Y) }))" />
+                        <NumberField Label="Y" Value="Frame.ToDisplayY(hole.Center.Y)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Center = new(hole.Center.X, Frame.FromDisplayY(v)) }))" />
                         <NumberField Label="@T["Diameter"]" Value="hole.Diameter" Min="0.5" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Diameter = v }))" />
                         break;
                     case { Kind: EndProfileItemKind.Dowel } item when item.Index < _document.Current.Dowels.Count:
                         var dowel = _document.Current.Dowels[item.Index];
-                        <NumberField Label="X" Value="dowel.Center.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Center = new(v, dowel.Center.Y) }))" />
-                        <NumberField Label="Y" Value="dowel.Center.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Center = new(dowel.Center.X, v) }))" />
+                        <NumberField Label="X" Value="Frame.ToDisplayX(dowel.Center.X)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Center = new(Frame.FromDisplayX(v), dowel.Center.Y) }))" />
+                        <NumberField Label="Y" Value="Frame.ToDisplayY(dowel.Center.Y)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Center = new(dowel.Center.X, Frame.FromDisplayY(v)) }))" />
                         <NumberField Label="@T["Diameter"]" Value="dowel.Diameter" Min="0.5" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Diameter = v }))" />
                         break;
                     case null when _selection.IsEmpty:
@@ -237,18 +248,29 @@
 
     private PlateShape? Plate => _document is null ? null : PlateShape.From(_document.Current);
 
-    /// <summary>The plate's dimensions, drawn automatically: width, side heights and depth below rail top.</summary>
-    private IEnumerable<Dimension> PlateDimensions
+    public const string MeasureOriginKey = "end-profile-measure-origin";
+
+    private MeasureOrigin _origin = MeasureOrigin.RailTopCentre;
+    private bool _detailDimensions = true;
+
+    /// <summary>The frame measures are shown and typed in.</summary>
+    private MeasureFrame Frame => MeasureFrame.For(_document!.Current, _origin);
+
+    /// <summary>The dimensions drawn automatically, following a drag and the measure origin.</summary>
+    private IReadOnlyList<Dimension> PlateDimensions =>
+        EndProfileDimensions.Create(Shown, MeasureFrame.For(Shown, _origin), _view.ToWorld(28), _detailDimensions);
+
+    private async Task ChooseOriginAsync(ChangeEventArgs e)
     {
-        get
+        if (!Enum.TryParse<MeasureOrigin>(e.Value as string, out var origin)) return;
+        _origin = origin;
+        try
         {
-            if (PlateShape.From(Shown) is not { } plate) yield break;
-            var gap = _view.ToWorld(28);
-            Point leftBottom = new(plate.Left, plate.Bottom), rightBottom = new(plate.Right, plate.Bottom);
-            yield return Dimension.Place(leftBottom, rightBottom, new(0, plate.Bottom - gap), DimensionKind.Horizontal);
-            yield return Dimension.Place(leftBottom, plate.UpperEdge[0], new(plate.Left - gap, 0), DimensionKind.Vertical);
-            yield return Dimension.Place(rightBottom, plate.UpperEdge[^1], new(plate.Right + gap, 0), DimensionKind.Vertical);
-            yield return Dimension.Place(new(plate.Left, 0), leftBottom, new(plate.Left - 2.2 * gap, 0), DimensionKind.Vertical);
+            await Workbench.SetValueAsync(MeasureOriginKey, $"\"{origin}\"");
+        }
+        catch (StorageException)
+        {
+            // Only the preference is lost; the editor still measures from the chosen origin.
         }
     }
 
@@ -306,6 +328,7 @@
         var key = Draft.Id.ToString();
         try
         {
+            if (await Workbench.GetValueAsync(MeasureOriginKey) is { } stored && Enum.TryParse<MeasureOrigin>(stored.Trim('"'), out var origin)) _origin = origin;
             if (await EditorSession<EndProfile>.LoadStateAsync(Workbench, key) is { } state)
             {
                 _view = _view with { Center = new(state.CenterX, state.CenterY), Scale = state.Scale };

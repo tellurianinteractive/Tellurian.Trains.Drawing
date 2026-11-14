@@ -598,3 +598,18 @@ label.inline {
     .plate-points tr.selected {
         background: #fbe9e1;
     }
+
+label.stacked {
+    display: grid;
+    gap: 0.15rem;
+    margin-bottom: 0.35rem;
+}
+
+    label.stacked span {
+        color: var(--app-muted);
+    }
+
+    label.stacked select {
+        font: inherit;
+        padding: 0.2rem;
+    }

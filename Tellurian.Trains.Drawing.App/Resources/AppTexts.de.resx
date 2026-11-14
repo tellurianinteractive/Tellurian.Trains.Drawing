@@ -258,4 +258,9 @@
   <data name="DeletePoint" xml:space="preserve"><value>Punkt löschen</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>Die Oberkante ist auch die Geländelinie, die an Übergängen verglichen wird. Ziehe die Punkte in der Zeichnung oder gib sie in mm ein; Y ist unter SOK negativ.</value></data>
   <data name="EpItem_PlatePoint" xml:space="preserve"><value>Punkt des Kopfstücks</value></data>
+  <data name="MeasureFrom" xml:space="preserve"><value>Messen von</value></data>
+  <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>SOK und Mittellinie</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Untere linke Ecke des Kopfstücks</value></data>
+  <data name="DetailDimensions" xml:space="preserve"><value>Schraubenlöcher und Punkte bemaßen</value></data>
+  <data name="OffsetFromLeft" xml:space="preserve"><value>Abstand von der linken Kante (mm)</value></data>
 </root>

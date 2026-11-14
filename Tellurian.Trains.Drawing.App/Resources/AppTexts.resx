@@ -258,4 +258,9 @@
   <data name="DeletePoint" xml:space="preserve"><value>Delete point</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>The upper edge is also the ground line compared at joints. Drag the points in the drawing or type them in mm; Y is negative below rail top.</value></data>
   <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plate point</value></data>
+  <data name="MeasureFrom" xml:space="preserve"><value>Measure from</value></data>
+  <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>Rail top and centre line</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plate's lower left corner</value></data>
+  <data name="DetailDimensions" xml:space="preserve"><value>Dimension screw holes and points</value></data>
+  <data name="OffsetFromLeft" xml:space="preserve"><value>Distance from left edge (mm)</value></data>
 </root>

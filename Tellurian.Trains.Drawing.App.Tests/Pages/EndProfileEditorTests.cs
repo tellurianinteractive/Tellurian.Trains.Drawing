@@ -118,4 +118,22 @@ public sealed class EndProfileEditorTests
 
         Assert.AreEqual("saved.tdendprofile", updated.FileName);
     }
+
+    [TestMethod]
+    public void MeasuresFollowTheChosenOrigin()
+    {
+        using var context = new AppTestContext();
+        var profile = BuiltInCatalogue.Instance.EndProfiles[0].Copy("ORIGIN");
+        var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
+        var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
+        page.WaitForElement("#measure-origin");
+        var plate = Model.EndProfiles.PlateShape.From(profile)!;
+        string FirstPointX() => page.FindAll(".plate-points tbody tr")[0].QuerySelectorAll("input")[0].GetAttribute("value")!;
+        Assert.AreEqual(Editing.Input.NumberInput.Format(plate.Left, 1, System.Globalization.CultureInfo.CurrentCulture), FirstPointX());
+
+        page.Find("#measure-origin").Change(nameof(Editing.EndProfiles.MeasureOrigin.PlateLowerLeft));
+
+        Assert.AreEqual("0", FirstPointX(), "The left edge is X = 0 measured from the lower left corner.");
+        Assert.AreEqual("\"PlateLowerLeft\"", context.Workbench.Values[Editors.EndProfileEditor.MeasureOriginKey]);
+    }
 }

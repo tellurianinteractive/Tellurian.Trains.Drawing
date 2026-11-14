@@ -258,4 +258,9 @@
   <data name="DeletePoint" xml:space="preserve"><value>Ta bort punkt</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>Överkanten är också marklinjen som jämförs vid skarvar. Dra punkterna i ritningen eller skriv in dem i mm; Y är negativt under RÖK.</value></data>
   <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plattpunkt</value></data>
+  <data name="MeasureFrom" xml:space="preserve"><value>Mät från</value></data>
+  <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>RÖK och mittlinjen</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plattans nedre vänstra hörn</value></data>
+  <data name="DetailDimensions" xml:space="preserve"><value>Måttsätt skruvhål och punkter</value></data>
+  <data name="OffsetFromLeft" xml:space="preserve"><value>Avstånd från vänsterkanten (mm)</value></data>
 </root>

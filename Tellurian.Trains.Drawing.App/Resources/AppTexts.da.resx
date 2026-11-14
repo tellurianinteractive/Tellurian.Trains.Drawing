@@ -258,4 +258,9 @@
   <data name="DeletePoint" xml:space="preserve"><value>Slet punkt</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>Overkanten er også terrænlinjen, der sammenlignes ved samlinger. Træk punkterne i tegningen eller skriv dem i mm; Y er negativ under skinneoverkant.</value></data>
   <data name="EpItem_PlatePoint" xml:space="preserve"><value>Pladepunkt</value></data>
+  <data name="MeasureFrom" xml:space="preserve"><value>Mål fra</value></data>
+  <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>Skinneoverkant og midterlinje</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Pladens nederste venstre hjørne</value></data>
+  <data name="DetailDimensions" xml:space="preserve"><value>Målsæt skruehuller og punkter</value></data>
+  <data name="OffsetFromLeft" xml:space="preserve"><value>Afstand fra venstre kant (mm)</value></data>
 </root>
