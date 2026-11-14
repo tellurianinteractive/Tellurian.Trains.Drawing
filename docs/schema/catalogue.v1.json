@@ -154,6 +154,16 @@
             }
           ]
         },
+        "plate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlateShape"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "groundLine": {
           "anyOf": [
             {
@@ -444,6 +454,58 @@
             "sweep"
           ]
         }
+      ]
+    },
+    "PlateSegment": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "line",
+            "arc",
+            "fillet"
+          ]
+        },
+        "end": true,
+        "center": true,
+        "radius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "side": {
+          "enum": [
+            "above",
+            "below",
+            null
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "PlateShape": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlateSegment"
+          }
+        },
+        "bottom": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "start",
+        "segments",
+        "bottom"
       ]
     },
     "Point": {

@@ -1,0 +1,219 @@
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<div class="drawing-canvas @Class" @ref="_host">
+    <svg @ref="_svg" class="drawing-canvas-svg" viewBox="@Viewport.ViewBox" preserveAspectRatio="xMidYMid meet"
+         tabindex="0" role="img" aria-label="@Label" @onkeydown="OnKeyDown">
+        @if (ShowGrid)
+        {
+            var spacing = NiceSteps.GridSpacing(Viewport.Scale);
+            var major = spacing * MajorGridEvery;
+            var visible = Viewport.VisibleWorld.Inflated(Math.Max(Viewport.VisibleWorld.Width, Viewport.VisibleWorld.Height));
+            <defs>
+                <pattern id="@($"{_id}-grid")" class="drawing-grid" width="@SvgPath.Number(spacing)" height="@SvgPath.Number(spacing)" patternUnits="userSpaceOnUse">
+                    <path d="@($"M {SvgPath.Number(spacing)} 0 L 0 0 0 {SvgPath.Number(spacing)}")" class="drawing-grid-minor" />
+                </pattern>
+                <pattern id="@($"{_id}-grid-major")" width="@SvgPath.Number(major)" height="@SvgPath.Number(major)" patternUnits="userSpaceOnUse">
+                    <rect width="@SvgPath.Number(major)" height="@SvgPath.Number(major)" fill="@($"url(#{_id}-grid)")" />
+                    <path d="@($"M {SvgPath.Number(major)} 0 L 0 0 0 {SvgPath.Number(major)}")" class="drawing-grid-major" />
+                </pattern>
+            </defs>
+            <rect class="drawing-grid-area" x="@SvgPath.Number(visible.Min.X)" y="@SvgPath.Number(-visible.Max.Y)"
+                  width="@SvgPath.Number(visible.Width)" height="@SvgPath.Number(visible.Height)" fill="@($"url(#{_id}-grid-major)")" />
+        }
+        <g class="drawing-world" transform="scale(1,-1)">
+            @ChildContent
+        </g>
+        @if (Overlay is not null)
+        {
+            <g class="drawing-overlay" transform="scale(1,-1)">
+                @Overlay
+            </g>
+        }
+    </svg>
+    @if (ShowScaleBar)
+    {
+        var length = NiceSteps.ScaleBarLength(Viewport.Scale);
+        <div class="drawing-scale-bar" aria-hidden="true">
+            <span class="drawing-scale-bar-line" style="@($"width: {SvgPath.Number(length * Viewport.Scale)}px")"></span>
+            <span class="drawing-scale-bar-text">@ScaleBarText(length)</span>
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>Major grid lines are drawn every this many minor lines.</summary>
+    public const int MajorGridEvery = 5;
+
+    private readonly string _id = $"canvas-{Guid.NewGuid():N}";
+    private ElementReference _host;
+    private ElementReference _svg;
+    private IJSObjectReference? _module;
+    private IJSObjectReference? _instance;
+    private DotNetObjectReference<DrawingCanvas>? _self;
+    /// <summary>The view the script has: attached with, reported or pushed.</summary>
+    private Viewport? _jsView;
+
+    /// <summary>The visible part of the drawing. Pan and zoom report the new view through <see cref="ViewportChanged"/>.</summary>
+    [Parameter, EditorRequired] public Viewport Viewport { get; set; } = default!;
+    [Parameter] public EventCallback<Viewport> ViewportChanged { get; set; }
+
+    /// <summary>Content in world millimetres, Y up.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Content drawn above everything, e.g. selection handles, rubber bands and snap markers.</summary>
+    [Parameter] public RenderFragment? Overlay { get; set; }
+
+    [Parameter] public bool ShowGrid { get; set; } = true;
+    [Parameter] public bool ShowScaleBar { get; set; } = true;
+
+    /// <summary>
+    /// When true, dragging with the primary button pans, as in a read-only view. Otherwise the primary button goes
+    /// to the pointer callbacks, and panning uses the middle button, Space + drag, or two fingers.
+    /// </summary>
+    [Parameter] public bool PanWithPrimaryButton { get; set; }
+
+    [Parameter] public EventCallback<CanvasPointerEventArgs> OnPointerDown { get; set; }
+    [Parameter] public EventCallback<CanvasPointerEventArgs> OnPointerMove { get; set; }
+    [Parameter] public EventCallback<CanvasPointerEventArgs> OnPointerUp { get; set; }
+    [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDownCallback { get; set; }
+
+    /// <summary>The accessible name of the drawing.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>
+    /// The area to keep in view: when the canvas gets its real size, or is resized, the view is fitted to it again,
+    /// until the user pans or zooms. Read-only views use it, since their size isn't known when they are rendered.
+    /// </summary>
+    [Parameter] public BoundingBox? AutoFit { get; set; }
+
+    private bool _userMovedView;
+
+    /// <summary>Shows <paramref name="area"/> (zoom to fit, zoom to selection).</summary>
+    public Task ZoomToAsync(BoundingBox area) => SetViewAsync(Viewport.ZoomTo(area));
+
+    /// <summary>Changes the view from .NET, e.g. after zoom to fit.</summary>
+    public async Task SetViewAsync(Viewport view)
+    {
+        _jsView = view;
+        await ViewportChanged.InvokeAsync(view);
+        await PushViewAsync(view);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // A view set by the parent, rather than reported by JS, must reach the JS state too.
+        if (_instance is not null && Viewport != _jsView) await PushViewAsync(Viewport);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Tellurian.Trains.Drawing.Components/Canvas/DrawingCanvas.razor.js");
+            if (_module is null) return;
+            _self = DotNetObjectReference.Create(this);
+            var view = Viewport;
+            _instance = await _module.InvokeAsync<IJSObjectReference>("attach", _host, _svg, _self, ViewState(view), PanWithPrimaryButton);
+            _jsView = view;
+            // The parent may have set another view while the script was loading, e.g. a restored one.
+            if (Viewport != view) await PushViewAsync(Viewport);
+        }
+        catch (JSException)
+        {
+            // Without the script the drawing is still shown; it just can't be panned or zoomed.
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+
+    /// <summary>Called by the script, debounced, when pan, zoom or a resize changed the view.</summary>
+    [JSInvokable]
+    public async Task ViewChanged(double centerX, double centerY, double scale, double width, double height)
+    {
+        var view = Viewport with { Center = new(centerX, centerY), Scale = scale, Width = width, Height = height };
+        var isResizeOnly = view.Center.IsCloseTo(Viewport.Center) && Math.Abs(view.Scale - Viewport.Scale) <= Tolerance.Length * Viewport.Scale;
+        if (!isResizeOnly) _userMovedView = true;
+        if (AutoFit is { } area && isResizeOnly && !_userMovedView && (width != Viewport.Width || height != Viewport.Height))
+        {
+            await SetViewAsync(Viewport.Fit(area, width, height));
+            return;
+        }
+        _jsView = view;
+        if (view != Viewport) await ViewportChanged.InvokeAsync(view);
+    }
+
+    [JSInvokable]
+    public Task PointerDown(double x, double y, double screenX, double screenY, int button, int buttons, int modifiers, string pointerType) =>
+        OnPointerDown.InvokeAsync(Pointer(x, y, screenX, screenY, button, buttons, modifiers, pointerType));
+
+    /// <summary>Called at most once per animation frame while the pointer moves.</summary>
+    [JSInvokable]
+    public Task PointerMove(double x, double y, double screenX, double screenY, int button, int buttons, int modifiers, string pointerType) =>
+        OnPointerMove.InvokeAsync(Pointer(x, y, screenX, screenY, button, buttons, modifiers, pointerType));
+
+    [JSInvokable]
+    public Task PointerUp(double x, double y, double screenX, double screenY, int button, int buttons, int modifiers, string pointerType) =>
+        OnPointerUp.InvokeAsync(Pointer(x, y, screenX, screenY, button, buttons, modifiers, pointerType));
+
+    private Task OnKeyDown(KeyboardEventArgs e) => OnKeyDownCallback.InvokeAsync(e);
+
+    private async Task PushViewAsync(Viewport view)
+    {
+        if (_instance is null) return;
+        _jsView = view;
+        try
+        {
+            await _instance.InvokeVoidAsync("setView", ViewState(view));
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException)
+        {
+        }
+    }
+
+    private static double[] ViewState(Viewport view) => [view.Center.X, view.Center.Y, view.Scale];
+
+    private static string ScaleBarText(double millimetres) =>
+        millimetres >= 1000 ? $"{SvgPath.Number(millimetres / 1000)} m" : $"{SvgPath.Number(millimetres)} mm";
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_instance is not null)
+            {
+                await _instance.InvokeVoidAsync("detach");
+                await _instance.DisposeAsync();
+            }
+            if (_module is not null) await _module.DisposeAsync();
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException)
+        {
+        }
+        _self?.Dispose();
+    }
+
+    /// <summary>
+    /// A pointer event as the script sends it. Plain values cross the interop boundary, so no reflection-based
+    /// serialization is needed (trim and AOT safe). <paramref name="modifiers"/>: 1 Shift, 2 Ctrl, 4 Alt, 8 Meta.
+    /// </summary>
+    public static CanvasPointerEventArgs Pointer(double x, double y, double screenX, double screenY, int button, int buttons, int modifiers, string pointerType) => new()
+    {
+        World = new(x, y),
+        Screen = new(screenX, screenY),
+        Button = button,
+        Buttons = buttons,
+        ShiftKey = (modifiers & 1) != 0,
+        CtrlKey = (modifiers & 2) != 0,
+        AltKey = (modifiers & 4) != 0,
+        MetaKey = (modifiers & 8) != 0,
+        PointerType = pointerType,
+    };
+}

@@ -1,0 +1,274 @@
+@page "/new/module"
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model.AutoDraw
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@inject CatalogueService Catalogues
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
+
+<PageTitle>@T["NewModuleTitle"]</PageTitle>
+
+<h1>@T["NewModuleTitle"]</h1>
+
+@if (catalogue is null)
+{
+    @if (message is not null)
+    {
+        <p class="error" role="alert">@message</p>
+    }
+}
+else
+{
+    <form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
+        <fieldset class="choices">
+            <legend>@T["Template"]</legend>
+            @foreach (var kind in Enum.GetValues<ModuleTemplateKind>())
+            {
+                <label>
+                    <input type="radio" name="kind" checked="@(form.Kind == kind)" @onchange="() => form.Kind = kind" />
+                    @T[$"Template_{kind}"]
+                </label>
+            }
+        </fieldset>
+
+        <label>
+            <span>@T["Name"]</span>
+            <input id="name" @bind="form.Name" required />
+        </label>
+
+        <label>
+            <span>@T["Standard"]</span>
+            <select id="standard" value="@form.StandardId" @onchange="SelectStandard">
+                @foreach (var standard in catalogue.Standards.OrderBy(s => s.ShortName))
+                {
+                    <option value="@standard.Id">@standard.ShortName</option>
+                }
+            </select>
+        </label>
+
+        <label>
+            <span>@T["EndProfile"]</span>
+            <select id="endProfile" @bind="form.EndProfileId">
+                @foreach (var profile in EndProfiles)
+                {
+                    <option value="@profile.Id">@profile.Designation (@(profile.Tracks.Count == 1 ? T["OneTrack"] : T.Format("TrackCount", profile.Tracks.Count)))</option>
+                }
+            </select>
+        </label>
+
+        @if (form.Kind != ModuleTemplateKind.Curve)
+        {
+            <label>
+                <span>@T["StraightLength"]</span>
+                <input id="straight" type="number" min="1" step="any" @bind="form.Straight" />
+            </label>
+        }
+        @if (form.Kind != ModuleTemplateKind.Straight)
+        {
+            <label>
+                <span>@T["Radius"]</span>
+                <input id="radius" type="number" min="1" step="any" @bind="form.Radius" />
+            </label>
+            <label>
+                <span>@T["Angle"]</span>
+                <input id="angle" type="number" min="1" max="360" step="any" @bind="form.Angle" />
+            </label>
+            <label>
+                <span>@T["CurveDirection"]</span>
+                <select @bind="form.CurveDirection">
+                    @foreach (var direction in Enum.GetValues<CurveDirection>())
+                    {
+                        <option value="@direction">@T[$"CurveDirection_{direction}"]</option>
+                    }
+                </select>
+            </label>
+        }
+        @if (form.Kind == ModuleTemplateKind.StraightAndCurve)
+        {
+            <label>
+                <span>@T["StraightPosition"]</span>
+                <select @bind="form.StraightPosition">
+                    @foreach (var position in Enum.GetValues<StraightPosition>())
+                    {
+                        <option value="@position">@T[$"StraightPosition_{position}"]</option>
+                    }
+                </select>
+            </label>
+        }
+        <label>
+            <span>@T["Width"]</span>
+            <input id="width" type="number" min="1" step="any" @bind="form.Width" placeholder="@T["WidthHint"]" />
+        </label>
+
+        @if (errors.Count > 0)
+        {
+            <ul class="error" role="alert">
+                @foreach (var error in errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        }
+        @if (notes.Count > 0)
+        {
+            <div class="notes" role="status">
+                <p>@(created is null ? T["NotDrawn"] : T["DrawnWithNotes"])</p>
+                <ul>
+                    @foreach (var note in notes)
+                    {
+                        <li>@note.Message</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <div class="toolbar">
+            @if (created is null)
+            {
+                <button type="submit" class="primary" disabled="@(creating is not null)">@T["Create"]</button>
+            }
+            else
+            {
+                <a class="button primary" href="@DrawingPage.Url(created.Id)">@T["OpenDrawing"]</a>
+            }
+            <a class="button" href="">@T["Cancel"]</a>
+        </div>
+    </form>
+    @if (creating is not null)
+    {
+        <div class="busy-overlay">
+            <p class="busy-message" role="status" aria-live="polite">@T.Format("CreatingModule", creating)</p>
+        </div>
+    }
+}
+
+@code {
+    private DrawingCatalogue? catalogue;
+    private readonly Form form = new();
+    private IReadOnlyList<string> errors = [];
+    private IReadOnlyList<AutoDrawNote> notes = [];
+    private Draft? created;
+    private string? message;
+    /// <summary>The name of the module being created, while it is.</summary>
+    private string? creating;
+
+    /// <summary>Long enough for the browser to show the wait message before the work starts.</summary>
+    private static readonly TimeSpan ShowMessageDelay = TimeSpan.FromMilliseconds(1);
+
+    private IEnumerable<EndProfile> EndProfiles =>
+        catalogue is null ? [] : catalogue.EndProfilesOf(form.StandardId).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            catalogue = await Catalogues.GetAsync();
+            form.Name = T["NewModuleName"];
+            // Start with a standard that has end profiles, so the form can be submitted as it is.
+            var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
+            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id).Any()) ?? standards.FirstOrDefault();
+            if (standard is not null) UseStandard(standard);
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private void SelectStandard(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value as string, out var id) && catalogue?.FindStandard(id) is { } standard) UseStandard(standard);
+    }
+
+    private void UseStandard(ModuleStandard standard)
+    {
+        form.StandardId = standard.Id;
+        form.EndProfileId = EndProfiles.FirstOrDefault()?.Id ?? Guid.Empty;
+        form.Radius = standard.DefaultCurveRadius ?? Form.FallbackRadius;
+    }
+
+    private async Task CreateAsync()
+    {
+        notes = [];
+        errors = Validate().ToList();
+        if (errors.Count > 0 || catalogue is null) return;
+
+        creating = form.Name.Trim();
+        StateHasChanged();
+        // Drawing a module takes a while in the browser; let it show the wait message first.
+        await Task.Delay(ShowMessageDelay);
+        try
+        {
+            await CreateModuleAsync(catalogue);
+        }
+        finally
+        {
+            creating = null;
+        }
+    }
+
+    private async Task CreateModuleAsync(DrawingCatalogue catalogue)
+    {
+        var template = new ModuleTemplate
+        {
+            Kind = form.Kind,
+            Name = form.Name.Trim(),
+            Standard = catalogue.FindStandard(form.StandardId)!,
+            EndProfile = catalogue.FindEndProfile(form.EndProfileId)!,
+            Straight = form.Straight ?? 0,
+            Radius = form.Radius ?? 0,
+            Angle = form.Angle ?? 0,
+            Width = form.Width,
+            CurveDirection = form.CurveDirection,
+            StraightPosition = form.StraightPosition,
+        };
+        var result = template.Create(catalogue);
+        notes = result.Notes;
+        if (result.Module is null)
+        {
+            // Never fail silently: without notes, at least say that nothing was drawn.
+            if (notes.Count == 0) errors = [T["NotDrawn"]];
+            return;
+        }
+        try
+        {
+            var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(result.Module, catalogue.FindEndProfile));
+            created = await Documents.CreateAsync(json);
+            if (notes.Count == 0) Navigation.NavigateTo(DrawingPage.Url(created.Id));
+        }
+        catch (StorageException ex)
+        {
+            errors = [T.Format("StorageError", ex.Message)];
+        }
+    }
+
+    private IEnumerable<string> Validate()
+    {
+        if (string.IsNullOrWhiteSpace(form.Name)) yield return T["NameRequired"];
+        if (catalogue?.FindEndProfile(form.EndProfileId) is null) yield return T["EndProfileRequired"];
+        if (form.Kind != ModuleTemplateKind.Curve && form.Straight is not > 0) yield return T.Format("MustBePositive", T["StraightLength"]);
+        if (form.Kind != ModuleTemplateKind.Straight)
+        {
+            if (form.Radius is not > 0) yield return T.Format("MustBePositive", T["Radius"]);
+            if (form.Angle is not (> 0 and <= 360)) yield return T.Format("AngleRange", T["Angle"]);
+        }
+        if (form.Width is <= 0) yield return T.Format("MustBePositive", T["Width"]);
+    }
+
+    private sealed class Form
+    {
+        public const double FallbackRadius = 2000;
+
+        public ModuleTemplateKind Kind { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Guid StandardId { get; set; }
+        public Guid EndProfileId { get; set; }
+        public double? Straight { get; set; } = 1000;
+        public double? Radius { get; set; } = FallbackRadius;
+        public double? Angle { get; set; } = 30;
+        public double? Width { get; set; }
+        public CurveDirection CurveDirection { get; set; }
+        public StraightPosition StraightPosition { get; set; }
+    }
+}

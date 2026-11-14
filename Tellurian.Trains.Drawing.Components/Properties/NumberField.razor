@@ -1,0 +1,101 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Editing.Input
+
+@* A numeric property (Phase 4): typed as the user's language writes numbers, with a unit, committed on Enter or
+   when leaving the field. Invalid or out-of-range input is marked and not committed; Escape restores the value. *@
+<label class="property-label" for="@_id">@Label</label>
+<span class="number-field @(_invalid ? "invalid" : null)">
+    <input id="@_id" class="number-field-input" type="text" inputmode="decimal" autocomplete="off"
+           value="@_text" placeholder="@(Value is null ? MixedText : null)" readonly="@ReadOnly"
+           aria-invalid="@(_invalid ? "true" : "false")" title="@(_invalid ? InvalidText : null)"
+           @oninput="OnInput" @onchange="OnChange" @onkeydown="OnKeyDown" />
+    @if (Unit is not null)
+    {
+        <span class="number-field-unit" aria-hidden="true">@Unit</span>
+    }
+</span>
+
+@code {
+    private readonly string _id = $"number-{Guid.NewGuid():N}";
+    private string _text = string.Empty;
+    private bool _invalid;
+    private double? _shown;
+    private bool _isEditing;
+
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    /// <summary>The value; null when several selected objects have different values.</summary>
+    [Parameter] public double? Value { get; set; }
+
+    [Parameter] public EventCallback<double> ValueChanged { get; set; }
+    [Parameter] public Quantity Quantity { get; set; } = Quantity.Length;
+
+    /// <summary>The unit shown after the field, e.g. "mm" or "°".</summary>
+    [Parameter] public string? Unit { get; set; } = "mm";
+
+    [Parameter] public int Decimals { get; set; } = 1;
+    [Parameter] public double? Min { get; set; }
+    [Parameter] public double? Max { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+
+    /// <summary>Shown when the value is mixed; the host passes its translation.</summary>
+    [Parameter] public string MixedText { get; set; } = "—";
+
+    /// <summary>The tooltip of invalid input; the host passes its translation.</summary>
+    [Parameter] public string InvalidText { get; set; } = "Not a valid number.";
+
+    protected override void OnParametersSet()
+    {
+        // A new value from outside replaces the text, unless the user is typing.
+        if (_isEditing && Value == _shown) return;
+        _shown = Value;
+        _text = Value is { } value ? NumberInput.Format(value, Decimals, CultureInfo.CurrentCulture) : string.Empty;
+        _invalid = false;
+        _isEditing = false;
+    }
+
+    private void OnInput(ChangeEventArgs e)
+    {
+        _text = e.Value as string ?? string.Empty;
+        _isEditing = true;
+    }
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        _text = e.Value as string ?? string.Empty;
+        await CommitAsync();
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Restore();
+        else if (e.Key == "Enter") await CommitAsync();
+    }
+
+    private async Task CommitAsync()
+    {
+        if (ReadOnly) return;
+        if (string.IsNullOrWhiteSpace(_text) && Value is null)
+        {
+            Restore();
+            return;
+        }
+        if (!NumberInput.TryParse(_text, Quantity, out var parsed) || parsed < Min || parsed > Max)
+        {
+            _invalid = true;
+            return;
+        }
+        _invalid = false;
+        _isEditing = false;
+        var rounded = Math.Round(parsed, Decimals, MidpointRounding.AwayFromZero);
+        _text = NumberInput.Format(rounded, Decimals, CultureInfo.CurrentCulture);
+        if (Value is not { } current || Math.Abs(current - rounded) > Math.Pow(10, -Decimals) / 2) await ValueChanged.InvokeAsync(rounded);
+    }
+
+    private void Restore()
+    {
+        _isEditing = false;
+        _invalid = false;
+        _text = Value is { } value ? NumberInput.Format(value, Decimals, CultureInfo.CurrentCulture) : string.Empty;
+    }
+}

@@ -1,0 +1,80 @@
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@using Tellurian.Trains.Drawing.Model.Files
+
+@* Read-only end view of an end profile (EX-8): seen from outside the module, rail top at Y = 0. Works without JS. *@
+@if (_profile is null)
+{
+    <p class="drawing-view-error">@Error</p>
+}
+else
+{
+    <DrawingCanvas Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+                   PanWithPrimaryButton="true" Label="@(Label ?? _profile.Designation)" Class="end-profile-view">
+        <EndProfileContent Profile="_profile" TrackColor="@TrackColor" Layers="Layers" RailTopText="@RailTopText" TextSize="TextSize" />
+    </DrawingCanvas>
+}
+
+@code {
+    private const double TextSizePerHeight = 0.06;
+
+    private EndProfile? _profile;
+    private BoundingBox _bounds;
+    private Viewport _view = default!;
+    private object? _source;
+
+    /// <summary>The profile to show; or give <see cref="Json"/>.</summary>
+    [Parameter] public EndProfile? Profile { get; set; }
+
+    /// <summary>An end profile file (<c>.tdendprofile</c>), as an alternative to <see cref="Profile"/>.</summary>
+    [Parameter] public string? Json { get; set; }
+
+    /// <summary>The standard, for the track colour; the default colour is used without it.</summary>
+    [Parameter] public ModuleStandard? Standard { get; set; }
+
+    [Parameter] public EndProfileLayers Layers { get; set; } = EndProfileLayers.All;
+    [Parameter] public bool ShowGrid { get; set; }
+    [Parameter] public bool ShowScaleBar { get; set; } = true;
+
+    /// <summary>The label of the rail-top line; the host passes its translation.</summary>
+    [Parameter] public string RailTopText { get; set; } = "Top of rail";
+
+    /// <summary>Shown when the file can't be read.</summary>
+    [Parameter] public string Error { get; set; } = "The end profile can't be shown.";
+
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>The initial size in pixels, before the real size is known.</summary>
+    [Parameter] public double Width { get; set; } = 600;
+    [Parameter] public double Height { get; set; } = 300;
+
+    private string TrackColor => Standard?.TrackColor ?? ModuleStandard.DefaultTrackColor;
+    private double TextSize => Math.Max(_bounds.Height, _bounds.Width / 3) * TextSizePerHeight;
+
+    protected override void OnParametersSet()
+    {
+        // The view is fitted again only when another drawing is shown, so a re-render keeps the user's pan and zoom.
+        object? source = Profile ?? (object?)Json;
+        if (ReferenceEquals(source, _source) && _profile is not null) return;
+        _source = source;
+        _profile = Profile ?? Read(Json);
+        if (_profile is null) return;
+        _bounds = EndProfileContent.Bounds(_profile);
+        _view = Viewport.Fit(_bounds, Width, Height);
+    }
+
+    private static EndProfile? Read(string? json)
+    {
+        if (json is null) return null;
+        try
+        {
+            return DrawingFileSerializer.DeserializeEndProfile(json);
+        }
+        catch (DrawingFileException)
+        {
+            return null;
+        }
+    }
+}

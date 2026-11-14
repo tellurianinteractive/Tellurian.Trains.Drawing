@@ -32,8 +32,8 @@ public sealed class DrawingFileSchemaTests
         Assert.AreEqual("module.v1.json", DrawingFileSchema.FileName(DrawingFileKind.Module));
 
     [TestMethod]
-    public void KindsWithoutModelHaveNoSchemaYet() =>
-        Assert.ThrowsExactly<NotSupportedException>(() => DrawingFileSchema.Create(DrawingFileKind.HallPlan));
+    public void EveryKindHasASchema() =>
+        CollectionAssert.AreEquivalent(Enum.GetValues<DrawingFileKind>(), DrawingFileSchema.Kinds.ToArray());
 
     [TestMethod]
     public void EndProfileFilesMatchTheSchema()
@@ -52,6 +52,17 @@ public sealed class DrawingFileSchemaTests
     [TestMethod]
     public void CatalogueFilesMatchTheSchema() =>
         SchemaValidator.AssertValid(DrawingFileKind.Catalogue, DrawingFileSerializer.Serialize(TestCatalogue.Instance));
+
+    [TestMethod]
+    public void HallFilesMatchTheSchema()
+    {
+        SchemaValidator.AssertValid(DrawingFileKind.Hall, DrawingFileSerializer.Serialize(TestHalls.Club()));
+        SchemaValidator.AssertValid(DrawingFileKind.Hall, DrawingFileSerializer.Serialize(Halls.Hall.Rectangle("Empty", 10000, 6000)));
+    }
+
+    [TestMethod]
+    public void HallPlanFilesMatchTheSchema() =>
+        SchemaValidator.AssertValid(DrawingFileKind.HallPlan, DrawingFileSerializer.Serialize(TestHalls.Plan(TestCatalogue.Instance)));
 
     [TestMethod]
     public void SchemaRejectsInvalidFiles()
@@ -97,6 +108,8 @@ public sealed class DrawingFileSchemaTests
                 case DrawingFileKind.EndProfile: DrawingFileSerializer.DeserializeEndProfile(json); break;
                 case DrawingFileKind.Module: DrawingFileSerializer.DeserializeModule(json); break;
                 case DrawingFileKind.Catalogue: DrawingFileSerializer.DeserializeCatalogue(json); break;
+                case DrawingFileKind.Hall: DrawingFileSerializer.DeserializeHall(json); break;
+                case DrawingFileKind.HallPlan: DrawingFileSerializer.DeserializeHallPlan(json); break;
                 default: Assert.Fail($"{Path.GetFileName(file)}: no reader for {kind}."); break;
             }
         }

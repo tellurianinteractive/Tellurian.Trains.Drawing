@@ -8,6 +8,8 @@ files are public contracts (spec EX-7): the Module Registry will accept them for
 | [endprofile.v1.json](endprofile.v1.json) | `endProfile` | `.tdendprofile` |
 | [module.v1.json](module.v1.json) | `module` | `.tdmodule` |
 | [catalogue.v1.json](catalogue.v1.json) | `catalogue` | `.tdcatalogue` |
+| [hall.v1.json](hall.v1.json) | `hall` | `.tdhall` |
+| [hallplan.v1.json](hallplan.v1.json) | `hallPlan` | `.tdhallplan` |
 
 Examples are in [examples/](examples/). Changes are logged in [CHANGELOG.md](CHANGELOG.md).
 
@@ -56,6 +58,23 @@ A module file contains:
   as its own values (spec §10). They are written for receivers and derived again when the file is opened.
 
 An auto-drawn variant has an `autoDraw` record with the generator version and the parameters it was drawn from.
+
+### Halls
+Hall coordinates are millimetres with X to the right and Y up. The `outline` is the walls as a closed path;
+wall `i` is step `i`. Obstacles (pillars, furniture) and no-go zones are closed paths. A door has a `position`
+(the centre of the opening on the wall, heading into the hall), a `width` and a `keepFreeDepth`.
+
+### Hall plans
+A hall plan file is self-contained: it embeds the `hall`, the placed `modules`, their `endProfiles`, the
+`standards` and any compatibility `overrides`. Embedded modules are read-only copies with their `revision`.
+- `layouts` hold the modules in `lines`. A line's `entries` are joined end to end: each entry's `entryExit`
+  joins the previous entry's `exitExit`. A branch line has `startAt`, the free exit of a module in another line
+  where it starts; `endAt` joins the last module to a free exit elsewhere (a rejoining branch or a loop).
+- Module poses are **not stored**; they are computed from the layout's `anchorModuleId` and `anchorPose`
+  (the anchor module's local origin and X axis in hall coordinates).
+- Exits are referred to by module id and exit label. A module is placed at most once per plan.
+- `joints` only lists joints whose properties the planner has set (join-method override, number of clamps,
+  note). Joint fit is evaluated from the end profiles, not stored.
 
 ## Keeping the schemas up to date
 The schemas are generated from the code (`DrawingFileSchema.Create`), and a test fails when the code and

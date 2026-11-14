@@ -1,0 +1,582 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Properties
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Components.Views
+@using Tellurian.Trains.Drawing.Editing.Commands
+@using Tellurian.Trains.Drawing.Editing.EndProfiles
+@using Tellurian.Trains.Drawing.Editing.Input
+@using Tellurian.Trains.Drawing.Editing.Selection
+@using Tellurian.Trains.Drawing.Editing.Snapping
+@using Tellurian.Trains.Drawing.Editing.Tools
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@implements IAsyncDisposable
+@inject DrawingDocuments Documents
+@inject IWorkbench Workbench
+@inject SafeReload Reload
+@inject TimeProvider Time
+@inject IJSRuntime JS
+
+@* The end profile editor (Phase 5, EP-1…EP-7): end view with tools, a property panel and live derived properties. *@
+@if (_document is not null)
+{
+    <div class="editor-layout">
+        <div class="editor-canvas">
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@_document.Current.Designation"
+                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+                <ChildContent>
+                    <EndProfileContent Profile="Shown" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="_view.ToWorld(12)" Selected="_selection.Items"
+                                       ShowPlatePoints="true" HandleSize="_view.ToWorld(8)" />
+                    @foreach (var dimension in PlateDimensions)
+                    {
+                        <DimensionLine Dimension="dimension" TextSize="_view.ToWorld(DimensionTextPixels)" />
+                    }
+                    @if (Title is { } title)
+                    {
+                        <WorldText At="title.Center" Text="@title.Text" Size="title.Size" Class="ep-title" />
+                    }
+                </ChildContent>
+                <Overlay>
+                    @if (_select.RubberBand is { } band)
+                    {
+                        <rect class="editor-rubber-band" x="@SvgPath.Number(band.Min.X)" y="@SvgPath.Number(band.Min.Y)" width="@SvgPath.Number(band.Width)" height="@SvgPath.Number(band.Height)" />
+                    }
+                    @if (ActivePathOrNull?.Preview is { } preview)
+                    {
+                        <path class="editor-preview" d="@SvgPath.From(preview)" />
+                    }
+                    @if (ActivePlaceOrNull?.Preview is { } place)
+                    {
+                        <circle class="editor-place" cx="@SvgPath.Number(place.X)" cy="@SvgPath.Number(place.Y)" r="@SvgPath.Number(_activeTool == EndProfileTool.Track ? 2 : EndProfileCommands.DefaultScrewHoleDiameter / 2)" />
+                    }
+                    @if (Snapped is { } snap)
+                    {
+                        <circle class="editor-snap" cx="@SvgPath.Number(snap.Point.X)" cy="@SvgPath.Number(snap.Point.Y)" r="@SvgPath.Number(_view.ToWorld(5))" />
+                    }
+                </Overlay>
+            </DrawingCanvas>
+        </div>
+        <aside class="editor-side">
+            <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+                <h2>@T["ArchivePane"]</h2>
+                @ArchiveContent
+                <p class="detail" id="autosave">@AutosaveText</p>
+            </section>
+            <section class="pane edit-pane" aria-label="@T["EditPane"]">
+                <h2>@T["EditPane"]</h2>
+                <div class="pane-buttons" role="toolbar">
+                    @foreach (var tool in Enum.GetValues<EndProfileTool>())
+                    {
+                        <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
+                                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
+                    }
+                </div>
+                @if (_activeTool == EndProfileTool.UpperEdge)
+                {
+                    <label class="inline"><input type="checkbox" id="arc-mode" checked="@(ActivePath.Mode == PathStepMode.TangentArc)" @onchange="ToggleArc" /> @T["ArcMode"]</label>
+                }
+                <div class="pane-buttons">
+                    <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
+                    <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
+                    <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
+                    <button type="button" id="mirror-holes" @onclick="MirrorHoles">@T["MirrorScrewHoles"]</button>
+                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ZoomBounds)">@T["ZoomToFit"]</button>
+                    <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
+                </div>
+                <p class="pane-help" aria-live="polite">@Status</p>
+            </section>
+            @if (Plate is { } plate)
+            {
+                <section class="pane plate-pane" aria-label="@T["PlatePane"]">
+                    <h2>@T["PlatePane"]</h2>
+                    <label class="stacked">
+                        <span>@T["MeasureFrom"]</span>
+                        <select id="measure-origin" value="@_origin" @onchange="ChooseOriginAsync">
+                            @foreach (var origin in Enum.GetValues<MeasureOrigin>())
+                            {
+                                <option value="@origin">@T[$"MeasureOrigin_{origin}"]</option>
+                            }
+                        </select>
+                    </label>
+                    <label class="inline"><input type="checkbox" id="detail-dimensions" @bind="_detailDimensions" /> @T["DetailDimensions"]</label>
+                    <div class="property-grid">
+                        <NumberField Label="@T["PlateDepth"]" Value="-plate.Bottom" Min="0" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateBottom(-v))" />
+                        <NumberField Label="@T["PlateWidth"]" Value="plate.Width" ReadOnly="true" />
+                    </div>
+                    <table class="plate-points">
+                        <thead><tr><th>#</th><th>@T["SegmentType"]</th><th>X</th><th>Y</th></tr></thead>
+                        <tbody>
+                            @{
+                                var startShown = Frame.ToDisplay(plate.Start);
+                            }
+                            <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(0)) ? "selected" : null)">
+                                <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(0))">1</button></td>
+                                <td class="detail">@T["SegmentStart"]</td>
+                                <td><NumberField Label="" Unit="@null" Value="startShown.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(0, Frame.FromDisplay(new(v, startShown.Y))))" /></td>
+                                <td><NumberField Label="" Unit="@null" Value="startShown.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(0, Frame.FromDisplay(new(startShown.X, v))))" /></td>
+                            </tr>
+                            @for (var i = 0; i < plate.Segments.Count; i++)
+                            {
+                                var index = i;
+                                var segment = plate.Segments[i];
+                                var vertex = Frame.ToDisplay(plate.UpperEdge[i + 1]);
+                                <tr class="@(_selection.Contains(EndProfileItem.PlatePoint(i + 1)) ? "selected" : null)">
+                                    <td><button type="button" class="link" @onclick="() => _selection.Select(EndProfileItem.PlatePoint(index + 1))">@(i + 2)</button></td>
+                                    <td>
+                                        <select class="segment-kind" aria-label="@T["SegmentType"]" value="@segment.Kind" @onchange="e => ChangeSegmentKind(index, e)">
+                                            @foreach (var kind in Enum.GetValues<PlateSegmentKind>())
+                                            {
+                                                <option value="@kind">@T[$"SegmentKind_{kind}"]</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    @if (segment.Kind == PlateSegmentKind.Fillet)
+                                    {
+                                        <td><NumberField Label="" Unit="R" Value="segment.EffectiveRadius" Min="0.1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Fillet(v, segment.Side)))" /></td>
+                                        <td>
+                                            <select class="segment-kind" aria-label="@T["FilletSide_Auto"]" value="@(segment.Side?.ToString() ?? "")"
+                                                    @onchange="e => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Fillet(segment.EffectiveRadius, Enum.TryParse<FilletSide>(e.Value as string, out var side) ? side : null)))">
+                                                <option value="">@T["FilletSide_Auto"]</option>
+                                                <option value="@FilletSide.Above">@T["FilletSide_Above"]</option>
+                                                <option value="@FilletSide.Below">@T["FilletSide_Below"]</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td><NumberField Label="" Unit="@null" Value="vertex.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index + 1, Frame.FromDisplay(new(v, vertex.Y))))" /></td>
+                                        <td><NumberField Label="" Unit="@null" Value="vertex.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlatePoint(index + 1, Frame.FromDisplay(new(vertex.X, v))))" /></td>
+                                    }
+                                </tr>
+                                @if (segment.Kind == PlateSegmentKind.Arc && segment.Center is { } centre)
+                                {
+                                    var centreShown = Frame.ToDisplay(centre);
+                                    <tr class="arc-centre">
+                                        <td></td>
+                                        <td class="detail">@T["ArcCentre"] (R @Mm(segment.EffectiveRadius))</td>
+                                        <td><NumberField Label="" Unit="@null" Value="centreShown.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Arc(Frame.FromDisplay(new(v, centreShown.Y)), segment.End!.Value)))" /></td>
+                                        <td><NumberField Label="" Unit="@null" Value="centreShown.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetPlateSegment(index, PlateSegment.Arc(Frame.FromDisplay(new(centreShown.X, v)), segment.End!.Value)))" /></td>
+                                    </tr>
+                                }
+                                @if (segment.Kind == PlateSegmentKind.Fillet)
+                                {
+                                    <tr class="arc-centre">
+                                        <td></td>
+                                        <td class="detail">@T["FilletEnd"]</td>
+                                        <td class="detail number">@Mm(vertex.X)</td>
+                                        <td class="detail number">@Mm(vertex.Y)</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pane-buttons">
+                        <button type="button" id="add-point" @onclick="AddPlatePoint">@T["AddPoint"]</button>
+                        <button type="button" id="delete-point" disabled="@(!_selection.Items.Any(i => i.Kind == EndProfileItemKind.PlatePoint) || plate.UpperEdge.Count <= 2)" @onclick="DeleteSelection">@T["DeletePoint"]</button>
+                    </div>
+                    <p class="pane-help">@T["PlateHelp"]</p>
+                </section>
+            }
+            <PropertyPanel Title="@SelectionTitle" Class="pane">
+                @switch (SingleSelected)
+                {
+                    case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
+                        var track = _document.Current.Tracks[item.Index];
+                        <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Offset = Frame.FromDisplayX(v) }))" />
+                        <NumberField Label="@T["Gauge"]" Value="track.Gauge" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Gauge = v }))" />
+                        <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Label = v }))" />
+                        break;
+                    case { Kind: EndProfileItemKind.ScrewHole } item when item.Index < _document.Current.ScrewHoles.Count:
+                        var hole = _document.Current.ScrewHoles[item.Index];
+                        <NumberField Label="X" Value="Frame.ToDisplayX(hole.Center.X)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Center = new(Frame.FromDisplayX(v), hole.Center.Y) }))" />
+                        <NumberField Label="Y" Value="Frame.ToDisplayY(hole.Center.Y)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Center = new(hole.Center.X, Frame.FromDisplayY(v)) }))" />
+                        <NumberField Label="@T["Diameter"]" Value="hole.Diameter" Min="0.5" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetScrewHole(item.Index, hole with { Diameter = v }))" />
+                        break;
+                    case { Kind: EndProfileItemKind.Dowel } item when item.Index < _document.Current.Dowels.Count:
+                        var dowel = _document.Current.Dowels[item.Index];
+                        <NumberField Label="X" Value="Frame.ToDisplayX(dowel.Center.X)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Center = new(Frame.FromDisplayX(v), dowel.Center.Y) }))" />
+                        <NumberField Label="Y" Value="Frame.ToDisplayY(dowel.Center.Y)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Center = new(dowel.Center.X, Frame.FromDisplayY(v)) }))" />
+                        <NumberField Label="@T["Diameter"]" Value="dowel.Diameter" Min="0.5" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetDowel(item.Index, dowel with { Diameter = v }))" />
+                        break;
+                    case null when _selection.IsEmpty:
+                        var profile = _document.Current;
+                        <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p with { Designation = v })); }" />
+                        <TextField Label="@T["Scale"]" Value="@profile.Scale" ReadOnly="true" />
+                        <TextField Label="@T["Standards"]" Value="@string.Join(", ", profile.Standards.Select(s => s.Name))" ReadOnly="true" />
+                        <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ScrewHolePattern = v }))" />
+                        <TextField Label="@T["Field_SourceTitle"]" Value="@profile.Source?.Title" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithTitle(p.Source, v) }))" />
+                        <TextField Label="@T["Field_SourceUrl"]" Value="@profile.Source?.Url" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithUrl(p.Source, v) }))" />
+                        break;
+                    default:
+                        <p class="property-note">@T.Format("SelectedCount", _selection.Count)</p>
+                        break;
+                }
+            </PropertyPanel>
+
+            <section class="pane derived" aria-label="@T["Derived"]">
+                <h2>@T["Derived"]</h2>
+                <dl class="properties">
+                    <dt>@T["PlateSize"]</dt>
+                    <dd id="plate-size">@(_derived.PlateBounds.IsEmpty ? "–" : $"{Mm(_derived.PlateWidth)} × {Mm(_derived.PlateHeight)} mm")</dd>
+                    <dt>@T["Tracks"]</dt>
+                    <dd id="track-count">@_derived.TrackCount</dd>
+                    @if (_derived.TrackCount > 0)
+                    {
+                        <dt>@T["Offsets"]</dt>
+                        <dd>@string.Join("; ", _derived.TrackOffsets.Select(Mm)) mm</dd>
+                    }
+                    @if (_derived.TrackCentreDistances.Count > 0)
+                    {
+                        <dt>c/c</dt>
+                        <dd id="centre-distances">@string.Join("; ", _derived.TrackCentreDistances.Select(Mm)) mm</dd>
+                    }
+                    <dt>@T["ScrewHoles"]</dt>
+                    <dd id="screw-hole-count">@_document.Current.ScrewHoles.Count</dd>
+                    <dt>@T["Symmetry"]</dt>
+                    <dd id="symmetry" class="@(_derived.IsSymmetric ? "symmetric" : "asymmetric")">
+                        @(_derived.IsSymmetric ? T["Symmetric"] : T.Format("AsymmetricIn", AsymmetricText))
+                    </dd>
+                </dl>
+            </section>
+        </aside>
+    </div>
+    var sheet = Sheet;
+    <div class="print-sheet" aria-hidden="true">
+        <svg class="print-drawing" viewBox="@sheet.ViewBox" preserveAspectRatio="xMidYMid meet">
+            <g transform="scale(1,-1)">
+                <EndProfileContent Profile="_document.Current" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="sheet.TextSize" />
+                @foreach (var dimension in sheet.Dimensions)
+                {
+                    <DimensionLine Dimension="dimension" TextSize="sheet.TextSize" />
+                }
+                @if (sheet.Title is { } printedTitle)
+                {
+                    <WorldText At="printedTitle.Center" Text="@printedTitle.Text" Size="printedTitle.Size" Class="ep-title" />
+                }
+            </g>
+        </svg>
+    </div>
+}
+
+@code {
+    private static readonly double SnapPixels = SnapEngine.DefaultTolerancePixels;
+
+    private readonly SelectionSet<EndProfileItem> _selection = new();
+    private readonly EndProfileScene _scene = new();
+    private readonly SnapEngine _snap = new(EndProfileScene.IndexCellSize);
+    private EditorDocument<EndProfile>? _document;
+    private EditorSession<EndProfile>? _session;
+    private SelectMoveTool<EndProfile, EndProfileItem> _select = default!;
+    private PathTool<EndProfile> _upperEdge = default!;
+    private PlaceTool<EndProfile> _screwHole = default!;
+    private PlaceTool<EndProfile> _track = default!;
+    private EndProfileTool _activeTool = EndProfileTool.Select;
+    private DrawingCanvas? _canvas;
+    private Viewport _view = default!;
+    private EndProfileProperties _derived = default!;
+    private string? _storageError;
+
+    /// <summary>The draft being edited.</summary>
+    [Parameter, EditorRequired] public Draft Draft { get; set; } = default!;
+
+    /// <summary>The standard's track colour; the default without it.</summary>
+    [Parameter] public string? TrackColor { get; set; }
+
+    /// <summary>The host's file actions and status, shown in the Archive pane.</summary>
+    [Parameter] public RenderFragment? ArchiveContent { get; set; }
+
+    /// <summary>Raised after each autosave with the updated draft, e.g. for an unsaved-changes badge.</summary>
+    [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
+
+    /// <summary>The profile as edited now.</summary>
+    public EndProfile? Current => _document?.Current;
+
+    /// <summary>Saves unsaved edits to the draft at once, e.g. before saving to a file.</summary>
+    public async Task<bool> FlushAsync() => _session is null || await _session.FlushAsync();
+
+    private double Tolerance => _view.ToWorld(SnapPixels);
+
+    /// <summary>The profile with a dragged selection shown where it is being moved.</summary>
+    private EndProfile Shown => _select.DragOffset is { } offset ? EndProfileCommands.Move([.. _selection.Items], offset).Apply(_document!.Current) : _document!.Current;
+
+    private ITool Active => _activeTool switch
+    {
+        EndProfileTool.UpperEdge => _upperEdge,
+        EndProfileTool.ScrewHole => _screwHole,
+        EndProfileTool.Track => _track,
+        _ => _select,
+    };
+
+    private PathTool<EndProfile> ActivePath => _upperEdge;
+    private PathTool<EndProfile>? ActivePathOrNull => _activeTool == EndProfileTool.UpperEdge ? _upperEdge : null;
+    private PlaceTool<EndProfile>? ActivePlaceOrNull => _activeTool switch { EndProfileTool.ScrewHole => _screwHole, EndProfileTool.Track => _track, _ => null };
+
+    private SnapResult? Snapped => ActivePathOrNull?.Snapped ?? ActivePlaceOrNull?.Snapped ?? (_activeTool == EndProfileTool.Select ? _select.Snapped : null);
+
+    /// <summary>Zoom to fit: the drawing, its dimensions and the title, with a little room around them.</summary>
+    private BoundingBox ZoomBounds =>
+        EndProfileSheet.Bounds(Shown, PlateDimensions, Title, _view.ToWorld(DimensionTextPixels)).Inflated(_view.ToWorld(ZoomMarginPixels));
+
+    private const double DimensionTextPixels = 11;
+    private const double ZoomMarginPixels = 16;
+
+    /// <summary>The title, "Standard Scale Designation", centred below the lowest dimension.</summary>
+    private LabelPlacement? Title => EndProfileLabel.Place(Shown, PlateDimensions, _view.ToWorld(DimensionTextPixels));
+
+    /// <summary>The drawing as printed, sized for the page whatever the zoom; the print styles show it instead of the editor.</summary>
+    private SheetLayout Sheet => EndProfileSheet.Create(_document!.Current, MeasureFrame.For(_document.Current, _origin), _detailDimensions);
+
+    private async Task PrintAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("print");
+        }
+        catch (JSException)
+        {
+            // Printing isn't available, e.g. in a restricted browser; nothing is lost.
+        }
+    }
+
+    /// <summary>A new upper edge without a plate gets a plate this deep below its lowest point, mm.</summary>
+    private const double DefaultPlateDepth = 100;
+
+    private PlateShape? Plate => _document is null ? null : PlateShape.From(_document.Current);
+
+    public const string MeasureOriginKey = "end-profile-measure-origin";
+
+    private MeasureOrigin _origin = MeasureOrigin.RailTopCentre;
+    private bool _detailDimensions = true;
+
+    /// <summary>The frame measures are shown and typed in.</summary>
+    private MeasureFrame Frame => MeasureFrame.For(_document!.Current, _origin);
+
+    /// <summary>The dimensions drawn automatically, following a drag and the measure origin.</summary>
+    private IReadOnlyList<Dimension> PlateDimensions =>
+        EndProfileDimensions.Create(Shown, MeasureFrame.For(Shown, _origin), _view.ToWorld(28), _detailDimensions);
+
+    private async Task ChooseOriginAsync(ChangeEventArgs e)
+    {
+        if (!Enum.TryParse<MeasureOrigin>(e.Value as string, out var origin)) return;
+        _origin = origin;
+        try
+        {
+            await Workbench.SetValueAsync(MeasureOriginKey, $"\"{origin}\"");
+        }
+        catch (StorageException)
+        {
+            // Only the preference is lost; the editor still measures from the chosen origin.
+        }
+    }
+
+    /// <summary>Default radius of a new fillet, mm.</summary>
+    private const double DefaultFilletRadius = 10;
+
+    /// <summary>
+    /// Changes the kind of segment <paramref name="index"/>, keeping where it ends: a new arc gets a centre below the
+    /// chord with the chord's length as radius, so it bulges up; a new fillet gets the default radius.
+    /// </summary>
+    private void ChangeSegmentKind(int index, ChangeEventArgs e)
+    {
+        if (Plate is not { } plate || !Enum.TryParse<PlateSegmentKind>(e.Value as string, out var kind) || kind == plate.Segments[index].Kind) return;
+        var from = plate.UpperEdge[index];
+        var to = plate.UpperEdge[index + 1];
+        var segment = kind switch
+        {
+            PlateSegmentKind.Arc when (to - from).Length > 0 => PlateSegment.Arc(Point.Lerp(from, to, 0.5) - (to - from).LeftNormal * (Math.Sqrt(3) / 2), to),
+            PlateSegmentKind.Fillet => PlateSegment.Fillet(DefaultFilletRadius),
+            _ => PlateSegment.Line(to),
+        };
+        Apply(EndProfileCommands.SetPlateSegment(index, segment));
+    }
+
+    /// <summary>Adds a point after the selected point, or in the middle of the upper edge.</summary>
+    private void AddPlatePoint()
+    {
+        if (Plate is not { } plate) return;
+        var selected = _selection.Items.Where(i => i.Kind == EndProfileItemKind.PlatePoint).Select(i => i.Index).DefaultIfEmpty((plate.UpperEdge.Count - 1) / 2).Max();
+        Apply(EndProfileCommands.AddPlatePoint(Math.Min(selected, plate.UpperEdge.Count - 2)));
+        _selection.Select(EndProfileItem.PlatePoint(Math.Min(selected, plate.UpperEdge.Count - 2) + 1));
+    }
+
+    private EndProfileItem? SingleSelected => _selection.Count == 1 ? _selection.Items[0] : null;
+
+    private string SelectionTitle => SingleSelected is { } item ? T[$"EpItem_{item.Kind}"] : T["EndProfileProperties"];
+
+    /// <summary>The elements that differ from their mirror image, as shown in the symmetry indicator (EP-7).</summary>
+    private static readonly FitDifferences[] SymmetryElements =
+        [FitDifferences.TrackPositions, FitDifferences.ScrewHoles, FitDifferences.GroundLine, FitDifferences.Outline, FitDifferences.Dowels];
+
+    private string AsymmetricText =>
+        string.Join(", ", SymmetryElements.Where(d => _derived.AsymmetricElements.HasFlag(d)).Select(d => T[$"Difference_{d}"]));
+
+    private string Status => _activeTool switch
+    {
+        EndProfileTool.UpperEdge => T[_upperEdge.IsDrawing ? "UpperEdgeHelpDrawing" : "UpperEdgeHelp"],
+        EndProfileTool.ScrewHole => T["ScrewHoleHelp"],
+        EndProfileTool.Track => T["TrackHelp"],
+        _ => T["EndProfileSelectHelp"],
+    };
+
+    private string AutosaveText =>
+        _storageError is not null ? T.Format("StorageError", _storageError)
+        : _session?.Autosave.LastError is { } error ? T.Format("StorageError", error.Message)
+        : _session?.Autosave.IsPending == true ? T["UnsavedChanges"]
+        : T["SavedInBrowser"];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var profile = Model.Files.DrawingFileSerializer.DeserializeEndProfile(Draft.Json);
+        // The stored plate is the source; its outline and ground line are generated, so they always match it.
+        if (profile.Plate is { } storedPlate) profile = profile with { Outline = storedPlate.Outline(), GroundLine = storedPlate.GroundLine() };
+        _document = new(profile);
+        _view = Viewport.Fit(EndProfileSheet.Create(profile, MeasureFrame.For(profile, _origin), _detailDimensions).Bounds, 800, 400);
+        _select = new(_document, _selection, _scene, _snap);
+        _upperEdge = new(_document, _snap, path => EndProfileCommands.SetUpperEdge(path.Tessellate(PlateShape.ArcTolerance).Points, DefaultPlateDepth))
+        {
+            AllowsClosed = false,
+        };
+        _screwHole = new(_document, _snap, EndProfileCommands.AddScrewHole);
+        _track = new(_document, _snap, p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauge = profile.Tracks.FirstOrDefault()?.Gauge ?? 16.5 }))
+        {
+            Constrain = p => new(p.X, 0),
+        };
+        _document.Changed += OnDocumentChanged;
+        Refresh();
+        var key = Draft.Id.ToString();
+        try
+        {
+            if (await Workbench.GetValueAsync(MeasureOriginKey) is { } stored && Enum.TryParse<MeasureOrigin>(stored.Trim('"'), out var origin)) _origin = origin;
+            if (await EditorSession<EndProfile>.LoadStateAsync(Workbench, key) is { } state)
+            {
+                _view = _view with { Center = new(state.CenterX, state.CenterY), Scale = state.Scale };
+                _selection.Set(state.Selection.Select(s => EndProfileItem.TryParse(s, out var item) ? (EndProfileItem?)item : null).OfType<EndProfileItem>()
+                    .Where(i => EndProfileScene.Items(profile).Contains(i)));
+            }
+            _session = new(key, _document, SaveDraftAsync, Workbench, Reload, Time)
+            {
+                CaptureState = () => new(_view.Center.X, _view.Center.Y, _view.Scale, [.. _selection.Items.Select(i => i.ToString())]),
+            };
+            _session.Autosave.Saved += OnAutosaveChanged;
+            _session.Autosave.SaveFailed += OnAutosaveFailed;
+        }
+        catch (StorageException ex)
+        {
+            _storageError = ex.Message;
+        }
+    }
+
+    private async Task SaveDraftAsync(EndProfile profile, CancellationToken cancellationToken)
+    {
+        var draft = await Documents.UpdateAsync(Draft.Id, Model.Files.DrawingFileSerializer.Serialize(profile), cancellationToken);
+        await InvokeAsync(() => DraftChanged.InvokeAsync(draft));
+    }
+
+    private void OnAutosaveChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnAutosaveFailed(object? sender, Exception e) => _ = InvokeAsync(StateHasChanged);
+
+    private void Choose(EndProfileTool tool)
+    {
+        Active.Cancel();
+        _activeTool = tool;
+    }
+
+    private void ToggleArc(ChangeEventArgs e)
+    {
+        var mode = e.Value is true ? PathStepMode.TangentArc : PathStepMode.Line;
+        _upperEdge.Mode = mode;
+    }
+
+    private void OnDown(CanvasPointerEventArgs e) => Active.PointerDown(e.ToToolPointer(Tolerance));
+
+    private void OnMove(CanvasPointerEventArgs e)
+    {
+        _snap.GridSpacing = NiceSteps.GridSpacing(_view.Scale);
+        Active.PointerMove(e.ToToolPointer(Tolerance));
+    }
+
+    private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(Tolerance));
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        var command = e.CtrlKey || e.MetaKey;
+        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
+        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
+        else if (Active.KeyDown(e.Key)) return;
+        else if (e.Key is "Delete" or "Backspace" && _activeTool == EndProfileTool.Select) DeleteSelection();
+    }
+
+    private void Apply(IEditCommand<EndProfile> command)
+    {
+        Active.Cancel();
+        _document!.Apply(command);
+    }
+
+    private void Undo()
+    {
+        Active.Cancel();
+        _document!.Undo();
+    }
+
+    private void Redo()
+    {
+        Active.Cancel();
+        _document!.Redo();
+    }
+
+    private void DeleteSelection()
+    {
+        if (_selection.IsEmpty) return;
+        var items = _selection.Items.ToList();
+        _selection.Clear();
+        Apply(EndProfileCommands.Delete(items));
+    }
+
+    private void MirrorHoles() => Apply(EndProfileCommands.MirrorScrewHoles(FitTolerances.Default.Joint));
+
+    private void OnDocumentChanged(object? sender, EventArgs e)
+    {
+        // Indexes refer to the current lists, so a selection that no longer exists is cleared.
+        var items = EndProfileScene.Items(_document!.Current).ToHashSet();
+        if (_selection.Items.Any(i => !items.Contains(i))) _selection.Clear();
+        Refresh();
+    }
+
+    private void Refresh()
+    {
+        _snap.Clear();
+        _snap.AddRange(_scene.AllSnapTargets(_document!.Current));
+        _derived = EndProfileAnalysis.Analyze(_document.Current);
+    }
+
+    private static DocumentReference? WithTitle(DocumentReference? source, string? title) =>
+        title is null && source?.Url is null ? null : (source ?? new()) with { Title = title };
+
+    private static DocumentReference? WithUrl(DocumentReference? source, string? url) =>
+        url is null && source?.Title is null ? null : (source ?? new()) with { Url = url };
+
+    private static string Mm(double value) => NumberInput.Format(value, 1, CultureInfo.CurrentCulture);
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_document is not null) _document.Changed -= OnDocumentChanged;
+        if (_session is not null)
+        {
+            _session.Autosave.Saved -= OnAutosaveChanged;
+            _session.Autosave.SaveFailed -= OnAutosaveFailed;
+            await _session.DisposeAsync();
+        }
+    }
+
+    private enum EndProfileTool
+    {
+        Select,
+        UpperEdge,
+        Track,
+        ScrewHole,
+    }
+}

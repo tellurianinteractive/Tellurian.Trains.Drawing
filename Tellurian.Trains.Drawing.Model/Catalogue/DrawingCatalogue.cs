@@ -38,6 +38,27 @@ public sealed record DrawingCatalogue
     /// <summary>The end profiles that belong to the standard.</summary>
     public IEnumerable<EndProfile> EndProfilesOf(Guid standardId) => EndProfiles.Where(p => p.Standards.Any(s => s.Id == standardId));
 
+    /// <summary>The catalogue with <paramref name="standard"/> added, or replacing the standard with the same id.</summary>
+    public DrawingCatalogue With(ModuleStandard standard) => this with { Standards = [.. Standards.Where(s => s.Id != standard.Id), standard] };
+
+    /// <summary>The catalogue with <paramref name="addOn"/> added, or replacing the add-on with the same id.</summary>
+    public DrawingCatalogue With(StandardAddOn addOn) => this with { AddOns = [.. AddOns.Where(a => a.Id != addOn.Id), addOn] };
+
+    /// <summary>The catalogue with <paramref name="entry"/> added, replacing <paramref name="replacing"/> and any override of the same pair.</summary>
+    public DrawingCatalogue With(EndProfileCompatibilityOverride entry, EndProfileCompatibilityOverride? replacing = null) => this with
+    {
+        Overrides = [.. Overrides.Where(o => o != replacing && !o.Applies(entry.FirstEndProfileId, entry.SecondEndProfileId)), entry],
+    };
+
+    /// <summary>The catalogue with <paramref name="profile"/> added, or replacing the end profile with the same id.</summary>
+    public DrawingCatalogue With(EndProfile profile) => this with { EndProfiles = [.. EndProfiles.Where(p => p.Id != profile.Id), profile] };
+
+    public DrawingCatalogue WithoutStandard(Guid id) => this with { Standards = [.. Standards.Where(s => s.Id != id)] };
+
+    public DrawingCatalogue WithoutAddOn(Guid id) => this with { AddOns = [.. AddOns.Where(a => a.Id != id)] };
+
+    public DrawingCatalogue WithoutOverride(EndProfileCompatibilityOverride entry) => this with { Overrides = [.. Overrides.Where(o => o != entry)] };
+
     /// <summary>
     /// The catalogue to work with: the built-in entries and the user's own (CA-2), which are kept apart.
     /// A user entry replaces a built-in one with the same id (or, for scales, short name).

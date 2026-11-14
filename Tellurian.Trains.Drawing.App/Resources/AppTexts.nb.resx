@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppName" xml:space="preserve"><value>Module Draw</value></data>
+  <data name="AppDescription" xml:space="preserve"><value>Tegn endeprofiler, moduler og hallplaner for modultreff med modelljernbane.</value></data>
+  <data name="Version" xml:space="preserve"><value>Versjon {0}</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Language" xml:space="preserve"><value>Språk</value></data>
+  <data name="Open" xml:space="preserve"><value>Åpne…</value></data>
+  <data name="Drafts" xml:space="preserve"><value>Fortsett arbeidet</value></data>
+  <data name="NoDrafts" xml:space="preserve"><value>Det finnes ikke noe pågående arbeid.</value></data>
+  <data name="RecentFiles" xml:space="preserve"><value>Nylige filer</value></data>
+  <data name="NoRecentFiles" xml:space="preserve"><value>Ingen filer er åpnet ennå.</value></data>
+  <data name="UnsavedChanges" xml:space="preserve"><value>Ulagrede endringer</value></data>
+  <data name="Saved" xml:space="preserve"><value>Lagret</value></data>
+  <data name="NotSavedToFile" xml:space="preserve"><value>Ikke lagret til fil</value></data>
+  <data name="SaveReminder" xml:space="preserve"><value>Utkast finnes bare i denne nettleseren. Lagre arbeidet ditt til en fil.</value></data>
+  <data name="PickAgain" xml:space="preserve"><value>Denne nettleseren kan ikke åpne filer på nytt selv. Bruk Åpne… og velg {0}.</value></data>
+  <data name="FileNotAvailable" xml:space="preserve"><value>{0} er ikke lenger tilgjengelig. Bruk Åpne… for å velge den.</value></data>
+  <data name="CouldNotOpen" xml:space="preserve"><value>Disse filene kunne ikke åpnes:</value></data>
+  <data name="Save" xml:space="preserve"><value>Lagre</value></data>
+  <data name="SaveDownload" xml:space="preserve"><value>Lagre (last ned)</value></data>
+  <data name="SaveAs" xml:space="preserve"><value>Lagre som…</value></data>
+  <data name="DownloadNote" xml:space="preserve"><value>Denne nettleseren kan ikke lagre i den eksisterende filen: Lagre laster ned en ny fil. Velg den gamle filen for å erstatte den.</value></data>
+  <data name="Discard" xml:space="preserve"><value>Forkast utkastet</value></data>
+  <data name="DiscardUnsaved" xml:space="preserve"><value>Forkaste de ulagrede endringene i {0}?</value></data>
+  <data name="Changed" xml:space="preserve"><value>Endret</value></data>
+  <data name="File" xml:space="preserve"><value>Fil</value></data>
+  <data name="DraftNotFound" xml:space="preserve"><value>Denne tegningen er ikke lenger åpen.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>Dette er en skrivebeskyttet visning. Redigeringsverktøyet for denne typen tegning kommer i en senere versjon.</value></data>
+  <data name="StorageError" xml:space="preserve"><value>Nettleserens lagring kunne ikke brukes: {0}</value></data>
+  <data name="FileError" xml:space="preserve"><value>Filoperasjonen mislyktes: {0}</value></data>
+  <data name="Kind_EndProfile" xml:space="preserve"><value>Endeprofil</value></data>
+  <data name="Kind_Module" xml:space="preserve"><value>Modul</value></data>
+  <data name="Kind_Hall" xml:space="preserve"><value>Hall</value></data>
+  <data name="Kind_HallPlan" xml:space="preserve"><value>Hallplan</value></data>
+  <data name="Kind_Catalogue" xml:space="preserve"><value>Katalog</value></data>
+  <data name="NewModule" xml:space="preserve"><value>Ny modul…</value></data>
+  <data name="NewModuleTitle" xml:space="preserve"><value>Ny modul</value></data>
+  <data name="NewModuleName" xml:space="preserve"><value>Ny modul</value></data>
+  <data name="Template" xml:space="preserve"><value>Mal</value></data>
+  <data name="Template_Straight" xml:space="preserve"><value>Rett</value></data>
+  <data name="Template_Curve" xml:space="preserve"><value>Kurve</value></data>
+  <data name="Template_StraightAndCurve" xml:space="preserve"><value>Rett og kurve</value></data>
+  <data name="Name" xml:space="preserve"><value>Navn</value></data>
+  <data name="Standard" xml:space="preserve"><value>Standard</value></data>
+  <data name="EndProfile" xml:space="preserve"><value>Endeprofil</value></data>
+  <data name="OneTrack" xml:space="preserve"><value>1 spor</value></data>
+  <data name="TrackCount" xml:space="preserve"><value>{0} spor</value></data>
+  <data name="StraightLength" xml:space="preserve"><value>Rett lengde (mm)</value></data>
+  <data name="Radius" xml:space="preserve"><value>Radius (mm)</value></data>
+  <data name="Angle" xml:space="preserve"><value>Vinkel (°)</value></data>
+  <data name="Width" xml:space="preserve"><value>Bredde (mm)</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Tomt: endeplatens bredde</value></data>
+  <data name="CurveDirection" xml:space="preserve"><value>Kurveretning</value></data>
+  <data name="CurveDirection_Left" xml:space="preserve"><value>Venstre</value></data>
+  <data name="CurveDirection_Right" xml:space="preserve"><value>Høyre</value></data>
+  <data name="StraightPosition" xml:space="preserve"><value>Rett del</value></data>
+  <data name="StraightPosition_Before" xml:space="preserve"><value>Før kurven</value></data>
+  <data name="StraightPosition_After" xml:space="preserve"><value>Etter kurven</value></data>
+  <data name="StraightPosition_Split" xml:space="preserve"><value>Halvt før, halvt etter</value></data>
+  <data name="Create" xml:space="preserve"><value>Opprett</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+  <data name="NotDrawn" xml:space="preserve"><value>Modulen kunne ikke tegnes:</value></data>
+  <data name="DrawnWithNotes" xml:space="preserve"><value>Modulen ble tegnet. Kontroller disse merknadene:</value></data>
+  <data name="OpenDrawing" xml:space="preserve"><value>Åpne tegningen</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Skriv inn et navn.</value></data>
+  <data name="EndProfileRequired" xml:space="preserve"><value>Velg en endeprofil.</value></data>
+  <data name="MustBePositive" xml:space="preserve"><value>{0} må være større enn 0.</value></data>
+  <data name="AngleRange" xml:space="preserve"><value>{0} må være større enn 0 og høyst 360.</value></data>
+  <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillegg og endeprofiler. De innebygde oppføringene følger med appen; dine egne oppføringer lagres i denne nettleseren og kan eksporteres som en fil.</value></data>
+  <data name="ImportFiles" xml:space="preserve"><value>Importer filer…</value></data>
+  <data name="ImportArchive" xml:space="preserve"><value>Importer ZIP…</value></data>
+  <data name="ImportFolder" xml:space="preserve"><value>Importer mappe…</value></data>
+  <data name="ExportCatalogue" xml:space="preserve"><value>Eksporter katalogen din…</value></data>
+  <data name="ImportPreview" xml:space="preserve"><value>Endeprofiler som skal importeres</value></data>
+  <data name="NoEndProfilesFound" xml:space="preserve"><value>Filene inneholder ingen endeprofiler.</value></data>
+  <data name="Import" xml:space="preserve"><value>Importer</value></data>
+  <data name="ImportStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Differences" xml:space="preserve"><value>Forskjeller</value></data>
+  <data name="ImportStatus_New" xml:space="preserve"><value>Ny</value></data>
+  <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Finnes allerede i katalogen</value></data>
+  <data name="ImportStatus_Changed" xml:space="preserve"><value>Avviker fra katalogen</value></data>
+  <data name="ImportChoiceNote" xml:space="preserve"><value>Avkryssede profiler legges til i katalogen din. En profil som avviker, erstatter den i katalogen og beholder dens id, slik at moduler som bruker den, får den importerte tegningen.</value></data>
+  <data name="ImportSelected" xml:space="preserve"><value>Importer {0} avkryssede</value></data>
+  <data name="Imported" xml:space="preserve"><value>{0} endeprofil(er) importert.</value></data>
+  <data name="Exported" xml:space="preserve"><value>Katalogen din ble lagret som {0}.</value></data>
+  <data name="Change_Designation" xml:space="preserve"><value>betegnelse</value></data>
+  <data name="Change_Scale" xml:space="preserve"><value>skala</value></data>
+  <data name="Change_Standards" xml:space="preserve"><value>standarder</value></data>
+  <data name="Change_Tracks" xml:space="preserve"><value>spor</value></data>
+  <data name="Change_ScrewHoles" xml:space="preserve"><value>skruehull</value></data>
+  <data name="Change_Dowels" xml:space="preserve"><value>styrepinner</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>platens omriss</value></data>
+  <data name="Change_GroundLine" xml:space="preserve"><value>terrenglinje</value></data>
+  <data name="Change_Source" xml:space="preserve"><value>kilde</value></data>
+  <data name="EndProfiles" xml:space="preserve"><value>Endeprofiler</value></data>
+  <data name="Scale" xml:space="preserve"><value>Skala</value></data>
+  <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
+  <data name="Tracks" xml:space="preserve"><value>Spor</value></data>
+  <data name="Origin" xml:space="preserve"><value>Opprinnelse</value></data>
+  <data name="Origin_BuiltIn" xml:space="preserve"><value>Innebygd</value></data>
+  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
+  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, erstatter innebygd</value></data>
+  <data name="Copy" xml:space="preserve"><value>Kopier</value></data>
+  <data name="CopySuffix" xml:space="preserve"><value>kopi</value></data>
+  <data name="Copied" xml:space="preserve"><value>Kopiert som {0}.</value></data>
+  <data name="Delete" xml:space="preserve"><value>Slett</value></data>
+  <data name="RestoreBuiltIn" xml:space="preserve"><value>Gjenopprett innebygd</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Slette {0} fra katalogen din?</value></data>
+  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Fjerne din versjon av {0} og bruke den innebygde igjen?</value></data>
+  <data name="Gauge" xml:space="preserve"><value>Sporvidde (mm)</value></data>
+  <data name="RailTopHeight" xml:space="preserve"><value>Skinnetopp (mm)</value></data>
+  <data name="AddOns" xml:space="preserve"><value>Tillegg</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>En ny versjon er tilgjengelig.</value></data>
+  <data name="UpdateNow" xml:space="preserve"><value>Oppdater</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Oppdateringen ble utsatt fordi arbeidet ditt ikke kunne lagres: {0}</value></data>
+  <data name="Edit" xml:space="preserve"><value>Rediger</value></data>
+  <data name="EditEntry" xml:space="preserve"><value>Rediger {0}</value></data>
+  <data name="NewStandard" xml:space="preserve"><value>Ny standard…</value></data>
+  <data name="NewAddOn" xml:space="preserve"><value>Nytt tillegg…</value></data>
+  <data name="NewOverride" xml:space="preserve"><value>Nytt unntak…</value></data>
+  <data name="EditOverride" xml:space="preserve"><value>Rediger unntak</value></data>
+  <data name="AddOn" xml:space="preserve"><value>Tillegg</value></data>
+  <data name="Overrides" xml:space="preserve"><value>Unntak for tilpasning</value></data>
+  <data name="NoOverrides" xml:space="preserve"><value>Det finnes ingen unntak. Skjøter vurderes bare etter reglene.</value></data>
+  <data name="OverrideIntro" xml:space="preserve"><value>Et unntak erstatter reglenes resultat for et par endeprofiler, for kjente særtilfeller. Bruk det bare der reglene gir feil svar.</value></data>
+  <data name="EditBuiltInNote" xml:space="preserve"><value>Denne oppføringen er innebygd. Når du lagrer, opprettes din egen versjon, som erstatter den innebygde til du gjenoppretter den.</value></data>
+  <data name="EntryNotFound" xml:space="preserve"><value>Katalogoppføringen finnes ikke.</value></data>
+  <data name="None" xml:space="preserve"><value>(ingen)</value></data>
+  <data name="RailSystem_TwoRail" xml:space="preserve"><value>Toskinne</value></data>
+  <data name="RailSystem_ThreeRail" xml:space="preserve"><value>Treskinne</value></data>
+  <data name="Fit_Fits" xml:space="preserve"><value>Passer</value></data>
+  <data name="Fit_FitsWithMismatch" xml:space="preserve"><value>Passer med avvik</value></data>
+  <data name="Fit_FitsWithClamps" xml:space="preserve"><value>Passer med tvinger</value></data>
+  <data name="Fit_Incompatible" xml:space="preserve"><value>Passer ikke</value></data>
+  <data name="Field_ShortName" xml:space="preserve"><value>Kortnavn</value></data>
+  <data name="Field_Scale" xml:space="preserve"><value>Skala</value></data>
+  <data name="Field_RailSystem" xml:space="preserve"><value>Skinnesystem</value></data>
+  <data name="Field_NormalGauge" xml:space="preserve"><value>Normalsporvidde (mm)</value></data>
+  <data name="Field_NarrowGauge" xml:space="preserve"><value>Smalsporvidde (mm)</value></data>
+  <data name="Field_RailTopHeight" xml:space="preserve"><value>Skinnetopp over gulv (mm)</value></data>
+  <data name="Field_MinimumClearance" xml:space="preserve"><value>Minste avstand (mm)</value></data>
+  <data name="Field_OperatorSpaceDepth" xml:space="preserve"><value>Dybde på operatørområde (mm)</value></data>
+  <data name="Field_DefaultCurveRadius" xml:space="preserve"><value>Standardradius (mm)</value></data>
+  <data name="Field_MinimumReverseCurveRadius" xml:space="preserve"><value>Minste radius for S-kurver (mm)</value></data>
+  <data name="Field_DefaultSingleTrackEndProfileId" xml:space="preserve"><value>Standard endeprofil, enkeltspor</value></data>
+  <data name="Field_DefaultDoubleTrackEndProfileId" xml:space="preserve"><value>Standard endeprofil, dobbeltspor</value></data>
+  <data name="Field_TrackColor" xml:space="preserve"><value>Sporfarge</value></data>
+  <data name="Field_TrackSystem" xml:space="preserve"><value>Sporsystem</value></data>
+  <data name="Field_Couplings" xml:space="preserve"><value>Koblinger</value></data>
+  <data name="Field_Electricity" xml:space="preserve"><value>Strømforsyning</value></data>
+  <data name="Field_Wheelset" xml:space="preserve"><value>Hjulsett</value></data>
+  <data name="Field_SourceTitle" xml:space="preserve"><value>Kildedokument</value></data>
+  <data name="Field_SourceUrl" xml:space="preserve"><value>Kilde-URL</value></data>
+  <data name="Field_SourceRevision" xml:space="preserve"><value>Kildens revisjon</value></data>
+  <data name="Field_BaseStandardId" xml:space="preserve"><value>Grunnstandard</value></data>
+  <data name="Field_Description" xml:space="preserve"><value>Beskrivelse</value></data>
+  <data name="Field_FirstEndProfileId" xml:space="preserve"><value>Første endeprofil</value></data>
+  <data name="Field_SecondEndProfileId" xml:space="preserve"><value>Andre endeprofil</value></data>
+  <data name="Field_Fit" xml:space="preserve"><value>Resultat</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Merknad</value></data>
+  <data name="Problem_ShortNameMissing" xml:space="preserve"><value>{0}: skriv inn et navn.</value></data>
+  <data name="Problem_ShortNameInUse" xml:space="preserve"><value>{0}: navnet er allerede i bruk.</value></data>
+  <data name="Problem_ScaleUnknown" xml:space="preserve"><value>{0}: velg en skala fra katalogen.</value></data>
+  <data name="Problem_NotPositive" xml:space="preserve"><value>{0} må være større enn 0.</value></data>
+  <data name="Problem_EndProfileNotOfStandard" xml:space="preserve"><value>{0}: velg en endeprofil for denne standarden.</value></data>
+  <data name="Problem_TrackColorInvalid" xml:space="preserve"><value>{0} må være en farge som #1f5fbf.</value></data>
+  <data name="Problem_BaseStandardUnknown" xml:space="preserve"><value>{0}: velg en standard fra katalogen.</value></data>
+  <data name="Problem_EndProfileUnknown" xml:space="preserve"><value>{0}: velg en endeprofil fra katalogen.</value></data>
+  <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} må være forskjellig fra den første endeprofilen.</value></data>
+  <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} må ha samme skala som den første endeprofilen.</value></data>
+  <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: det finnes allerede et unntak for disse endeprofilene.</value></data>
+  <data name="Sandbox" xml:space="preserve"><value>Testflate for tegneflaten</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>En testtegning for redigeringen: klikk eller dra en ramme for å merke, dra for å flytte (Skift: rett, Alt: uten festing), Ctrl+Z for å angre. Panorer med midtknappen eller mellomrom + dra, zoom med hjulet eller ved å knipe.</value></data>
+  <data name="ZoomToFit" xml:space="preserve"><value>Zoom til alt</value></data>
+  <data name="Undo" xml:space="preserve"><value>Angre</value></data>
+  <data name="Redo" xml:space="preserve"><value>Gjør om</value></data>
+  <data name="SelectedCount" xml:space="preserve"><value>{0} merket</value></data>
+  <data name="RailTop" xml:space="preserve"><value>Skinnetopp</value></data>
+  <data name="CannotShow" xml:space="preserve"><value>Tegningen kan ikke vises.</value></data>
+  <data name="Tool_Select" xml:space="preserve"><value>Merk</value></data>
+  <data name="Tool_Path" xml:space="preserve"><value>Tegn</value></data>
+  <data name="Tool_Measure" xml:space="preserve"><value>Mål</value></data>
+  <data name="Tool_Dimension" xml:space="preserve"><value>Målsett</value></data>
+  <data name="ArcMode" xml:space="preserve"><value>Buer</value></data>
+  <data name="PathHelp" xml:space="preserve"><value>Klikk for å starte en linje.</value></data>
+  <data name="PathHelpDrawing" xml:space="preserve"><value>Klikk for å legge til punkter; klikk på starten for å lukke, Enter for å avslutte, Tilbake for å fjerne et punkt, Escape for å avbryte.</value></data>
+  <data name="DimensionHelp" xml:space="preserve"><value>Klikk på to punkter og deretter der mållinjen skal ligge.</value></data>
+  <data name="MeasureResult" xml:space="preserve"><value>Avstand {0} mm (dx {1}, dy {2}), retning {3}°</value></data>
+  <data name="ResetSandbox" xml:space="preserve"><value>Tilbakestill</value></data>
+  <data name="SavedInBrowser" xml:space="preserve"><value>Lagret i nettleseren</value></data>
+  <data name="Properties" xml:space="preserve"><value>Egenskaper</value></data>
+  <data name="NothingSelected" xml:space="preserve"><value>Ingenting er merket.</value></data>
+  <data name="InvalidNumber" xml:space="preserve"><value>Ikke et gyldig tall.</value></data>
+  <data name="Depth" xml:space="preserve"><value>Dybde (mm)</value></data>
+  <data name="NewEndProfile" xml:space="preserve"><value>Ny endeprofil…</value></data>
+  <data name="NewEndProfileTitle" xml:space="preserve"><value>Ny endeprofil</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start med en rektangulær endeplate med spor; tegn deretter omriss, terrenglinje og skruehull i redigeringen.</value></data>
+  <data name="Designation" xml:space="preserve"><value>Betegnelse</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Platens bredde (mm)</value></data>
+  <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Overkant under skinnetopp (mm)</value></data>
+  <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Underkant under skinnetopp (mm)</value></data>
+  <data name="NumberOfTracks" xml:space="preserve"><value>Antall spor</value></data>
+  <data name="CentreDistance" xml:space="preserve"><value>Sporavstand, c/c (mm)</value></data>
+  <data name="CopyScrewHolesFrom" xml:space="preserve"><value>Kopier skruehull fra</value></data>
+  <data name="DesignationRequired" xml:space="preserve"><value>Skriv inn en betegnelse.</value></data>
+  <data name="PlateEdgesOrder" xml:space="preserve"><value>Underkanten må ligge lenger under skinnetopp enn overkanten.</value></data>
+  <data name="TrackCountRange" xml:space="preserve"><value>Antallet spor må være 0–8.</value></data>
+  <data name="EpTool_Select" xml:space="preserve"><value>Merk</value></data>
+  <data name="EpTool_Outline" xml:space="preserve"><value>Omriss</value></data>
+  <data name="EpTool_GroundLine" xml:space="preserve"><value>Terrenglinje</value></data>
+  <data name="EpTool_Track" xml:space="preserve"><value>Spor</value></data>
+  <data name="EpTool_ScrewHole" xml:space="preserve"><value>Skruehull</value></data>
+  <data name="EpItem_Track" xml:space="preserve"><value>Spor</value></data>
+  <data name="EpItem_ScrewHole" xml:space="preserve"><value>Skruehull</value></data>
+  <data name="EpItem_Dowel" xml:space="preserve"><value>Styrepinne</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>Endeplatens omriss</value></data>
+  <data name="EpItem_GroundLine" xml:space="preserve"><value>Terrenglinje</value></data>
+  <data name="EndProfileProperties" xml:space="preserve"><value>Endeprofil</value></data>
+  <data name="MirrorScrewHoles" xml:space="preserve"><value>Speil skruehull</value></data>
+  <data name="Offset" xml:space="preserve"><value>Avstand fra midten (mm)</value></data>
+  <data name="Diameter" xml:space="preserve"><value>Diameter (mm)</value></data>
+  <data name="Label" xml:space="preserve"><value>Etikett</value></data>
+  <data name="ScrewHolePattern" xml:space="preserve"><value>Skruehullsmønster</value></data>
+  <data name="Derived" xml:space="preserve"><value>Avledede egenskaper</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Platens størrelse</value></data>
+  <data name="Offsets" xml:space="preserve"><value>Sporenes plassering</value></data>
+  <data name="ScrewHoles" xml:space="preserve"><value>Skruehull</value></data>
+  <data name="Symmetry" xml:space="preserve"><value>Symmetri</value></data>
+  <data name="Symmetric" xml:space="preserve"><value>Symmetrisk</value></data>
+  <data name="AsymmetricIn" xml:space="preserve"><value>Asymmetrisk: {0}</value></data>
+  <data name="Difference_TrackPositions" xml:space="preserve"><value>spor</value></data>
+  <data name="Difference_ScrewHoles" xml:space="preserve"><value>skruehull</value></data>
+  <data name="Difference_GroundLine" xml:space="preserve"><value>terrenglinje</value></data>
+  <data name="Difference_Outline" xml:space="preserve"><value>omriss</value></data>
+  <data name="Difference_Dowels" xml:space="preserve"><value>styrepinner</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Klikk på endeplatens hjørner; klikk på det første hjørnet for å lukke omrisset. Det nye omrisset erstatter det gamle.</value></data>
+  <data name="GroundLineHelp" xml:space="preserve"><value>Klikk på terrengets punkter fra venstre mot høyre; trykk Enter for å avslutte. Den erstatter den gamle terrenglinjen.</value></data>
+  <data name="ScrewHoleHelp" xml:space="preserve"><value>Klikk der et skruehull skal sitte; det festes til kanter, andre hull og rutenettet.</value></data>
+  <data name="TrackHelp" xml:space="preserve"><value>Klikk der et spor skal ligge; skinnetoppen ligger alltid på referanselinjen.</value></data>
+  <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klikk for å merke, dra for å flytte (Skift: rett, Alt: uten festing), Delete for å slette. Sett utenfra modulen.</value></data>
+  <data name="SaveToCatalogue" xml:space="preserve"><value>Lagre i min katalog</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} er lagret i katalogen din.</value></data>
+  <data name="EditAsDraft" xml:space="preserve"><value>Rediger</value></data>
+  <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
+  <data name="EditPane" xml:space="preserve"><value>Rediger</value></data>
+  <data name="EpTool_UpperEdge" xml:space="preserve"><value>Overkant</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klikk på platens overkant fra venstre mot høyre; trykk Enter for å avslutte. Sidene følger første og siste punkt.</value></data>
+  <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klikk for å legge til punkter; Enter avslutter, Tilbake fjerner et punkt, Escape avbryter.</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Plate</value></data>
+  <data name="PlateDepth" xml:space="preserve"><value>Underkant under skinnetopp (mm)</value></data>
+  <data name="AddPoint" xml:space="preserve"><value>Legg til punkt</value></data>
+  <data name="DeletePoint" xml:space="preserve"><value>Slett punkt</value></data>
+  <data name="PlateHelp" xml:space="preserve"><value>Overkanten er også terrenglinjen som sammenlignes ved skjøter. Dra punktene i tegningen eller skriv dem inn i mm; Y er negativ under skinnetopp.</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Platepunkt</value></data>
+  <data name="MeasureFrom" xml:space="preserve"><value>Mål fra</value></data>
+  <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>Skinnetopp og midtlinje</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Platens nedre venstre hjørne</value></data>
+  <data name="DetailDimensions" xml:space="preserve"><value>Målsett skruehull og punkter</value></data>
+  <data name="OffsetFromLeft" xml:space="preserve"><value>Avstand fra venstre kant (mm)</value></data>
+  <data name="SegmentType" xml:space="preserve"><value>Type</value></data>
+  <data name="SegmentStart" xml:space="preserve"><value>Start</value></data>
+  <data name="SegmentKind_Line" xml:space="preserve"><value>Linje</value></data>
+  <data name="SegmentKind_Arc" xml:space="preserve"><value>Bue</value></data>
+  <data name="SegmentKind_Fillet" xml:space="preserve"><value>Avrunding</value></data>
+  <data name="ArcCentre" xml:space="preserve"><value>Sentrum</value></data>
+  <data name="FilletEnd" xml:space="preserve"><value>Slutter ved</value></data>
+  <data name="FilletSide_Above" xml:space="preserve"><value>Sentrum over</value></data>
+  <data name="FilletSide_Below" xml:space="preserve"><value>Sentrum under</value></data>
+  <data name="FilletSide_Auto" xml:space="preserve"><value>Sentrum: beste tilpasning</value></data>
+  <data name="Print" xml:space="preserve"><value>Skriv ut</value></data>
+  <data name="CreatingModule" xml:space="preserve"><value>Vent litt. Oppretter modulen {0}…</value></data>
+  <data name="InformationTitle" xml:space="preserve"><value>Velkommen til Module Draw</value></data>
+  <data name="InformationIntro" xml:space="preserve"><value>Module Draw er for å tegne endeprofiler, moduler og hallplaner for modultreff.</value></data>
+  <data name="InformationPreRelease" xml:space="preserve"><value>Dette er en forhåndsversjon for utprøving. Du kan tegne endeprofiler og lage moduler fra maler. Redigering av moduler, haller og hallplaner kommer senere.</value></data>
+  <data name="InformationStorage" xml:space="preserve"><value>Utkast lagres automatisk i denne nettleseren mens du arbeider. Lagre tegningene dine som filer for å beholde og dele dem.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Bruk en datamaskin, helst med Chrome eller Edge. Module Draw virker uten nett og kan installeres som en app.</value></data>
+  <data name="InformationContinue" xml:space="preserve"><value>Kom i gang</value></data>
+</root>

@@ -1,0 +1,305 @@
+@page "/catalogue"
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@inject CatalogueService Catalogues
+@inject BrowserDialogs Dialogs
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
+
+<PageTitle>@T["Catalogue"]</PageTitle>
+
+<h1>@T["Catalogue"]</h1>
+<p>@T["CatalogueIntro"]</p>
+
+<div class="toolbar">
+    <button type="button" id="import-files" @onclick="() => ImportAsync(ImportSourceKind.Files)">@T["ImportFiles"]</button>
+    <button type="button" id="import-archive" @onclick="() => ImportAsync(ImportSourceKind.Archive)">@T["ImportArchive"]</button>
+    <button type="button" id="import-folder" @onclick="() => ImportAsync(ImportSourceKind.Folder)">@T["ImportFolder"]</button>
+    <button type="button" id="export" @onclick="ExportAsync">@T["ExportCatalogue"]</button>
+</div>
+
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (status is not null)
+{
+    <p class="status" role="status">@status</p>
+}
+
+@if (preview is not null)
+{
+    <section class="import-preview">
+        <h2>@T["ImportPreview"]</h2>
+        @if (preview.Problems.Count > 0)
+        {
+            <div class="error">
+                <p>@T["CouldNotOpen"]</p>
+                <ul>
+                    @foreach (var problem in preview.Problems)
+                    {
+                        <li><b>@problem.Name</b>: @problem.Message</li>
+                    }
+                </ul>
+            </div>
+        }
+        @if (preview.Items.Count == 0)
+        {
+            <p class="empty">@T["NoEndProfilesFound"]</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr><th>@T["Import"]</th><th>@T["EndProfile"]</th><th>@T["ImportStatus"]</th><th>@T["Differences"]</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in preview.Items)
+                    {
+                        <tr class="@item.Status.ToString().ToLowerInvariant()">
+                            <td>
+                                <input type="checkbox" aria-label="@item.Imported.Designation" disabled="@(item.Status == EndProfileImportStatus.Unchanged)"
+                                       checked="@chosen.Contains(item)" @onchange="e => Choose(item, e.Value is true)" />
+                            </td>
+                            <td>@item.Imported.Designation <span class="detail">@item.Imported.Scale</span></td>
+                            <td>@T[$"ImportStatus_{item.Status}"]</td>
+                            <td>@ChangesText(item)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p class="note">@T["ImportChoiceNote"]</p>
+        }
+        <div class="toolbar">
+            <button type="button" class="primary" id="apply-import" disabled="@(chosen.Count == 0)" @onclick="ApplyImportAsync">@T.Format("ImportSelected", chosen.Count)</button>
+            <button type="button" @onclick="() => preview = null">@T["Cancel"]</button>
+        </div>
+    </section>
+}
+
+@if (catalogue is not null && user is not null)
+{
+    <section class="end-profiles">
+        <h2>@T["EndProfiles"]</h2>
+        <table class="table">
+            <thead>
+                <tr><th>@T["EndProfile"]</th><th>@T["Scale"]</th><th>@T["Standards"]</th><th>@T["Tracks"]</th><th>@T["Origin"]</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var profile in catalogue.EndProfiles.OrderBy(p => p.Scale).ThenBy(p => p.Designation))
+                {
+                    var origin = CatalogueService.Origin(CatalogueService.BuiltIn.FindEndProfile(profile.Id) is not null, user.FindEndProfile(profile.Id) is not null);
+                    <tr>
+                        <td>@profile.Designation</td>
+                        <td>@profile.Scale</td>
+                        <td>@string.Join(", ", profile.Standards.Select(s => s.Name))</td>
+                        <td>@profile.Tracks.Count</td>
+                        <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                        <td class="actions">
+                            <button type="button" class="link" @onclick="() => CopyAsync(profile)">@T["Copy"]</button>
+                            @if (origin != CatalogueOrigin.BuiltIn)
+                            {
+                                <button type="button" class="link edit-profile" @onclick="() => EditAsync(profile)">@T["EditAsDraft"]</button>
+                                <button type="button" class="link" @onclick="() => DeleteAsync(profile, origin)">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section class="standards">
+        <h2>@T["Standards"]</h2>
+        <div class="toolbar"><a class="button" id="new-standard" href="catalogue/standard/new">@T["NewStandard"]</a></div>
+        <table class="table">
+            <thead>
+                <tr><th>@T["Standard"]</th><th>@T["Scale"]</th><th>@T["Gauge"]</th><th>@T["RailTopHeight"]</th><th>@T["Origin"]</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var standard in catalogue.Standards.OrderBy(s => s.Scale).ThenBy(s => s.ShortName))
+                {
+                    var origin = CatalogueService.Origin(CatalogueService.BuiltIn.FindStandard(standard.Id) is not null, user.FindStandard(standard.Id) is not null);
+                    <tr>
+                        <td>@standard.ShortName</td>
+                        <td>@standard.Scale</td>
+                        <td>@standard.NormalGauge.ToString("0.#")</td>
+                        <td>@standard.RailTopHeight.ToString("0")</td>
+                        <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                        <td class="actions">
+                            <a href="catalogue/standard/@standard.Id">@T["Edit"]</a>
+                            @if (origin != CatalogueOrigin.BuiltIn)
+                            {
+                                <button type="button" class="link" @onclick="() => RemoveAsync(standard.ShortName, origin, () => Catalogues.DeleteStandardAsync(standard.Id))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section class="add-ons">
+        <h2>@T["AddOns"]</h2>
+        <div class="toolbar"><a class="button" id="new-addon" href="catalogue/addon/new">@T["NewAddOn"]</a></div>
+        <table class="table">
+            <thead>
+                <tr><th>@T["AddOn"]</th><th>@T["Field_BaseStandardId"]</th><th>@T["Field_Description"]</th><th>@T["Origin"]</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var addOn in catalogue.AddOns.OrderBy(a => a.ShortName))
+                {
+                    var origin = CatalogueService.Origin(CatalogueService.BuiltIn.AddOns.Any(a => a.Id == addOn.Id), user.AddOns.Any(a => a.Id == addOn.Id));
+                    <tr>
+                        <td>@addOn.ShortName</td>
+                        <td>@catalogue.FindStandard(addOn.BaseStandardId)?.ShortName</td>
+                        <td>@addOn.Description</td>
+                        <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                        <td class="actions">
+                            <a href="catalogue/addon/@addOn.Id">@T["Edit"]</a>
+                            @if (origin != CatalogueOrigin.BuiltIn)
+                            {
+                                <button type="button" class="link" @onclick="() => RemoveAsync(addOn.ShortName, origin, () => Catalogues.DeleteAddOnAsync(addOn.Id))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section class="overrides">
+        <h2>@T["Overrides"]</h2>
+        <div class="toolbar"><a class="button" id="new-override" href="catalogue/override">@T["NewOverride"]</a></div>
+        @if (catalogue.Overrides.Count == 0)
+        {
+            <p class="empty">@T["NoOverrides"]</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr><th>@T["Field_FirstEndProfileId"]</th><th>@T["Field_SecondEndProfileId"]</th><th>@T["Field_Fit"]</th><th>@T["Field_Note"]</th><th>@T["Origin"]</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in catalogue.Overrides)
+                    {
+                        var origin = CatalogueService.Origin(
+                            CatalogueService.BuiltIn.Overrides.Any(o => o.Applies(entry.FirstEndProfileId, entry.SecondEndProfileId)),
+                            user.Overrides.Contains(entry));
+                        var name = $"{catalogue.FindEndProfile(entry.FirstEndProfileId)?.Designation} – {catalogue.FindEndProfile(entry.SecondEndProfileId)?.Designation}";
+                        <tr>
+                            <td>@catalogue.FindEndProfile(entry.FirstEndProfileId)?.Designation</td>
+                            <td>@catalogue.FindEndProfile(entry.SecondEndProfileId)?.Designation</td>
+                            <td>@T[$"Fit_{entry.Fit}"]</td>
+                            <td>@entry.Note</td>
+                            <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
+                            <td class="actions">
+                                <a href="@OverrideEditorPage.Url(entry)">@T["Edit"]</a>
+                                @if (origin != CatalogueOrigin.BuiltIn)
+                                {
+                                    <button type="button" class="link" @onclick="() => RemoveAsync(name, origin, () => Catalogues.DeleteOverrideAsync(entry))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+}
+
+@code {
+    private DrawingCatalogue? catalogue;
+    private DrawingCatalogue? user;
+    private CatalogueImportPreview? preview;
+    private HashSet<EndProfileImportItem> chosen = [];
+    private string? message;
+    private string? status;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            user = await Catalogues.GetUserAsync();
+            catalogue = await Catalogues.GetAsync();
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private string ChangesText(EndProfileImportItem item) =>
+        string.Join(", ", Enum.GetValues<EndProfileChanges>().Where(c => c != EndProfileChanges.None && item.Changes.HasFlag(c)).Select(c => T[$"Change_{c}"]));
+
+    private void Choose(EndProfileImportItem item, bool isChosen)
+    {
+        if (isChosen) chosen.Add(item);
+        else chosen.Remove(item);
+    }
+
+    private async Task ImportAsync(ImportSourceKind source) => await RunAsync(async () =>
+    {
+        var result = await Catalogues.PickImportAsync(source);
+        if (result is null) return;
+        preview = result;
+        chosen = [.. result.Items.Where(i => i.Status == EndProfileImportStatus.New)];
+    });
+
+    private async Task ApplyImportAsync() => await RunAsync(async () =>
+    {
+        var count = chosen.Count;
+        await Catalogues.ApplyImportAsync(chosen);
+        preview = null;
+        chosen = [];
+        status = T.Format("Imported", count);
+    });
+
+    private async Task ExportAsync() => await RunAsync(async () =>
+    {
+        if (await Catalogues.ExportAsync() is { } saved) status = T.Format("Exported", saved.Name);
+    });
+
+    private async Task CopyAsync(EndProfile profile) => await RunAsync(async () =>
+    {
+        var copy = await Catalogues.CopyEndProfileAsync(profile.Id, CatalogueService.CopyName(profile.Designation, profile.Scale, catalogue!, T["CopySuffix"]));
+        status = T.Format("Copied", copy.Designation);
+    });
+
+    /// <summary>Opens one of the user's end profiles in the editor, as a draft (EP-1).</summary>
+    private async Task EditAsync(EndProfile profile) => await RunAsync(async () =>
+    {
+        var draft = await Documents.EditAsync(DrawingFileSerializer.Serialize(profile));
+        Navigation.NavigateTo(DrawingPage.Url(draft.Id));
+    });
+
+    private Task DeleteAsync(EndProfile profile, CatalogueOrigin origin) =>
+        RemoveAsync(profile.Designation, origin, () => Catalogues.DeleteEndProfileAsync(profile.Id));
+
+    /// <summary>Removes a user entry after asking; for a replacement, the built-in entry is used again.</summary>
+    private async Task RemoveAsync(string name, CatalogueOrigin origin, Func<Task> remove) => await RunAsync(async () =>
+    {
+        var question = T.Format(origin == CatalogueOrigin.ReplacesBuiltIn ? "ConfirmRestoreBuiltIn" : "ConfirmDelete", name);
+        if (!await Dialogs.ConfirmAsync(question)) return;
+        await remove();
+    });
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        message = null;
+        status = null;
+        try
+        {
+            await action();
+        }
+        catch (Exception ex) when (ex is FileOperationException or StorageException)
+        {
+            message = T.Format(ex is FileOperationException ? "FileError" : "StorageError", ex.Message);
+        }
+        await LoadAsync();
+    }
+}

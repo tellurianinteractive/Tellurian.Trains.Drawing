@@ -1,0 +1,121 @@
+@page "/catalogue/override"
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@inject CatalogueService Catalogues
+@inject NavigationManager Navigation
+
+<PageTitle>@Title</PageTitle>
+
+<h1>@Title</h1>
+<p class="note">@T["OverrideIntro"]</p>
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (catalogue is not null)
+{
+    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+        <label>
+            <span>@T["Field_FirstEndProfileId"]</span>
+            <select id="first" @bind="firstId">
+                @foreach (var profile in Profiles)
+                {
+                    <option value="@profile.Id">@profile.Designation (@profile.Scale)</option>
+                }
+            </select>
+        </label>
+        <label>
+            <span>@T["Field_SecondEndProfileId"]</span>
+            <select id="second" @bind="secondId">
+                @foreach (var profile in Profiles)
+                {
+                    <option value="@profile.Id">@profile.Designation (@profile.Scale)</option>
+                }
+            </select>
+        </label>
+        <label>
+            <span>@T["Field_Fit"]</span>
+            <select id="fit" @bind="fit">
+                @foreach (var value in Enum.GetValues<JointFit>())
+                {
+                    <option value="@value">@T[$"Fit_{value}"]</option>
+                }
+            </select>
+        </label>
+        <label><span>@T["Field_Note"]</span><textarea rows="2" @bind="note"></textarea></label>
+
+        <ProblemList Problems="problems" />
+
+        <div class="toolbar">
+            <button type="submit" class="primary">@T["Save"]</button>
+            <a class="button" href="catalogue">@T["Cancel"]</a>
+        </div>
+    </form>
+}
+
+@code {
+    /// <summary>The pair of the override to edit; both null for a new override.</summary>
+    [SupplyParameterFromQuery] public Guid? First { get; set; }
+    [SupplyParameterFromQuery] public Guid? Second { get; set; }
+
+    private DrawingCatalogue? catalogue;
+    private EndProfileCompatibilityOverride? original;
+    private Guid firstId;
+    private Guid secondId;
+    private JointFit fit = JointFit.FitsWithClamps;
+    private string? note;
+    private IReadOnlyList<CatalogueProblem> problems = [];
+    private string? message;
+
+    public static string Url(EndProfileCompatibilityOverride entry) =>
+        $"catalogue/override?first={entry.FirstEndProfileId}&second={entry.SecondEndProfileId}";
+
+    private string Title => original is null ? T["NewOverride"] : T["EditOverride"];
+
+    private IEnumerable<EndProfile> Profiles => catalogue?.EndProfiles.OrderBy(p => p.Scale).ThenBy(p => p.Designation) ?? Enumerable.Empty<EndProfile>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            catalogue = await Catalogues.GetAsync();
+            original = First is { } a && Second is { } b ? catalogue.Overrides.FirstOrDefault(o => o.Applies(a, b)) : null;
+            if (First is not null && original is null)
+            {
+                message = T["EntryNotFound"];
+                catalogue = null;
+                return;
+            }
+            var profiles = Profiles.ToList();
+            firstId = original?.FirstEndProfileId ?? profiles.FirstOrDefault()?.Id ?? Guid.Empty;
+            secondId = original?.SecondEndProfileId ?? profiles.Skip(1).FirstOrDefault()?.Id ?? firstId;
+            fit = original?.Fit ?? JointFit.FitsWithClamps;
+            note = original?.Note;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        var entry = new EndProfileCompatibilityOverride
+        {
+            FirstEndProfileId = firstId,
+            SecondEndProfileId = secondId,
+            Fit = fit,
+            Note = string.IsNullOrWhiteSpace(note) ? null : note.Trim(),
+        };
+        try
+        {
+            problems = await Catalogues.SaveOverrideAsync(entry, original);
+            if (problems.Count == 0) Navigation.NavigateTo("catalogue");
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+}

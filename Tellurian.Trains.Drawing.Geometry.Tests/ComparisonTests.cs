@@ -45,6 +45,19 @@ public sealed class ComparisonTests
     }
 
     [TestMethod]
+    public void IsWithinAgreesWithTheMaximumDeviation()
+    {
+        var symmetric = new Polyline([new(-200, 0), new(-100, 20), new(100, 20), new(200, 0)], false);
+        var asymmetric = new Polyline([new(-200, 0), new(-100, 30), new(100, 20), new(200, 0)], false);
+        var shortLine = new Polyline([new(0, 0), new(100, 0)], false);
+        var longLine = new Polyline([new(0, 0), new(150, 0)], false);
+        var pairs = new[] { (symmetric, Mirror.AboutCentreLine(symmetric)), (asymmetric, Mirror.AboutCentreLine(asymmetric)), (shortLine, longLine), (longLine, shortLine) };
+        foreach (var (first, second) in pairs)
+            foreach (var tolerance in new[] { 0.5, 6.0, 49.0, 51.0 })
+                Assert.AreEqual(ShapeComparison.MaximumDeviation(first, second, 0.1).IsWithin(tolerance), ShapeComparison.IsWithin(first, second, tolerance, 0.1), $"Tolerance {tolerance}.");
+    }
+
+    [TestMethod]
     public void SampleSpacingMustBePositive() =>
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
             ShapeComparison.MaximumDeviation(new([new(0, 0), new(1, 0)], false), new([new(0, 0), new(1, 0)], false), 0));

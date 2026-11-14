@@ -106,13 +106,15 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 **Exit criteria:** ≥ 90 % line coverage on Geometry. Benchmarks for the distance checks on 300 tessellated outlines are under the NF-2 budget.
 **Requirements:** foundation for EP-7/8, MD-4..7, VA-1, VA-3, VA-5..7, NF-2, NF-5, NF-8.
 
-### Phase 2 – Domain model, fit evaluator, catalogue and file format (≈2–3 weeks)
+### Phase 2 – Domain model, fit evaluator, catalogue and file format (≈2–3 weeks) — ✅ done 2026-11-14
 1. Model records:
    - Scale, ModuleStandard, **StandardAddOn** (base standard), EndProfileCompatibilityOverride;
    - **EndProfile drawing**: outline, ground line, tracks (offset, gauge, rail top), screw holes, dowels, dimensions, labels, and the fallback screw-hole pattern identifier;
    - Owner, Module (shared properties, incl. add-ons met) → **ModuleVariant** (configuration label, default flag, optional Registry id) → **Section** (outline), **InternalJoint** (optional free internal end profile), Exit (outer ends only, with profile orientation and rail-top offset, 0 = standard height), TrackElement hierarchy (straight, arc, turnout variants, crossing, double slip, buffer stop), **OperatorSpace** (polygon), **PublicSide** (edge references), **DuckUnderArea** (polygon, optional clear height), Label;
    - Hall, Obstacle, Door, NoGoZone;
    - HallPlan (primary + accepted standards, preferred add-ons), Placement (with leg adjustment), Joint (fit, join method Bolted/Clamped, override flag, number of clamps), **PublicArea** (polygon), **WalkingPath** (centre line + width), **Acknowledgement** (finding type, involved placements, state fingerprint, note, time).
+
+   *As built:* the stored placement properties (variant, entry/exit exit, leg adjustment, note) are on `LineEntry`, inside `Layout` → `Line`, because poses are computed from the layout's anchor (spec §3). A computed `Placement` comes with the layout engine in Phase 9. `Joint` stores only the planner's choices (join-method override, number of clamps, note); the fit is evaluated, not stored. The anchor lock is on `Layout`.
 2. **End profile analysis**: derive plate width/height, track offsets and c/c, screw-hole positions and symmetry (drawing vs its own mirror image, listing the asymmetric elements) (EP-7 logic).
 3. **Joint fit evaluator** (spec §3.2), a pure function `(endA + orientation, endB + orientation, overrides, tolerances) → (Fit, JoinMethod, differences)`.
    - Rules are evaluated in order: mirror A → tracks → screw holes (with identifier fallback) → ground line → fits (plate outline/height is ignored; all positions relative to rail top). Overrides are applied last.
@@ -145,7 +147,7 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 **Exit criteria:** end profiles and a module can be created from templates in code, saved to a file and loaded back identically. The fit evaluator classifies the built-in profile pairs as expected.
 **Requirements:** CA-1, CA-2 (logic), EP-2/EP-7 (logic), MD-3 (logic), MD-10 (logic), §6 file format, EX-4 (logic), EX-7.
 
-### Phase 3 – Files, workbench storage and app shell (≈1–2 weeks)
+### Phase 3 – Files, workbench storage and app shell (≈1–2 weeks) — code complete 2026-11-14; manual exit check pending
 **Files are the primary result; IndexedDB is the workbench** (UseCases.md, spec §6).
 1. File service: open, save, save as for all file kinds, using the File System Access API with a fallback. Import from **ZIP archives** and **folders** (EX-9).
 2. Workbench over IndexedDB:
@@ -162,6 +164,8 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 7. **Safe reload (AP-7)**: one `SafeReload` service that is used for every reload the app starts itself (language change, update). It flushes all open drafts to IndexedDB, waits for confirmation, stores the editor state (open documents, variant, selection, view), then reloads. On start it restores the editor state. If flushing fails, it cancels the reload and offers Save. Tests cover: a language change with unsaved edits in two open drawings, an update with an unsaved hall plan, and blocked storage.
 
 **Exit criteria:** create a module from a template via the UI and save it as a file. Close the app with unsaved changes and resume the draft. Re-open the saved file from the recent files. Import end profiles from a ZIP archive.
+
+*As built:* the file service has two implementations chosen at start-up (File System Access API; upload/download). ZIP and folder import, drawing identity, module templates (MD-3), end profile import with a choice per profile (UC-2) and catalogue validation live in `Model`. The app has the start page, a placeholder drawing page, the new-module page, the catalogue page with editors for standards, add-ons and overrides, export of the user catalogue (CA-3), the update prompt and `SafeReload`, and texts in all five languages. Restoring the editor state after a reload (AP-7) comes with the editors from Phase 4: until then, drafts are kept and offered on the start page. The exit criteria are covered by unit and bUnit tests with fake files; the real file pickers still need a manual check in Chromium and in Firefox or Safari.
 **Requirements:** EP-1 (library part), MD-1, CA-2, CA-3, EX-4, EX-9, AP-1, AP-2 (infrastructure), AP-7.
 
 ### Phase 4 – Shared drawing canvas and editor framework (≈2–3 weeks)
@@ -176,9 +180,9 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 4. Autosave (debounced, per document) and recovery of unsaved work on start.
 5. Property panel framework (forms bound to the selected object, numeric input with units).
 
-6. All components live in the `Components` library. **Read-only display components** for end profiles, modules and hall plans (EX-8), taking the model or the file JSON, with layer options. A minimal Blazor Server test host (in the Components test project or a sample) verifies that the display components render in Interactive Server mode without JS (NF-10).
+6. All components live in the `Components` library. **Read-only display components** for end profiles, modules and hall plans (EX-8), taking the model or the file JSON, with layer options. The library stays render-mode agnostic so that this app (static WebAssembly) and the Module Registry (Blazor Server) can both use it (NF-10): no WebAssembly-only APIs, only asynchronous JS interop and only after first render, and read-only display without JS. A static-rendering test in the Components tests (`HtmlRenderer`, a JS runtime that fails on any call) checks every display component.
 
-**Exit criteria:** a test document of simple shapes can be panned, zoomed, selected, moved with snapping and undone, with the mouse; pan and pinch-zoom also work with touch, for viewing. A module drawing renders read-only in both a WebAssembly and a Server host.
+**Exit criteria:** a test document of simple shapes can be panned, zoomed, selected, moved with snapping and undone, with the mouse; pan and pinch-zoom also work with touch, for viewing. A module drawing renders read-only in the app and in the static-rendering test, without JS.
 **Requirements:** AP-3, AP-4, MD-11, MD-12, EP-10 (dimensions), HP-6 (framework), EX-8 (framework), NF-10.
 
 ### Phase 5 – End profile editor and compare view (≈2 weeks)
@@ -258,6 +262,12 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 
    **Inspect joint (HP-12):** opens the compare view for the joint's two exits in their actual orientations.
 8. Embedding of module drawings (with revision), end profiles and catalogue entries in the hall plan file. Difference resolution on open (EX-5).
+   **Lean hall plan drafts.** The embedded modules are read-only, so autosave must not rewrite them on every change (a 300-module plan is several MB):
+   - module drawings and their end profiles are stored once in IndexedDB, keyed by module id and revision, when a module is added to the plan or updated to a newer revision (HP-16);
+   - the hall plan draft holds only the plan's own data (layouts, lines, entries with flips and leg adjustments, joints, public areas, walking paths, acknowledgements, settings), referring to modules by id and revision;
+   - the complete, self-contained file is assembled only when saving to a file, and split again when a file is opened as a draft;
+   - `AutosaveScheduler` and `EditorSession` need no change: the hall plan editor passes a save function that writes the lean draft. `DrawingDocuments` learns the two-part draft for save and open;
+   - tests: autosave after a move writes only the lean draft; adding or updating a module writes its snapshot once; save to file and reopen round-trips identically.
 9. **Read-only modules (HP-16)**:
    - placements reference an immutable embedded module snapshot;
    - the hall plan editor exposes only placement and joint commands, so there are no module-editing commands in the plan;

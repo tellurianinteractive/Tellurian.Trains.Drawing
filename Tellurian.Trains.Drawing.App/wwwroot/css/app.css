@@ -101,6 +101,623 @@ code {
     z-index: 1000;
 }
 
-#update-available[hidden] {
+#update-available {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ---------- App shell ---------- */
+:root {
+    --app-accent: #03173d;
+    --app-primary: #1b6ec2;
+    --app-muted: #5f6b7a;
+    --app-border: #d6dbe1;
+    --app-warning-bg: #fff4ce;
+    --app-error: #b32121;
+    color-scheme: light;
+}
+
+html, body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: #1d232b;
+    background: #fff;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--app-accent);
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+    .app-header a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+.app-name {
+    font-weight: 600;
+}
+
+.app-nav {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+}
+
+    .app-nav a.active {
+        text-decoration: underline;
+    }
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-main {
+    padding: 1rem 1.5rem;
+    max-width: 60rem;
+}
+
+h1:focus {
+    outline: none;
+}
+
+button {
+    font: inherit;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    background: #f5f7fa;
+    cursor: pointer;
+}
+
+    button.primary, a.button.primary {
+        background: var(--app-primary);
+        border-color: var(--app-primary);
+        color: #fff;
+    }
+
+    button.link {
+        border: none;
+        background: none;
+        padding: 0;
+        color: var(--app-primary);
+        text-decoration: underline;
+    }
+
+.toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.item-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .item-list li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.75rem;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--app-border);
+    }
+
+.kind, .detail, .empty, .version, .note {
+    color: var(--app-muted);
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.05rem 0.5rem;
+    border-radius: 1rem;
+}
+
+    .badge.unsaved {
+        background: var(--app-warning-bg);
+    }
+
+    .badge.saved {
+        background: #dff3e4;
+    }
+
+.reminder {
+    background: var(--app-warning-bg);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+}
+
+.error {
+    color: var(--app-error);
+}
+
+.properties {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+}
+
+    .properties dt {
+        color: var(--app-muted);
+    }
+
+    .properties dd {
+        margin: 0;
+    }
+
+a.button {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    background: #f5f7fa;
+    color: inherit;
+    text-decoration: none;
+}
+
+.form {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 32rem;
+}
+
+    .form label {
+        display: grid;
+        gap: 0.2rem;
+    }
+
+    .form .choices label {
+        display: inline-flex;
+        gap: 0.3rem;
+        margin-right: 1rem;
+    }
+
+    .form input:not([type=radio]), .form select {
+        font: inherit;
+        padding: 0.3rem 0.4rem;
+    }
+
+.notes {
+    background: var(--app-warning-bg);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .table th, .table td {
+        text-align: left;
+        padding: 0.3rem 0.6rem 0.3rem 0;
+        border-bottom: 1px solid var(--app-border);
+        vertical-align: baseline;
+    }
+
+    .table th {
+        color: var(--app-muted);
+        font-weight: 500;
+    }
+
+    .table .actions {
+        white-space: nowrap;
+    }
+
+        .table .actions button + button {
+            margin-left: 0.75rem;
+        }
+
+    .table tr.unchanged {
+        color: var(--app-muted);
+    }
+
+.badge.builtin {
+    background: #eef1f5;
+}
+
+.badge.user, .badge.replacesbuiltin {
+    background: #e3eefb;
+}
+
+.status {
+    color: #1d6b33;
+}
+
+.app-main:has(.table) {
+    max-width: 75rem;
+}
+
+.sandbox-canvas {
+    height: 60vh;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}
+
+.sandbox-shape {
+    fill: rgba(27, 110, 194, 0.08);
+    stroke: #1b6ec2;
+    stroke-width: 2;
+}
+
+.sandbox-shape.open {
+    fill: none;
+}
+
+.sandbox-shape {
+    cursor: pointer;
+}
+
+.sandbox-shape.selected {
+    stroke: #c24b1b;
+    stroke-width: 3;
+    fill: rgba(194, 75, 27, 0.08);
+}
+
+.sandbox-shape.open.selected {
+    fill: none;
+}
+
+.sandbox-rubber-band {
+    fill: rgba(27, 110, 194, 0.08);
+    stroke: #1b6ec2;
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+}
+
+.sandbox-snap {
+    fill: none;
+    stroke: #c24b1b;
+    stroke-width: 2;
+}
+
+.drawing-view {
+    height: 55vh;
+    margin: 1rem 0;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}
+
+.sandbox-preview {
+    fill: none;
+    stroke: #1b6ec2;
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+}
+
+.sandbox-measure {
+    stroke: #c24b1b;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+}
+
+.sandbox-close {
+    fill: none;
+    stroke: #2f8f46;
+    stroke-width: 2;
+}
+
+label.inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.sandbox-status {
+    min-height: 2.6em;
+    margin: 0.4rem 0 0;
+}
+
+.sandbox-editor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    gap: 1rem;
+}
+
+@media (max-width: 50rem) {
+    .sandbox-editor {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sandbox-properties {
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    padding: 0.75rem;
+    align-self: start;
+}
+
+/* ---------- Editors ---------- */
+:root {
+    --app-header-height: 2.75rem;
+}
+
+.app-header {
+    min-height: var(--app-header-height);
+    box-sizing: border-box;
+}
+
+/* Editors use the whole window below the header: the drawing gets all the space the panes leave. */
+.app-main:has(.editor-layout) {
+    max-width: none;
+    padding: 0.5rem;
+}
+
+.editor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    gap: 0.5rem;
+    height: calc(100dvh - var(--app-header-height) - 1rem);
+}
+
+.editor-canvas {
+    min-height: 0;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}
+
+.editor-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+    .editor-side input, .editor-side select, .editor-side textarea {
+        box-sizing: border-box;
+    }
+
+    /* Fields shrink to the column; labels wrap rather than push the inputs out. */
+    .editor-side .pane .property-grid {
+        grid-template-columns: minmax(4.5rem, 40%) minmax(0, 1fr);
+    }
+
+.pane {
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.9rem;
+}
+
+    .pane h2 {
+        font-size: 0.95rem;
+        margin: 0 0 0.4rem;
+    }
+
+    .pane p {
+        margin: 0.3rem 0;
+    }
+
+.pane-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0.35rem 0;
+}
+
+    .pane-buttons button {
+        padding: 0.2rem 0.55rem;
+        font-size: 0.85rem;
+    }
+
+.pane-help {
+    color: var(--app-muted);
+    font-size: 0.8rem;
+}
+
+.archive-name .kind {
+    font-size: 0.8rem;
+}
+
+.derived .symmetric {
+    color: #1d6b33;
+}
+
+.derived .asymmetric {
+    color: #a05a00;
+}
+
+@media (max-width: 55rem) {
+    .editor-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .editor-canvas {
+        height: 60vh;
+    }
+
+    .editor-side {
+        overflow: visible;
+    }
+}
+
+.editor-rubber-band {
+    fill: rgba(27, 110, 194, 0.08);
+    stroke: #1b6ec2;
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+}
+
+.editor-preview {
+    fill: none;
+    stroke: #1b6ec2;
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+}
+
+.editor-place {
+    fill: rgba(27, 110, 194, 0.15);
+    stroke: #1b6ec2;
+    stroke-width: 1.5;
+}
+
+.editor-snap {
+    fill: none;
+    stroke: #c24b1b;
+    stroke-width: 2;
+}
+
+
+.plate-points {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.4rem;
+}
+
+    .plate-points th {
+        text-align: left;
+        font-weight: 500;
+        color: var(--app-muted);
+        font-size: 0.8rem;
+    }
+
+    .plate-points td {
+        padding: 0.1rem 0.15rem;
+    }
+
+    .plate-points td:first-child {
+        width: 1.6rem;
+    }
+
+    .plate-points label {
+        display: none;
+    }
+
+    .plate-points tr.selected {
+        background: #fbe9e1;
+    }
+
+label.stacked {
+    display: grid;
+    gap: 0.15rem;
+    margin-bottom: 0.35rem;
+}
+
+    label.stacked span {
+        color: var(--app-muted);
+    }
+
+    label.stacked select {
+        font: inherit;
+        padding: 0.2rem;
+    }
+
+.plate-points .segment-kind {
+    font: inherit;
+    font-size: 0.8rem;
+    padding: 0.1rem;
+    max-width: 5.5rem;
+}
+
+.plate-points tr.arc-centre td {
+    font-size: 0.8rem;
+    padding-top: 0;
+}
+
+.plate-points td.number {
+    text-align: right;
+    padding-right: 1.9rem;
+}
+
+.ep-title {
+    font-weight: 600;
+}
+
+/* The drawing as printed: hidden on screen; printed alone, fitted to a landscape page. */
+.print-sheet {
     display: none;
+}
+
+@media print {
+    @page {
+        size: landscape;
+        margin: 10mm;
+    }
+
+    .app-header, .editor-layout, #update-available, #blazor-error-ui {
+        display: none !important;
+    }
+
+    .app-main:has(.print-sheet) {
+        padding: 0;
+        margin: 0;
+    }
+
+    .print-sheet {
+        display: block;
+        height: 185mm;
+        break-inside: avoid;
+    }
+
+    .print-drawing {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+        /* Line widths in print points, whatever the drawing's scale. */
+        .print-drawing * {
+            vector-effect: non-scaling-stroke;
+        }
+}
+
+/* A wait message over the page while something slow runs, e.g. drawing a new module. */
+.busy-overlay {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    cursor: progress;
+}
+
+.busy-message {
+    background: #fff;
+    border: 1px solid var(--app-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    padding: 1rem 1.5rem;
+    margin: 0 1rem;
+    font-size: 1.05rem;
+}
+
+button.danger, a.button.danger {
+    background: var(--app-error);
+    border-color: var(--app-error);
+    color: #fff;
+}
+
+/* The buttons of a list row, at its right end. */
+.item-list .actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-left: auto;
+}
+
+    .item-list .actions button, .item-list .actions a.button {
+        padding: 0.2rem 0.65rem;
+        font-size: 0.9rem;
+    }
+
+.app-version {
+    font-weight: normal;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.information {
+    max-width: 40rem;
 }
