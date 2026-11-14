@@ -1,12 +1,159 @@
 @page "/"
+@inject IWorkbench Workbench
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
 
-<PageTitle>Tellurian Trains Drawing</PageTitle>
+<PageTitle>@T["AppName"]</PageTitle>
 
-<h1>Tellurian Trains Drawing</h1>
+<h1>@T["AppName"]</h1>
+<p>@T["AppDescription"]</p>
 
-<p>Draw end profiles, modules and hall plans for model railway module meetings.</p>
-<p class="version">Version @Version</p>
+<div class="toolbar">
+    <button type="button" class="primary" @onclick="OpenAsync">@T["Open"]</button>
+</div>
+
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (problems.Count > 0)
+{
+    <div class="error" role="alert">
+        <p>@T["CouldNotOpen"]</p>
+        <ul>
+            @foreach (var problem in problems)
+            {
+                <li><b>@problem.Name</b>: @problem.Message</li>
+            }
+        </ul>
+    </div>
+}
+
+<section class="drafts">
+    <h2>@T["Drafts"]</h2>
+    @if (drafts is null)
+    {
+    }
+    else if (drafts.Count == 0)
+    {
+        <p class="empty">@T["NoDrafts"]</p>
+    }
+    else
+    {
+        @if (drafts.Any(d => d.HasUnsavedChanges))
+        {
+            <p class="reminder">@T["SaveReminder"]</p>
+        }
+        <ul class="item-list">
+            @foreach (var draft in drafts)
+            {
+                <li>
+                    <a href="@DrawingPage.Url(draft.Id)">@draft.Name</a>
+                    <span class="kind">@T[$"Kind_{draft.Kind}"]</span>
+                    @if (draft.HasUnsavedChanges)
+                    {
+                        <span class="badge unsaved">@T["UnsavedChanges"]</span>
+                    }
+                    <span class="detail">@(draft.FileName ?? T["NotSavedToFile"])</span>
+                    <time class="detail" datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+<section class="recent">
+    <h2>@T["RecentFiles"]</h2>
+    @if (recent is null)
+    {
+    }
+    else if (recent.Count == 0)
+    {
+        <p class="empty">@T["NoRecentFiles"]</p>
+    }
+    else
+    {
+        <ul class="item-list">
+            @foreach (var file in recent)
+            {
+                <li>
+                    <button type="button" class="link" @onclick="() => ReopenAsync(file)">@file.FileName</button>
+                    <span class="kind">@T[$"Kind_{file.Kind}"]</span>
+                    <span class="detail">@file.Name</span>
+                    <time class="detail" datetime="@file.Used.ToString("o")">@file.Used.ToLocalTime().ToString("g")</time>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+<p class="version">@T.Format("Version", Version)</p>
 
 @code {
+    private IReadOnlyList<Draft>? drafts;
+    private IReadOnlyList<RecentFile>? recent;
+    private IReadOnlyList<ImportProblem> problems = [];
+    private string? message;
+
     private static string Version => typeof(Home).Assembly.GetName().Version?.ToString(3) ?? "?";
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            drafts = await Workbench.GetDraftsAsync();
+            recent = await Workbench.GetRecentFilesAsync();
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task OpenAsync()
+    {
+        await RunAsync(async () => Show(await Documents.OpenAsync()));
+    }
+
+    private async Task ReopenAsync(RecentFile file)
+    {
+        if (!Documents.CanReopen || file.HandleId is null)
+        {
+            message = T.Format("PickAgain", file.FileName);
+            return;
+        }
+        await RunAsync(async () =>
+        {
+            var result = await Documents.ReopenAsync(file);
+            if (result is null) message = T.Format("FileNotAvailable", file.FileName);
+            else Show(result);
+        });
+    }
+
+    private void Show(OpenResult result)
+    {
+        problems = result.Problems;
+        if (result.Drafts.Count == 1 && result.Problems.Count == 0) Navigation.NavigateTo(DrawingPage.Url(result.Drafts[0].Id));
+    }
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        message = null;
+        problems = [];
+        try
+        {
+            await action();
+        }
+        catch (FileOperationException ex)
+        {
+            message = T.Format("FileError", ex.Message);
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+        await LoadAsync();
+    }
 }

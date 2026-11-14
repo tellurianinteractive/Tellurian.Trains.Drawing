@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppName" xml:space="preserve"><value>Tellurian Trains Drawing</value></data>
+  <data name="AppDescription" xml:space="preserve"><value>Draw end profiles, modules and hall plans for model railway module meetings.</value></data>
+  <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Open" xml:space="preserve"><value>Open…</value></data>
+  <data name="Drafts" xml:space="preserve"><value>Resume work</value></data>
+  <data name="NoDrafts" xml:space="preserve"><value>There is no work in progress.</value></data>
+  <data name="RecentFiles" xml:space="preserve"><value>Recent files</value></data>
+  <data name="NoRecentFiles" xml:space="preserve"><value>No files opened yet.</value></data>
+  <data name="UnsavedChanges" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="NotSavedToFile" xml:space="preserve"><value>Not saved to a file</value></data>
+  <data name="SaveReminder" xml:space="preserve"><value>Drafts are kept only in this browser. Save your work to a file.</value></data>
+  <data name="PickAgain" xml:space="preserve"><value>This browser can't re-open files by itself. Use Open… and pick {0}.</value></data>
+  <data name="FileNotAvailable" xml:space="preserve"><value>{0} isn't available any more. Use Open… to pick it.</value></data>
+  <data name="CouldNotOpen" xml:space="preserve"><value>These files couldn't be opened:</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="SaveDownload" xml:space="preserve"><value>Save (download)</value></data>
+  <data name="SaveAs" xml:space="preserve"><value>Save as…</value></data>
+  <data name="DownloadNote" xml:space="preserve"><value>This browser can't save in place: Save downloads a new file. Choose the old file to replace it.</value></data>
+  <data name="Discard" xml:space="preserve"><value>Discard draft</value></data>
+  <data name="DiscardUnsaved" xml:space="preserve"><value>Discard the unsaved changes to {0}?</value></data>
+  <data name="Changed" xml:space="preserve"><value>Changed</value></data>
+  <data name="File" xml:space="preserve"><value>File</value></data>
+  <data name="DraftNotFound" xml:space="preserve"><value>This drawing isn't open any more.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>The editor for this kind of drawing isn't available yet.</value></data>
+  <data name="StorageError" xml:space="preserve"><value>The browser's storage couldn't be used: {0}</value></data>
+  <data name="FileError" xml:space="preserve"><value>The file operation failed: {0}</value></data>
+  <data name="Kind_EndProfile" xml:space="preserve"><value>End profile</value></data>
+  <data name="Kind_Module" xml:space="preserve"><value>Module</value></data>
+  <data name="Kind_Hall" xml:space="preserve"><value>Hall</value></data>
+  <data name="Kind_HallPlan" xml:space="preserve"><value>Hall plan</value></data>
+  <data name="Kind_Catalogue" xml:space="preserve"><value>Catalogue</value></data>
+</root>

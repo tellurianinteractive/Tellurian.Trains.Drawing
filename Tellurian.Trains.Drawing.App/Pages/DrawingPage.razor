@@ -1,0 +1,108 @@
+@page "/drawing/{Id:guid}"
+@inject IWorkbench Workbench
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>@(draft?.Name ?? T["AppName"])</PageTitle>
+
+@if (notFound)
+{
+    <p class="error">@T["DraftNotFound"]</p>
+}
+else if (draft is not null)
+{
+    <h1>@draft.Name</h1>
+    <p class="kind">@T[$"Kind_{draft.Kind}"]</p>
+
+    <div class="toolbar">
+        <button type="button" class="primary" @onclick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
+        @if (Documents.CanSaveInPlace)
+        {
+            <button type="button" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
+        }
+        <button type="button" @onclick="DiscardAsync">@T["Discard"]</button>
+    </div>
+    @if (!Documents.CanSaveInPlace)
+    {
+        <p class="note">@T["DownloadNote"]</p>
+    }
+    @if (message is not null)
+    {
+        <p class="error" role="alert">@message</p>
+    }
+
+    <dl class="properties">
+        <dt>@T["File"]</dt>
+        <dd>@(draft.FileName ?? T["NotSavedToFile"])</dd>
+        <dt>@T["Changed"]</dt>
+        <dd><time datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time></dd>
+    </dl>
+    <p class="status">
+        @if (draft.HasUnsavedChanges)
+        {
+            <span class="badge unsaved">@T["UnsavedChanges"]</span>
+        }
+        else
+        {
+            <span class="badge saved">@T["Saved"]</span>
+        }
+    </p>
+
+    <p class="note">@T["EditorComing"]</p>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private Draft? draft;
+    private bool notFound;
+    private string? message;
+
+    public static string Url(Guid id) => $"drawing/{id}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            draft = await Workbench.GetDraftAsync(Id);
+            notFound = draft is null;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task SaveAsync(bool saveAs)
+    {
+        message = null;
+        try
+        {
+            draft = await Documents.SaveAsync(Id, saveAs) ?? draft;
+        }
+        catch (FileOperationException ex)
+        {
+            message = T.Format("FileError", ex.Message);
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task DiscardAsync()
+    {
+        if (draft is null) return;
+        try
+        {
+            if (draft.HasUnsavedChanges && !await JS.InvokeAsync<bool>("confirm", T.Format("DiscardUnsaved", draft.Name))) return;
+            await Workbench.DeleteDraftAsync(draft.Id);
+            Navigation.NavigateTo("");
+        }
+        catch (Exception ex) when (ex is JSException or StorageException)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+}

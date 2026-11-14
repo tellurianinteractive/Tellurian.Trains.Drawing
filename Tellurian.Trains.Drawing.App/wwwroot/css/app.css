@@ -104,3 +104,150 @@ code {
 #update-available[hidden] {
     display: none;
 }
+
+/* ---------- App shell ---------- */
+:root {
+    --app-accent: #03173d;
+    --app-primary: #1b6ec2;
+    --app-muted: #5f6b7a;
+    --app-border: #d6dbe1;
+    --app-warning-bg: #fff4ce;
+    --app-error: #b32121;
+    color-scheme: light;
+}
+
+html, body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: #1d232b;
+    background: #fff;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--app-accent);
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+    .app-header a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+.app-name {
+    font-weight: 600;
+}
+
+.app-nav {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+}
+
+    .app-nav a.active {
+        text-decoration: underline;
+    }
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-main {
+    padding: 1rem 1.5rem;
+    max-width: 60rem;
+}
+
+h1:focus {
+    outline: none;
+}
+
+button {
+    font: inherit;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    background: #f5f7fa;
+    cursor: pointer;
+}
+
+    button.primary {
+        background: var(--app-primary);
+        border-color: var(--app-primary);
+        color: #fff;
+    }
+
+    button.link {
+        border: none;
+        background: none;
+        padding: 0;
+        color: var(--app-primary);
+        text-decoration: underline;
+    }
+
+.toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.item-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .item-list li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.75rem;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--app-border);
+    }
+
+.kind, .detail, .empty, .version, .note {
+    color: var(--app-muted);
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.05rem 0.5rem;
+    border-radius: 1rem;
+}
+
+    .badge.unsaved {
+        background: var(--app-warning-bg);
+    }
+
+    .badge.saved {
+        background: #dff3e4;
+    }
+
+.reminder {
+    background: var(--app-warning-bg);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+}
+
+.error {
+    color: var(--app-error);
+}
+
+.properties {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+}
+
+    .properties dt {
+        color: var(--app-muted);
+    }
+
+    .properties dd {
+        margin: 0;
+    }
