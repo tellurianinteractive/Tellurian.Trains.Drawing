@@ -21,8 +21,10 @@ permissions:
   contents: read
 
 # Pull requests cancel outdated runs; runs on master are never cancelled, so a deploy is never interrupted.
+# The event name keeps pull request runs apart from master pushes: when a PR is merged its "closed" run
+# has github.ref = refs/heads/master and would otherwise cancel the deploy.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:

@@ -70,6 +70,23 @@ public static class CatalogueValidation
         return problems;
     }
 
+    /// <summary>
+    /// Checks every entry of the user's catalogue against the catalogue it is part of. Entries are checked when
+    /// they are saved, but can become invalid later, for example when an end profile they refer to is deleted
+    /// or an imported entry takes a short name.
+    /// </summary>
+    public static IReadOnlyList<CatalogueEntryProblem> ValidateUserEntries(DrawingCatalogue user, DrawingCatalogue catalogue)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(catalogue);
+        return
+        [
+            .. user.Standards.SelectMany(s => Validate(s, catalogue).Select(p => new CatalogueEntryProblem(CatalogueEntryKind.Standard, s.Id, null, p))),
+            .. user.AddOns.SelectMany(a => Validate(a, catalogue).Select(p => new CatalogueEntryProblem(CatalogueEntryKind.AddOn, a.Id, null, p))),
+            .. user.Overrides.SelectMany(o => Validate(o, catalogue, replacing: o).Select(p => new CatalogueEntryProblem(CatalogueEntryKind.Override, o.FirstEndProfileId, o.SecondEndProfileId, p))),
+        ];
+    }
+
     /// <summary>A CSS hex colour: <c>#rgb</c> or <c>#rrggbb</c>.</summary>
     public static bool IsHexColor(string? value) =>
         value is { Length: 4 or 7 } && value[0] == '#' && value[1..].All(char.IsAsciiHexDigit)

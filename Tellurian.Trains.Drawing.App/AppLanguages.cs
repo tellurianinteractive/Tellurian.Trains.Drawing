@@ -19,4 +19,12 @@ public static class AppLanguages
     /// <summary>The culture name stored and passed to Blazor.start, e.g. <c>sv-SE</c>.</summary>
     public static string CultureOf(Language language) =>
         language.CultureCode is null ? language.TwoLetterCode : $"{language.TwoLetterCode}-{language.CultureCode}";
+
+    /// <summary>The flag image for the language selector, e.g. <c>images/flags/se.png</c>; English shows the British flag.</summary>
+    public static string FlagOf(Language language) =>
+        $"images/flags/{(language.TwoLetterCode == Neutral ? "gb" : (language.CultureCode ?? language.TwoLetterCode).ToLowerInvariant())}.png";
+
+    /// <summary>The language's name in itself, capitalised, e.g. "Svenska".</summary>
+    public static string NativeNameOf(Language language) =>
+        System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(System.Globalization.CultureInfo.GetCultureInfo(language.TwoLetterCode).NativeName);
 }

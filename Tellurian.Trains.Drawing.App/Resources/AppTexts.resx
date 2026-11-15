@@ -279,6 +279,16 @@
   <data name="InformationIntro" xml:space="preserve"><value>Module Draw is for drawing model railway end profiles, modules and hall plans for module meetings.</value></data>
   <data name="InformationPreRelease" xml:space="preserve"><value>This is a pre-release for trying out. You can draw end profiles and create modules from templates. Editing modules, halls and hall plans comes later.</value></data>
   <data name="InformationStorage" xml:space="preserve"><value>Drafts are saved automatically in this browser while you work. Save your drawings to files to keep them and to share them.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Use a desktop computer, preferably with Chrome or Edge. Module Draw works offline and can be installed as an app.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Use a desktop computer with a Chromium-based browser, such as Chrome, Edge, Brave, Vivaldi or Opera, or Chromium on Linux. In these browsers Module Draw opens and saves your files directly.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Get started</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Release notes</value></data>
+  <data name="Override" xml:space="preserve"><value>Compatibility override</value></data>
+  <data name="Problems" xml:space="preserve"><value>Problems</value></data>
+  <data name="NoProblems" xml:space="preserve"><value>No problems found.</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="UnknownEndProfile" xml:space="preserve"><value>unknown end profile</value></data>
+  <data name="InformationGeneral" xml:space="preserve"><value>General</value></data>
+  <data name="InformationBrowserSupport" xml:space="preserve"><value>Browser support</value></data>
+  <data name="InformationOffline" xml:space="preserve"><value>Module Draw works offline and can be installed as an app.</value></data>
+  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox and Safari work too, with limitations: they can't save straight back to the file you opened, so saving is a download. Depending on the browser's settings, the file goes to your downloads folder or you choose where to save it; choose the original file to replace it. Recent files and folders must be picked again to be opened.</value></data>
 </root>

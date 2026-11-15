@@ -1,9 +1,8 @@
-@page "/"
+@page "/start"
 @inject IWorkbench Workbench
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
-@inject StartupInformation Startup
 
 <PageTitle>@T["AppName"]</PageTitle>
 
@@ -102,6 +101,8 @@
 <p class="version">@T.Format("Version", AppVersion.Current)</p>
 
 @code {
+    public const string Url = "start";
+
     private IReadOnlyList<Draft>? drafts;
     private IReadOnlyList<RecentFile>? recent;
     private IReadOnlyList<ImportProblem> problems = [];
@@ -109,12 +110,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // When the app starts, the information page comes first.
-        if (await Startup.ShowOnceAsync())
-        {
-            Navigation.NavigateTo(InformationPage.Url, replace: true);
-            return;
-        }
         await LoadAsync();
     }
 

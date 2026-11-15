@@ -41,12 +41,12 @@ dotnet pack Tellurian.Trains.Drawing.Components               # pack libraries o
 - Heights are offsets from the standard's rail top (RÖK); 0 = standard height (normally 1300 mm).
 - Use `System.Text.Json` source generation (trim/AOT safe); no reflection-based serialization.
 - The module and end profile file formats are public contracts (spec EX-7): schema changes must be backward compatible within a major schema version and are logged.
-- UI strings in English resources first; languages en, de, da, sv, nb (Tellurian.Localization).
+- UI strings in English resources first; languages en, de, da, sv, nb (Tellurian.Localization). German addresses the user with "du", not "Sie": the users are hobbyists.
 - UI changes must be checked in a browser; the AOT Release build before releases.
 
 ## Release
 
-CI (`.github/workflows/build-and-deploy.yml`) builds and tests every push and pull request. A push to `master` deploys when `<Version>` in `Directory.Build.props` has no tag `v<Version>`; it then tags and creates a GitHub release. Every release needs a `RELEASENOTES.md` section (`## Release x.y.z`, `Released yyyy-MM-dd`, at least one bullet; `- Maintenance update.` for internal-only changes). Pull requests from this repository get an Azure preview environment.
+CI (`.github/workflows/build-and-deploy.yml`) builds and tests every push and pull request. A push to `master` deploys when `<Version>` in `Directory.Build.props` has no tag `v<Version>`; it then tags and creates a GitHub release. Every release needs a `RELEASENOTES.md` section (`## Release x.y.z`, `Released yyyy-MM-dd`, at least one bullet; `- Maintenance update.` for internal-only changes). Release notes are translated into every UI language: `RELEASENOTES.sv.md`, `.de.md`, `.da.md` and `.nb.md` get the same releases and dates (translated headings, e.g. `## Version x.y.z`), using the app's own UI terms; a test fails when a translation is missing or out of step. The app shows the notes in the UI language, falling back to English. Pull requests from this repository get an Azure preview environment.
 
 ## Azure
 

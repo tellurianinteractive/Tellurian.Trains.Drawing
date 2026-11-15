@@ -4,7 +4,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="AppName" xml:space="preserve"><value>Module Draw</value></data>
+  <data name="AppName" xml:space="preserve"><value>Modultegneren</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Tegn endeprofiler, moduler og hal-planer til modeljernbanens modultræf.</value></data>
   <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
@@ -275,10 +275,20 @@
   <data name="FilletSide_Auto" xml:space="preserve"><value>Centrum: bedste pasning</value></data>
   <data name="Print" xml:space="preserve"><value>Udskriv</value></data>
   <data name="CreatingModule" xml:space="preserve"><value>Vent venligst. Opretter modulet {0}…</value></data>
-  <data name="InformationTitle" xml:space="preserve"><value>Velkommen til Module Draw</value></data>
-  <data name="InformationIntro" xml:space="preserve"><value>Module Draw er til at tegne endeprofiler, moduler og hal-planer til modultræf.</value></data>
+  <data name="InformationTitle" xml:space="preserve"><value>Velkommen til Modultegneren</value></data>
+  <data name="InformationIntro" xml:space="preserve"><value>Modultegneren er til at tegne endeprofiler, moduler og hal-planer til modultræf.</value></data>
   <data name="InformationPreRelease" xml:space="preserve"><value>Dette er en forhåndsversion til afprøvning. Du kan tegne endeprofiler og oprette moduler ud fra skabeloner. Redigering af moduler, haller og hal-planer kommer senere.</value></data>
   <data name="InformationStorage" xml:space="preserve"><value>Kladder gemmes automatisk i denne browser, mens du arbejder. Gem dine tegninger som filer for at beholde og dele dem.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Brug en computer, helst med Chrome eller Edge. Module Draw virker offline og kan installeres som en app.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Brug en computer med en Chromium-baseret browser, for eksempel Chrome, Edge, Brave, Vivaldi eller Opera, eller Chromium på Linux. I disse browsere åbner og gemmer Modultegneren dine filer direkte.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Kom i gang</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Udgivelsesnoter</value></data>
+  <data name="Override" xml:space="preserve"><value>Undtagelse for pasning</value></data>
+  <data name="Problems" xml:space="preserve"><value>Problemer</value></data>
+  <data name="NoProblems" xml:space="preserve"><value>Ingen problemer fundet.</value></data>
+  <data name="Close" xml:space="preserve"><value>Luk</value></data>
+  <data name="UnknownEndProfile" xml:space="preserve"><value>ukendt endeprofil</value></data>
+  <data name="InformationGeneral" xml:space="preserve"><value>Generelt</value></data>
+  <data name="InformationBrowserSupport" xml:space="preserve"><value>Understøttede browsere</value></data>
+  <data name="InformationOffline" xml:space="preserve"><value>Modultegneren virker offline og kan installeres som en app.</value></data>
+  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox og Safari virker også, men med begrænsninger: de kan ikke gemme direkte i den fil, du åbnede, så at gemme bliver en download. Afhængigt af browserens indstillinger havner filen i mappen til overførsler, eller du vælger, hvor den skal gemmes; vælg den oprindelige fil for at erstatte den. Seneste filer og mapper skal vælges igen for at blive åbnet.</value></data>
 </root>

@@ -18,6 +18,9 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files)
 
     public static DrawingCatalogue BuiltIn => BuiltInCatalogue.Instance;
 
+    /// <summary>Raised after the user's part of the catalogue has been saved.</summary>
+    public event Action? Changed;
+
     /// <summary>The built-in and user entries merged; a user entry replaces a built-in one with the same id.</summary>
     public async Task<DrawingCatalogue> GetAsync(CancellationToken cancellationToken = default) =>
         DrawingCatalogue.Merge(BuiltIn, await GetUserAsync(cancellationToken));
@@ -34,6 +37,7 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files)
     {
         await workbench.SetValueAsync(UserCatalogueKey, DrawingFileSerializer.Serialize(user), cancellationToken);
         _user = user;
+        Changed?.Invoke();
     }
 
     /// <summary>Where an entry comes from: built in, the user's own, or the user's replacement of a built-in entry.</summary>

@@ -212,7 +212,7 @@ else if (draft is not null)
         {
             if (draft.HasUnsavedChanges && !await Dialogs.ConfirmAsync(T.Format("DiscardUnsaved", draft.Name))) return;
             await Workbench.DeleteDraftAsync(draft.Id);
-            Navigation.NavigateTo("");
+            Navigation.NavigateTo(Home.Url);
         }
         catch (StorageException ex)
         {

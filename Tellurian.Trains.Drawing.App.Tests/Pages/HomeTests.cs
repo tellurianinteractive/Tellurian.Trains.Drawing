@@ -143,19 +143,4 @@ public sealed class HomeTests
         Assert.IsEmpty(context.Workbench.Drafts);
         Assert.IsNotNull(home.Find(".drafts .empty"));
     }
-
-    [TestMethod]
-    public void InformationPageComesFirstWhenTheAppStarts()
-    {
-        using var context = new AppTestContext();
-        context.JSInterop.Setup<string?>("sessionStorage.getItem", _ => true).SetResult(null);
-        var navigation = context.Services.GetRequiredService<NavigationManager>();
-
-        context.Render<Home>();
-        Assert.EndsWith("information", navigation.Uri);
-
-        navigation.NavigateTo("");
-        context.Render<Home>();
-        Assert.EndsWith("/", navigation.Uri, "Only once.");
-    }
 }

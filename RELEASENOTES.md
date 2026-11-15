@@ -1,5 +1,15 @@
 # Release Notes
 
+## Release 0.3.0
+Released 2026-11-15
+- The information page is now the first page, with the sections General and Browser support. The start page with drafts and recent files is under Start in the top menu.
+- Release notes in the app: click the bullhorn next to the version number. They are shown in your language.
+- Problems indicator in the top bar: a green check, or a red sign with the number of problems in your own catalogue entries (standards, add-ons and compatibility overrides). Click a problem to open the entry and correct it.
+- Choose the language with flags in the top bar.
+- The app has a name in each language: Module Draw, Modulritaren, Modulzeichner and Modultegneren.
+- German texts address you with "du".
+- Icons also work offline.
+
 ## Release 0.2.0
 Released 2026-11-15
 - First public pre-release, for trying out. The app is now called **Module Draw**.
