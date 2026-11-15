@@ -342,7 +342,12 @@ In priority order (to be confirmed):
 7. EP-11/MD-14/HA-4 background images with calibration, including PDF pages (one shared mechanism; EP-11 possibly already in Phase 5).
 8. EP-6 dowels (if not done in Phase 5), AP-5 dark theme.
 
+### Planned next (decided 2026-11-15)
+- **Scale setting (AP-9)**: the scale the user works in, next to the country in Settings; it filters choices the same way as the country (`DrawingCatalogue.ForCountry`, CA-6) and is passed to Module Registry API calls.
+- **Empty catalogue (CA-1)**: the built-in catalogue is interim, as hard-coded entries may be wrong. It stays until Registry import (CA-5) works; then the catalogue starts empty and is filled manually (CA-2) or by import.
+
 ### Later (separate plan)
+- **Upload from this app (EX-11)**: upload end profile and module drawings to the Module Registry through its API, with the API key from Settings (AP-8), when the Registry's API supports it.
 - **Module Registry upload of module files and end profile drawings** (spec §10). This is Registry-side work in its own repository, based on the published schemas. End profile drawings are stored with the Registry's EndProfile entity. This app needs no changes beyond keeping the schemas stable.
 - **Registry import in this app** (spec §10): a read-only Registry API for the catalogue, including end profile drawings (CA-5), and possibly for downloading module files. Access control stays in the Registry; the app has no roles of its own. CORS for the SWA origin is required.
 - MD-15 DXF import, HP-10 plan templates.
@@ -356,6 +361,7 @@ In priority order (to be confirmed):
 | CA-2, CA-3 | 2 (logic), 3 (UI) |
 | CA-4 | replaced by EP-* |
 | CA-5 | Later |
+| CA-6 | as built, 0.4.0 |
 | EP-1 | 3 (library), 5 |
 | EP-2, EP-7 | 2 (logic), 5 (UI) |
 | EP-3 … EP-6, EP-8 | 5 |
@@ -391,6 +397,8 @@ In priority order (to be confirmed):
 | EX-9 | 0 (spike C), 3, 9 |
 | EX-5 | 9 |
 | EX-7 | 2 (schemas), 12 (freeze v1) |
+| EX-10 | as built, 0.4.0 |
+| EX-11 | Later |
 | EX-8 | 4 (framework), 5, 6, 9 (per drawing kind) |
 | AP-1 | 0 (skeleton), 3 |
 | AP-2 | 3 (infrastructure), 12 |
@@ -398,6 +406,8 @@ In priority order (to be confirmed):
 | AP-5 | 13 |
 | AP-6 | 12 |
 | AP-7 | 3 (safe reload), 12 (language switcher uses it) |
+| AP-8 | as built, 0.4.0 |
+| AP-9 | Planned next |
 | NF-1, NF-3 | 0, 12 |
 | NF-2 | 0 (spike), 1, 9, 10, 12 |
 | NF-4 | 0, 12 |
