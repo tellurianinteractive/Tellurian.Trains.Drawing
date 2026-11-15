@@ -1,5 +1,12 @@
 # Versionshinweise
 
+## Version 0.4.0
+Veröffentlicht am 2026-11-15
+- Seite Einstellungen, unter Einstellungen im oberen Menü: dein Benutzername, das Land, in dem du arbeitest, und dein API-Schlüssel für das Modulregister. Die Einstellungen bleiben in deinem Browser, auch nach Updates, und werden nie in Dateien gespeichert.
+- Änderungsprotokoll: Wenn du eine Zeichnung speicherst, werden dein Benutzername und das Datum darin festgehalten, ein Eintrag pro Person mit dem letzten Datum. Das Protokoll wird im Eigenschaftenbereich angezeigt. Ohne Benutzernamen wird nichts festgehalten, und die Problemanzeige zeigt eine Warnung.
+- Normen, die nur in einigen Ländern gelten, wie MMM in Schweden, werden nur angeboten, wenn du eines dieser Länder in den Einstellungen wählst; ebenso ihre Zusätze und Endprofile. Zeichnungen, die sie verwenden, öffnen sich wie gewohnt. Deine eigenen Normen können ihre Länder angeben.
+- Die Startseite zeigt die Versionsnummer nicht mehr; sie steht im oberen Menü.
+
 ## Version 0.3.0
 Veröffentlicht am 2026-11-15
 - Die Informationsseite ist jetzt die erste Seite, mit den Abschnitten Allgemein und Unterstützte Browser. Die Startseite mit Entwürfen und zuletzt verwendeten Dateien findest du unter Start im oberen Menü.
