@@ -286,7 +286,7 @@ Validation runs continuously and its results appear in a **problems list** and a
   - a **hall plan file** embeds copies of the hall, every module drawing it uses and their end profiles, so anyone can open it.
 - **Identity**: drawings keep their GUID when exported and imported, so the same physical module or the same end profile is recognised again. Optional Registry ids (module, end profile) are kept as extra keys.
 - **Migration**: older schema versions are upgraded on load. Newer versions are refused with a clear message.
-- **Published schema**: JSON Schemas for all file kinds are kept in the repository (`docs/schema/`) and published with the app. The **module** and **end profile** schemas are consumed by the Module Registry (EX-7), so changes to them must be coordinated with the Registry.
+- **Published schema**: JSON Schemas for all file kinds, with examples, are kept in the repository in `schemas/` (not deployed with the app). They are generated from the code and checked by tests. The **module** and **end profile** schemas are consumed by the Module Registry (EX-7), so changes to them must be coordinated with the Registry.
 - **Self-describing references**: a module file includes its catalogue references by value (standard short name, scale, end profile designations) as well as by id. A receiver can then map them to its own data without access to the app's catalogue.
 - **Sharing**: through the File System Access API where available (save in place), otherwise download/upload. The Web Share API is used on mobile (S).
 

@@ -40,7 +40,7 @@ dotnet pack Tellurian.Trains.Drawing.Components               # pack libraries o
 - Units are millimetres and degrees. Module placements are rotated and translated, **never mirrored**; mirroring exists only for comparing end profiles.
 - Heights are offsets from the standard's rail top (RÖK); 0 = standard height (normally 1300 mm).
 - Use `System.Text.Json` source generation (trim/AOT safe); no reflection-based serialization.
-- The module and end profile file formats are public contracts (spec EX-7): schema changes must be backward compatible within a major schema version and are logged.
+- The module and end profile file formats are public contracts (spec EX-7): schema changes must be backward compatible within a major schema version and are logged. The JSON Schemas and examples in `schemas/` (not deployed) are generated from the code: after a deliberate change, run the Model tests with `TELLURIAN_UPDATE_SCHEMAS=1` and log it in `schemas/CHANGELOG.md`. The Module Registry builds its API from them.
 - UI strings in English resources first; languages en, de, da, sv, nb (Tellurian.Localization). German addresses the user with "du", not "Sie": the users are hobbyists.
 - UI changes must be checked in a browser; the AOT Release build before releases.
 

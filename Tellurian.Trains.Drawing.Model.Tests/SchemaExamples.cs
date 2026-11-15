@@ -6,7 +6,7 @@ using Tellurian.Trains.Drawing.Model.Modules;
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
 /// <summary>
-/// Writes the example files in <c>docs/schema/examples/</c> for the Module Registry developers,
+/// Writes the example files in <c>schemas/examples/</c> for the Module Registry developers,
 /// auto-drawn from Registry-like data with the built-in catalogue.
 /// </summary>
 internal static class SchemaExamples

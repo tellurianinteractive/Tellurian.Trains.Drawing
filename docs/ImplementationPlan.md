@@ -134,12 +134,12 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 6. Derived module measures (length, width, radius, angle, track length, ramp height difference and gradient) and comparison with the entered Registry-style values (MD-10 logic).
 7. File envelope, `JsonSerializerContext`, schema version + migration pipeline (no-op v1 → v1), refusal of newer versions.
    **The module and end profile files are public contracts (EX-7)** for upload to the Module Registry:
-   - JSON Schemas in `docs/schema/` (end profile and module first);
+   - JSON Schemas in `schemas/` (end profile and module first);
    - module files embed their end profiles;
    - catalogue references stored by value as well as by id;
    - a test that validates serialized samples against the schemas;
    - a schema change log;
-   - sample files in `docs/schema/examples/` for the Registry developers.
+   - sample files in `schemas/examples/` for the Registry developers.
 8. **Built-in catalogue** JSON (embedded resource): scales and standards, plus end profile drawings for FREMO H0 (incl. H0-RE), MMM-2R, MMM-3R and FREMO N, so that the H0-RE ↔ MMM-2R clamp case and the 2R ↔ 3R incompatibility can be tested. Add-ons MMM-Summer and MMM-Modern on MMM-2R. Add overrides only where the rules give the wrong answer.
    Sources: the published PDF drawings from **FREMO** (all FREMO scales) and **MMM** (MMM-2R, MMM-3R and its add-ons). Each profile records its source document and revision. Phase 2 can use hand-entered test profiles; the real ones are drawn and checked in Phase 5.
 9. Unit tests: serialization round trips, templates, derived measures, catalogue loading/merging (built-in + user, CA-2).

@@ -5,8 +5,8 @@ using Tellurian.Trains.Drawing.Model.Modules;
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
 /// <summary>
-/// The schemas and examples in <c>docs/schema/</c> are public contracts (EX-7). After a deliberate change, run
-/// the tests with <c>TELLURIAN_UPDATE_SCHEMAS=1</c> to rewrite them, and log the change in <c>docs/schema/CHANGELOG.md</c>.
+/// The schemas and examples in <c>schemas/</c> are public contracts (EX-7). After a deliberate change, run
+/// the tests with <c>TELLURIAN_UPDATE_SCHEMAS=1</c> to rewrite them, and log the change in <c>schemas/CHANGELOG.md</c>.
 /// </summary>
 [TestClass]
 public sealed class DrawingFileSchemaTests
@@ -23,7 +23,7 @@ public sealed class DrawingFileSchemaTests
             if (RepositoryFiles.IsUpdating) RepositoryFiles.Write(path, generated);
             Assert.IsTrue(File.Exists(path), $"{path} is missing. Run the tests with {RepositoryFiles.UpdateVariable}=1 to create it.");
             Assert.IsTrue(JsonNode.DeepEquals(generated, JsonNode.Parse(File.ReadAllText(path))),
-                $"The {kind} schema has changed. Check that the change is backward compatible (EX-7), run the tests with {RepositoryFiles.UpdateVariable}=1 and log it in docs/schema/CHANGELOG.md.");
+                $"The {kind} schema has changed. Check that the change is backward compatible (EX-7), run the tests with {RepositoryFiles.UpdateVariable}=1 and log it in schemas/CHANGELOG.md.");
         }
     }
 

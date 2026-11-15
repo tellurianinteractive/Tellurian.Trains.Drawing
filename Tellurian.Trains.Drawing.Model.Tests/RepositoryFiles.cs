@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
 /// <summary>
-/// Access to files checked into the repository, such as the published schemas in <c>docs/schema/</c>.
+/// Access to files checked into the repository, such as the published schemas in <c>schemas/</c>.
 /// Set the environment variable <see cref="UpdateVariable"/> to 1 to let tests rewrite generated files.
 /// </summary>
 internal static class RepositoryFiles
@@ -15,7 +15,7 @@ internal static class RepositoryFiles
 
     public static string Root { get; } = FindRoot();
 
-    public static string SchemaDirectory => Path.Combine(Root, "docs", "schema");
+    public static string SchemaDirectory => Path.Combine(Root, "schemas");
 
     public static string ExamplesDirectory => Path.Combine(SchemaDirectory, "examples");
 
