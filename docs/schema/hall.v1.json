@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Tellurian Trains Drawing Hall file",
-  "description": "A .tdhall file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "description": "A .hall.json file, schema version 1. Lengths in millimetres, angles in degrees.",
   "type": "object",
   "properties": {
     "format": {

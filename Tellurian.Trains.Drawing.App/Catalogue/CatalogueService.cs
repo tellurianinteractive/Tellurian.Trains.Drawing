@@ -13,7 +13,7 @@ namespace Tellurian.Trains.Drawing.App.Catalogue;
 public sealed class CatalogueService(IWorkbench workbench, IFileService files, SettingsService settings)
 {
     public const string UserCatalogueKey = "user-catalogue";
-    public const string ExportFileName = "my-catalogue.tdcatalogue";
+    public const string ExportFileName = "my-catalogue.catalogue.json";
 
     private DrawingCatalogue? _user;
 

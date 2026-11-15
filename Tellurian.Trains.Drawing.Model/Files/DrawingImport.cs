@@ -4,8 +4,9 @@ using System.Text;
 namespace Tellurian.Trains.Drawing.Model.Files;
 
 /// <summary>
-/// Reads many drawing files at once, from a ZIP archive or a folder (EX-9, UC-2, UC-7). Files are
-/// recognised by their extension; a file that can't be read is reported, and the others are still imported.
+/// Reads many drawing files at once, from a ZIP archive or a folder (EX-9, UC-2, UC-7). JSON files (and files
+/// with the legacy extensions) are read, and their kind is taken from their content; JSON files that aren't drawing
+/// files are skipped. A drawing file that can't be read is reported, and the others are still imported.
 /// </summary>
 public static class DrawingImport
 {
@@ -39,8 +40,8 @@ public static class DrawingImport
         var skipped = 0;
         foreach (var file in files)
         {
-            var kind = DrawingFileFormat.KindOf(Path.GetExtension(file.Name));
-            if (kind is null || (accepted is not null && !accepted.Contains(kind.Value)))
+            var named = DrawingFileFormat.KindOf(file.Name);
+            if (!DrawingFileFormat.MayBeDrawingFile(file.Name) || (named is { } kindByName && accepted is not null && !accepted.Contains(kindByName)))
             {
                 skipped++;
                 continue;
@@ -49,12 +50,19 @@ public static class DrawingImport
             {
                 var json = file.ReadText();
                 var header = DrawingFileSerializer.ReadHeader(json);
-                if (header.Kind != kind)
-                    problems.Add(new(file.Name, $"The file is a {header.Kind} file, but its extension is for {kind} files."));
+                if (accepted is not null && !accepted.Contains(header.Kind))
+                    skipped++;
+                else if (named is { } expected && header.Kind != expected)
+                    problems.Add(new(file.Name, $"The file is a {header.Kind} file, but its name is for {expected} files."));
                 else if (!header.IsSupported)
-                    problems.Add(new(file.Name, $"The file has {kind} schema version {header.SchemaVersion}, which is newer than this version of the app reads. Update the app to import it."));
+                    problems.Add(new(file.Name, $"The file has {header.Kind} schema version {header.SchemaVersion}, which is newer than this version of the app reads. Update the app to import it."));
                 else
                     imported.Add(new(file.Name, header, json));
+            }
+            catch (DrawingFileException) when (named is null)
+            {
+                // A JSON file that isn't a drawing file, e.g. other data in a folder or archive.
+                skipped++;
             }
             catch (DrawingFileException ex)
             {

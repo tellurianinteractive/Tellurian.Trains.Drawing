@@ -3,13 +3,17 @@
 JSON Schemas (draft 2020-12) of the Tellurian Trains Drawing files. The **module** and **end profile**
 files are public contracts (spec EX-7): the Module Registry will accept them for upload.
 
-| File | Kind | Extension |
+| File | Kind | File name |
 |---|---|---|
-| [endprofile.v1.json](endprofile.v1.json) | `endProfile` | `.tdendprofile` |
-| [module.v1.json](module.v1.json) | `module` | `.tdmodule` |
-| [catalogue.v1.json](catalogue.v1.json) | `catalogue` | `.tdcatalogue` |
-| [hall.v1.json](hall.v1.json) | `hall` | `.tdhall` |
-| [hallplan.v1.json](hallplan.v1.json) | `hallPlan` | `.tdhallplan` |
+| [endprofile.v1.json](endprofile.v1.json) | `endProfile` | `*.endprofile.json` |
+| [module.v1.json](module.v1.json) | `module` | `*.module.json` |
+| [catalogue.v1.json](catalogue.v1.json) | `catalogue` | `*.catalogue.json` |
+| [hall.v1.json](hall.v1.json) | `hall` | `*.hall.json` |
+| [hallplan.v1.json](hallplan.v1.json) | `hallPlan` | `*.hallplan.json` |
+
+Drawing files are plain JSON. The kind in the file name is a convention; readers identify a file by its `format`
+(`tellurian-drawing`) and `kind`. Files saved up to version 0.4 used the extensions `.tdendprofile`, `.tdmodule`,
+`.tdcatalogue`, `.tdhall` and `.tdhallplan`; the content is the same.
 
 Examples are in [examples/](examples/). Changes are logged in [CHANGELOG.md](CHANGELOG.md).
 

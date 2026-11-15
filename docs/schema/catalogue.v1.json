@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Tellurian Trains Drawing Catalogue file",
-  "description": "A .tdcatalogue file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "description": "A .catalogue.json file, schema version 1. Lengths in millimetres, angles in degrees.",
   "type": "object",
   "properties": {
     "format": {

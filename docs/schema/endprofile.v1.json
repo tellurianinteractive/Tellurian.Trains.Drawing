@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Tellurian Trains Drawing EndProfile file",
-  "description": "A .tdendprofile file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "description": "A .endprofile.json file, schema version 1. Lengths in millimetres, angles in degrees.",
   "type": "object",
   "properties": {
     "format": {

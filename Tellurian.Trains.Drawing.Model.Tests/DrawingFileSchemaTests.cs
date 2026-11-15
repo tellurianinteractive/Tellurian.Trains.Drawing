@@ -98,8 +98,9 @@ public sealed class DrawingFileSchemaTests
         Assert.IsNotEmpty(files, $"There are no examples. Run the tests with {RepositoryFiles.UpdateVariable}=1 to create them.");
         foreach (var file in files)
         {
-            var kind = DrawingFileFormat.KindOf(Path.GetExtension(file));
+            var kind = DrawingFileFormat.KindOf(Path.GetFileName(file));
             Assert.IsNotNull(kind, $"{Path.GetFileName(file)} has an unknown extension.");
+            StringAssert.EndsWith(file, DrawingFileFormat.Extension(kind.Value), "Examples have the current file names.");
             var json = File.ReadAllText(file);
             SchemaValidator.AssertValid(kind.Value, json);
             Assert.AreEqual(kind.Value, DrawingFileSerializer.ReadHeader(json).Kind);

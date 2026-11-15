@@ -161,10 +161,13 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
     /// </summary>
     private const string InvalidFileNameCharacters = "<>:\"/\\|?*";
 
-    /// <summary>The previous file name, or one made from the drawing's name, so the browser can offer to replace the old file.</summary>
+    /// <summary>
+    /// The previous file name, so the browser can offer to replace the old file, or one made from the drawing's name,
+    /// e.g. <c>Club hall.hall.json</c>. A legacy extension in the previous name becomes the current one.
+    /// </summary>
     public static string SuggestedFileName(Draft draft)
     {
-        if (!string.IsNullOrWhiteSpace(draft.FileName)) return draft.FileName;
+        if (!string.IsNullOrWhiteSpace(draft.FileName)) return DrawingFileFormat.WithCurrentExtension(draft.FileName, draft.Kind);
         var name = new string([.. draft.Name.Trim().Select(c => char.IsControl(c) || InvalidFileNameCharacters.Contains(c) ? '-' : c)]);
         return $"{(name.Length == 0 ? draft.Kind.ToString() : name)}{DrawingFileFormat.Extension(draft.Kind)}";
     }

@@ -40,6 +40,33 @@ public sealed class DrawingImportTests
     }
 
     [TestMethod]
+    public void JsonFilesAreRecognisedByTheirContent()
+    {
+        using var zip = Zip(("a.module.json", ModuleJson()), ("renamed.json", ProfileJson()), ("data/other.json", "{ \"name\": \"x\" }"), ("broken.json", "{ not json"));
+        var result = DrawingImport.FromZip(zip);
+        CollectionAssert.AreEqual(new[] { "a.module.json", "renamed.json" }, result.Files.Select(f => f.Name).ToArray());
+        Assert.AreEqual(DrawingFileKind.EndProfile, result.Files[1].Header.Kind);
+        Assert.AreEqual(2, result.Skipped, "JSON files that aren't drawing files are skipped, not reported.");
+        Assert.IsEmpty(result.Problems);
+    }
+
+    [TestMethod]
+    public void AJsonFileNamedForAnotherKindIsReported()
+    {
+        var result = DrawingImport.FromFiles([ImportSource.FromText("wrong.module.json", ProfileJson())]);
+        Assert.IsEmpty(result.Files);
+        StringAssert.Contains(Assert.ContainsSingle(result.Problems).Message, "its name is for Module files");
+    }
+
+    [TestMethod]
+    public void OnlyAcceptedKindsAreImportedAlsoFromPlainJson()
+    {
+        var result = DrawingImport.FromFiles([ImportSource.FromText("m.json", ModuleJson()), ImportSource.FromText("p.json", ProfileJson())], [DrawingFileKind.EndProfile]);
+        Assert.AreEqual("p.json", Assert.ContainsSingle(result.Files).Name);
+        Assert.AreEqual(1, result.Skipped);
+    }
+
+    [TestMethod]
     public void OnlyAcceptedKindsAreImported()
     {
         using var zip = Zip(("a.tdmodule", ModuleJson()), ("p.tdendprofile", ProfileJson()));

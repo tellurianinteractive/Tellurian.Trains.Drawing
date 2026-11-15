@@ -2,12 +2,12 @@
   "format": "tellurian-drawing",
   "kind": "hallPlan",
   "schemaVersion": 1,
-  "appVersion": "0.3.0",
+  "appVersion": "0.4.0",
   "content": {
-    "id": "6eb3d5e2-3715-4982-9c27-834e057bca9e",
+    "id": "9eaed3a8-4610-44aa-9fe2-4c239b844191",
     "name": "Club meeting",
     "hall": {
-      "id": "c78d0b30-09f9-403a-81a9-f6962fc2d5d4",
+      "id": "5292cae8-08a7-4bf5-8214-0a87e62c21ba",
       "name": "Club hall",
       "address": "Station Road 1",
       "outline": {
@@ -50,7 +50,7 @@
       "minimumAisleWidth": 1200,
       "obstacles": [
         {
-          "id": "a844ade3-3bef-424f-8891-447ae18c72ad",
+          "id": "2cf6e40a-28c7-4ee0-9c20-dfa9982722b5",
           "kind": "pillar",
           "area": {
             "start": {
@@ -80,7 +80,7 @@
           "label": "P1"
         },
         {
-          "id": "4a681935-f6d1-4d31-b016-5d02da3ab5d0",
+          "id": "c64888dc-c6f5-4987-900d-75fceff82a1c",
           "kind": "pillar",
           "area": {
             "start": {
@@ -121,7 +121,7 @@
           }
         },
         {
-          "id": "0259b1be-52b5-4cab-9b5f-f0e6b011ea8b",
+          "id": "0ed32af2-13b7-4ef4-bc80-f6606f3e378b",
           "kind": "furniture",
           "area": {
             "start": {
@@ -165,7 +165,7 @@
       ],
       "doors": [
         {
-          "id": "6fa17c17-d61a-48e6-925e-026a409e52d0",
+          "id": "148049ca-9632-4dc4-b26f-5cb55d90122a",
           "kind": "door",
           "position": {
             "x": 1500,
@@ -177,7 +177,7 @@
           "label": "Entrance"
         },
         {
-          "id": "83a71520-029e-4ee5-a643-e9d1138eaf2c",
+          "id": "973b0b45-bb80-4f77-b774-4aa724aea25c",
           "kind": "emergencyExit",
           "position": {
             "x": 12000,
@@ -190,7 +190,7 @@
       ],
       "noGoZones": [
         {
-          "id": "644bd8df-139c-40b8-995d-8af7cf3d9aca",
+          "id": "8938d826-c017-4bde-a7be-65cc93c5a34b",
           "area": {
             "start": {
               "x": 5600,
@@ -256,9 +256,9 @@
     },
     "layouts": [
       {
-        "id": "6ff67713-6f6b-46c5-8516-2c584e4d3723",
+        "id": "14a0712b-be2c-4fd2-8bc6-30870e875ce4",
         "name": "Main",
-        "anchorModuleId": "eb12be43-606b-489a-a3c4-a2009e6c5f1e",
+        "anchorModuleId": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
         "anchorPose": {
           "x": 2000,
           "y": 2000,
@@ -277,31 +277,31 @@
           },
           "second": {
             "kind": "obstacle",
-            "obstacleId": "a844ade3-3bef-424f-8891-447ae18c72ad"
+            "obstacleId": "2cf6e40a-28c7-4ee0-9c20-dfa9982722b5"
           },
           "angleWall": 0
         },
         "lines": [
           {
-            "id": "a396a8ad-4afc-47e8-af12-f32a441ed1d6",
+            "id": "8d9a3b64-aff0-4896-ba50-eb39bf9a247a",
             "name": "Main line",
             "entries": [
               {
-                "moduleId": "eb12be43-606b-489a-a3c4-a2009e6c5f1e",
+                "moduleId": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
                 "entryExit": "W",
                 "exitExit": "E",
                 "legAdjustment": 0
               },
               {
-                "moduleId": "01bb0f35-f3c5-455b-a673-e3651f151948",
+                "moduleId": "24a2e937-0b99-4879-b9f6-7690f4b28c2a",
                 "entryExit": "E",
                 "exitExit": "W",
                 "legAdjustment": 5,
                 "note": "Bends the other way"
               },
               {
-                "moduleId": "74c10fd9-3cf5-4dd6-99c3-4e1c7c154bad",
-                "variantId": "b05232bf-cd21-4c03-8c7a-c1b31052e8c2",
+                "moduleId": "acbd4742-59ec-4940-abd3-b64775f128c3",
+                "variantId": "584d3087-950c-42e2-9dba-406747603ae2",
                 "entryExit": "W",
                 "exitExit": "E",
                 "legAdjustment": 0
@@ -309,17 +309,17 @@
             ]
           },
           {
-            "id": "6544c15f-501c-4b5c-aed0-c990753006b5",
+            "id": "5e7c3072-e7ff-455b-999c-1fb35b08990b",
             "name": "Branch",
             "entries": [
               {
-                "moduleId": "da392900-d066-471f-b031-c2bb36ca2e6c",
+                "moduleId": "2b2bbbfe-bef0-4d8b-a50f-04b91926342a",
                 "entryExit": "W",
                 "legAdjustment": 0
               }
             ],
             "startAt": {
-              "moduleId": "74c10fd9-3cf5-4dd6-99c3-4e1c7c154bad",
+              "moduleId": "acbd4742-59ec-4940-abd3-b64775f128c3",
               "exitLabel": "E2"
             }
           }
@@ -329,11 +329,11 @@
     "joints": [
       {
         "first": {
-          "moduleId": "eb12be43-606b-489a-a3c4-a2009e6c5f1e",
+          "moduleId": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
           "exitLabel": "E"
         },
         "second": {
-          "moduleId": "01bb0f35-f3c5-455b-a673-e3651f151948",
+          "moduleId": "24a2e937-0b99-4879-b9f6-7690f4b28c2a",
           "exitLabel": "E"
         },
         "joinMethodOverride": "clamped",
@@ -343,7 +343,7 @@
     ],
     "publicAreas": [
       {
-        "id": "4d23e4b6-a980-43f2-8866-f6444c964e76",
+        "id": "8dbb299e-eef3-44e2-8253-08a19d0ca0db",
         "area": {
           "start": {
             "x": 4000,
@@ -386,7 +386,7 @@
     ],
     "walkingPaths": [
       {
-        "id": "9fb35a6b-6fae-4e79-8f36-7ee201cf5652",
+        "id": "1d664f74-7845-4e4d-be92-0940a63c12c8",
         "centreLine": {
           "start": {
             "x": 1000,
@@ -416,10 +416,10 @@
     ],
     "acknowledgements": [
       {
-        "id": "46d04c69-6bfe-499e-8607-8117a92a0986",
+        "id": "797bb6bd-b55a-4842-b14e-bbbd2de4e53b",
         "findingCode": "VA-11",
         "moduleIds": [
-          "74c10fd9-3cf5-4dd6-99c3-4e1c7c154bad"
+          "acbd4742-59ec-4940-abd3-b64775f128c3"
         ],
         "fingerprint": "sample",
         "note": "Operator space overlaps the stage edge",
@@ -428,7 +428,7 @@
     ],
     "modules": [
       {
-        "id": "eb12be43-606b-489a-a3c4-a2009e6c5f1e",
+        "id": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
         "name": "Straight",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -449,7 +449,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "041cd96a-1ac1-4f48-939c-70dee5241fce",
+            "id": "7038ebeb-f9a1-4f06-9cea-65d14a582a59",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -608,7 +608,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "ec5e3470-0227-44d6-833a-e16806558b50",
+                "id": "98bf3d06-5748-4e50-9fe4-64db8017f285",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -653,7 +653,7 @@
         ]
       },
       {
-        "id": "01bb0f35-f3c5-455b-a673-e3651f151948",
+        "id": "24a2e937-0b99-4879-b9f6-7690f4b28c2a",
         "name": "Curve",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -674,7 +674,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "64a3b0f8-87c7-48c7-aa19-0046f66714ea",
+            "id": "408ff289-e40e-4972-8ecd-ec8f1b76c84e",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -839,7 +839,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "81c09b67-232e-4f8e-b4e5-c2b4e6bcaa89",
+                "id": "3ab78ec1-76b9-4b44-ae50-62d9bad3ec99",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -886,7 +886,7 @@
         ]
       },
       {
-        "id": "74c10fd9-3cf5-4dd6-99c3-4e1c7c154bad",
+        "id": "acbd4742-59ec-4940-abd3-b64775f128c3",
         "name": "Junction",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -907,7 +907,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "b05232bf-cd21-4c03-8c7a-c1b31052e8c2",
+            "id": "584d3087-950c-42e2-9dba-406747603ae2",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -1117,7 +1117,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "83be9c60-614b-4497-bc78-a11848a2bbf6",
+                "id": "912353df-10f1-42f9-ab84-42f781423741",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1167,7 +1167,7 @@
         ]
       },
       {
-        "id": "da392900-d066-471f-b031-c2bb36ca2e6c",
+        "id": "2b2bbbfe-bef0-4d8b-a50f-04b91926342a",
         "name": "Terminus",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -1189,7 +1189,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "36505ffb-0524-4e0b-a541-6aeac8e4d5b7",
+            "id": "f4ff2cca-296b-4929-a868-21e07d2f17a0",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -1325,7 +1325,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "b745623c-d5fa-41b0-b319-5deb5632e7aa",
+                "id": "64b1276f-79c3-430d-8c24-f86c01a5d046",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1337,7 +1337,7 @@
                   "y": -25,
                   "heading": 180
                 },
-                "id": "22dfe04a-ea08-4ea1-a221-fca6f399b48e",
+                "id": "9bfe8356-6017-4dbb-b6c6-0739c3c3c42f",
                 "isMainTrack": false,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1360,7 +1360,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "1138e2bf-05c9-4187-98d4-60e6c9b15b43",
+                "id": "b53ba315-32fc-4b92-a104-7f25de4cf1ab",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1372,7 +1372,7 @@
                   "y": 25,
                   "heading": 180
                 },
-                "id": "3d435518-5d21-49fe-aa02-6004fe968993",
+                "id": "ccea90e8-a357-4e5f-ba35-5ab348e0d118",
                 "isMainTrack": false,
                 "isNarrowGauge": false,
                 "isGenerated": true

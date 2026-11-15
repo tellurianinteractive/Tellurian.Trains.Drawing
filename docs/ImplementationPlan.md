@@ -86,7 +86,7 @@ Results: ADR 0001 (SVG canvas), ADR 0002 (files first, per-browser fallback), AD
 7. **Spike B – localization in WASM:** verify Tellurian.Localization RESX + Markdown under trimming/AOT and culture switching.
 8. **Spike C – files first, IndexedDB as workbench** (UseCases.md):
    - open and save a JSON file in place with the File System Access API, with a download/upload fallback (Firefox, Safari);
-   - pick a **folder** and read all `*.tdmodule` files in it, then re-read it later with the stored handle (Chromium); multi-file fallback;
+   - pick a **folder** and read all module files (`*.tdmodule`, since 0.5 `*.module.json`) in it, then re-read it later with the stored handle (Chromium); multi-file fallback;
    - read module files from a **ZIP archive** with `System.IO.Compression` in WebAssembly;
    - drafts and recent file handles in IndexedDB, and the persistent-storage request;
    - manifest file handlers.

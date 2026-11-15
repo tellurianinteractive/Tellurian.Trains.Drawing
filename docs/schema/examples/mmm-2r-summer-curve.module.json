@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.3.0",
+  "appVersion": "0.4.0",
   "content": {
     "module": {
-      "id": "d53802e3-d62c-42d7-83d0-00787f881309",
+      "id": "ce36bad1-5f9d-4335-bcf1-8105e162d2fc",
       "name": "Summer curve",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
@@ -31,7 +31,7 @@
       "revisionLog": [],
       "variants": [
         {
-          "id": "4d332caf-b4b7-4701-b79a-efcc94f009f8",
+          "id": "7b6505b3-6ab3-465e-b365-44fc3ab39b12",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -280,7 +280,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "08170670-9812-4a62-a783-4d061a069688",
+              "id": "45253424-7f7d-432f-bdb2-b5386aaf9603",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -416,7 +416,7 @@
     ],
     "measures": [
       {
-        "variantId": "4d332caf-b4b7-4701-b79a-efcc94f009f8",
+        "variantId": "7b6505b3-6ab3-465e-b365-44fc3ab39b12",
         "measures": {
           "length": 1478.0972450961724,
           "straight": 299.9999999999999,

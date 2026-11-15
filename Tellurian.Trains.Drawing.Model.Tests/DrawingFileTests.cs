@@ -254,20 +254,30 @@ public sealed class DrawingFileTests
     public void CurrentVersionNeedsNoMigrations() => Assert.IsEmpty(DrawingFileMigrations.All);
 
     [TestMethod]
-    [DataRow(DrawingFileKind.EndProfile, ".tdendprofile")]
-    [DataRow(DrawingFileKind.Module, ".tdmodule")]
-    [DataRow(DrawingFileKind.Hall, ".tdhall")]
-    [DataRow(DrawingFileKind.HallPlan, ".tdhallplan")]
-    [DataRow(DrawingFileKind.Catalogue, ".tdcatalogue")]
-    public void ExtensionsMatchKinds(DrawingFileKind kind, string extension)
+    [DataRow(DrawingFileKind.EndProfile, ".endprofile.json", ".tdendprofile")]
+    [DataRow(DrawingFileKind.Module, ".module.json", ".tdmodule")]
+    [DataRow(DrawingFileKind.Hall, ".hall.json", ".tdhall")]
+    [DataRow(DrawingFileKind.HallPlan, ".hallplan.json", ".tdhallplan")]
+    [DataRow(DrawingFileKind.Catalogue, ".catalogue.json", ".tdcatalogue")]
+    public void FileNamesAreJsonWithTheKindAndLegacyExtensionsAreStillKnown(DrawingFileKind kind, string extension, string legacy)
     {
         Assert.AreEqual(extension, DrawingFileFormat.Extension(kind));
-        Assert.AreEqual(kind, DrawingFileFormat.KindOf(extension));
+        Assert.AreEqual(legacy, DrawingFileFormat.LegacyExtension(kind));
+        Assert.AreEqual(kind, DrawingFileFormat.KindOf($"Station Nord{extension}"));
         Assert.AreEqual(kind, DrawingFileFormat.KindOf(extension[1..].ToUpperInvariant()));
+        Assert.AreEqual(kind, DrawingFileFormat.KindOf($"old{legacy.ToUpperInvariant()}"));
+        Assert.AreEqual($"old{extension}", DrawingFileFormat.WithCurrentExtension($"old{legacy}", kind));
+        Assert.IsTrue(DrawingFileFormat.MayBeDrawingFile($"old{legacy}"));
     }
 
     [TestMethod]
-    public void UnknownExtensionHasNoKind() => Assert.IsNull(DrawingFileFormat.KindOf(".json"));
+    public void APlainJsonNameSaysNoKindButMayBeADrawingFile()
+    {
+        Assert.IsNull(DrawingFileFormat.KindOf("profile.json"));
+        Assert.IsTrue(DrawingFileFormat.MayBeDrawingFile("profile.JSON"));
+        Assert.IsFalse(DrawingFileFormat.MayBeDrawingFile("readme.txt"));
+        Assert.AreEqual("mine.json", DrawingFileFormat.WithCurrentExtension("mine.json", DrawingFileKind.Module));
+    }
 
     private static JsonNode Rename(JsonNode content, string from, string to)
     {

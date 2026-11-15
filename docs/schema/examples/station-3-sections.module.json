@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.3.0",
+  "appVersion": "0.4.0",
   "content": {
     "module": {
-      "id": "a7af41bc-ecc0-4eab-a002-3f740789e3b5",
+      "id": "295c6595-a817-441c-a59f-90e505628313",
       "name": "Station",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -27,7 +27,7 @@
       "revisionLog": [],
       "variants": [
         {
-          "id": "7fa86b0b-a81b-4837-93b4-8b742ff774e1",
+          "id": "976e6bb6-d75d-4d26-a209-b51502cc3a04",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -319,7 +319,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "0ccef1d7-a4a0-4129-a69d-a9848ac57d38",
+              "id": "1f1d2a18-b0f3-492d-ba42-6f333d99f374",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -706,7 +706,7 @@
     ],
     "measures": [
       {
-        "variantId": "7fa86b0b-a81b-4837-93b4-8b742ff774e1",
+        "variantId": "976e6bb6-d75d-4d26-a209-b51502cc3a04",
         "measures": {
           "length": 3000,
           "straight": 3000,
