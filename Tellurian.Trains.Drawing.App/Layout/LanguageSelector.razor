@@ -1,16 +1,18 @@
 @using System.Globalization
 @inject SafeReload Reload
 
-<label class="language-selector">
-    <span>@T["Language"]</span>
-    <select value="@Current" @onchange="ChangeAsync">
-        @foreach (var language in AppLanguages.All)
-        {
-            var culture = AppLanguages.CultureOf(language);
-            <option value="@culture">@CultureInfo.GetCultureInfo(culture).NativeName</option>
-        }
-    </select>
-</label>
+@* One flag per language, as in the Planning app. A change reloads the app safely: drafts are saved first (AP-7). *@
+<div class="language-selector" role="group" aria-label="@T["Language"]">
+    @foreach (var language in AppLanguages.All)
+    {
+        var culture = AppLanguages.CultureOf(language);
+        var name = AppLanguages.NativeNameOf(language);
+        <button type="button" class="@(culture == Current ? "active" : null)" title="@name" aria-label="@name"
+                aria-pressed="@(culture == Current ? "true" : "false")" @onclick="() => ChangeAsync(culture)">
+            <img src="@AppLanguages.FlagOf(language)" alt="" />
+        </button>
+    }
+</div>
 @if (error is not null)
 {
     <p class="error" role="alert">@T.Format("StorageError", error)</p>
@@ -25,9 +27,9 @@
         ?? AppLanguages.All.Select(AppLanguages.CultureOf).FirstOrDefault(c => c.StartsWith(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, StringComparison.Ordinal))
         ?? AppLanguages.Neutral;
 
-    private async Task ChangeAsync(ChangeEventArgs e)
+    private async Task ChangeAsync(string culture)
     {
-        if (e.Value is not string culture || culture == Current) return;
+        if (culture == Current) return;
         error = (await Reload.ReloadAsync(culture))?.Message;
     }
 }

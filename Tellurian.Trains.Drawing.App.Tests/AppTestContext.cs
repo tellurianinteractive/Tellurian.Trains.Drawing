@@ -27,10 +27,8 @@ internal sealed class AppTestContext : BunitContext
         Services.AddSingleton<CatalogueService>();
         Services.AddSingleton<SafeReload>();
         Services.AddSingleton<BrowserDialogs>();
-        Services.AddSingleton<global::Tellurian.Trains.Drawing.App.Layout.StartupInformation>();
+        Services.AddSingleton<CatalogueProblems>();
         JSInterop.Mode = JSRuntimeMode.Loose;
-        // The information page has been shown in this tab, so pages render as they are; a test can set it up again.
-        JSInterop.Setup<string?>("sessionStorage.getItem", _ => true).SetResult("1");
     }
 
     public InMemoryWorkbench Workbench { get; } = new();

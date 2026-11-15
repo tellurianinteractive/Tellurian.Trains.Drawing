@@ -4,7 +4,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="AppName" xml:space="preserve"><value>Module Draw</value></data>
+  <data name="AppName" xml:space="preserve"><value>Modulzeichner</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Zeichne Endprofile, Module und Hallenpläne für Modelleisenbahn-Modultreffen.</value></data>
   <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
@@ -275,11 +275,20 @@
   <data name="FilletSide_Auto" xml:space="preserve"><value>Mittelpunkt: beste Passung</value></data>
   <data name="Print" xml:space="preserve"><value>Drucken</value></data>
   <data name="CreatingModule" xml:space="preserve"><value>Bitte warten. Modul {0} wird erstellt…</value></data>
-  <data name="InformationTitle" xml:space="preserve"><value>Willkommen bei Module Draw</value></data>
-  <data name="InformationIntro" xml:space="preserve"><value>Module Draw dient zum Zeichnen von Endprofilen, Modulen und Hallenplänen für Modultreffen.</value></data>
-  <data name="InformationPreRelease" xml:space="preserve"><value>Dies ist eine Vorabversion zum Ausprobieren. Sie können Endprofile zeichnen und Module aus Vorlagen erstellen. Das Bearbeiten von Modulen, Hallen und Hallenplänen folgt später.</value></data>
-  <data name="InformationStorage" xml:space="preserve"><value>Entwürfe werden während der Arbeit automatisch in diesem Browser gespeichert. Speichern Sie Ihre Zeichnungen als Dateien, um sie zu behalten und weiterzugeben.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Verwenden Sie einen Computer, am besten mit Chrome oder Edge. Module Draw funktioniert offline und kann als App installiert werden.</value></data>
+  <data name="InformationTitle" xml:space="preserve"><value>Willkommen beim Modulzeichner</value></data>
+  <data name="InformationIntro" xml:space="preserve"><value>Der Modulzeichner dient zum Zeichnen von Endprofilen, Modulen und Hallenplänen für Modultreffen.</value></data>
+  <data name="InformationPreRelease" xml:space="preserve"><value>Dies ist eine Vorabversion zum Ausprobieren. Du kannst Endprofile zeichnen und Module aus Vorlagen erstellen. Das Bearbeiten von Modulen, Hallen und Hallenplänen folgt später.</value></data>
+  <data name="InformationStorage" xml:space="preserve"><value>Entwürfe werden während der Arbeit automatisch in diesem Browser gespeichert. Speichere deine Zeichnungen als Dateien, um sie zu behalten und weiterzugeben.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Verwende einen Computer mit einem Chromium-basierten Browser, zum Beispiel Chrome, Edge, Brave, Vivaldi oder Opera, oder Chromium unter Linux. In diesen Browsern öffnet und speichert der Modulzeichner deine Dateien direkt.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Loslegen</value></data>
   <data name="ReleaseNotes" xml:space="preserve"><value>Versionshinweise</value></data>
+  <data name="Override" xml:space="preserve"><value>Passungsausnahme</value></data>
+  <data name="Problems" xml:space="preserve"><value>Probleme</value></data>
+  <data name="NoProblems" xml:space="preserve"><value>Keine Probleme gefunden.</value></data>
+  <data name="Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="UnknownEndProfile" xml:space="preserve"><value>unbekanntes Endprofil</value></data>
+  <data name="InformationGeneral" xml:space="preserve"><value>Allgemein</value></data>
+  <data name="InformationBrowserSupport" xml:space="preserve"><value>Unterstützte Browser</value></data>
+  <data name="InformationOffline" xml:space="preserve"><value>Der Modulzeichner funktioniert offline und kann als App installiert werden.</value></data>
+  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox und Safari funktionieren auch, aber mit Einschränkungen: Diese Browser können nicht direkt in die geöffnete Datei speichern, deshalb ist Speichern ein Download. Je nach Browsereinstellung landet die Datei im Download-Ordner, oder du wählst, wo sie gespeichert wird; wähle die ursprüngliche Datei, um sie zu ersetzen. Zuletzt verwendete Dateien und Ordner musst du zum Öffnen erneut auswählen.</value></data>
 </root>

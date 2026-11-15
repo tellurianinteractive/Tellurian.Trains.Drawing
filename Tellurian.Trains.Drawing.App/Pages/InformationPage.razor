@@ -1,21 +1,31 @@
+@page "/"
 @page "/information"
 
-@* The information page: shown when the app starts and from the app name in the top menu. *@
+@* The information page: the app's first page, also opened from the app name in the top menu. *@
 <PageTitle>@T["AppName"]</PageTitle>
 
 <article class="information">
     <h1>@T["InformationTitle"]</h1>
-    <p class="version">@T.Format("Version", AppVersion.Current)</p>
-    <p>@T["InformationIntro"]</p>
-    <p>@T["InformationPreRelease"]</p>
-    <p>@T["InformationStorage"]</p>
-    <p>@T["InformationBrowsers"]</p>
+
+    <section id="general">
+        <h2>@T["InformationGeneral"]</h2>
+        <p>@T["InformationIntro"]</p>
+        <p>@T["InformationPreRelease"]</p>
+        <p>@T["InformationStorage"]</p>
+        <p>@T["InformationOffline"]</p>
+    </section>
+
+    <section id="browser-support">
+        <h2>@T["InformationBrowserSupport"]</h2>
+        <p>@T["InformationBrowsers"]</p>
+        <p>@T["InformationOtherBrowsers"]</p>
+    </section>
+
     <div class="toolbar">
-        <a class="button primary" id="get-started" href="">@T["InformationContinue"]</a>
-        <a class="button" id="release-notes" href="@ReleaseNotesPage.Url">@T["ReleaseNotes"]</a>
+        <a class="button primary" id="get-started" href="@Home.Url">@T["InformationContinue"]</a>
     </div>
 </article>
 
 @code {
-    public const string Url = "information";
+    public const string Url = "";
 }

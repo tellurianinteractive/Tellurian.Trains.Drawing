@@ -103,4 +103,32 @@ public sealed class CatalogueValidationTests
         Assert.HasCount(Catalogue.AddOns.Count + 1, Catalogue.With(addOn).AddOns);
         Assert.HasCount(Catalogue.AddOns.Count, Catalogue.With(addOn).WithoutAddOn(addOn.Id).AddOns);
     }
+
+    [TestMethod]
+    public void ValidUserEntriesHaveNoProblems()
+    {
+        var user = DrawingCatalogue.Empty
+            .With(NewStandard())
+            .With(new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Fremo.Id })
+            .With(new EndProfileCompatibilityOverride { FirstEndProfileId = TestCatalogue.FremoSingle.Id, SecondEndProfileId = TestCatalogue.Mmm480.Id, Fit = JointFit.FitsWithClamps });
+        Assert.IsEmpty(CatalogueValidation.ValidateUserEntries(user, DrawingCatalogue.Merge(Catalogue, user)));
+    }
+
+    [TestMethod]
+    public void UserEntriesThatBecameInvalidAreReportedWithTheirEntry()
+    {
+        var standard = NewStandard() with { DefaultSingleTrackEndProfileId = Guid.NewGuid() };
+        var addOn = new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Guid.NewGuid() };
+        var entry = new EndProfileCompatibilityOverride { FirstEndProfileId = TestCatalogue.FremoSingle.Id, SecondEndProfileId = Guid.NewGuid(), Fit = JointFit.Fits };
+        var user = DrawingCatalogue.Empty.With(standard).With(addOn).With(entry);
+
+        var problems = CatalogueValidation.ValidateUserEntries(user, DrawingCatalogue.Merge(Catalogue, user));
+
+        CollectionAssert.AreEqual(new[]
+        {
+            new CatalogueEntryProblem(CatalogueEntryKind.Standard, standard.Id, null, new(CatalogueProblemCode.EndProfileNotOfStandard, "DefaultSingleTrackEndProfileId")),
+            new CatalogueEntryProblem(CatalogueEntryKind.AddOn, addOn.Id, null, new(CatalogueProblemCode.BaseStandardUnknown, "BaseStandardId")),
+            new CatalogueEntryProblem(CatalogueEntryKind.Override, entry.FirstEndProfileId, entry.SecondEndProfileId, new(CatalogueProblemCode.EndProfileUnknown, "SecondEndProfileId")),
+        }, problems.ToArray());
+    }
 }

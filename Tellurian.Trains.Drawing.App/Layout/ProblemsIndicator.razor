@@ -1,0 +1,80 @@
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@inject CatalogueProblems Catalogue
+@inject NavigationManager Navigation
+@implements IDisposable
+
+@* The problems indicator in the top bar: a green check when there are none, else a red sign with the count.
+   Clicking it lists the problems; clicking a problem opens the entry to correct. Drawing problems join later (VA). *@
+<div class="problems-indicator @(HasProblems ? "has-problems" : "no-problems")">
+    <button type="button" class="indicator-button" id="problems-button" title="@T["Problems"]" aria-label="@T["Problems"]" @onclick="Toggle">
+        <i class="fa-solid @(HasProblems ? "fa-circle-exclamation" : "fa-circle-check")"></i>
+        @if (HasProblems)
+        {
+            <span class="badge">@Catalogue.Problems.Count</span>
+        }
+    </button>
+
+    @if (open)
+    {
+        <div class="panel-backdrop" @onclick="Close"></div>
+        <div class="problems-panel" role="dialog" aria-labelledby="problems-title">
+            <header>
+                <h2 id="problems-title">@T["Problems"]</h2>
+                <button type="button" class="close" title="@T["Close"]" aria-label="@T["Close"]" @onclick="Close"><i class="fa-solid fa-xmark"></i></button>
+            </header>
+            @if (!HasProblems)
+            {
+                <p class="empty">@T["NoProblems"]</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var problem in Catalogue.Problems)
+                    {
+                        <li><a href="@Href(problem)" @onclick="Close"><b>@Subject(problem)</b>: @Message(problem.Problem)</a></li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private bool open;
+
+    private bool HasProblems => Catalogue.Problems.Count > 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Catalogue.Changed += OnChanged;
+        if (!Catalogue.IsChecked) await Catalogue.CheckAsync();
+    }
+
+    private void Toggle() => open = !open;
+
+    private void Close() => open = false;
+
+    private string Subject(CatalogueEntryProblem problem) => problem.Kind switch
+    {
+        CatalogueEntryKind.Standard => $"{T["Standard"]} {Catalogue.Catalogue.FindStandard(problem.Id)?.ShortName}",
+        CatalogueEntryKind.AddOn => $"{T["AddOn"]} {Catalogue.Catalogue.AddOns.FirstOrDefault(a => a.Id == problem.Id)?.ShortName}",
+        _ => $"{T["Override"]} {EndProfileName(problem.Id)} – {EndProfileName(problem.SecondId)}",
+    };
+
+    private string EndProfileName(Guid? id) =>
+        id is { } profileId && Catalogue.Catalogue.FindEndProfile(profileId) is { } profile ? profile.Designation : T["UnknownEndProfile"];
+
+    private string Message(CatalogueProblem problem) => T.Format($"Problem_{problem.Code}", T[$"Field_{problem.Property}"]);
+
+    private static string Href(CatalogueEntryProblem problem) => problem.Kind switch
+    {
+        CatalogueEntryKind.Standard => $"catalogue/standard/{problem.Id}",
+        CatalogueEntryKind.AddOn => $"catalogue/addon/{problem.Id}",
+        _ => $"catalogue/override?first={problem.Id}&second={problem.SecondId}",
+    };
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Catalogue.Changed -= OnChanged;
+}

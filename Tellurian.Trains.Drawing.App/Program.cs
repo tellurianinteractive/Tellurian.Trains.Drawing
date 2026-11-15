@@ -34,7 +34,7 @@ builder.Services.AddSingleton<DrawingDocuments>();
 builder.Services.AddSingleton<CatalogueService>();
 builder.Services.AddSingleton<SafeReload>();
 builder.Services.AddSingleton<BrowserDialogs>();
-builder.Services.AddSingleton<Tellurian.Trains.Drawing.App.Layout.StartupInformation>();
+builder.Services.AddSingleton<CatalogueProblems>();
 
 var host = builder.Build();
 await host.Services.GetRequiredService<BrowserEnvironment>().InitializeAsync();

@@ -24,7 +24,9 @@
 
   <!-- Markdown documents shown in the app (release notes, later help texts), embedded so they work offline. -->
   <ItemGroup>
-    <EmbeddedResource Include="..\RELEASENOTES.md" LogicalName="RELEASENOTES.md" />
+    <!-- English in RELEASENOTES.md, translations in RELEASENOTES.<language>.md. WithCulture="false" keeps the
+         translations in the main assembly instead of satellite assemblies. -->
+    <EmbeddedResource Include="..\RELEASENOTES*.md" LogicalName="%(Filename)%(Extension)" WithCulture="false" />
   </ItemGroup>
 
   <ItemGroup>

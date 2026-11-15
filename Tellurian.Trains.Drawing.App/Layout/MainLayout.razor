@@ -1,16 +1,39 @@
 ﻿@inherits LayoutComponentBase
+@using Tellurian.Trains.Drawing.App.Help
 
 <header class="app-header">
-    <a class="app-name" href="@Pages.InformationPage.Url">@T["AppName"] <span class="app-version">@AppVersion.Current</span></a>
+    <span class="app-title">
+        <a class="app-name" href="">@T["AppName"]</a>
+        <span class="app-version">@AppVersion.Current</span>
+        <button type="button" class="release-notes-button" id="release-notes-button" title="@T["ReleaseNotes"]" aria-label="@T["ReleaseNotes"]" @onclick="ToggleReleaseNotes"><i class="fa-solid fa-bullhorn"></i></button>
+    </span>
     <nav class="app-nav">
-        <NavLink href="" Match="NavLinkMatch.All">@T["Start"]</NavLink>
+        <NavLink href="@Pages.Home.Url" Match="NavLinkMatch.All">@T["Start"]</NavLink>
         <NavLink href="catalogue">@T["Catalogue"]</NavLink>
     </nav>
+    <ProblemsIndicator />
     <LanguageSelector />
 </header>
+
+@if (showReleaseNotes)
+{
+    <div class="modal-backdrop" @onclick="ToggleReleaseNotes">
+        <article class="modal-panel release-notes" role="dialog" aria-labelledby="release-notes-title" @onclick:stopPropagation>
+            <button type="button" class="close" title="@T["Close"]" aria-label="@T["Close"]" @onclick="ToggleReleaseNotes"><i class="fa-solid fa-xmark"></i></button>
+            <h1 id="release-notes-title">@T["ReleaseNotes"]</h1>
+            @((MarkupString)MarkdownDocuments.Html(MarkdownDocuments.ReleaseNotes, System.Globalization.CultureInfo.CurrentUICulture))
+        </article>
+    </div>
+}
 
 <main class="app-main">
     @Body
 </main>
 
 <UpdatePrompt />
+
+@code {
+    private bool showReleaseNotes;
+
+    private void ToggleReleaseNotes() => showReleaseNotes = !showReleaseNotes;
+}
