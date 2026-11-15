@@ -281,4 +281,5 @@
   <data name="InformationStorage" xml:space="preserve"><value>Utkast sparas automatiskt i den här webbläsaren medan du arbetar. Spara dina ritningar som filer för att behålla dem och dela dem.</value></data>
   <data name="InformationBrowsers" xml:space="preserve"><value>Använd en dator, helst med Chrome eller Edge. Module Draw fungerar utan uppkoppling och kan installeras som en app.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Kom igång</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Versionsinformation</value></data>
 </root>

@@ -281,4 +281,5 @@
   <data name="InformationStorage" xml:space="preserve"><value>Drafts are saved automatically in this browser while you work. Save your drawings to files to keep them and to share them.</value></data>
   <data name="InformationBrowsers" xml:space="preserve"><value>Use a desktop computer, preferably with Chrome or Edge. Module Draw works offline and can be installed as an app.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Get started</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Release notes</value></data>
 </root>

@@ -281,4 +281,5 @@
   <data name="InformationStorage" xml:space="preserve"><value>Kladder gemmes automatisk i denne browser, mens du arbejder. Gem dine tegninger som filer for at beholde og dele dem.</value></data>
   <data name="InformationBrowsers" xml:space="preserve"><value>Brug en computer, helst med Chrome eller Edge. Module Draw virker offline og kan installeres som en app.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Kom i gang</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Udgivelsesnoter</value></data>
 </root>

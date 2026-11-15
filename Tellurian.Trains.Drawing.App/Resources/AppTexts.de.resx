@@ -281,4 +281,5 @@
   <data name="InformationStorage" xml:space="preserve"><value>Entwürfe werden während der Arbeit automatisch in diesem Browser gespeichert. Speichern Sie Ihre Zeichnungen als Dateien, um sie zu behalten und weiterzugeben.</value></data>
   <data name="InformationBrowsers" xml:space="preserve"><value>Verwenden Sie einen Computer, am besten mit Chrome oder Edge. Module Draw funktioniert offline und kann als App installiert werden.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Loslegen</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Versionshinweise</value></data>
 </root>

@@ -281,4 +281,5 @@
   <data name="InformationStorage" xml:space="preserve"><value>Utkast lagres automatisk i denne nettleseren mens du arbeider. Lagre tegningene dine som filer for å beholde og dele dem.</value></data>
   <data name="InformationBrowsers" xml:space="preserve"><value>Bruk en datamaskin, helst med Chrome eller Edge. Module Draw virker uten nett og kan installeres som en app.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Kom i gang</value></data>
+  <data name="ReleaseNotes" xml:space="preserve"><value>Versjonsmerknader</value></data>
 </root>
