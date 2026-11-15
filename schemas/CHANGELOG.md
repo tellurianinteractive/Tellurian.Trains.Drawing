@@ -5,6 +5,12 @@ changes are allowed. Schema version 1 is a draft until it is frozen (implementat
 until then it may still change.
 
 ## Version 1 (draft)
+### 2026-11-15 (file names)
+- Drawing files are plain JSON files. Suggested names end with the kind and `.json`: `.endprofile.json`,
+  `.module.json`, `.hall.json`, `.hallplan.json`, `.catalogue.json`. Readers identify a file by `format` and `kind`,
+  not by its name. The earlier extensions (`.tdendprofile`, `.tdmodule`, `.tdhall`, `.tdhallplan`, `.tdcatalogue`)
+  are still read. The content is unchanged; only the schemas' descriptions name the new file endings.
+
 ### 2026-11-15 (revision log, countries)
 - End profiles, modules, halls and hall plans have a `revisionLog`: one entry per person who saved the drawing,
   with `name` and the last `date` (`yyyy-MM-dd`) they saved it, newest first. Readers that don't know it ignore it.

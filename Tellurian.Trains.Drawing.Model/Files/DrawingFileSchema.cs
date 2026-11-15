@@ -8,7 +8,7 @@ namespace Tellurian.Trains.Drawing.Model.Files;
 
 /// <summary>
 /// JSON Schemas of the drawing files (EX-7), generated from the same metadata the serializer uses,
-/// so they can't drift from the code. The published copies are in <c>docs/schema/</c>.
+/// so they can't drift from the code. The published copies are in <c>schemas/</c> (not deployed with the app).
 /// </summary>
 public static class DrawingFileSchema
 {

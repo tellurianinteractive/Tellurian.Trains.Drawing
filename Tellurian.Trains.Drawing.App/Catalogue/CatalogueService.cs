@@ -13,7 +13,7 @@ namespace Tellurian.Trains.Drawing.App.Catalogue;
 public sealed class CatalogueService(IWorkbench workbench, IFileService files, SettingsService settings)
 {
     public const string UserCatalogueKey = "user-catalogue";
-    public const string ExportFileName = "my-catalogue.tdcatalogue";
+    public const string ExportFileName = "my-catalogue.catalogue.json";
 
     private DrawingCatalogue? _user;
 
@@ -27,11 +27,11 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
         DrawingCatalogue.Merge(BuiltIn, await GetUserAsync(cancellationToken));
 
     /// <summary>
-    /// The entries to choose from: <see cref="GetAsync"/> without standards for other countries than the one in
-    /// the settings, and what belongs only to them (CA-6). Drawings are still read with the whole catalogue.
+    /// The entries to choose from: <see cref="GetAsync"/> limited to the country (CA-6) and the scale (AP-9) in the
+    /// settings. Drawings are still read with the whole catalogue.
     /// </summary>
     public async Task<DrawingCatalogue> GetForChoicesAsync(CancellationToken cancellationToken = default) =>
-        (await GetAsync(cancellationToken)).ForCountry(await settings.CountryCodeAsync(cancellationToken));
+        (await GetAsync(cancellationToken)).ForChoices(await settings.CountryCodeAsync(cancellationToken), await settings.ScaleAsync(cancellationToken));
 
     public async Task<DrawingCatalogue> GetUserAsync(CancellationToken cancellationToken = default)
     {

@@ -1,5 +1,11 @@
 # Versjonsmerknader
 
+## Versjon 0.5.0
+Utgitt 2026-11-15
+- Tegninger lagres som vanlige JSON-filer, navngitt etter typen, for eksempel *Station Nord.module.json* eller *FREMO-H0-B96.endprofile.json*. De kan åpnes i hvilken som helst JSON-redigerer. Filer som er lagret med de tidligere filendelsene (.tdmodule, .tdendprofile og så videre), kan fortsatt åpnes.
+- Åpne og importer tar imot alle JSON-filer; appen leser typen fra innholdet. Andre JSON-filer i en mappe eller et ZIP-arkiv hoppes over.
+- Innstilling for skala: velg skalaen du arbeider i, så vises bare standarder og endeprofiler i den skalaen, sammen med landet ditt.
+
 ## Versjon 0.4.0
 Utgitt 2026-11-15
 - Siden Innstillinger, under Innstillinger i toppmenyen: brukernavnet ditt, landet du arbeider i, og API-nøkkelen din for Modulregisteret. Innstillingene lagres i nettleseren, også etter oppdateringer, og lagres aldri i filer.

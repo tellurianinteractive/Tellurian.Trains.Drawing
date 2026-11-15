@@ -1,5 +1,11 @@
 # Versionshinweise
 
+## Version 0.5.0
+Veröffentlicht am 2026-11-15
+- Zeichnungen werden als normale JSON-Dateien gespeichert, benannt nach ihrer Art, zum Beispiel *Station Nord.module.json* oder *FREMO-H0-B96.endprofile.json*. Sie lassen sich in jedem JSON-Editor öffnen. Dateien mit den früheren Endungen (.tdmodule, .tdendprofile usw.) lassen sich weiterhin öffnen.
+- Öffnen und Importieren nehmen jede JSON-Datei an; die App liest die Art aus dem Inhalt. Andere JSON-Dateien in einem Ordner oder ZIP-Archiv werden übersprungen.
+- Einstellung für den Maßstab: Wähle den Maßstab, in dem du arbeitest, dann werden nur Normen und Endprofile in diesem Maßstab angeboten, zusammen mit deinem Land.
+
 ## Version 0.4.0
 Veröffentlicht am 2026-11-15
 - Seite Einstellungen, unter Einstellungen im oberen Menü: dein Benutzername, das Land, in dem du arbeitest, und dein API-Schlüssel für das Modulregister. Die Einstellungen bleiben in deinem Browser, auch nach Updates, und werden nie in Dateien gespeichert.

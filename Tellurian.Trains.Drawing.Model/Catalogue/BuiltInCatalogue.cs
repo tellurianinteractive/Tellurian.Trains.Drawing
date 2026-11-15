@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Drawing.Model.Catalogue;
 
 /// <summary>
 /// The catalogue that ships with the library (CA-1): scales, standards, add-ons and end profile drawings,
-/// read from the embedded catalogue file <c>BuiltInCatalogue.tdcatalogue</c>.
+/// read from the embedded catalogue file <c>BuiltInCatalogue.catalogue.json</c>.
 /// </summary>
 public static class BuiltInCatalogue
 {
@@ -14,7 +14,7 @@ public static class BuiltInCatalogue
     /// </summary>
     public const string ProvisionalRevision = "provisional";
 
-    internal const string ResourceName = "Tellurian.Trains.Drawing.Model.BuiltInCatalogue.tdcatalogue";
+    internal const string ResourceName = "Tellurian.Trains.Drawing.Model.BuiltInCatalogue.catalogue.json";
 
     private static readonly Lazy<DrawingCatalogue> Catalogue = new(Load);
 

@@ -27,7 +27,7 @@ public sealed class SettingsService(IWorkbench workbench)
     /// <summary>Saves the settings, with blank texts as not set.</summary>
     public async Task SaveAsync(UserSettings settings, CancellationToken cancellationToken = default)
     {
-        var cleaned = settings with { UserName = Clean(settings.UserName), ApiKey = Clean(settings.ApiKey) };
+        var cleaned = settings with { UserName = Clean(settings.UserName), Scale = Clean(settings.Scale), ApiKey = Clean(settings.ApiKey) };
         await workbench.SetValueAsync(StorageKey, JsonSerializer.Serialize(cleaned, WorkbenchJsonContext.Default.UserSettings), cancellationToken);
         _settings = cleaned;
         await workbench.RequestPersistenceAsync(cancellationToken);
@@ -37,6 +37,10 @@ public sealed class SettingsService(IWorkbench workbench)
     /// <summary>The two-letter code of the user's country, or null when none is chosen.</summary>
     public async Task<string?> CountryCodeAsync(CancellationToken cancellationToken = default) =>
         Countries.Find((await GetAsync(cancellationToken)).CountryId)?.Code;
+
+    /// <summary>The short name of the user's scale, or null for all scales.</summary>
+    public async Task<string?> ScaleAsync(CancellationToken cancellationToken = default) =>
+        (await GetAsync(cancellationToken)).Scale;
 
     private static string? Clean(string? text) => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
 }

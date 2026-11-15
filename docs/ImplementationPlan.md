@@ -86,7 +86,7 @@ Results: ADR 0001 (SVG canvas), ADR 0002 (files first, per-browser fallback), AD
 7. **Spike B – localization in WASM:** verify Tellurian.Localization RESX + Markdown under trimming/AOT and culture switching.
 8. **Spike C – files first, IndexedDB as workbench** (UseCases.md):
    - open and save a JSON file in place with the File System Access API, with a download/upload fallback (Firefox, Safari);
-   - pick a **folder** and read all `*.tdmodule` files in it, then re-read it later with the stored handle (Chromium); multi-file fallback;
+   - pick a **folder** and read all module files (`*.tdmodule`, since 0.5 `*.module.json`) in it, then re-read it later with the stored handle (Chromium); multi-file fallback;
    - read module files from a **ZIP archive** with `System.IO.Compression` in WebAssembly;
    - drafts and recent file handles in IndexedDB, and the persistent-storage request;
    - manifest file handlers.
@@ -134,12 +134,12 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 6. Derived module measures (length, width, radius, angle, track length, ramp height difference and gradient) and comparison with the entered Registry-style values (MD-10 logic).
 7. File envelope, `JsonSerializerContext`, schema version + migration pipeline (no-op v1 → v1), refusal of newer versions.
    **The module and end profile files are public contracts (EX-7)** for upload to the Module Registry:
-   - JSON Schemas in `docs/schema/` (end profile and module first);
+   - JSON Schemas in `schemas/` (end profile and module first);
    - module files embed their end profiles;
    - catalogue references stored by value as well as by id;
    - a test that validates serialized samples against the schemas;
    - a schema change log;
-   - sample files in `docs/schema/examples/` for the Registry developers.
+   - sample files in `schemas/examples/` for the Registry developers.
 8. **Built-in catalogue** JSON (embedded resource): scales and standards, plus end profile drawings for FREMO H0 (incl. H0-RE), MMM-2R, MMM-3R and FREMO N, so that the H0-RE ↔ MMM-2R clamp case and the 2R ↔ 3R incompatibility can be tested. Add-ons MMM-Summer and MMM-Modern on MMM-2R. Add overrides only where the rules give the wrong answer.
    Sources: the published PDF drawings from **FREMO** (all FREMO scales) and **MMM** (MMM-2R, MMM-3R and its add-ons). Each profile records its source document and revision. Phase 2 can use hand-entered test profiles; the real ones are drawn and checked in Phase 5.
 9. Unit tests: serialization round trips, templates, derived measures, catalogue loading/merging (built-in + user, CA-2).
@@ -342,7 +342,11 @@ In priority order (to be confirmed):
 7. EP-11/MD-14/HA-4 background images with calibration, including PDF pages (one shared mechanism; EP-11 possibly already in Phase 5).
 8. EP-6 dowels (if not done in Phase 5), AP-5 dark theme.
 
+### Planned next (decided 2026-11-15)
+- **Empty catalogue (CA-1)**: the built-in catalogue is interim, as hard-coded entries may be wrong. It stays until Registry import (CA-5) works; then the catalogue starts empty and is filled manually (CA-2) or by import.
+
 ### Later (separate plan)
+- **Upload from this app (EX-11)**: upload end profile and module drawings to the Module Registry through its API, with the API key from Settings (AP-8), when the Registry's API supports it.
 - **Module Registry upload of module files and end profile drawings** (spec §10). This is Registry-side work in its own repository, based on the published schemas. End profile drawings are stored with the Registry's EndProfile entity. This app needs no changes beyond keeping the schemas stable.
 - **Registry import in this app** (spec §10): a read-only Registry API for the catalogue, including end profile drawings (CA-5), and possibly for downloading module files. Access control stays in the Registry; the app has no roles of its own. CORS for the SWA origin is required.
 - MD-15 DXF import, HP-10 plan templates.
@@ -356,6 +360,7 @@ In priority order (to be confirmed):
 | CA-2, CA-3 | 2 (logic), 3 (UI) |
 | CA-4 | replaced by EP-* |
 | CA-5 | Later |
+| CA-6 | as built, 0.4.0 |
 | EP-1 | 3 (library), 5 |
 | EP-2, EP-7 | 2 (logic), 5 (UI) |
 | EP-3 … EP-6, EP-8 | 5 |
@@ -391,6 +396,8 @@ In priority order (to be confirmed):
 | EX-9 | 0 (spike C), 3, 9 |
 | EX-5 | 9 |
 | EX-7 | 2 (schemas), 12 (freeze v1) |
+| EX-10 | as built, 0.4.0 |
+| EX-11 | Later |
 | EX-8 | 4 (framework), 5, 6, 9 (per drawing kind) |
 | AP-1 | 0 (skeleton), 3 |
 | AP-2 | 3 (infrastructure), 12 |
@@ -398,6 +405,8 @@ In priority order (to be confirmed):
 | AP-5 | 13 |
 | AP-6 | 12 |
 | AP-7 | 3 (safe reload), 12 (language switcher uses it) |
+| AP-8 | as built, 0.4.0 |
+| AP-9 | as built, 0.5.0 (Registry calls with CA-5) |
 | NF-1, NF-3 | 0, 12 |
 | NF-2 | 0 (spike), 1, 9, 10, 12 |
 | NF-4 | 0, 12 |

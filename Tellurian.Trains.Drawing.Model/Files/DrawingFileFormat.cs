@@ -22,8 +22,26 @@ public static class DrawingFileFormat
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown file kind."),
     };
 
-    /// <summary>The file name extension, including the dot, e.g. <c>.tdmodule</c>.</summary>
+    /// <summary>The extension of every drawing file: they are JSON files, readable in any JSON editor.</summary>
+    public const string JsonExtension = ".json";
+
+    /// <summary>
+    /// The end of the file names this library suggests, including the dot, e.g. <c>.module.json</c>: the kind
+    /// before <see cref="JsonExtension"/>, so the kind shows in a folder listing. The kind of a file is always
+    /// read from its content, so a file with any name ending in <c>.json</c> can be opened.
+    /// </summary>
     public static string Extension(DrawingFileKind kind) => kind switch
+    {
+        DrawingFileKind.EndProfile => ".endprofile.json",
+        DrawingFileKind.Module => ".module.json",
+        DrawingFileKind.Hall => ".hall.json",
+        DrawingFileKind.HallPlan => ".hallplan.json",
+        DrawingFileKind.Catalogue => ".catalogue.json",
+        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown file kind."),
+    };
+
+    /// <summary>The extension used up to version 0.4, e.g. <c>.tdmodule</c>. Such files can still be opened.</summary>
+    public static string LegacyExtension(DrawingFileKind kind) => kind switch
     {
         DrawingFileKind.EndProfile => ".tdendprofile",
         DrawingFileKind.Module => ".tdmodule",
@@ -33,15 +51,30 @@ public static class DrawingFileFormat
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown file kind."),
     };
 
-    /// <summary>The kind of file with <paramref name="extension"/> (with or without the dot), or null.</summary>
-    public static DrawingFileKind? KindOf(string extension)
+    /// <summary>
+    /// The kind a file name (or an extension, with or without the dot) says, by <see cref="Extension"/> or
+    /// <see cref="LegacyExtension"/>; null when it doesn't say, e.g. a plain <c>.json</c> name.
+    /// </summary>
+    public static DrawingFileKind? KindOf(string name)
     {
-        var normalized = extension.StartsWith('.') ? extension : $".{extension}";
+        var normalized = name.StartsWith('.') ? name : $".{name}";
         foreach (var kind in Enum.GetValues<DrawingFileKind>())
         {
-            if (string.Equals(Extension(kind), normalized, StringComparison.OrdinalIgnoreCase)) return kind;
+            if (normalized.EndsWith(Extension(kind), StringComparison.OrdinalIgnoreCase) ||
+                normalized.EndsWith(LegacyExtension(kind), StringComparison.OrdinalIgnoreCase)) return kind;
         }
         return null;
+    }
+
+    /// <summary>True if a file with this name may be a drawing file: a JSON file, or one with a legacy extension.</summary>
+    public static bool MayBeDrawingFile(string fileName) =>
+        fileName.EndsWith(JsonExtension, StringComparison.OrdinalIgnoreCase) || KindOf(fileName) is not null;
+
+    /// <summary>The file name with a legacy extension replaced by <see cref="Extension"/>; other names are kept.</summary>
+    public static string WithCurrentExtension(string fileName, DrawingFileKind kind)
+    {
+        var legacy = LegacyExtension(kind);
+        return fileName.EndsWith(legacy, StringComparison.OrdinalIgnoreCase) ? $"{fileName[..^legacy.Length]}{Extension(kind)}" : fileName;
     }
 
     /// <summary>The version of this library, written as <c>appVersion</c> when the caller gives none.</summary>

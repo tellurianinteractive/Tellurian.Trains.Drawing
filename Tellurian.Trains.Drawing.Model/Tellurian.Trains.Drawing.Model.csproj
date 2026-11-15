@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Catalogue\BuiltInCatalogue.tdcatalogue" LogicalName="Tellurian.Trains.Drawing.Model.BuiltInCatalogue.tdcatalogue" />
+    <EmbeddedResource Include="Catalogue\BuiltInCatalogue.catalogue.json" LogicalName="Tellurian.Trains.Drawing.Model.BuiltInCatalogue.catalogue.json" />
   </ItemGroup>
 
   <ItemGroup>

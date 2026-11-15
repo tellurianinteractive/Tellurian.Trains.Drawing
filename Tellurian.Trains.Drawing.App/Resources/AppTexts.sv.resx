@@ -307,4 +307,6 @@
   <data name="RevisionLog" xml:space="preserve"><value>Ändringslogg</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Inte sparad av någon med användarnamn än.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Inget användarnamn i inställningarna: när du sparar en ritning registreras det inte i ändringsloggen.</value></data>
+  <data name="AllScales" xml:space="preserve"><value>(alla skalor)</value></data>
+  <data name="ScaleHelp" xml:space="preserve"><value>Bara standarder och ändprofiler i den här skalan visas, med deras tillägg. Frågor till Modulregistret gäller också den här skalan.</value></data>
 </root>

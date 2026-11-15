@@ -1,5 +1,11 @@
 # Versionsinformation
 
+## Version 0.5.0
+Utgiven 2026-11-15
+- Ritningar sparas som vanliga JSON-filer, namngivna efter sin typ, till exempel *Station Nord.module.json* eller *FREMO-H0-B96.endprofile.json*. De öppnas i vilken JSON-redigerare som helst. Filer som sparats med de tidigare filändelserna (.tdmodule, .tdendprofile och så vidare) går fortfarande att öppna.
+- Öppna och importera tar emot alla JSON-filer; appen läser typen ur innehållet. Andra JSON-filer i en mapp eller ett ZIP-arkiv hoppas över.
+- Inställning för skala: välj skalan du arbetar i, så visas bara standarder och ändprofiler i den skalan, tillsammans med ditt land.
+
 ## Version 0.4.0
 Utgiven 2026-11-15
 - Sidan Inställningar, under Inställningar i toppmenyn: ditt användarnamn, landet du arbetar i och din API-nyckel för Modulregistret. Inställningarna sparas i webbläsaren, även efter uppdateringar, och sparas aldrig i filer.

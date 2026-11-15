@@ -95,7 +95,7 @@ public sealed class DrawingDocumentsTests
 
         Assert.IsNotNull(saved);
         Assert.IsFalse(saved.HasUnsavedChanges);
-        Assert.AreEqual(("club.tdhall", "h1", false), (files.Saves[0].SuggestedName, files.Saves[0].HandleId, files.Saves[0].SaveAs));
+        Assert.AreEqual(("club.hall.json", "h1", false), (files.Saves[0].SuggestedName, files.Saves[0].HandleId, files.Saves[0].SaveAs));
         Assert.AreEqual(1, _workbench.PersistenceRequests);
     }
 
@@ -182,7 +182,7 @@ public sealed class DrawingDocumentsTests
 
         var saved = await documents.SaveAsync(draft.Id, saveAs: false);
 
-        Assert.AreEqual("club.tdhall", files.Saves[0].SuggestedName);
+        Assert.AreEqual("club.hall.json", files.Saves[0].SuggestedName, "A legacy name gets the current extension.");
         Assert.IsNull(saved?.HandleId);
     }
 
@@ -212,11 +212,12 @@ public sealed class DrawingDocumentsTests
     }
 
     [TestMethod]
-    [DataRow("Club hall", null, "Club hall.tdhall")]
-    [DataRow("A/B: C", null, "A-B- C.tdhall")]
-    [DataRow("a<b>c\"d\\e|f?g*h", null, "a-b-c-d-e-f-g-h.tdhall")]
-    [DataRow("  ", null, "Hall.tdhall")]
-    [DataRow("Club hall", "old.tdhall", "old.tdhall")]
+    [DataRow("Club hall", null, "Club hall.hall.json")]
+    [DataRow("A/B: C", null, "A-B- C.hall.json")]
+    [DataRow("a<b>c\"d\\e|f?g*h", null, "a-b-c-d-e-f-g-h.hall.json")]
+    [DataRow("  ", null, "Hall.hall.json")]
+    [DataRow("Club hall", "old.tdhall", "old.hall.json")]
+    [DataRow("Club hall", "mine.json", "mine.json")]
     public void SuggestedFileNames(string name, string? fileName, string expected)
     {
         var draft = new Draft { Id = Guid.NewGuid(), Kind = DrawingFileKind.Hall, Name = name, Json = "{}", FileName = fileName, Modified = default };

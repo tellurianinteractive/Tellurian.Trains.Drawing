@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Tellurian Trains Drawing EndProfile file",
-  "description": "A .tdendprofile file, schema version 1. Lengths in millimetres, angles in degrees.",
+  "title": "Tellurian Trains Drawing Hall file",
+  "description": "A .hall.json file, schema version 1. Lengths in millimetres, angles in degrees.",
   "type": "object",
   "properties": {
     "format": {
       "const": "tellurian-drawing"
     },
     "kind": {
-      "const": "endProfile"
+      "const": "hall"
     },
     "schemaVersion": {
       "const": 1
@@ -20,7 +20,7 @@
       ]
     },
     "content": {
-      "$ref": "#/$defs/EndProfile"
+      "$ref": "#/$defs/Hall"
     }
   },
   "required": [
@@ -30,59 +30,39 @@
     "content"
   ],
   "$defs": {
-    "CatalogueReference": {
+    "Door": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
           "format": "uuid"
         },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "name"
-      ]
-    },
-    "Circle": {
-      "type": "object",
-      "properties": {
-        "center": {
-          "$ref": "#/$defs/Point"
+        "kind": {
+          "enum": [
+            "door",
+            "emergencyExit"
+          ]
         },
-        "diameter": {
+        "position": {
+          "$ref": "#/$defs/Pose"
+        },
+        "width": {
           "type": "number"
+        },
+        "keepFreeDepth": {
+          "type": "number"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
-        "center",
-        "diameter"
+        "position",
+        "width"
       ]
-    },
-    "DocumentReference": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "url": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "revision": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
     },
     "DrawingRevision": {
       "type": "object",
@@ -100,94 +80,54 @@
         "date"
       ]
     },
-    "EndProfile": {
+    "Hall": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
           "format": "uuid"
         },
-        "designation": {
+        "name": {
           "type": "string"
         },
-        "scale": {
-          "type": "string"
-        },
-        "standards": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/CatalogueReference"
-          }
-        },
-        "outline": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/PathDrawing"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "plate": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/PlateShape"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "groundLine": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/PathDrawing"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "tracks": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/EndProfileTrack"
-          }
-        },
-        "screwHoles": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Circle"
-          }
-        },
-        "dowels": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Circle"
-          }
-        },
-        "screwHolePattern": {
+        "address": {
           "type": [
             "string",
             "null"
           ]
         },
-        "source": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DocumentReference"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "registryId": {
+        "note": {
           "type": [
-            "integer",
+            "string",
             "null"
           ]
+        },
+        "outline": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "minimumAisleWidth": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "obstacles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Obstacle"
+          }
+        },
+        "doors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Door"
+          }
+        },
+        "noGoZones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NoGoZone"
+          }
         },
         "revision": {
           "type": "integer"
@@ -201,24 +141,44 @@
       },
       "required": [
         "id",
-        "designation",
-        "scale"
+        "name",
+        "outline"
       ]
     },
-    "EndProfileTrack": {
+    "NoGoZone": {
       "type": "object",
       "properties": {
-        "offset": {
-          "type": "number"
+        "id": {
+          "type": "string",
+          "format": "uuid"
         },
-        "gauge": {
-          "type": "number"
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
         },
-        "railSystem": {
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "area",
+        "reason"
+      ]
+    },
+    "Obstacle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
           "enum": [
-            "twoRail",
-            "threeRail"
+            "pillar",
+            "furniture"
           ]
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
         },
         "label": {
           "type": [
@@ -228,8 +188,7 @@
         }
       },
       "required": [
-        "offset",
-        "gauge"
+        "area"
       ]
     },
     "PathDrawing": {
@@ -291,58 +250,6 @@
         }
       ]
     },
-    "PlateSegment": {
-      "type": "object",
-      "properties": {
-        "kind": {
-          "enum": [
-            "line",
-            "arc",
-            "fillet"
-          ]
-        },
-        "end": true,
-        "center": true,
-        "radius": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "side": {
-          "enum": [
-            "above",
-            "below",
-            null
-          ]
-        }
-      },
-      "required": [
-        "kind"
-      ]
-    },
-    "PlateShape": {
-      "type": "object",
-      "properties": {
-        "start": {
-          "$ref": "#/$defs/Point"
-        },
-        "segments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/PlateSegment"
-          }
-        },
-        "bottom": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "start",
-        "segments",
-        "bottom"
-      ]
-    },
     "Point": {
       "type": "object",
       "properties": {
@@ -356,6 +263,25 @@
       "required": [
         "x",
         "y"
+      ]
+    },
+    "Pose": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "heading": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "heading"
       ]
     }
   }

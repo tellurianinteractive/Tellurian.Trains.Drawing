@@ -1,5 +1,11 @@
 # Release Notes
 
+## Release 0.5.0
+Released 2026-11-15
+- Drawings are saved as plain JSON files, named after the kind, e.g. *Station Nord.module.json* or *FREMO-H0-B96.endprofile.json*. They open in any JSON editor. Files saved with the earlier extensions (.tdmodule, .tdendprofile and so on) still open.
+- Open and import accept any JSON file; the app reads the kind from the content. Other JSON files in a folder or ZIP archive are skipped.
+- Scale setting: choose the scale you work in, and only standards and end profiles of that scale are offered, together with your country.
+
 ## Release 0.4.0
 Released 2026-11-15
 - Settings page, under Settings in the top menu: your user name, the country you work in, and your Module Registry API key. Settings are kept in your browser, also after updates, and are never saved in files.

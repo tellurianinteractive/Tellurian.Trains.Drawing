@@ -307,4 +307,6 @@
   <data name="RevisionLog" xml:space="preserve"><value>Ændringslog</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Endnu ikke gemt af nogen med brugernavn.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Intet brugernavn i indstillingerne: når du gemmer en tegning, registreres det ikke i ændringsloggen.</value></data>
+  <data name="AllScales" xml:space="preserve"><value>(alle skalaer)</value></data>
+  <data name="ScaleHelp" xml:space="preserve"><value>Kun standarder og endeprofiler i denne skala vises, med deres tilføjelser. Forespørgsler til Modulregistret gælder også denne skala.</value></data>
 </root>

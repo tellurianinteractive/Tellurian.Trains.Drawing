@@ -38,6 +38,35 @@ public sealed class SettingsPageTests
     }
 
     [TestMethod]
+    public void TheScaleIsChosenAmongTheCatalogueScales()
+    {
+        using var context = new AppTestContext();
+        var page = context.Render<SettingsPage>();
+
+        var options = page.FindAll("#scale option").Select(o => o.GetAttribute("value")).ToArray();
+        CollectionAssert.AreEqual(new[] { "", "H0", "N" }, options);
+        Assert.AreEqual("(all scales)", page.Find("#scale option").TextContent);
+
+        page.Find("#scale").Change("N");
+        page.Find("form").Submit();
+
+        Assert.AreEqual("N", context.Services.GetRequiredService<SettingsService>().GetAsync().Result.Scale);
+    }
+
+    [TestMethod]
+    public void TheScaleLimitsTheChoices()
+    {
+        using var context = new AppTestContext();
+        context.Services.GetRequiredService<SettingsService>().SaveAsync(new() { Scale = "N" }).Wait();
+
+        var choices = context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().GetForChoicesAsync().Result;
+
+        Assert.IsNotEmpty(choices.Standards);
+        Assert.IsTrue(choices.Standards.All(s => s.Scale == "N"));
+        Assert.IsTrue(choices.EndProfiles.All(p => p.Scale == "N"));
+    }
+
+    [TestMethod]
     public void TheApiKeyIsHiddenUntilShown()
     {
         using var context = new AppTestContext();

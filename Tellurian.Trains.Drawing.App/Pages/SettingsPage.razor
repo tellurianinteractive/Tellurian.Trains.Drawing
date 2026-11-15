@@ -1,6 +1,7 @@
 @page "/settings"
 @using Tellurian.Trains.Drawing.App.Settings
 @inject SettingsService Settings
+@inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
 
 @* The user's settings (AP-8): kept in this browser, never written to drawing or catalogue files. *@
 <PageTitle>@T["Settings"]</PageTitle>
@@ -31,6 +32,17 @@
             <small class="note">@T["CountryHelp"]</small>
         </label>
         <label>
+            <span>@T["Field_Scale"]</span>
+            <select id="scale" @bind="form.Scale">
+                <option value="">@T["AllScales"]</option>
+                @foreach (var scale in scales)
+                {
+                    <option value="@scale.ShortName">@scale</option>
+                }
+            </select>
+            <small class="note">@T["ScaleHelp"]</small>
+        </label>
+        <label>
             <span>@T["Field_ApiKey"]</span>
             <span class="secret">
                 <input id="apiKey" type="@(showApiKey ? "text" : "password")" @bind="form.ApiKey" autocomplete="off" spellcheck="false" />
@@ -53,6 +65,7 @@
     public const string Url = "settings";
 
     private Form? form;
+    private IReadOnlyList<Tellurian.Trains.Drawing.Model.Catalogue.Scale> scales = [];
     private bool showApiKey;
     private bool saved;
     private string? message;
@@ -62,7 +75,8 @@
         try
         {
             var settings = await Settings.GetAsync();
-            form = new() { UserName = settings.UserName, CountryId = settings.CountryId, ApiKey = settings.ApiKey };
+            scales = [.. (await Catalogues.GetAsync()).Scales.OrderBy(s => s.ShortName, StringComparer.OrdinalIgnoreCase)];
+            form = new() { UserName = settings.UserName, CountryId = settings.CountryId, Scale = settings.Scale, ApiKey = settings.ApiKey };
         }
         catch (StorageException ex)
         {
@@ -75,7 +89,7 @@
         if (form is null) return;
         try
         {
-            await Settings.SaveAsync(new() { UserName = form.UserName, CountryId = form.CountryId, ApiKey = form.ApiKey });
+            await Settings.SaveAsync(new() { UserName = form.UserName, CountryId = form.CountryId, Scale = form.Scale, ApiKey = form.ApiKey });
             saved = true;
             message = null;
         }
@@ -89,6 +103,7 @@
     {
         public string? UserName { get; set; }
         public int? CountryId { get; set; }
+        public string? Scale { get; set; }
         public string? ApiKey { get; set; }
     }
 }
