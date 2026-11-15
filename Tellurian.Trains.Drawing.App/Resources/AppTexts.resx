@@ -290,4 +290,18 @@
   <data name="InformationBrowserSupport" xml:space="preserve"><value>Browser support</value></data>
   <data name="InformationOffline" xml:space="preserve"><value>Module Draw works offline and can be installed as an app.</value></data>
   <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox and Safari work too, with limitations: they can't save straight back to the file you opened, so saving is a download. Depending on the browser's settings, the file goes to your downloads folder or you choose where to save it; choose the original file to replace it. Recent files and folders must be picked again to be opened.</value></data>
+  <data name="Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Field_UserName" xml:space="preserve"><value>User name</value></data>
+  <data name="UserNameHelp" xml:space="preserve"><value>Recorded with the date in the revision log of each drawing you save, to show who made changes.</value></data>
+  <data name="Field_Country" xml:space="preserve"><value>Country</value></data>
+  <data name="NoCountry" xml:space="preserve"><value>(none)</value></data>
+  <data name="CountryHelp" xml:space="preserve"><value>Standards that apply only in some countries, such as MMM in Sweden, are offered only when you choose one of those countries; their add-ons and end profiles likewise. Drawings that use them open as usual.</value></data>
+  <data name="Field_ApiKey" xml:space="preserve"><value>Module Registry API key</value></data>
+  <data name="ApiKeyHelp" xml:space="preserve"><value>Only needed to use the Module Registry API. It is kept in this browser and never saved in drawings or catalogue files.</value></data>
+  <data name="Show" xml:space="preserve"><value>Show</value></data>
+  <data name="Hide" xml:space="preserve"><value>Hide</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Settings saved.</value></data>
+  <data name="Field_Countries" xml:space="preserve"><value>Countries</value></data>
+  <data name="CountriesHelp" xml:space="preserve"><value>Two-letter country codes, e.g. SE, separated by commas. Empty: the standard applies in all countries.</value></data>
+  <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: use two-letter country codes such as SE.</value></data>
 </root>

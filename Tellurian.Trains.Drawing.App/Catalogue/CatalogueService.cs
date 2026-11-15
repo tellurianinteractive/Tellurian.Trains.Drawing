@@ -1,4 +1,5 @@
 using Tellurian.Trains.Drawing.App.Files;
+using Tellurian.Trains.Drawing.App.Settings;
 using Tellurian.Trains.Drawing.App.Storage;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
@@ -9,7 +10,7 @@ namespace Tellurian.Trains.Drawing.App.Catalogue;
 /// The catalogue to work with (CA-1, CA-2): the built-in catalogue with the user's own entries layered
 /// on top. The user's part is kept in the workbench as a catalogue file, and can be exported and imported (CA-3).
 /// </summary>
-public sealed class CatalogueService(IWorkbench workbench, IFileService files)
+public sealed class CatalogueService(IWorkbench workbench, IFileService files, SettingsService settings)
 {
     public const string UserCatalogueKey = "user-catalogue";
     public const string ExportFileName = "my-catalogue.tdcatalogue";
@@ -24,6 +25,13 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files)
     /// <summary>The built-in and user entries merged; a user entry replaces a built-in one with the same id.</summary>
     public async Task<DrawingCatalogue> GetAsync(CancellationToken cancellationToken = default) =>
         DrawingCatalogue.Merge(BuiltIn, await GetUserAsync(cancellationToken));
+
+    /// <summary>
+    /// The entries to choose from: <see cref="GetAsync"/> without standards for other countries than the one in
+    /// the settings, and what belongs only to them (CA-6). Drawings are still read with the whole catalogue.
+    /// </summary>
+    public async Task<DrawingCatalogue> GetForChoicesAsync(CancellationToken cancellationToken = default) =>
+        (await GetAsync(cancellationToken)).ForCountry(await settings.CountryCodeAsync(cancellationToken));
 
     public async Task<DrawingCatalogue> GetUserAsync(CancellationToken cancellationToken = default)
     {

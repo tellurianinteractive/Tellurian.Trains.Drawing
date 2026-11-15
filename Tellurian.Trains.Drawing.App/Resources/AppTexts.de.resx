@@ -290,4 +290,18 @@
   <data name="InformationBrowserSupport" xml:space="preserve"><value>Unterstützte Browser</value></data>
   <data name="InformationOffline" xml:space="preserve"><value>Der Modulzeichner funktioniert offline und kann als App installiert werden.</value></data>
   <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox und Safari funktionieren auch, aber mit Einschränkungen: Diese Browser können nicht direkt in die geöffnete Datei speichern, deshalb ist Speichern ein Download. Je nach Browsereinstellung landet die Datei im Download-Ordner, oder du wählst, wo sie gespeichert wird; wähle die ursprüngliche Datei, um sie zu ersetzen. Zuletzt verwendete Dateien und Ordner musst du zum Öffnen erneut auswählen.</value></data>
+  <data name="Settings" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="Field_UserName" xml:space="preserve"><value>Benutzername</value></data>
+  <data name="UserNameHelp" xml:space="preserve"><value>Wird mit dem Datum im Änderungsprotokoll jeder Zeichnung gespeichert, die du speicherst, um zu zeigen, wer Änderungen gemacht hat.</value></data>
+  <data name="Field_Country" xml:space="preserve"><value>Land</value></data>
+  <data name="NoCountry" xml:space="preserve"><value>(keins)</value></data>
+  <data name="CountryHelp" xml:space="preserve"><value>Normen, die nur in einigen Ländern gelten, wie MMM in Schweden, werden nur angeboten, wenn du eines dieser Länder wählst; ebenso ihre Zusätze und Endprofile. Zeichnungen, die sie verwenden, öffnen sich wie gewohnt.</value></data>
+  <data name="Field_ApiKey" xml:space="preserve"><value>API-Schlüssel für das Modulregister</value></data>
+  <data name="ApiKeyHelp" xml:space="preserve"><value>Nur für die API des Modulregisters nötig. Er wird in diesem Browser gespeichert und nie in Zeichnungen oder Katalogdateien.</value></data>
+  <data name="Show" xml:space="preserve"><value>Anzeigen</value></data>
+  <data name="Hide" xml:space="preserve"><value>Verbergen</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Einstellungen gespeichert.</value></data>
+  <data name="Field_Countries" xml:space="preserve"><value>Länder</value></data>
+  <data name="CountriesHelp" xml:space="preserve"><value>Ländercodes mit zwei Buchstaben, zum Beispiel SE, durch Kommas getrennt. Leer: Die Norm gilt in allen Ländern.</value></data>
+  <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: verwende Ländercodes mit zwei Buchstaben, zum Beispiel SE.</value></data>
 </root>

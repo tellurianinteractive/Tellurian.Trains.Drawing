@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.1.0",
+  "appVersion": "0.3.0",
   "content": {
     "module": {
-      "id": "96debd35-a386-4a29-a012-ca7325cfd5e3",
+      "id": "28ce0223-e3d4-494d-a361-64978d969c5d",
       "name": "Curve R2000 30\u00B0",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -24,9 +24,10 @@
       "isSignalModule": false,
       "isStandAlone": false,
       "revision": 0,
+      "revisionLog": [],
       "variants": [
         {
-          "id": "aa4c8b3e-450d-4463-833e-6ae6bef92950",
+          "id": "20d72456-f18f-43ac-810c-877d4370709e",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -191,7 +192,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "b52e7cfb-3999-4865-88e0-6829b485eb0d",
+              "id": "fae6b43e-d7fc-4f01-b91d-55c11dc4867f",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -527,12 +528,13 @@
           "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
           "revision": "drawing-2026-11-14"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       }
     ],
     "measures": [
       {
-        "variantId": "aa4c8b3e-450d-4463-833e-6ae6bef92950",
+        "variantId": "20d72456-f18f-43ac-810c-877d4370709e",
         "measures": {
           "length": 1047.1975511965977,
           "straight": 0,

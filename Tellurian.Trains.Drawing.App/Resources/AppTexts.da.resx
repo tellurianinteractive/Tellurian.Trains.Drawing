@@ -290,4 +290,18 @@
   <data name="InformationBrowserSupport" xml:space="preserve"><value>Understøttede browsere</value></data>
   <data name="InformationOffline" xml:space="preserve"><value>Modultegneren virker offline og kan installeres som en app.</value></data>
   <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox og Safari virker også, men med begrænsninger: de kan ikke gemme direkte i den fil, du åbnede, så at gemme bliver en download. Afhængigt af browserens indstillinger havner filen i mappen til overførsler, eller du vælger, hvor den skal gemmes; vælg den oprindelige fil for at erstatte den. Seneste filer og mapper skal vælges igen for at blive åbnet.</value></data>
+  <data name="Settings" xml:space="preserve"><value>Indstillinger</value></data>
+  <data name="Field_UserName" xml:space="preserve"><value>Brugernavn</value></data>
+  <data name="UserNameHelp" xml:space="preserve"><value>Gemmes med dato i ændringsloggen for hver tegning, du gemmer, for at vise, hvem der har lavet ændringer.</value></data>
+  <data name="Field_Country" xml:space="preserve"><value>Land</value></data>
+  <data name="NoCountry" xml:space="preserve"><value>(intet)</value></data>
+  <data name="CountryHelp" xml:space="preserve"><value>Standarder, der kun gælder i nogle lande, som MMM i Sverige, vises kun, når du vælger et af de lande; det samme gælder deres tilføjelser og endeprofiler. Tegninger, der bruger dem, åbnes som normalt.</value></data>
+  <data name="Field_ApiKey" xml:space="preserve"><value>API-nøgle til Modulregistret</value></data>
+  <data name="ApiKeyHelp" xml:space="preserve"><value>Kun nødvendig for at bruge Modulregistrets API. Den gemmes i denne browser og aldrig i tegninger eller katalogfiler.</value></data>
+  <data name="Show" xml:space="preserve"><value>Vis</value></data>
+  <data name="Hide" xml:space="preserve"><value>Skjul</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Indstillingerne er gemt.</value></data>
+  <data name="Field_Countries" xml:space="preserve"><value>Lande</value></data>
+  <data name="CountriesHelp" xml:space="preserve"><value>Landekoder på to bogstaver, for eksempel SE, adskilt med komma. Tomt: standarden gælder i alle lande.</value></data>
+  <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: brug landekoder på to bogstaver, for eksempel SE.</value></data>
 </root>

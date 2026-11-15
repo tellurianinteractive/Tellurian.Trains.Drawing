@@ -2,7 +2,7 @@
   "format": "tellurian-drawing",
   "kind": "endProfile",
   "schemaVersion": 1,
-  "appVersion": "0.1.0",
+  "appVersion": "0.3.0",
   "content": {
     "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
     "designation": "MMM480",
@@ -95,6 +95,7 @@
       "title": "MMM: MMM-2R end profile 480. Provisional values, to be drawn from the published MMM PDF.",
       "revision": "provisional"
     },
-    "revision": 0
+    "revision": 0,
+    "revisionLog": []
   }
 }

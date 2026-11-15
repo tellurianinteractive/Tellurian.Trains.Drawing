@@ -28,4 +28,7 @@ public enum CatalogueProblemCode
 
     /// <summary>There already is an override for the pair.</summary>
     OverrideExists,
+
+    /// <summary>A country isn't an ISO 3166 two-letter code, e.g. <c>SE</c>.</summary>
+    CountryInvalid,
 }

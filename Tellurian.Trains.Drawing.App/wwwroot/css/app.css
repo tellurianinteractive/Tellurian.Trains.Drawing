@@ -886,6 +886,17 @@ button.danger, a.button.danger {
         color: #1a1a1a;
     }
 
+/* A text box with a button beside it, e.g. the API key with Show/Hide. */
+.secret {
+    display: flex;
+    gap: 0.5rem;
+}
+
+    .secret input {
+        flex: 1;
+        min-width: 0;
+    }
+
 /* A centred dialog over a dimmed page, e.g. the release notes. */
 .modal-backdrop {
     position: fixed;

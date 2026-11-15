@@ -13,7 +13,7 @@ public sealed class DrawingDocumentsTests
     private readonly InMemoryWorkbench _workbench = new();
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 11, 14, 12, 0, 0, TimeSpan.Zero));
 
-    private DrawingDocuments Documents(FakeFileService files) => new(files, _workbench, _time);
+    private DrawingDocuments Documents(FakeFileService files) => new(files, _workbench, _time, new global::Tellurian.Trains.Drawing.App.Settings.SettingsService(_workbench));
 
     [TestMethod]
     public async Task OpenedFileBecomesASavedDraftAndARecentFile()
@@ -97,6 +97,36 @@ public sealed class DrawingDocumentsTests
         Assert.IsFalse(saved.HasUnsavedChanges);
         Assert.AreEqual(("club.tdhall", "h1", false), (files.Saves[0].SuggestedName, files.Saves[0].HandleId, files.Saves[0].SaveAs));
         Assert.AreEqual(1, _workbench.PersistenceRequests);
+    }
+
+    [TestMethod]
+    public async Task SavingRecordsTheUserNameAndDateInTheRevisionLog()
+    {
+        await new global::Tellurian.Trains.Drawing.App.Settings.SettingsService(_workbench).SaveAsync(new() { UserName = " Anna Andersson " });
+        var (_, json) = TestDrawings.Hall();
+        var files = new FakeFileService { FilesToOpen = [new("club.tdhall", json, "h1")] };
+        var documents = Documents(files);
+        var draft = (await documents.OpenAsync()).Drafts.Single();
+
+        var saved = await documents.SaveAsync(draft.Id, saveAs: false);
+
+        var log = DrawingFileSerializer.DeserializeHall(files.Saves[0].Text).RevisionLog;
+        var entry = Assert.ContainsSingle(log);
+        Assert.AreEqual(("Anna Andersson", new DateOnly(2026, 11, 14)), (entry.Name, entry.Date));
+        Assert.AreEqual(files.Saves[0].Text, saved!.Json, "The draft keeps the recorded log.");
+    }
+
+    [TestMethod]
+    public async Task WithoutAUserNameNothingIsRecorded()
+    {
+        var (_, json) = TestDrawings.Hall();
+        var files = new FakeFileService { FilesToOpen = [new("club.tdhall", json, "h1")] };
+        var documents = Documents(files);
+        var draft = (await documents.OpenAsync()).Drafts.Single();
+
+        await documents.SaveAsync(draft.Id, saveAs: false);
+
+        Assert.IsEmpty(DrawingFileSerializer.DeserializeHall(files.Saves[0].Text).RevisionLog);
     }
 
     [TestMethod]

@@ -79,8 +79,8 @@
     {
         try
         {
-            catalogue = await Catalogues.GetAsync();
-            original = First is { } a && Second is { } b ? catalogue.Overrides.FirstOrDefault(o => o.Applies(a, b)) : null;
+            catalogue = await Catalogues.GetForChoicesAsync();
+            original = First is { } a && Second is { } b ? (await Catalogues.GetAsync()).Overrides.FirstOrDefault(o => o.Applies(a, b)) : null;
             if (First is not null && original is null)
             {
                 message = T["EntryNotFound"];

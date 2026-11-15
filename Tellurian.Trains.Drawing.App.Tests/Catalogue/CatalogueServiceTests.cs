@@ -15,7 +15,7 @@ public sealed class CatalogueServiceTests
     private readonly InMemoryWorkbench _workbench = new();
     private readonly FakeFileService _files = new();
 
-    private CatalogueService Service() => new(_workbench, _files);
+    private CatalogueService Service() => new(_workbench, _files, new global::Tellurian.Trains.Drawing.App.Settings.SettingsService(_workbench));
 
     private static EndProfile BuiltInProfile => BuiltInCatalogue.Instance.EndProfiles[0];
 

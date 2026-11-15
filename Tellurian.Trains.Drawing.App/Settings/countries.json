@@ -1,0 +1,16 @@
+[
+  { "id": 1, "englishName": "Sweden", "domainSuffix": "se" },
+  { "id": 2, "englishName": "Norway", "domainSuffix": "no" },
+  { "id": 3, "englishName": "Denmark", "domainSuffix": "dk" },
+  { "id": 4, "englishName": "Germany", "domainSuffix": "de" },
+  { "id": 5, "englishName": "Switzerland", "domainSuffix": "ch" },
+  { "id": 6, "englishName": "United Kingdom", "domainSuffix": "uk" },
+  { "id": 7, "englishName": "Netherlands", "domainSuffix": "nl" },
+  { "id": 8, "englishName": "Italy", "domainSuffix": "it" },
+  { "id": 9, "englishName": "Poland", "domainSuffix": "pl" },
+  { "id": 10, "englishName": "France", "domainSuffix": "fr" },
+  { "id": 11, "englishName": "Hungary", "domainSuffix": "hu" },
+  { "id": 12, "englishName": "CzechRepublic", "domainSuffix": "cz" },
+  { "id": 13, "englishName": "Slovakia", "domainSuffix": "sk" },
+  { "id": 14, "englishName": "Austria", "domainSuffix": "at" }
+]

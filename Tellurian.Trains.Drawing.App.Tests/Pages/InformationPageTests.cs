@@ -18,7 +18,7 @@ public sealed class InformationPageTests
         Assert.AreEqual("", name.GetAttribute("href"));
         Assert.AreEqual("Module Draw", name.TextContent.Trim());
         Assert.AreEqual(AppVersion.Current, layout.Find(".app-version").TextContent);
-        CollectionAssert.AreEqual(new[] { "Start", "Catalogue" }, layout.FindAll(".app-nav a").Select(a => a.TextContent).ToArray());
+        CollectionAssert.AreEqual(new[] { "Start", "Catalogue", "Settings" }, layout.FindAll(".app-nav a").Select(a => a.TextContent).ToArray());
         Assert.AreEqual(Home.Url, layout.Find(".app-nav a").GetAttribute("href"));
     }
 

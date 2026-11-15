@@ -27,6 +27,9 @@ public sealed record Hall
     /// <summary>Incremented on every save.</summary>
     public int Revision { get; init; }
 
+    /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
+    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+
     /// <summary>The number of walls.</summary>
     [JsonIgnore]
     public int WallCount => Outline.Steps.Count;

@@ -125,6 +125,22 @@
         }
       }
     },
+    "DrawingRevision": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "name",
+        "date"
+      ]
+    },
     "EndProfile": {
       "type": "object",
       "properties": {
@@ -216,6 +232,12 @@
         },
         "revision": {
           "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
         }
       },
       "required": [
@@ -388,6 +410,12 @@
             "integer",
             "null"
           ]
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

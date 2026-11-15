@@ -225,7 +225,7 @@
         try
         {
             user = await Catalogues.GetUserAsync();
-            catalogue = await Catalogues.GetAsync();
+            catalogue = await Catalogues.GetForChoicesAsync();
         }
         catch (StorageException ex)
         {

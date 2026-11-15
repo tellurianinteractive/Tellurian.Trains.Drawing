@@ -109,6 +109,7 @@ public sealed class CatalogueEditorPageTests
     public void CataloguePageLinksToTheEditors()
     {
         using var context = new AppTestContext();
+        context.UseCountry("SE");
         var page = context.Render<CataloguePage>();
         Assert.AreEqual("catalogue/standard/new", page.Find("#new-standard").GetAttribute("href"));
         Assert.HasCount(BuiltInCatalogue.Instance.AddOns.Count, page.FindAll(".add-ons tbody tr"));

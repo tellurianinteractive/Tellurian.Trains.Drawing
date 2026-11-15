@@ -1,0 +1,94 @@
+@page "/settings"
+@using Tellurian.Trains.Drawing.App.Settings
+@inject SettingsService Settings
+
+@* The user's settings (AP-8): kept in this browser, never written to drawing or catalogue files. *@
+<PageTitle>@T["Settings"]</PageTitle>
+
+<h1>@T["Settings"]</h1>
+
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (form is not null)
+{
+    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+        <label>
+            <span>@T["Field_UserName"]</span>
+            <input id="userName" @bind="form.UserName" autocomplete="name" />
+            <small class="note">@T["UserNameHelp"]</small>
+        </label>
+        <label>
+            <span>@T["Field_Country"]</span>
+            <select id="country" @bind="form.CountryId">
+                <option value="">@T["NoCountry"]</option>
+                @foreach (var country in Countries.All)
+                {
+                    <option value="@country.Id">@country.EnglishName</option>
+                }
+            </select>
+            <small class="note">@T["CountryHelp"]</small>
+        </label>
+        <label>
+            <span>@T["Field_ApiKey"]</span>
+            <span class="secret">
+                <input id="apiKey" type="@(showApiKey ? "text" : "password")" @bind="form.ApiKey" autocomplete="off" spellcheck="false" />
+                <button type="button" id="toggle-api-key" @onclick="() => showApiKey = !showApiKey">@(showApiKey ? T["Hide"] : T["Show"])</button>
+            </span>
+            <small class="note">@T["ApiKeyHelp"]</small>
+        </label>
+
+        <div class="toolbar">
+            <button type="submit" class="primary" id="save-settings">@T["Save"]</button>
+            @if (saved)
+            {
+                <span class="note" id="settings-saved" role="status">@T["SettingsSaved"]</span>
+            }
+        </div>
+    </form>
+}
+
+@code {
+    public const string Url = "settings";
+
+    private Form? form;
+    private bool showApiKey;
+    private bool saved;
+    private string? message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var settings = await Settings.GetAsync();
+            form = new() { UserName = settings.UserName, CountryId = settings.CountryId, ApiKey = settings.ApiKey };
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        if (form is null) return;
+        try
+        {
+            await Settings.SaveAsync(new() { UserName = form.UserName, CountryId = form.CountryId, ApiKey = form.ApiKey });
+            saved = true;
+            message = null;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private sealed class Form
+    {
+        public string? UserName { get; set; }
+        public int? CountryId { get; set; }
+        public string? ApiKey { get; set; }
+    }
+}

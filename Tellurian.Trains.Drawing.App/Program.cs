@@ -31,6 +31,7 @@ builder.Services.AddSingleton<IFileService>(sp => sp.GetRequiredService<BrowserE
     : new UploadDownloadFileService(sp.GetRequiredService<FilesInterop>()));
 builder.Services.AddSingleton<IWorkbench, IndexedDbWorkbench>();
 builder.Services.AddSingleton<DrawingDocuments>();
+builder.Services.AddSingleton<Tellurian.Trains.Drawing.App.Settings.SettingsService>();
 builder.Services.AddSingleton<CatalogueService>();
 builder.Services.AddSingleton<SafeReload>();
 builder.Services.AddSingleton<BrowserDialogs>();

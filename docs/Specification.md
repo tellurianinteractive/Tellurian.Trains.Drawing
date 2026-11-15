@@ -136,6 +136,7 @@ All three editors (end profile, module, hall) share the same drawing canvas: pan
 | CA-3 | M | The catalogue can be exported and imported as a file. |
 | CA-4 | – | *Replaced by EP-1…EP-9.* |
 | CA-5 | L | The catalogue can be imported from the Module Registry (§10). |
+| CA-6 | M | **Country-specific standards**: a module standard can name the countries it applies to (ISO 3166 two-letter codes); without countries it applies everywhere. The built-in MMM-2R and MMM-3R apply in Sweden only; the FREMO standards everywhere. Standards for other countries than the one in the settings (AP-8), with their add-ons, the end profiles that belong only to them and overrides of those end profiles, are **not offered as choices** (catalogue lists, new module, new end profile, editors). With no country chosen, only standards that apply everywhere are offered. Drawings that use such a standard still open and show as usual. |
 
 ### 5.2 End profile drawing (EP)
 | ID | Pri | Requirement |
@@ -257,6 +258,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 | EX-5 | M | Opening a hall plan or module file that contains modules or end profiles that already exist in the local library shows any differences (by revision). For the **library**, the user chooses whether to keep the local version or import the file's version. For a **hall plan**, the embedded modules stay as they are until the planner updates them (HP-16). |
 | EX-6 | S | Export and import of the whole local workspace (backup). |
 | EX-7 | M | The **module and end profile file formats are public contracts**. The Module Registry will accept module files and end profile drawings for upload in a coming release. The formats are documented, have published JSON Schemas, and are versioned with backward-compatible changes only within a major schema version (§6). |
+| EX-10 | M | **Revision log**: every end profile, module, hall and hall plan has a revision log with one entry per person who saved it: the user name from the settings (AP-8) and the last date they saved it, newest first. Saving a file records the entry; without a user name nothing is recorded. Embedded end profiles keep their own log. |
 | EX-8 | M | **Reusable display components**: read-only components that show an end profile, a module (a chosen variant) or a hall plan, from the model or directly from the file JSON, with layer options (e.g. operator spaces, public sides, duck-under areas). They are meant to be embedded in other apps, first the Module Registry (NF-10). |
 
 ### 5.9 Application (AP)
@@ -268,6 +270,7 @@ Validation runs continuously and its results appear in a **problems list** and a
 | AP-4 | M | Pan/zoom canvas with zoom-to-fit, zoom-to-selection, and a scale bar. |
 | AP-5 | S | Light/dark theme. |
 | AP-6 | M | Context help (Markdown, localised) for the editors. |
+| AP-8 | M | **Settings** page: the **user name** (recorded in the revision log, EX-10), the **country** the user works in (from the Module Registry's country list, CA-6), and the user's **Module Registry API key**. Settings are kept in the browser's workbench and never written to drawing or catalogue files; the API key is hidden until shown. |
 | AP-7 | M | **No data loss when the app reloads itself.** Changing language (AP-2) and accepting an update (AP-1) reload the app. Before such a reload, every open drawing with unsaved changes is written as a **draft** to IndexedDB, and the reload waits until the writes are confirmed. After the reload, the app **reopens the same drawings in the same state**: document, variant, selected line or module, zoom and pan. If the drafts can't be written (e.g. storage is blocked), the reload is **not** done; the user is told why and offered to save the files first. The same draft mechanism protects against closing the tab or a crash, as far as the last autosave (UC-5). |
 
 ## 6. Data storage and file formats

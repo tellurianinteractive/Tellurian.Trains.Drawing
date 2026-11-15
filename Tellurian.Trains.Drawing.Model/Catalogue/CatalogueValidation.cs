@@ -26,6 +26,7 @@ public static class CatalogueValidation
         if (!IsHexColor(standard.TrackColor)) problems.Add(new(CatalogueProblemCode.TrackColorInvalid, nameof(standard.TrackColor)));
         OfStandard(standard.DefaultSingleTrackEndProfileId, nameof(standard.DefaultSingleTrackEndProfileId));
         OfStandard(standard.DefaultDoubleTrackEndProfileId, nameof(standard.DefaultDoubleTrackEndProfileId));
+        if (!standard.Countries.All(IsCountryCode)) problems.Add(new(CatalogueProblemCode.CountryInvalid, nameof(standard.Countries)));
         return problems;
 
         void Positive(double? value, string property)
@@ -86,6 +87,9 @@ public static class CatalogueValidation
             .. user.Overrides.SelectMany(o => Validate(o, catalogue, replacing: o).Select(p => new CatalogueEntryProblem(CatalogueEntryKind.Override, o.FirstEndProfileId, o.SecondEndProfileId, p))),
         ];
     }
+
+    /// <summary>An ISO 3166 two-letter country code in capitals, e.g. <c>SE</c>.</summary>
+    public static bool IsCountryCode(string? value) => value is { Length: 2 } && value.All(char.IsAsciiLetterUpper);
 
     /// <summary>A CSS hex colour: <c>#rgb</c> or <c>#rrggbb</c>.</summary>
     public static bool IsHexColor(string? value) =>

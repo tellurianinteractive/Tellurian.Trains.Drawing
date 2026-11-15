@@ -163,7 +163,7 @@ else
     {
         try
         {
-            catalogue = await Catalogues.GetAsync();
+            catalogue = await Catalogues.GetForChoicesAsync();
             form.Name = T["NewModuleName"];
             // Start with a standard that has end profiles, so the form can be submitted as it is.
             var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();

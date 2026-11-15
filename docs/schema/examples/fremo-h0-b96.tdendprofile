@@ -2,7 +2,7 @@
   "format": "tellurian-drawing",
   "kind": "endProfile",
   "schemaVersion": 1,
-  "appVersion": "0.1.0",
+  "appVersion": "0.3.0",
   "content": {
     "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
     "designation": "FREMO-H0-B96",
@@ -289,6 +289,7 @@
       "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
       "revision": "drawing-2026-11-14"
     },
-    "revision": 0
+    "revision": 0,
+    "revisionLog": []
   }
 }

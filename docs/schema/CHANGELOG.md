@@ -5,6 +5,12 @@ changes are allowed. Schema version 1 is a draft until it is frozen (implementat
 until then it may still change.
 
 ## Version 1 (draft)
+### 2026-11-15 (revision log, countries)
+- End profiles, modules, halls and hall plans have a `revisionLog`: one entry per person who saved the drawing,
+  with `name` and the last `date` (`yyyy-MM-dd`) they saved it, newest first. Readers that don't know it ignore it.
+- Module standards have `countries`: the ISO 3166 two-letter codes of the countries the standard applies to
+  (e.g. `["SE"]` for MMM-2R and MMM-3R); empty when it applies everywhere.
+
 ### 2026-11-14 (end profile plate)
 - End profiles have an optional `plate`: the end plate as entered, a `start` point, `segments` of kind `line`
   (`end`), `arc` (`center`, `end`) or `fillet` (`radius`,

@@ -57,6 +57,9 @@ public sealed record HallPlan
     /// <summary>Incremented on every save.</summary>
     public int Revision { get; init; }
 
+    /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
+    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+
     /// <summary>The primary standard and the further accepted standards.</summary>
     public IEnumerable<CatalogueReference> AllAcceptedStandards() => AcceptedStandards.Prepend(PrimaryStandard).DistinctBy(s => s.Id);
 

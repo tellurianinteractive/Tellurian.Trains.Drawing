@@ -370,6 +370,22 @@
         "width"
       ]
     },
+    "DrawingRevision": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "name",
+        "date"
+      ]
+    },
     "DuckUnderArea": {
       "type": "object",
       "properties": {
@@ -478,6 +494,12 @@
         },
         "revision": {
           "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
         }
       },
       "required": [
@@ -626,6 +648,12 @@
         },
         "revision": {
           "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
         }
       },
       "required": [
@@ -757,6 +785,12 @@
         },
         "revision": {
           "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
         }
       },
       "required": [
@@ -1091,6 +1125,12 @@
         "revision": {
           "type": "integer"
         },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
+        },
         "variants": {
           "type": "array",
           "items": {
@@ -1307,6 +1347,12 @@
             "integer",
             "null"
           ]
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

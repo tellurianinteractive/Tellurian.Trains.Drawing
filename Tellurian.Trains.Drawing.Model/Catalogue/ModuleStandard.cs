@@ -52,5 +52,15 @@ public sealed record ModuleStandard
     /// <summary>The Module Registry id of the standard, if known.</summary>
     public int? RegistryId { get; init; }
 
+    /// <summary>
+    /// The countries the standard applies to, as ISO 3166 two-letter codes (e.g. <c>SE</c> for the MMM standards);
+    /// empty when it applies everywhere, like the FREMO standards.
+    /// </summary>
+    public IReadOnlyList<string> Countries { get; init; } = [];
+
+    /// <summary>True if the standard applies in <paramref name="country"/> (a two-letter code, or null when not chosen).</summary>
+    public bool AppliesTo(string? country) =>
+        Countries.Count == 0 || (country is not null && Countries.Any(c => string.Equals(c, country, StringComparison.OrdinalIgnoreCase)));
+
     public override string ToString() => ShortName;
 }

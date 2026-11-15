@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.1.0",
+  "appVersion": "0.3.0",
   "content": {
     "module": {
-      "id": "cc309144-af35-4363-b3d2-687af4e92d2f",
+      "id": "4eeb6840-e683-48b8-bb48-721f556bac8d",
       "name": "Terminus",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -24,9 +24,10 @@
       "isSignalModule": false,
       "isStandAlone": false,
       "revision": 0,
+      "revisionLog": [],
       "variants": [
         {
-          "id": "445f169d-6c68-4cf8-9094-1affcab1fe04",
+          "id": "5edafd13-9819-40bd-a4bf-64f67d0ce1b9",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -162,7 +163,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "247f77d0-bb86-4cd7-97e1-5e2647416627",
+              "id": "c28e1f5f-5c5e-4276-9a3a-e43a5007f377",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -174,7 +175,7 @@
                 "y": -25,
                 "heading": 180
               },
-              "id": "0cca4198-f1d1-47b3-9807-0750bf2d05e7",
+              "id": "b9b505db-4b11-4c91-a346-fbea1c7a4f07",
               "isMainTrack": false,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -197,7 +198,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "4fe6b571-dc39-47d0-bb58-c51c860a13e3",
+              "id": "e3954216-60ef-4487-b65a-f692605f7616",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -209,7 +210,7 @@
                 "y": 25,
                 "heading": 180
               },
-              "id": "88658c88-6be1-4a2d-93ce-082ea65c9fd0",
+              "id": "64aa34c4-05fd-4f06-8ae8-def20b9dabd2",
               "isMainTrack": false,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -361,12 +362,13 @@
           "title": "FREMO: H0 double-track end profile 2E96. Provisional values, to be drawn from the published FREMO PDF.",
           "revision": "provisional"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       }
     ],
     "measures": [
       {
-        "variantId": "445f169d-6c68-4cf8-9094-1affcab1fe04",
+        "variantId": "5edafd13-9819-40bd-a4bf-64f67d0ce1b9",
         "measures": {
           "length": 1200,
           "straight": 1200,
