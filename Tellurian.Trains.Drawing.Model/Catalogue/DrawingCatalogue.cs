@@ -65,12 +65,26 @@ public sealed record DrawingCatalogue
     /// only to such standards, and overrides of those end profiles. End profiles without a standard are kept.
     /// Drawings that use a removed entry are still read with the whole catalogue.
     /// </summary>
-    public DrawingCatalogue ForCountry(string? country)
+    public DrawingCatalogue ForCountry(string? country) =>
+        Keeping(s => s.AppliesTo(country), (p, standardIds) => p.Standards.Count == 0 || p.Standards.Any(s => standardIds.Contains(s.Id)));
+
+    /// <summary>
+    /// The entries to choose from in <paramref name="scale"/> (a scale's short name, or null for all scales, AP-9):
+    /// the standards and end profiles of that scale, the add-ons of those standards and the overrides of those end
+    /// profiles. The scales themselves are all kept. Drawings that use a removed entry are still read with the whole catalogue.
+    /// </summary>
+    public DrawingCatalogue ForScale(string? scale) =>
+        string.IsNullOrWhiteSpace(scale) ? this : Keeping(s => Same(s.Scale, scale!), (p, _) => Same(p.Scale, scale!));
+
+    /// <summary>The entries to choose from with the user's settings: <see cref="ForCountry"/> and <see cref="ForScale"/>.</summary>
+    public DrawingCatalogue ForChoices(string? country, string? scale) => ForCountry(country).ForScale(scale);
+
+    private DrawingCatalogue Keeping(Func<ModuleStandard, bool> keepStandard, Func<EndProfile, HashSet<Guid>, bool> keepProfile)
     {
-        var standards = Standards.Where(s => s.AppliesTo(country)).ToList();
-        if (standards.Count == Standards.Count) return this;
+        var standards = Standards.Where(keepStandard).ToList();
         var ids = standards.Select(s => s.Id).ToHashSet();
-        var profiles = EndProfiles.Where(p => p.Standards.Count == 0 || p.Standards.Any(s => ids.Contains(s.Id))).ToList();
+        var profiles = EndProfiles.Where(p => keepProfile(p, ids)).ToList();
+        if (standards.Count == Standards.Count && profiles.Count == EndProfiles.Count) return this;
         var profileIds = profiles.Select(p => p.Id).ToHashSet();
         return this with
         {

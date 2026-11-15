@@ -307,4 +307,6 @@
   <data name="RevisionLog" xml:space="preserve"><value>Änderungsprotokoll</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Noch von niemandem mit Benutzernamen gespeichert.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Kein Benutzername in den Einstellungen: Wenn du eine Zeichnung speicherst, wird das nicht im Änderungsprotokoll festgehalten.</value></data>
+  <data name="AllScales" xml:space="preserve"><value>(alle Maßstäbe)</value></data>
+  <data name="ScaleHelp" xml:space="preserve"><value>Nur Normen und Endprofile in diesem Maßstab werden angeboten, mit ihren Zusätzen. Anfragen an das Modulregister gelten ebenfalls diesem Maßstab.</value></data>
 </root>

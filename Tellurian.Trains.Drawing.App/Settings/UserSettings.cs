@@ -11,6 +11,12 @@ public sealed record UserSettings
     /// <summary>The Module Registry id of the country the user works in; standards for other countries aren't offered.</summary>
     public int? CountryId { get; init; }
 
+    /// <summary>
+    /// The short name of the scale the user works in, e.g. H0; standards and end profiles of other scales aren't
+    /// offered (AP-9), and Module Registry API calls ask for this scale. Null for all scales.
+    /// </summary>
+    public string? Scale { get; init; }
+
     /// <summary>The user's key for the Module Registry API.</summary>
     public string? ApiKey { get; init; }
 }

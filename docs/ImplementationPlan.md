@@ -343,7 +343,6 @@ In priority order (to be confirmed):
 8. EP-6 dowels (if not done in Phase 5), AP-5 dark theme.
 
 ### Planned next (decided 2026-11-15)
-- **Scale setting (AP-9)**: the scale the user works in, next to the country in Settings; it filters choices the same way as the country (`DrawingCatalogue.ForCountry`, CA-6) and is passed to Module Registry API calls.
 - **Empty catalogue (CA-1)**: the built-in catalogue is interim, as hard-coded entries may be wrong. It stays until Registry import (CA-5) works; then the catalogue starts empty and is filled manually (CA-2) or by import.
 
 ### Later (separate plan)
@@ -407,7 +406,7 @@ In priority order (to be confirmed):
 | AP-6 | 12 |
 | AP-7 | 3 (safe reload), 12 (language switcher uses it) |
 | AP-8 | as built, 0.4.0 |
-| AP-9 | Planned next |
+| AP-9 | as built, 0.5.0 (Registry calls with CA-5) |
 | NF-1, NF-3 | 0, 12 |
 | NF-2 | 0 (spike), 1, 9, 10, 12 |
 | NF-4 | 0, 12 |
