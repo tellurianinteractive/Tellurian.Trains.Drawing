@@ -6,7 +6,6 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppName" xml:space="preserve"><value>Modulritaren</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Rita ändprofiler, moduler och hallplaner för modulträffar med modelljärnväg.</value></data>
-  <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
   <data name="Language" xml:space="preserve"><value>Språk</value></data>
   <data name="Open" xml:space="preserve"><value>Öppna…</value></data>

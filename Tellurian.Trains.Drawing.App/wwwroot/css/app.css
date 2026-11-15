@@ -239,7 +239,7 @@ button {
         border-bottom: 1px solid var(--app-border);
     }
 
-.kind, .detail, .empty, .version, .note {
+.kind, .detail, .empty, .note {
     color: var(--app-muted);
 }
 
