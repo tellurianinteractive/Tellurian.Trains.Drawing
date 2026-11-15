@@ -1,7 +1,7 @@
 # Release Notes
 
 ## Release 0.2.0
-Released 2026-11-14
+Released 2026-11-15
 - First public pre-release, for trying out. The app is now called **Module Draw**.
 - An information page when the app starts, also opened from "Module Draw" in the top menu.
 - End profile editor: draw the end plate's upper edge from a dimensioned drawing with lines, arcs and fillets (with the side of the fillet's centre), place tracks and screw holes, with automatic dimensions measured from rail top or the plate's lower left corner.
