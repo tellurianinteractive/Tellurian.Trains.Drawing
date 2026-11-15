@@ -51,6 +51,9 @@ public sealed record Module
     /// <summary>Incremented on every save.</summary>
     public int Revision { get; init; }
 
+    /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
+    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+
     public required IReadOnlyList<ModuleVariant> Variants { get; init; }
 
     /// <summary>The variant marked as default, otherwise the first.</summary>

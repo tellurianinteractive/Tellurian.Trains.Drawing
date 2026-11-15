@@ -63,9 +63,9 @@
     {
         try
         {
-            catalogue = await Catalogues.GetAsync();
+            catalogue = await Catalogues.GetForChoicesAsync();
             var user = await Catalogues.GetUserAsync();
-            original = Id is { } id ? catalogue.AddOns.FirstOrDefault(a => a.Id == id) : null;
+            original = Id is { } id ? (await Catalogues.GetAsync()).AddOns.FirstOrDefault(a => a.Id == id) : null;
             if (Id is not null && original is null)
             {
                 message = T["EntryNotFound"];

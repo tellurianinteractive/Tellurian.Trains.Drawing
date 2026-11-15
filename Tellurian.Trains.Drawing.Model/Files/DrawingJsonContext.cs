@@ -51,4 +51,5 @@ namespace Tellurian.Trains.Drawing.Model.Files;
 [JsonSerializable(typeof(DrawingFile<Hall>))]
 [JsonSerializable(typeof(DrawingFile<HallPlan>))]
 [JsonSerializable(typeof(DrawingFileKind))]
+[JsonSerializable(typeof(IReadOnlyList<DrawingRevision>))]
 public sealed partial class DrawingJsonContext : JsonSerializerContext;

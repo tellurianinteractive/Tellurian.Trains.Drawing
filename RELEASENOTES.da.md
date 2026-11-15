@@ -1,5 +1,12 @@
 # Udgivelsesnoter
 
+## Version 0.4.0
+Udgivet 2026-11-15
+- Siden Indstillinger, under Indstillinger i topmenuen: dit brugernavn, landet du arbejder i, og din API-nøgle til Modulregistret. Indstillingerne gemmes i din browser, også efter opdateringer, og gemmes aldrig i filer.
+- Ændringslog: når du gemmer en tegning, registreres dit brugernavn og datoen i den, én linje pr. person med den seneste dato. Loggen vises i egenskabspanelet. Uden brugernavn registreres intet, og problemindikatoren viser en advarsel.
+- Standarder, der kun gælder i nogle lande, som MMM i Sverige, vises kun, når du vælger et af de lande i indstillingerne; det samme gælder deres tilføjelser og endeprofiler. Tegninger, der bruger dem, åbnes som normalt. Dine egne standarder kan angive deres lande.
+- Startsiden viser ikke længere versionsnummeret; det står i topmenuen.
+
 ## Version 0.3.0
 Udgivet 2026-11-15
 - Informationssiden er nu den første side, med afsnittene Generelt og Understøttede browsere. Startsiden med kladder og seneste filer findes under Start i topmenuen.

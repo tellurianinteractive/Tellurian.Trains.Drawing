@@ -13,16 +13,14 @@ namespace Tellurian.Trains.Drawing.App.Tests.Pages;
 public sealed class HomeTests
 {
     [TestMethod]
-    public void ShowsAppNameAndVersion()
+    public void ShowsAppNameWithoutVersion()
     {
         using var context = new AppTestContext();
 
         var home = context.Render<Home>();
 
         Assert.AreEqual("Module Draw", home.Find("h1").TextContent);
-        // The version from Directory.Build.props, so a release doesn't have to change the test.
-        var version = typeof(Home).Assembly.GetName().Version!;
-        StringAssert.StartsWith(home.Find(".version").TextContent, $"Version {version.Major}.{version.Minor}.{version.Build}");
+        Assert.IsEmpty(home.FindAll(".version"), "The version is shown in the top bar.");
     }
 
     [TestMethod]

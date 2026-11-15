@@ -49,6 +49,9 @@ public sealed record EndProfile
     /// <summary>Incremented on every save.</summary>
     public int Revision { get; init; }
 
+    /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
+    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+
     [JsonIgnore]
     public bool HasScrewHoles => ScrewHoles.Count > 0;
 
@@ -71,7 +74,7 @@ public sealed record EndProfile
     /// A copy to edit as a user profile (CA-2): a new id, no Registry id and revision 0; the source is kept
     /// so the copy still says where it came from.
     /// </summary>
-    public EndProfile Copy(string designation) => this with { Id = Guid.NewGuid(), Designation = designation, RegistryId = null, Revision = 0 };
+    public EndProfile Copy(string designation) => this with { Id = Guid.NewGuid(), Designation = designation, RegistryId = null, Revision = 0, RevisionLog = [] };
 
     public override string ToString() => Designation;
 }

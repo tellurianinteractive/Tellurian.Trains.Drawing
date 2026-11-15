@@ -83,7 +83,7 @@
     {
         try
         {
-            catalogue = await Catalogues.GetAsync();
+            catalogue = await Catalogues.GetForChoicesAsync();
             var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
             var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id).Any()) ?? standards.FirstOrDefault();
             if (standard is not null) UseStandard(standard);

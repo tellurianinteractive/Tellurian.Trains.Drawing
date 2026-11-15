@@ -10,9 +10,25 @@ namespace Tellurian.Trains.Drawing.App.Tests.Pages;
 public sealed class CataloguePageTests
 {
     [TestMethod]
+    [DataRow(null), DataRow("DE")]
+    public void OutsideSwedenTheMmmEntriesAreNotListed(string? country)
+    {
+        using var context = new AppTestContext();
+        if (country is not null) context.UseCountry(country);
+        var page = context.Render<CataloguePage>();
+
+        var standards = page.FindAll(".standards tbody tr").Select(r => r.TextContent).ToArray();
+        Assert.IsNotEmpty(standards);
+        Assert.IsFalse(standards.Any(s => s.Contains("MMM", StringComparison.Ordinal)), string.Join(" | ", standards));
+        Assert.IsEmpty(page.FindAll(".add-ons tbody tr"));
+        Assert.IsLessThan(BuiltInCatalogue.Instance.EndProfiles.Count, page.FindAll(".end-profiles tbody tr").Count);
+    }
+
+    [TestMethod]
     public void ListsTheBuiltInEndProfilesAndStandards()
     {
         using var context = new AppTestContext();
+        context.UseCountry("SE");
         var page = context.Render<CataloguePage>();
         Assert.HasCount(BuiltInCatalogue.Instance.EndProfiles.Count, page.FindAll(".end-profiles tbody tr"));
         Assert.HasCount(BuiltInCatalogue.Instance.Standards.Count, page.FindAll(".standards tbody tr"));
@@ -40,6 +56,7 @@ public sealed class CataloguePageTests
     public void CopyAddsAUserProfile()
     {
         using var context = new AppTestContext();
+        context.UseCountry("SE");
         var page = context.Render<CataloguePage>();
         var first = BuiltInCatalogue.Instance.EndProfiles.OrderBy(p => p.Scale).ThenBy(p => p.Designation).First();
 

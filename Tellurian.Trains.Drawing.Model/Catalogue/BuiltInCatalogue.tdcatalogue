@@ -35,6 +35,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
         "shortName": "MMM-2R",
+        "countries": [ "SE" ],
         "scale": "H0",
         "railSystem": "twoRail",
         "normalGauge": 16.5,
@@ -50,6 +51,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b03",
         "shortName": "MMM-3R",
+        "countries": [ "SE" ],
         "scale": "H0",
         "railSystem": "threeRail",
         "normalGauge": 16.5,

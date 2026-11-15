@@ -1,17 +1,19 @@
 @using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.App.Settings
 @using Tellurian.Trains.Drawing.Model.Catalogue
 @inject CatalogueProblems Catalogue
-@inject NavigationManager Navigation
+@inject SettingsService Settings
 @implements IDisposable
 
-@* The problems indicator in the top bar: a green check when there are none, else a red sign with the count.
-   Clicking it lists the problems; clicking a problem opens the entry to correct. Drawing problems join later (VA). *@
-<div class="problems-indicator @(HasProblems ? "has-problems" : "no-problems")">
+@* The problems indicator in the top bar, as in the Planning app: a green check when all is well, a yellow sign
+   for warnings, a red sign for errors, with the count. Clicking it lists them, errors first; clicking one opens
+   the place to correct it. Drawing problems join later (VA). *@
+<div class="problems-indicator @StateClass">
     <button type="button" class="indicator-button" id="problems-button" title="@T["Problems"]" aria-label="@T["Problems"]" @onclick="Toggle">
-        <i class="fa-solid @(HasProblems ? "fa-circle-exclamation" : "fa-circle-check")"></i>
-        @if (HasProblems)
+        <i class="fa-solid @IconClass"></i>
+        @if (Count > 0)
         {
-            <span class="badge">@Catalogue.Problems.Count</span>
+            <span class="badge">@Count</span>
         }
     </button>
 
@@ -23,7 +25,7 @@
                 <h2 id="problems-title">@T["Problems"]</h2>
                 <button type="button" class="close" title="@T["Close"]" aria-label="@T["Close"]" @onclick="Close"><i class="fa-solid fa-xmark"></i></button>
             </header>
-            @if (!HasProblems)
+            @if (Count == 0)
             {
                 <p class="empty">@T["NoProblems"]</p>
             }
@@ -32,7 +34,11 @@
                 <ul>
                     @foreach (var problem in Catalogue.Problems)
                     {
-                        <li><a href="@Href(problem)" @onclick="Close"><b>@Subject(problem)</b>: @Message(problem.Problem)</a></li>
+                        <li class="error"><a href="@Href(problem)" @onclick="Close"><b>@Subject(problem)</b>: @Message(problem.Problem)</a></li>
+                    }
+                    @if (NoUserName)
+                    {
+                        <li class="warning" id="no-user-name"><a href="@Pages.SettingsPage.Url" @onclick="Close">@T["Warning_NoUserName"]</a></li>
                     }
                 </ul>
             }
@@ -42,13 +48,39 @@
 
 @code {
     private bool open;
+    private bool settingsRead;
+    private string? userName;
 
-    private bool HasProblems => Catalogue.Problems.Count > 0;
+    /// <summary>Saves aren't recorded in the revision log without a user name (EX-10).</summary>
+    private bool NoUserName => settingsRead && userName is null;
+
+    private int Count => Catalogue.Problems.Count + (NoUserName ? 1 : 0);
+
+    private string StateClass =>
+        Catalogue.Problems.Count > 0 ? "has-problems" : NoUserName ? "has-warnings" : "no-problems";
+
+    private string IconClass =>
+        Catalogue.Problems.Count > 0 ? "fa-circle-exclamation" : NoUserName ? "fa-triangle-exclamation" : "fa-circle-check";
 
     protected override async Task OnInitializedAsync()
     {
         Catalogue.Changed += OnChanged;
+        Settings.Changed += OnSettingsChanged;
+        await ReadSettingsAsync();
         if (!Catalogue.IsChecked) await Catalogue.CheckAsync();
+    }
+
+    private async Task ReadSettingsAsync()
+    {
+        try
+        {
+            userName = (await Settings.GetAsync()).UserName;
+            settingsRead = true;
+        }
+        catch (StorageException)
+        {
+            // The settings page reports storage problems.
+        }
     }
 
     private void Toggle() => open = !open;
@@ -76,5 +108,15 @@
 
     private void OnChanged() => InvokeAsync(StateHasChanged);
 
-    public void Dispose() => Catalogue.Changed -= OnChanged;
+    private void OnSettingsChanged() => InvokeAsync(async () =>
+    {
+        await ReadSettingsAsync();
+        StateHasChanged();
+    });
+
+    public void Dispose()
+    {
+        Catalogue.Changed -= OnChanged;
+        Settings.Changed -= OnSettingsChanged;
+    }
 }

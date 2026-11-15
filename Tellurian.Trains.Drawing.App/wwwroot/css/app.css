@@ -239,7 +239,7 @@ button {
         border-bottom: 1px solid var(--app-border);
     }
 
-.kind, .detail, .empty, .version, .note {
+.kind, .detail, .empty, .note {
     color: var(--app-muted);
 }
 
@@ -791,6 +791,14 @@ button.danger, a.button.danger {
         color: #ff6b5e;
     }
 
+    .problems-indicator.has-warnings .indicator-button {
+        color: #ffcc55;
+    }
+
+    .problems-indicator.has-warnings .badge {
+        background: #d9a406;
+    }
+
     .problems-indicator .badge {
         position: absolute;
         top: -0.35rem;
@@ -870,6 +878,10 @@ button.danger, a.button.danger {
             background: rgba(0, 0, 0, 0.05);
         }
 
+    .app-header .problems-panel li.warning a {
+        border-left-color: #d9a406;
+    }
+
 .problems-panel .close,
 .modal-panel .close {
     background: none;
@@ -884,6 +896,17 @@ button.danger, a.button.danger {
     .problems-panel .close:hover,
     .modal-panel .close:hover {
         color: #1a1a1a;
+    }
+
+/* A text box with a button beside it, e.g. the API key with Show/Hide. */
+.secret {
+    display: flex;
+    gap: 0.5rem;
+}
+
+    .secret input {
+        flex: 1;
+        min-width: 0;
     }
 
 /* A centred dialog over a dimmed page, e.g. the release notes. */

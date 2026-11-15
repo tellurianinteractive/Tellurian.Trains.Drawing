@@ -60,6 +60,28 @@ public sealed record DrawingCatalogue
     public DrawingCatalogue WithoutOverride(EndProfileCompatibilityOverride entry) => this with { Overrides = [.. Overrides.Where(o => o != entry)] };
 
     /// <summary>
+    /// The entries to choose from in <paramref name="country"/> (a two-letter code, or null when not chosen):
+    /// without standards that apply only in other countries (CA-6), their add-ons, the end profiles that belong
+    /// only to such standards, and overrides of those end profiles. End profiles without a standard are kept.
+    /// Drawings that use a removed entry are still read with the whole catalogue.
+    /// </summary>
+    public DrawingCatalogue ForCountry(string? country)
+    {
+        var standards = Standards.Where(s => s.AppliesTo(country)).ToList();
+        if (standards.Count == Standards.Count) return this;
+        var ids = standards.Select(s => s.Id).ToHashSet();
+        var profiles = EndProfiles.Where(p => p.Standards.Count == 0 || p.Standards.Any(s => ids.Contains(s.Id))).ToList();
+        var profileIds = profiles.Select(p => p.Id).ToHashSet();
+        return this with
+        {
+            Standards = standards,
+            AddOns = [.. AddOns.Where(a => ids.Contains(a.BaseStandardId))],
+            EndProfiles = profiles,
+            Overrides = [.. Overrides.Where(o => profileIds.Contains(o.FirstEndProfileId) && profileIds.Contains(o.SecondEndProfileId))],
+        };
+    }
+
+    /// <summary>
     /// The catalogue to work with: the built-in entries and the user's own (CA-2), which are kept apart.
     /// A user entry replaces a built-in one with the same id (or, for scales, short name).
     /// </summary>

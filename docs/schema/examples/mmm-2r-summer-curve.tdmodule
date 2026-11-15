@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.1.0",
+  "appVersion": "0.3.0",
   "content": {
     "module": {
-      "id": "479964a1-8c5b-4f8e-af05-3b2413d2b8a9",
+      "id": "d53802e3-d62c-42d7-83d0-00787f881309",
       "name": "Summer curve",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
@@ -28,9 +28,10 @@
       "isSignalModule": false,
       "isStandAlone": false,
       "revision": 0,
+      "revisionLog": [],
       "variants": [
         {
-          "id": "136d92a1-4b02-4036-ac22-bf17c1494a29",
+          "id": "4d332caf-b4b7-4701-b79a-efcc94f009f8",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -279,7 +280,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "41e3859e-79f9-4c67-a799-0da5eec4ad10",
+              "id": "08170670-9812-4a62-a783-4d061a069688",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -409,12 +410,13 @@
           "title": "MMM: MMM-2R end profile 480. Provisional values, to be drawn from the published MMM PDF.",
           "revision": "provisional"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       }
     ],
     "measures": [
       {
-        "variantId": "136d92a1-4b02-4036-ac22-bf17c1494a29",
+        "variantId": "4d332caf-b4b7-4701-b79a-efcc94f009f8",
         "measures": {
           "length": 1478.0972450961724,
           "straight": 299.9999999999999,

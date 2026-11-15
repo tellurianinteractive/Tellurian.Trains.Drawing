@@ -67,6 +67,11 @@
                 }
             </select>
         </label>
+        <label>
+            <span>@T["Field_Countries"]</span>
+            <input id="countries" @bind="form.Countries" placeholder="SE" />
+            <small class="note">@T["CountriesHelp"]</small>
+        </label>
         <label><span>@T["Field_TrackColor"]</span><input id="trackColor" type="color" @bind="form.TrackColor" /></label>
         <label><span>@T["Field_TrackSystem"]</span><input @bind="form.TrackSystem" /></label>
         <label><span>@T["Field_Couplings"]</span><input @bind="form.Couplings" /></label>
@@ -158,6 +163,9 @@
         public string? SourceUrl { get; set; }
         public string? SourceRevision { get; set; }
 
+        /// <summary>Two-letter country codes separated by commas or spaces, e.g. "SE, NO"; empty for all countries.</summary>
+        public string? Countries { get; set; }
+
         public static Form From(ModuleStandard s) => new()
         {
             ShortName = s.ShortName,
@@ -180,6 +188,7 @@
             SourceTitle = s.Source?.Title,
             SourceUrl = s.Source?.Url,
             SourceRevision = s.Source?.Revision,
+            Countries = string.Join(", ", s.Countries),
         };
 
         /// <summary>The standard with the form's values; properties the form doesn't show are kept from <paramref name="original"/>.</summary>
@@ -211,6 +220,7 @@
                 Couplings = Text(Couplings),
                 Electricity = Text(Electricity),
                 Wheelset = Text(Wheelset),
+                Countries = [.. (Countries ?? string.Empty).Split([',', ' ', ';'], StringSplitOptions.RemoveEmptyEntries).Select(c => c.ToUpperInvariant()).Distinct()],
                 Source = Text(SourceTitle) is null && Text(SourceUrl) is null && Text(SourceRevision) is null
                     ? null
                     : new DocumentReference { Title = Text(SourceTitle), Url = Text(SourceUrl), Revision = Text(SourceRevision) },

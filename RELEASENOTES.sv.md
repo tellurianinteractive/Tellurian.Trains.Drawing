@@ -1,5 +1,12 @@
 # Versionsinformation
 
+## Version 0.4.0
+Utgiven 2026-11-15
+- Sidan Inställningar, under Inställningar i toppmenyn: ditt användarnamn, landet du arbetar i och din API-nyckel för Modulregistret. Inställningarna sparas i webbläsaren, även efter uppdateringar, och sparas aldrig i filer.
+- Ändringslogg: när du sparar en ritning registreras ditt användarnamn och datumet i den, en rad per person med det senaste datumet. Loggen visas i egenskapspanelen. Utan användarnamn registreras ingenting, och problemindikatorn visar en varning.
+- Standarder som bara gäller i vissa länder, som MMM i Sverige, visas bara när du väljer ett av dessa länder i inställningarna; likaså deras tillägg och ändprofiler. Ritningar som använder dem öppnas som vanligt. Dina egna standarder kan ange sina länder.
+- Startsidan visar inte längre versionsnumret; det finns i toppmenyn.
+
 ## Version 0.3.0
 Utgiven 2026-11-15
 - Informationssidan är nu första sidan, med avsnitten Allmänt och Webbläsare som stöds. Startsidan med utkast och senaste filer finns under Start i toppmenyn.

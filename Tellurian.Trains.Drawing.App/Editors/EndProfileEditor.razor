@@ -209,6 +209,7 @@
                         <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ScrewHolePattern = v }))" />
                         <TextField Label="@T["Field_SourceTitle"]" Value="@profile.Source?.Title" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithTitle(p.Source, v) }))" />
                         <TextField Label="@T["Field_SourceUrl"]" Value="@profile.Source?.Url" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithUrl(p.Source, v) }))" />
+                        <RevisionLogList Log="RevisionLog" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
                         break;
                     default:
                         <p class="property-note">@T.Format("SelectedCount", _selection.Count)</p>
@@ -277,6 +278,22 @@
     private DrawingCanvas? _canvas;
     private Viewport _view = default!;
     private EndProfileProperties _derived = default!;
+    private string? _revisionLogJson;
+    private IReadOnlyList<Model.Files.DrawingRevision> _revisionLog = [];
+
+    /// <summary>The revision log from the draft, which saving to a file updates (EX-10); read again only when the draft changes.</summary>
+    private IReadOnlyList<Model.Files.DrawingRevision> RevisionLog
+    {
+        get
+        {
+            if (!ReferenceEquals(_revisionLogJson, Draft.Json))
+            {
+                _revisionLogJson = Draft.Json;
+                _revisionLog = Model.Files.DrawingRevisionLog.Read(Draft.Json);
+            }
+            return _revisionLog;
+        }
+    }
     private string? _storageError;
 
     /// <summary>The draft being edited.</summary>

@@ -8,7 +8,7 @@ namespace Tellurian.Trains.Drawing.App.Documents;
 /// Opens drawing files as drafts in the workbench and saves drafts to files (UC-5, spec §6).
 /// Files are the primary result: a saved draft has no unsaved changes; the draft is kept for resuming work.
 /// </summary>
-public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, TimeProvider time)
+public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, TimeProvider time, Settings.SettingsService settings)
 {
     private bool _persistenceRequested;
 
@@ -104,14 +104,15 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
         UpdateAsync(draft.Id, json, cancellationToken);
 
     /// <summary>
-    /// Stores a changed drawing in the stored draft with <paramref name="draftId"/>, keeping its file name and handle,
-    /// so an editor never overwrites what a save to a file has recorded meanwhile.
+    /// Stores a changed drawing in the stored draft with <paramref name="draftId"/>, keeping its file name, handle and
+    /// revision log (EX-10), so an editor never overwrites what a save to a file has recorded meanwhile.
     /// </summary>
     /// <exception cref="KeyNotFoundException">The draft doesn't exist any more.</exception>
     public async Task<Draft> UpdateAsync(Guid draftId, string json, CancellationToken cancellationToken = default)
     {
         var draft = await workbench.GetDraftAsync(draftId, cancellationToken) ?? throw new KeyNotFoundException($"There is no draft {draftId}.");
         var identity = DrawingIdentity.Read(json);
+        json = DrawingRevisionLog.KeepLog(json, draft.Json);
         var updated = draft with { Json = json, Name = identity.Name, HasUnsavedChanges = true, Modified = time.GetUtcNow() };
         await workbench.SaveDraftAsync(updated, cancellationToken);
         return updated;
@@ -131,14 +132,19 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
         return draft;
     }
 
-    /// <summary>Saves a draft to a file; null if the user cancelled.</summary>
+    /// <summary>
+    /// Saves a draft to a file, with the user name from the settings and today's date in the drawing's revision log;
+    /// null if the user cancelled.
+    /// </summary>
     public async Task<Draft?> SaveAsync(Guid draftId, bool saveAs, CancellationToken cancellationToken = default)
     {
         var draft = await workbench.GetDraftAsync(draftId, cancellationToken) ?? throw new KeyNotFoundException($"There is no draft {draftId}.");
-        var saved = await files.SaveAsync(draft.Json, SuggestedFileName(draft), draft.HandleId, saveAs, cancellationToken);
-        if (saved is null) return null;
         var now = time.GetUtcNow();
-        var updated = draft with { FileName = saved.Name, HandleId = saved.HandleId ?? (files.CanSaveInPlace ? draft.HandleId : null), HasUnsavedChanges = false, Modified = now };
+        var userName = (await settings.GetAsync(cancellationToken)).UserName;
+        var json = userName is null ? draft.Json : DrawingRevisionLog.Record(draft.Json, userName, DateOnly.FromDateTime(now.ToLocalTime().DateTime));
+        var saved = await files.SaveAsync(json, SuggestedFileName(draft), draft.HandleId, saveAs, cancellationToken);
+        if (saved is null) return null;
+        var updated = draft with { Json = json, FileName = saved.Name, HandleId = saved.HandleId ?? (files.CanSaveInPlace ? draft.HandleId : null), HasUnsavedChanges = false, Modified = now };
         await workbench.SaveDraftAsync(updated, cancellationToken);
         await workbench.AddRecentFileAsync(new() { Id = draft.Id, Kind = draft.Kind, Name = draft.Name, FileName = saved.Name, HandleId = updated.HandleId, Used = now }, cancellationToken);
         if (!_persistenceRequested)

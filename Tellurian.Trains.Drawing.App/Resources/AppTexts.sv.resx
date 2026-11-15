@@ -6,7 +6,6 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppName" xml:space="preserve"><value>Modulritaren</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Rita ändprofiler, moduler och hallplaner för modulträffar med modelljärnväg.</value></data>
-  <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
   <data name="Language" xml:space="preserve"><value>Språk</value></data>
   <data name="Open" xml:space="preserve"><value>Öppna…</value></data>
@@ -291,4 +290,21 @@
   <data name="InformationBrowserSupport" xml:space="preserve"><value>Webbläsare som stöds</value></data>
   <data name="InformationOffline" xml:space="preserve"><value>Modulritaren fungerar utan uppkoppling och kan installeras som en app.</value></data>
   <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox och Safari fungerar också, men med begränsningar: de kan inte spara direkt i filen du öppnade, så att spara blir en nedladdning. Beroende på webbläsarens inställningar hamnar filen i mappen för nedladdningar, eller så väljer du var den ska sparas; välj originalfilen för att ersätta den. Senaste filer och mappar måste väljas på nytt för att öppnas.</value></data>
+  <data name="Settings" xml:space="preserve"><value>Inställningar</value></data>
+  <data name="Field_UserName" xml:space="preserve"><value>Användarnamn</value></data>
+  <data name="UserNameHelp" xml:space="preserve"><value>Sparas med datum i ändringsloggen för varje ritning du sparar, för att visa vem som gjort ändringar.</value></data>
+  <data name="Field_Country" xml:space="preserve"><value>Land</value></data>
+  <data name="NoCountry" xml:space="preserve"><value>(inget)</value></data>
+  <data name="CountryHelp" xml:space="preserve"><value>Standarder som bara gäller i vissa länder, som MMM i Sverige, visas bara när du väljer ett av dessa länder; likaså deras tillägg och ändprofiler. Ritningar som använder dem öppnas som vanligt.</value></data>
+  <data name="Field_ApiKey" xml:space="preserve"><value>API-nyckel för Modulregistret</value></data>
+  <data name="ApiKeyHelp" xml:space="preserve"><value>Behövs bara för att använda Modulregistrets API. Den sparas i den här webbläsaren och aldrig i ritningar eller katalogfiler.</value></data>
+  <data name="Show" xml:space="preserve"><value>Visa</value></data>
+  <data name="Hide" xml:space="preserve"><value>Dölj</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Inställningarna är sparade.</value></data>
+  <data name="Field_Countries" xml:space="preserve"><value>Länder</value></data>
+  <data name="CountriesHelp" xml:space="preserve"><value>Landskoder med två bokstäver, till exempel SE, åtskilda med kommatecken. Tomt: standarden gäller i alla länder.</value></data>
+  <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: använd landskoder med två bokstäver, till exempel SE.</value></data>
+  <data name="RevisionLog" xml:space="preserve"><value>Ändringslogg</value></data>
+  <data name="NoRevisions" xml:space="preserve"><value>Inte sparad av någon med användarnamn än.</value></data>
+  <data name="Warning_NoUserName" xml:space="preserve"><value>Inget användarnamn i inställningarna: när du sparar en ritning registreras det inte i ändringsloggen.</value></data>
 </root>

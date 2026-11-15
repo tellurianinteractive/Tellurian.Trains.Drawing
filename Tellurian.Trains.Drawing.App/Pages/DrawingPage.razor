@@ -4,6 +4,7 @@
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
 @inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
+@using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Views
 @using Tellurian.Trains.Drawing.App.Editors
 
@@ -81,6 +82,7 @@ else if (draft is not null)
         <dt>@T["Changed"]</dt>
         <dd><time datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time></dd>
     </dl>
+    <RevisionLogList Log="@DrawingRevisionLog.Read(draft.Json)" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
     <p class="status">
         @if (draft.HasUnsavedChanges)
         {

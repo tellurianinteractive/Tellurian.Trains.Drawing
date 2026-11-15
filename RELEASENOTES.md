@@ -1,5 +1,12 @@
 # Release Notes
 
+## Release 0.4.0
+Released 2026-11-15
+- Settings page, under Settings in the top menu: your user name, the country you work in, and your Module Registry API key. Settings are kept in your browser, also after updates, and are never saved in files.
+- Revision log: when you save a drawing, your user name and the date are recorded in it, one entry per person with the last date. The log is shown in the properties panel. Without a user name nothing is recorded, and the problems indicator shows a warning.
+- Standards that apply only in some countries, such as MMM in Sweden, are offered only when you choose one of those countries in the settings; their add-ons and end profiles likewise. Drawings that use them open as usual. Your own standards can name their countries.
+- The start page no longer shows the version number; it is in the top bar.
+
 ## Release 0.3.0
 Released 2026-11-15
 - The information page is now the first page, with the sections General and Browser support. The start page with drafts and recent files is under Start in the top menu.

@@ -24,12 +24,17 @@ internal sealed class AppTestContext : BunitContext
         Services.AddSingleton<IWorkbench>(Workbench);
         Services.AddSingleton<IFileService>(Files);
         Services.AddSingleton<DrawingDocuments>();
+        Services.AddSingleton<global::Tellurian.Trains.Drawing.App.Settings.SettingsService>();
         Services.AddSingleton<CatalogueService>();
         Services.AddSingleton<SafeReload>();
         Services.AddSingleton<BrowserDialogs>();
         Services.AddSingleton<CatalogueProblems>();
         JSInterop.Mode = JSRuntimeMode.Loose;
     }
+
+    /// <summary>Chooses the country with the two-letter <paramref name="code"/> in the settings, e.g. SE for the MMM standards.</summary>
+    public void UseCountry(string code) =>
+        Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Settings.SettingsService>().SaveAsync(new() { CountryId = global::Tellurian.Trains.Drawing.App.Settings.Countries.All.Single(c => c.Code == code).Id }).Wait();
 
     public InMemoryWorkbench Workbench { get; } = new();
     public FakeFileService Files { get; }

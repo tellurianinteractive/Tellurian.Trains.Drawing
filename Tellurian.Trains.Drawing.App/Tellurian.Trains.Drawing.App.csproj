@@ -27,6 +27,8 @@
     <!-- English in RELEASENOTES.md, translations in RELEASENOTES.<language>.md. WithCulture="false" keeps the
          translations in the main assembly instead of satellite assemblies. -->
     <EmbeddedResource Include="..\RELEASENOTES*.md" LogicalName="%(Filename)%(Extension)" WithCulture="false" />
+    <!-- The Module Registry's countries, an excerpt of its database until it has an API for them. -->
+    <EmbeddedResource Include="Settings\countries.json" LogicalName="countries.json" />
   </ItemGroup>
 
   <ItemGroup>

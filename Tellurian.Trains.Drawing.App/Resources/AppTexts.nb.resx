@@ -6,7 +6,6 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppName" xml:space="preserve"><value>Modultegneren</value></data>
   <data name="AppDescription" xml:space="preserve"><value>Tegn endeprofiler, moduler og hallplaner for modultreff med modelljernbane.</value></data>
-  <data name="Version" xml:space="preserve"><value>Versjon {0}</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
   <data name="Language" xml:space="preserve"><value>Språk</value></data>
   <data name="Open" xml:space="preserve"><value>Åpne…</value></data>
@@ -291,4 +290,21 @@
   <data name="InformationBrowserSupport" xml:space="preserve"><value>Nettlesere som støttes</value></data>
   <data name="InformationOffline" xml:space="preserve"><value>Modultegneren virker uten nett og kan installeres som en app.</value></data>
   <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox og Safari virker også, men med begrensninger: de kan ikke lagre direkte i filen du åpnet, så lagring blir en nedlasting. Avhengig av nettleserens innstillinger havner filen i nedlastingsmappen, eller du velger hvor den skal lagres; velg den opprinnelige filen for å erstatte den. Nylige filer og mapper må velges på nytt for å åpnes.</value></data>
+  <data name="Settings" xml:space="preserve"><value>Innstillinger</value></data>
+  <data name="Field_UserName" xml:space="preserve"><value>Brukernavn</value></data>
+  <data name="UserNameHelp" xml:space="preserve"><value>Lagres med dato i endringsloggen for hver tegning du lagrer, for å vise hvem som har gjort endringer.</value></data>
+  <data name="Field_Country" xml:space="preserve"><value>Land</value></data>
+  <data name="NoCountry" xml:space="preserve"><value>(ingen)</value></data>
+  <data name="CountryHelp" xml:space="preserve"><value>Standarder som bare gjelder i noen land, som MMM i Sverige, vises bare når du velger ett av disse landene; det samme gjelder tilleggene og endeprofilene deres. Tegninger som bruker dem, åpnes som vanlig.</value></data>
+  <data name="Field_ApiKey" xml:space="preserve"><value>API-nøkkel for Modulregisteret</value></data>
+  <data name="ApiKeyHelp" xml:space="preserve"><value>Trengs bare for å bruke Modulregisterets API. Den lagres i denne nettleseren og aldri i tegninger eller katalogfiler.</value></data>
+  <data name="Show" xml:space="preserve"><value>Vis</value></data>
+  <data name="Hide" xml:space="preserve"><value>Skjul</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Innstillingene er lagret.</value></data>
+  <data name="Field_Countries" xml:space="preserve"><value>Land</value></data>
+  <data name="CountriesHelp" xml:space="preserve"><value>Landkoder på to bokstaver, for eksempel SE, skilt med komma. Tomt: standarden gjelder i alle land.</value></data>
+  <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: bruk landkoder på to bokstaver, for eksempel SE.</value></data>
+  <data name="RevisionLog" xml:space="preserve"><value>Endringslogg</value></data>
+  <data name="NoRevisions" xml:space="preserve"><value>Ikke lagret av noen med brukernavn ennå.</value></data>
+  <data name="Warning_NoUserName" xml:space="preserve"><value>Ingen brukernavn i innstillingene: når du lagrer en tegning, blir det ikke registrert i endringsloggen.</value></data>
 </root>
