@@ -23,6 +23,33 @@ public sealed record PathDrawing
         return new() { Start = list[0], Steps = steps, IsClosed = isClosed };
     }
 
+    /// <summary>
+    /// A closed rectangle of <paramref name="width"/> along the X axis and <paramref name="depth"/> along Y,
+    /// with its lower left corner at the origin, placed by <paramref name="transform"/>.
+    /// </summary>
+    public static PathDrawing Rectangle(double width, double depth, Transform transform)
+    {
+        if (width <= 0 || depth <= 0) throw new ArgumentOutOfRangeException(nameof(width), "A rectangle needs a positive width and depth.");
+        Point[] corners = [new(0, 0), new(width, 0), new(width, depth), new(0, depth)];
+        return Polyline(corners.Select(transform.Apply), isClosed: true);
+    }
+
+    /// <summary>A closed rectangle centred on <paramref name="center"/>, turned <paramref name="rotation"/>.</summary>
+    public static PathDrawing Rectangle(Point center, double width, double depth, Angle rotation) =>
+        Rectangle(width, depth, new Transform(Angle.Zero, new(-width / 2, -depth / 2)).Then(new(rotation, center.AsVector)));
+
+    /// <summary>A closed circle of two half arcs.</summary>
+    public static PathDrawing Circle(Point center, double diameter)
+    {
+        if (diameter <= 0) throw new ArgumentOutOfRangeException(nameof(diameter), "A circle needs a positive diameter.");
+        return new()
+        {
+            Start = center + new Vector(diameter / 2, 0),
+            Steps = [new ArcStep(center, Angle.Half.Degrees), new ArcStep(center, Angle.Half.Degrees)],
+            IsClosed = true,
+        };
+    }
+
     /// <summary>A drawing of <paramref name="path"/>.</summary>
     public static PathDrawing From(SegmentPath path) => new()
     {

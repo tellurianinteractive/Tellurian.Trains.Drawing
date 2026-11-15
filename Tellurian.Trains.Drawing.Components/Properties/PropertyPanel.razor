@@ -1,0 +1,30 @@
+@* A panel of properties for the selected object (Phase 4), with fields in a two-column grid. *@
+<section class="@($"property-panel {Class}")" aria-label="@Title">
+    @if (Title is not null)
+    {
+        <h2 class="property-panel-title">@Title</h2>
+    }
+    @if (IsEmpty || ChildContent is null)
+    {
+        <p class="property-panel-empty">@EmptyText</p>
+    }
+    else
+    {
+        <div class="property-grid">
+            @ChildContent
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+
+    /// <summary>The fields.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>True when there is nothing to show, e.g. nothing is selected; <see cref="EmptyText"/> is shown instead.</summary>
+    [Parameter] public bool IsEmpty { get; set; }
+
+    [Parameter] public string EmptyText { get; set; } = "Nothing is selected.";
+    [Parameter] public string? Class { get; set; }
+}

@@ -55,7 +55,7 @@ public static class JointFitEvaluator
         }
 
         if (facingA.Outline is not null && endB.Outline is not null &&
-            !ShapeComparison.MaximumDeviation(facingA.Outline.Tessellate(), endB.Outline.Tessellate(), tolerances.Joint / 2).IsWithin(tolerances.Joint))
+            !ShapeComparison.IsWithin(facingA.Outline.Tessellate(), endB.Outline.Tessellate(), tolerances.Joint, tolerances.Joint / 2))
             differences |= FitDifferences.Outline;
 
         var ruleFit =

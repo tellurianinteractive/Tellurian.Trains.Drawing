@@ -12,6 +12,9 @@ internal static class TestTolerance
     /// <summary>Values read from a drawing dimensioned in whole millimetres.</summary>
     public const double DrawingRounding = 0.5;
 
+    /// <summary>The direction change a drawing's rounded values may cause where an arc meets a fillet, degrees.</summary>
+    public const double ArcAngleRounding = 0.1;
+
     /// <summary>Relative difference allowed between areas computed from separately tessellated outlines.</summary>
     public const double RelativeArea = 1e-4;
 }

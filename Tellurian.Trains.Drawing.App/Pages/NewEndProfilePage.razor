@@ -1,0 +1,196 @@
+@page "/new/endprofile"
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@inject CatalogueService Catalogues
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
+
+<PageTitle>@T["NewEndProfileTitle"]</PageTitle>
+
+<h1>@T["NewEndProfileTitle"]</h1>
+<p class="note">@T["NewEndProfileIntro"]</p>
+
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (catalogue is not null)
+{
+    <form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
+        <label><span>@T["Designation"]</span><input id="designation" @bind="form.Designation" /></label>
+        <label>
+            <span>@T["Standard"]</span>
+            <select id="standard" value="@form.StandardId" @onchange="SelectStandard">
+                @foreach (var standard in catalogue.Standards.OrderBy(s => s.ShortName))
+                {
+                    <option value="@standard.Id">@standard.ShortName</option>
+                }
+            </select>
+        </label>
+        <label><span>@T["PlateWidth"]</span><input id="plate-width" type="number" step="any" @bind="form.PlateWidth" /></label>
+        <label><span>@T["PlateTopBelowRailTop"]</span><input id="plate-top" type="number" step="any" @bind="form.TopBelowRailTop" /></label>
+        <label><span>@T["PlateBottomBelowRailTop"]</span><input id="plate-bottom" type="number" step="any" @bind="form.BottomBelowRailTop" /></label>
+        <label><span>@T["NumberOfTracks"]</span><input id="track-count" type="number" min="0" max="8" @bind="form.TrackCount" /></label>
+        @if (form.TrackCount > 1)
+        {
+            <label><span>@T["CentreDistance"]</span><input id="centre-distance" type="number" step="any" @bind="form.CentreDistance" /></label>
+        }
+        <label><span>@T["Gauge"]</span><input id="gauge" type="number" step="any" @bind="form.Gauge" /></label>
+        <label>
+            <span>@T["CopyScrewHolesFrom"]</span>
+            <select id="holes-from" @bind="form.ScrewHolesFrom">
+                <option value="">@T["None"]</option>
+                @foreach (var profile in ProfilesOfStandard)
+                {
+                    <option value="@profile.Id">@profile.Designation (@profile.ScrewHoles.Count)</option>
+                }
+            </select>
+        </label>
+
+        @if (errors.Count > 0)
+        {
+            <ul class="error" role="alert">
+                @foreach (var error in errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        }
+
+        <div class="toolbar">
+            <button type="submit" class="primary">@T["Create"]</button>
+            <a class="button" href="">@T["Cancel"]</a>
+        </div>
+    </form>
+}
+
+@code {
+    private const double FallbackPlateWidth = 500;
+    private const double FallbackTop = 10;
+    private const double FallbackBottom = 200;
+    private const double FallbackCentreDistancePerGauge = 2.75;
+
+    private DrawingCatalogue? catalogue;
+    private readonly Form form = new();
+    private IReadOnlyList<string> errors = [];
+    private string? message;
+
+    private IEnumerable<EndProfile> ProfilesOfStandard =>
+        catalogue is null ? [] : catalogue.EndProfilesOf(form.StandardId).OrderBy(p => p.Designation);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            catalogue = await Catalogues.GetAsync();
+            var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
+            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id).Any()) ?? standards.FirstOrDefault();
+            if (standard is not null) UseStandard(standard);
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private void SelectStandard(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value as string, out var id) && catalogue?.FindStandard(id) is { } standard) UseStandard(standard);
+    }
+
+    /// <summary>Takes the defaults from the standard and its default end profiles.</summary>
+    private void UseStandard(ModuleStandard standard)
+    {
+        form.StandardId = standard.Id;
+        form.Gauge = standard.NormalGauge;
+        var single = Find(standard.DefaultSingleTrackEndProfileId) ?? ProfilesOfStandard.FirstOrDefault(p => p.Tracks.Count == 1);
+        var bounds = single?.Outline?.ToPath().Bounds;
+        form.PlateWidth = bounds is { IsEmpty: false } b1 ? Math.Round(b1.Width, 1) : FallbackPlateWidth;
+        // The track stands on the plate: rails on sleepers, so the top edge is at least that far below rail top.
+        var topBelowRailTop = single?.Outline is { } outline && TopAtCentre(outline) is { } top ? Rounded(-top) : FallbackTop;
+        form.TopBelowRailTop = Math.Max(topBelowRailTop, TrackCrossSection.Height);
+        form.BottomBelowRailTop = bounds is { IsEmpty: false } b3 ? Math.Round(-b3.Min.Y, 1) : FallbackBottom;
+        var doubleTrack = Find(standard.DefaultDoubleTrackEndProfileId);
+        form.CentreDistance = doubleTrack is not null && EndProfileAnalysis.Analyze(doubleTrack).TrackCentreDistances is [var cc, ..]
+            ? Math.Round(cc, 1)
+            : Math.Round(standard.NormalGauge * FallbackCentreDistancePerGauge, 1);
+        form.ScrewHolesFrom = single?.HasScrewHoles == true ? single.Id : null;
+    }
+
+    /// <summary>
+    /// Where the plate's top edge is at the centre line: the highest point where the outline crosses X = 0. The
+    /// bounding box would include embankments beside the track, which don't belong in a rectangular template.
+    /// </summary>
+    private static double? TopAtCentre(Model.PathDrawing outline)
+    {
+        double? top = null;
+        foreach (var (a, b) in outline.Tessellate().Edges())
+        {
+            if ((a.X < 0 && b.X < 0) || (a.X > 0 && b.X > 0) || a.X == b.X) continue;
+            var y = a.Y + (b.Y - a.Y) * (0 - a.X) / (b.X - a.X);
+            top = top is null ? y : Math.Max(top.Value, y);
+        }
+        return top;
+    }
+
+    /// <summary>Rounded to tenths, and never -0, which a number field would show as "-0".</summary>
+    private static double Rounded(double value) => Math.Round(value, 1) is var rounded && rounded == 0 ? 0 : rounded;
+
+    private EndProfile? Find(Guid? id) => id is { } value ? catalogue?.FindEndProfile(value) : null;
+
+    private async Task CreateAsync()
+    {
+        errors = Validate().ToList();
+        if (errors.Count > 0 || catalogue?.FindStandard(form.StandardId) is not { } standard) return;
+        var holesFrom = Find(form.ScrewHolesFrom);
+        var profile = EndProfileTemplate.Create(new()
+        {
+            Designation = form.Designation.Trim(),
+            Scale = standard.Scale,
+            Standards = [new(standard.Id, standard.ShortName)],
+            PlateWidth = form.PlateWidth!.Value,
+            PlateTop = -form.TopBelowRailTop!.Value,
+            PlateBottom = -form.BottomBelowRailTop!.Value,
+            TrackOffsets = EndProfileTemplate.CentredOffsets(form.TrackCount ?? 0, form.CentreDistance ?? 0),
+            Gauge = form.Gauge!.Value,
+            RailSystem = standard.RailSystem,
+            ScrewHoles = holesFrom?.ScrewHoles.Select(h => h.Center).ToList() ?? [],
+            ScrewHoleDiameter = holesFrom?.ScrewHoles.FirstOrDefault()?.Diameter ?? 8,
+            ScrewHolePattern = holesFrom?.ScrewHolePattern,
+        });
+        try
+        {
+            var draft = await Documents.CreateAsync(Model.Files.DrawingFileSerializer.Serialize(profile));
+            Navigation.NavigateTo(DrawingPage.Url(draft.Id));
+        }
+        catch (StorageException ex)
+        {
+            errors = [T.Format("StorageError", ex.Message)];
+        }
+    }
+
+    private IEnumerable<string> Validate()
+    {
+        if (string.IsNullOrWhiteSpace(form.Designation)) yield return T["DesignationRequired"];
+        if (form.PlateWidth is not > 0) yield return T.Format("MustBePositive", T["PlateWidth"]);
+        if (form.TopBelowRailTop is null || form.BottomBelowRailTop is null || form.BottomBelowRailTop <= form.TopBelowRailTop)
+            yield return T["PlateEdgesOrder"];
+        if (form.TrackCount is < 0 or > 8 or null) yield return T["TrackCountRange"];
+        if (form.TrackCount > 1 && form.CentreDistance is not > 0) yield return T.Format("MustBePositive", T["CentreDistance"]);
+        if (form.Gauge is not > 0) yield return T.Format("MustBePositive", T["Gauge"]);
+    }
+
+    private sealed class Form
+    {
+        public string Designation { get; set; } = string.Empty;
+        public Guid StandardId { get; set; }
+        public double? PlateWidth { get; set; }
+        public double? TopBelowRailTop { get; set; }
+        public double? BottomBelowRailTop { get; set; }
+        public int? TrackCount { get; set; } = 1;
+        public double? CentreDistance { get; set; }
+        public double? Gauge { get; set; }
+        public Guid? ScrewHolesFrom { get; set; }
+    }
+}

@@ -1,0 +1,222 @@
+@page "/catalogue/standard/new"
+@page "/catalogue/standard/{Id:guid}"
+@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.Model
+@using Tellurian.Trains.Drawing.Model.Catalogue
+@inject CatalogueService Catalogues
+@inject NavigationManager Navigation
+
+<PageTitle>@Title</PageTitle>
+
+<h1>@Title</h1>
+@if (isBuiltIn)
+{
+    <p class="note">@T["EditBuiltInNote"]</p>
+}
+
+@if (message is not null)
+{
+    <p class="error" role="alert">@message</p>
+}
+@if (catalogue is not null)
+{
+    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+        <label><span>@T["Field_ShortName"]</span><input id="shortName" @bind="form.ShortName" /></label>
+        <label>
+            <span>@T["Field_Scale"]</span>
+            <select id="scale" @bind="form.Scale">
+                @foreach (var scale in catalogue.Scales)
+                {
+                    <option value="@scale.ShortName">@scale</option>
+                }
+            </select>
+        </label>
+        <label>
+            <span>@T["Field_RailSystem"]</span>
+            <select @bind="form.RailSystem">
+                @foreach (var system in Enum.GetValues<RailSystem>())
+                {
+                    <option value="@system">@T[$"RailSystem_{system}"]</option>
+                }
+            </select>
+        </label>
+        <label><span>@T["Field_NormalGauge"]</span><input id="normalGauge" type="number" step="any" @bind="form.NormalGauge" /></label>
+        <label><span>@T["Field_NarrowGauge"]</span><input type="number" step="any" @bind="form.NarrowGauge" /></label>
+        <label><span>@T["Field_RailTopHeight"]</span><input id="railTopHeight" type="number" step="any" @bind="form.RailTopHeight" /></label>
+        <label><span>@T["Field_MinimumClearance"]</span><input type="number" step="any" @bind="form.MinimumClearance" /></label>
+        <label><span>@T["Field_OperatorSpaceDepth"]</span><input type="number" step="any" @bind="form.OperatorSpaceDepth" /></label>
+        <label><span>@T["Field_DefaultCurveRadius"]</span><input type="number" step="any" @bind="form.DefaultCurveRadius" /></label>
+        <label><span>@T["Field_MinimumReverseCurveRadius"]</span><input type="number" step="any" @bind="form.MinimumReverseCurveRadius" /></label>
+        <label>
+            <span>@T["Field_DefaultSingleTrackEndProfileId"]</span>
+            <select @bind="form.DefaultSingleTrackEndProfileId">
+                <option value="">@T["None"]</option>
+                @foreach (var profile in ProfilesOfStandard)
+                {
+                    <option value="@profile.Id">@profile.Designation</option>
+                }
+            </select>
+        </label>
+        <label>
+            <span>@T["Field_DefaultDoubleTrackEndProfileId"]</span>
+            <select @bind="form.DefaultDoubleTrackEndProfileId">
+                <option value="">@T["None"]</option>
+                @foreach (var profile in ProfilesOfStandard)
+                {
+                    <option value="@profile.Id">@profile.Designation</option>
+                }
+            </select>
+        </label>
+        <label><span>@T["Field_TrackColor"]</span><input id="trackColor" type="color" @bind="form.TrackColor" /></label>
+        <label><span>@T["Field_TrackSystem"]</span><input @bind="form.TrackSystem" /></label>
+        <label><span>@T["Field_Couplings"]</span><input @bind="form.Couplings" /></label>
+        <label><span>@T["Field_Electricity"]</span><input @bind="form.Electricity" /></label>
+        <label><span>@T["Field_Wheelset"]</span><input @bind="form.Wheelset" /></label>
+        <label><span>@T["Field_SourceTitle"]</span><input @bind="form.SourceTitle" /></label>
+        <label><span>@T["Field_SourceUrl"]</span><input type="url" @bind="form.SourceUrl" /></label>
+        <label><span>@T["Field_SourceRevision"]</span><input @bind="form.SourceRevision" /></label>
+
+        <ProblemList Problems="problems" />
+
+        <div class="toolbar">
+            <button type="submit" class="primary">@T["Save"]</button>
+            <a class="button" href="catalogue">@T["Cancel"]</a>
+        </div>
+    </form>
+}
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private DrawingCatalogue? catalogue;
+    private ModuleStandard? original;
+    private bool isBuiltIn;
+    private Form form = new();
+    private IReadOnlyList<CatalogueProblem> problems = [];
+    private string? message;
+
+    private string Title => Id is null ? T["NewStandard"] : T.Format("EditEntry", original?.ShortName ?? string.Empty);
+
+    private IEnumerable<Model.EndProfiles.EndProfile> ProfilesOfStandard =>
+        catalogue is null || Id is null ? [] : catalogue.EndProfilesOf(Id.Value).OrderBy(p => p.Designation);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            catalogue = await Catalogues.GetAsync();
+            var user = await Catalogues.GetUserAsync();
+            original = Id is { } id ? catalogue.FindStandard(id) : null;
+            if (Id is not null && original is null)
+            {
+                message = T["EntryNotFound"];
+                catalogue = null;
+                return;
+            }
+            isBuiltIn = Id is { } builtInId && CatalogueService.BuiltIn.FindStandard(builtInId) is not null && user.FindStandard(builtInId) is null;
+            form = original is null ? new() { Scale = catalogue.Scales.FirstOrDefault()?.ShortName ?? string.Empty } : Form.From(original);
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        try
+        {
+            problems = await Catalogues.SaveStandardAsync(form.ToStandard(original));
+            if (problems.Count == 0) Navigation.NavigateTo("catalogue");
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private sealed class Form
+    {
+        public string ShortName { get; set; } = string.Empty;
+        public string Scale { get; set; } = string.Empty;
+        public RailSystem RailSystem { get; set; }
+        public double? NormalGauge { get; set; }
+        public double? NarrowGauge { get; set; }
+        public double? RailTopHeight { get; set; } = ModuleStandard.DefaultRailTopHeight;
+        public double? MinimumClearance { get; set; } = 0;
+        public double? OperatorSpaceDepth { get; set; } = 800;
+        public double? DefaultCurveRadius { get; set; }
+        public double? MinimumReverseCurveRadius { get; set; }
+        public Guid? DefaultSingleTrackEndProfileId { get; set; }
+        public Guid? DefaultDoubleTrackEndProfileId { get; set; }
+        public string TrackColor { get; set; } = ModuleStandard.DefaultTrackColor;
+        public string? TrackSystem { get; set; }
+        public string? Couplings { get; set; }
+        public string? Electricity { get; set; }
+        public string? Wheelset { get; set; }
+        public string? SourceTitle { get; set; }
+        public string? SourceUrl { get; set; }
+        public string? SourceRevision { get; set; }
+
+        public static Form From(ModuleStandard s) => new()
+        {
+            ShortName = s.ShortName,
+            Scale = s.Scale,
+            RailSystem = s.RailSystem,
+            NormalGauge = s.NormalGauge,
+            NarrowGauge = s.NarrowGauge,
+            RailTopHeight = s.RailTopHeight,
+            MinimumClearance = s.MinimumClearance,
+            OperatorSpaceDepth = s.OperatorSpaceDepth,
+            DefaultCurveRadius = s.DefaultCurveRadius,
+            MinimumReverseCurveRadius = s.MinimumReverseCurveRadius,
+            DefaultSingleTrackEndProfileId = s.DefaultSingleTrackEndProfileId,
+            DefaultDoubleTrackEndProfileId = s.DefaultDoubleTrackEndProfileId,
+            TrackColor = s.TrackColor,
+            TrackSystem = s.TrackSystem,
+            Couplings = s.Couplings,
+            Electricity = s.Electricity,
+            Wheelset = s.Wheelset,
+            SourceTitle = s.Source?.Title,
+            SourceUrl = s.Source?.Url,
+            SourceRevision = s.Source?.Revision,
+        };
+
+        /// <summary>The standard with the form's values; properties the form doesn't show are kept from <paramref name="original"/>.</summary>
+        public ModuleStandard ToStandard(ModuleStandard? original)
+        {
+            var values = new ModuleStandard
+            {
+                Id = original?.Id ?? Guid.NewGuid(),
+                ShortName = ShortName.Trim(),
+                Scale = Scale,
+                NormalGauge = NormalGauge ?? 0,
+            };
+            return (original ?? values) with
+            {
+                ShortName = values.ShortName,
+                Scale = Scale,
+                RailSystem = RailSystem,
+                NormalGauge = values.NormalGauge,
+                NarrowGauge = NarrowGauge,
+                RailTopHeight = RailTopHeight ?? 0,
+                MinimumClearance = MinimumClearance ?? 0,
+                OperatorSpaceDepth = OperatorSpaceDepth ?? 0,
+                DefaultCurveRadius = DefaultCurveRadius,
+                MinimumReverseCurveRadius = MinimumReverseCurveRadius,
+                DefaultSingleTrackEndProfileId = DefaultSingleTrackEndProfileId,
+                DefaultDoubleTrackEndProfileId = DefaultDoubleTrackEndProfileId,
+                TrackColor = TrackColor,
+                TrackSystem = Text(TrackSystem),
+                Couplings = Text(Couplings),
+                Electricity = Text(Electricity),
+                Wheelset = Text(Wheelset),
+                Source = Text(SourceTitle) is null && Text(SourceUrl) is null && Text(SourceRevision) is null
+                    ? null
+                    : new DocumentReference { Title = Text(SourceTitle), Url = Text(SourceUrl), Revision = Text(SourceRevision) },
+            };
+        }
+
+        private static string? Text(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    }
+}

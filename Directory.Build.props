@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <Company>Tellurian Interactive AB</Company>
     <Copyright>Copyright © Tellurian Interactive AB</Copyright>

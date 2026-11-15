@@ -1,0 +1,36 @@
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+
+@* A dimension (EP-10) in world coordinates: extension lines, the dimension line with ticks, and the value. *@
+@{
+    var (start, end) = Dimension.Line();
+    var along = end - start;
+    var direction = along.Length < Tolerance.Length ? new Vector(1, 0) : along.Normalized;
+    var tick = (direction + direction.LeftNormal) * (TextSize * TickPerText);
+    var middle = Point.Lerp(start, end, 0.5);
+    var textAt = middle + direction.LeftNormal * (TextSize * 0.7);
+}
+<g class="@($"dimension {Class}")">
+    <line class="dimension-extension" x1="@SvgPath.Number(Dimension.Start.X)" y1="@SvgPath.Number(Dimension.Start.Y)" x2="@SvgPath.Number(start.X)" y2="@SvgPath.Number(start.Y)" stroke="@Stroke" stroke-width="1" />
+    <line class="dimension-extension" x1="@SvgPath.Number(Dimension.End.X)" y1="@SvgPath.Number(Dimension.End.Y)" x2="@SvgPath.Number(end.X)" y2="@SvgPath.Number(end.Y)" stroke="@Stroke" stroke-width="1" />
+    <line class="dimension-line" x1="@SvgPath.Number(start.X)" y1="@SvgPath.Number(start.Y)" x2="@SvgPath.Number(end.X)" y2="@SvgPath.Number(end.Y)" stroke="@Stroke" stroke-width="1" />
+    <line class="dimension-tick" x1="@SvgPath.Number((start - tick).X)" y1="@SvgPath.Number((start - tick).Y)" x2="@SvgPath.Number((start + tick).X)" y2="@SvgPath.Number((start + tick).Y)" stroke="@Stroke" stroke-width="1.5" />
+    <line class="dimension-tick" x1="@SvgPath.Number((end - tick).X)" y1="@SvgPath.Number((end - tick).Y)" x2="@SvgPath.Number((end + tick).X)" y2="@SvgPath.Number((end + tick).Y)" stroke="@Stroke" stroke-width="1.5" />
+    <WorldText At="textAt" Text="@(Dimension.Text ?? Value(Dimension.Length))" Size="TextSize" Rotation="direction.Direction" Fill="@Stroke" Class="dimension-text" />
+</g>
+
+@code {
+    private const double TickPerText = 0.35;
+
+    [Parameter, EditorRequired] public Dimension Dimension { get; set; } = default!;
+
+    /// <summary>The text height in millimetres; the host chooses it for the zoom level or the drawing size.</summary>
+    [Parameter] public double TextSize { get; set; } = 20;
+
+    [Parameter] public string Stroke { get; set; } = "#5f6b7a";
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>A length in millimetres as shown: whole millimetres, or tenths below 100 mm.</summary>
+    public static string Value(double millimetres) =>
+        millimetres < 100 ? SvgPath.Number(Math.Round(millimetres, 1)) : SvgPath.Number(Math.Round(millimetres));
+}

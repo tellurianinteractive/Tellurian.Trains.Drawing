@@ -1,0 +1,33 @@
+@using System.Globalization
+@inject SafeReload Reload
+
+<label class="language-selector">
+    <span>@T["Language"]</span>
+    <select value="@Current" @onchange="ChangeAsync">
+        @foreach (var language in AppLanguages.All)
+        {
+            var culture = AppLanguages.CultureOf(language);
+            <option value="@culture">@CultureInfo.GetCultureInfo(culture).NativeName</option>
+        }
+    </select>
+</label>
+@if (error is not null)
+{
+    <p class="error" role="alert">@T.Format("StorageError", error)</p>
+}
+
+@code {
+    private string? error;
+
+    /// <summary>The selected language's culture, or the neutral language when the current culture isn't one of them.</summary>
+    private static string Current =>
+        AppLanguages.All.Select(AppLanguages.CultureOf).FirstOrDefault(c => c == CultureInfo.CurrentUICulture.Name)
+        ?? AppLanguages.All.Select(AppLanguages.CultureOf).FirstOrDefault(c => c.StartsWith(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, StringComparison.Ordinal))
+        ?? AppLanguages.Neutral;
+
+    private async Task ChangeAsync(ChangeEventArgs e)
+    {
+        if (e.Value is not string culture || culture == Current) return;
+        error = (await Reload.ReloadAsync(culture))?.Message;
+    }
+}

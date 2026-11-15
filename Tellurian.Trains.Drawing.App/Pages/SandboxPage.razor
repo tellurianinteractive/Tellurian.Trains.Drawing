@@ -1,0 +1,280 @@
+@page "/sandbox"
+@using Tellurian.Trains.Drawing.App.Sandbox
+@using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Properties
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Commands
+@using Tellurian.Trains.Drawing.Editing.Selection
+@using Tellurian.Trains.Drawing.Editing.Snapping
+@using Tellurian.Trains.Drawing.Editing.Tools
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+@implements IAsyncDisposable
+@inject IWorkbench Workbench
+@inject SafeReload Reload
+@inject TimeProvider Time
+
+<PageTitle>@T["Sandbox"]</PageTitle>
+
+<h1>@T["Sandbox"]</h1>
+<p class="note">@T["SandboxIntro"]</p>
+
+<div class="toolbar" role="toolbar">
+    @foreach (var tool in Enum.GetValues<SandboxTool>())
+    {
+        <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
+                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"Tool_{tool}"]</button>
+    }
+    @if (_activeTool == SandboxTool.Path)
+    {
+        <label class="inline"><input type="checkbox" id="arc-mode" checked="@(_path.Mode == PathStepMode.TangentArc)" @onchange="ToggleArc" /> @T["ArcMode"]</label>
+    }
+</div>
+<div class="toolbar">
+    <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
+    <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
+    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(_document.Current.Bounds)">@T["ZoomToFit"]</button>
+    <button type="button" id="reset" @onclick="Reset">@T["ResetSandbox"]</button>
+    <span class="detail" id="autosave">@AutosaveText</span>
+    <span class="detail" id="pointer">@_pointer</span>
+</div>
+
+<div class="sandbox-editor">
+<div class="sandbox-canvas">
+    <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
+                   OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+        <ChildContent>
+            @foreach (var shape in _document.Current.Shapes)
+            {
+                var selected = _selection.Contains(shape.Id);
+                var path = selected && _select.DragOffset is { } offset ? SandboxScene.Moved(shape.Path, offset) : shape.Path;
+                <path @key="shape.Id" class="@ShapeClass(shape, selected)" d="@SvgPath.From(path)" />
+            }
+            @foreach (var dimension in _document.Current.Dimensions)
+            {
+                <DimensionLine Dimension="dimension" TextSize="TextSize" />
+            }
+        </ChildContent>
+        <Overlay>
+            @if (_select.RubberBand is { } band)
+            {
+                <rect class="sandbox-rubber-band" x="@SvgPath.Number(band.Min.X)" y="@SvgPath.Number(band.Min.Y)"
+                      width="@SvgPath.Number(band.Width)" height="@SvgPath.Number(band.Height)" />
+            }
+            @if (_activeTool == SandboxTool.Path && _path.Preview is { } preview)
+            {
+                <path class="sandbox-preview" d="@SvgPath.From(preview)" />
+            }
+            @if (_activeTool == SandboxTool.Measure && _measure.Measurement is { } measurement)
+            {
+                <line class="sandbox-measure" x1="@SvgPath.Number(measurement.Start.X)" y1="@SvgPath.Number(measurement.Start.Y)"
+                      x2="@SvgPath.Number(measurement.End.X)" y2="@SvgPath.Number(measurement.End.Y)" />
+            }
+            @if (_activeTool == SandboxTool.Dimension && _dimension.Preview is { } dimensionPreview)
+            {
+                <DimensionLine Dimension="dimensionPreview" TextSize="TextSize" Stroke="#1b6ec2" />
+            }
+            @if (Snapped is { } snap)
+            {
+                <circle class="sandbox-snap" cx="@SvgPath.Number(snap.Point.X)" cy="@SvgPath.Number(snap.Point.Y)" r="@SvgPath.Number(_view.ToWorld(5))" />
+            }
+            @if (_activeTool == SandboxTool.Path && _path.WouldClose && _path.Drawn is { } drawn)
+            {
+                <circle class="sandbox-close" cx="@SvgPath.Number(drawn.Start.X)" cy="@SvgPath.Number(drawn.Start.Y)" r="@SvgPath.Number(_view.ToWorld(7))" />
+            }
+        </Overlay>
+    </DrawingCanvas>
+</div>
+<aside class="sandbox-properties">
+    <PropertyPanel Title="@T["Properties"]" EmptyText="@T["NothingSelected"]" IsEmpty="_selection.IsEmpty">
+        @if (SelectionBounds is { } bounds)
+        {
+            <NumberField Label="X" Value="bounds.Min.X" ValueChanged="x => MoveSelection(new(x - bounds.Min.X, 0))" InvalidText="@T["InvalidNumber"]" />
+            <NumberField Label="Y" Value="bounds.Min.Y" ValueChanged="y => MoveSelection(new(0, y - bounds.Min.Y))" InvalidText="@T["InvalidNumber"]" />
+            <NumberField Label="@T["Width"]" Value="bounds.Width" ReadOnly="true" />
+            <NumberField Label="@T["Depth"]" Value="bounds.Height" ReadOnly="true" />
+        }
+    </PropertyPanel>
+</aside>
+</div>
+@* Below the canvas, so a changing status text never moves the drawing. *@
+<p class="detail sandbox-status" id="status" aria-live="polite">@Status</p>
+
+@code {
+    private readonly EditorDocument<SandboxDocument> _document = new(SandboxDocument.Sample);
+    private readonly SelectionSet<Guid> _selection = new();
+    private readonly SandboxScene _scene = new();
+    private readonly SnapEngine _snap = new(SandboxScene.IndexCellSize);
+    private SelectMoveTool<SandboxDocument, Guid> _select = default!;
+    private PathTool<SandboxDocument> _path = default!;
+    private MeasureTool _measure = default!;
+    private DimensionTool<SandboxDocument> _dimension = default!;
+    private SandboxTool _activeTool = SandboxTool.Select;
+    private DrawingCanvas? _canvas;
+    private Viewport _view = Viewport.Fit(SandboxDocument.Sample.Bounds, 900, 500);
+    private string _pointer = string.Empty;
+
+    private double Tolerance => _view.ToWorld(SnapEngine.DefaultTolerancePixels);
+
+    /// <summary>Text of dimensions about 12 px high at the current zoom.</summary>
+    private double TextSize => _view.ToWorld(12);
+
+    /// <summary>The bounds of the selected shapes together; null when nothing is selected.</summary>
+    private BoundingBox? SelectionBounds =>
+        _selection.IsEmpty ? null : _selection.Items.Select(id => _scene.BoundsOf(_document.Current, id)).Aggregate(BoundingBox.Empty, (a, b) => a.Union(b));
+
+    /// <summary>A change in the property panel is one undoable command, like a drag.</summary>
+    private void MoveSelection(Vector offset)
+    {
+        if (_selection.IsEmpty || offset.Length < Tellurian.Trains.Drawing.Geometry.Tolerance.Length) return;
+        Active.Cancel();
+        _document.Apply(_scene.Move([.. _selection.Items], offset));
+    }
+
+    private EditorSession<SandboxDocument>? _session;
+    private string? _storageError;
+
+    private string AutosaveText =>
+        _storageError is not null ? T.Format("StorageError", _storageError)
+        : _session is null ? string.Empty
+        : _session.Autosave.LastError is { } error ? T.Format("StorageError", error.Message)
+        : _session.Autosave.IsPending ? T["UnsavedChanges"]
+        : T["SavedInBrowser"];
+
+    private void OnAutosaveChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnAutosaveFailed(object? sender, Exception e) => _ = InvokeAsync(StateHasChanged);
+
+    /// <summary>Back to the sample drawing, as an undoable change.</summary>
+    private void Reset()
+    {
+        Active.Cancel();
+        _selection.Clear();
+        _document.Apply(new EditCommand<SandboxDocument>("Reset", _ => SandboxDocument.Sample));
+    }
+
+    private ITool Active => _activeTool switch
+    {
+        SandboxTool.Path => _path,
+        SandboxTool.Measure => _measure,
+        SandboxTool.Dimension => _dimension,
+        _ => _select,
+    };
+
+    private SnapResult? Snapped => _activeTool switch
+    {
+        SandboxTool.Path => _path.Snapped,
+        SandboxTool.Measure => _measure.Snapped,
+        SandboxTool.Dimension => _dimension.Snapped,
+        _ => _select.Snapped,
+    };
+
+    private string Status => _activeTool switch
+    {
+        SandboxTool.Measure when _measure.Measurement is { } m => T.Format("MeasureResult", DimensionLine.Value(m.Distance), DimensionLine.Value(m.DeltaX), DimensionLine.Value(m.DeltaY), SvgPath.Number(Math.Round(m.Direction.Degrees, 1))),
+        SandboxTool.Path => T[_path.IsDrawing ? "PathHelpDrawing" : "PathHelp"],
+        SandboxTool.Dimension => T["DimensionHelp"],
+        _ => T.Format("SelectedCount", _selection.Count),
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _select = new(_document, _selection, _scene, _snap);
+        _path = new(_document, _snap, path => new EditCommand<SandboxDocument>("Add shape", d => d.WithShape(path)));
+        _measure = new(_snap);
+        _dimension = new(_document, _snap, dimension => new EditCommand<SandboxDocument>("Add dimension", d => d.WithDimension(dimension)));
+        _document.Changed += OnDocumentChanged;
+        RefreshSnapTargets();
+        try
+        {
+            // Reopen as it was left (AP-7): the autosaved document, the view and the selection.
+            var store = new SandboxStore(Workbench);
+            if (await store.LoadAsync() is { } stored) _document.Replace(stored);
+            if (await EditorSession<SandboxDocument>.LoadStateAsync(Workbench, SandboxStore.Key) is { } state)
+            {
+                _view = _view with { Center = new(state.CenterX, state.CenterY), Scale = state.Scale };
+                _selection.Set(state.Selection.Select(s => Guid.TryParse(s, out var id) ? id : Guid.Empty).Where(id => _document.Current.Find(id) is not null));
+            }
+            _session = new(SandboxStore.Key, _document, store.SaveAsync, Workbench, Reload, Time)
+            {
+                CaptureState = () => new(_view.Center.X, _view.Center.Y, _view.Scale, [.. _selection.Items.Select(id => id.ToString())]),
+            };
+            _session.Autosave.Saved += OnAutosaveChanged;
+            _session.Autosave.SaveFailed += OnAutosaveFailed;
+        }
+        catch (StorageException ex)
+        {
+            _storageError = ex.Message;
+        }
+    }
+
+    private void Choose(SandboxTool tool)
+    {
+        Active.Cancel();
+        _activeTool = tool;
+    }
+
+    private void ToggleArc(ChangeEventArgs e) => _path.Mode = e.Value is true ? PathStepMode.TangentArc : PathStepMode.Line;
+
+    private void OnDown(CanvasPointerEventArgs e) => Active.PointerDown(e.ToToolPointer(Tolerance));
+
+    private void OnMove(CanvasPointerEventArgs e)
+    {
+        _snap.GridSpacing = NiceSteps.GridSpacing(_view.Scale);
+        Active.PointerMove(e.ToToolPointer(Tolerance));
+        _pointer = $"x {SvgPath.Number(Math.Round(e.World.X))} mm, y {SvgPath.Number(Math.Round(e.World.Y))} mm";
+    }
+
+    private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(Tolerance));
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        var command = e.CtrlKey || e.MetaKey;
+        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
+        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
+        else Active.KeyDown(e.Key);
+    }
+
+    private void Undo()
+    {
+        Active.Cancel();
+        _document.Undo();
+    }
+
+    private void Redo()
+    {
+        Active.Cancel();
+        _document.Redo();
+    }
+
+    private void OnDocumentChanged(object? sender, EventArgs e) => RefreshSnapTargets();
+
+    private void RefreshSnapTargets()
+    {
+        _snap.Clear();
+        foreach (var shape in _document.Current.Shapes) _snap.AddRange(_scene.SnapTargetsOf(_document.Current, shape.Id));
+    }
+
+    private static string ShapeClass(SandboxShape shape, bool selected) =>
+        string.Join(' ', new[] { "sandbox-shape", shape.Path.IsClosed ? null : "open", selected ? "selected" : null }.OfType<string>());
+
+    public async ValueTask DisposeAsync()
+    {
+        _document.Changed -= OnDocumentChanged;
+        if (_session is not null)
+        {
+            _session.Autosave.Saved -= OnAutosaveChanged;
+            _session.Autosave.SaveFailed -= OnAutosaveFailed;
+            await _session.DisposeAsync();
+        }
+    }
+
+    private enum SandboxTool
+    {
+        Select,
+        Path,
+        Measure,
+        Dimension,
+    }
+}

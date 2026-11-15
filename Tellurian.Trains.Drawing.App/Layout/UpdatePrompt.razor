@@ -1,0 +1,79 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject SafeReload Reload
+
+@if (isAvailable)
+{
+    <div id="update-available" role="status">
+        <span>@T["UpdateAvailable"]</span>
+        <button type="button" id="update-now" @onclick="UpdateAsync">@T["UpdateNow"]</button>
+        @if (error is not null)
+        {
+            <span class="error">@T.Format("UpdateFailed", error)</span>
+        }
+    </div>
+}
+
+@code {
+    private IJSObjectReference? module;
+    private DotNetObjectReference<UpdatePrompt>? self;
+    private bool isAvailable;
+    private string? error;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./Layout/UpdatePrompt.razor.js");
+            self = DotNetObjectReference.Create(this);
+            if (await module.InvokeAsync<bool>("subscribe", self)) await UpdateAvailable();
+        }
+        catch (JSException)
+        {
+            // Without the script there is no update prompt; the app still works.
+        }
+    }
+
+    [JSInvokable]
+    public async Task UpdateAvailable()
+    {
+        isAvailable = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>Unsaved work is flushed to drafts first (AP-7); if that fails, the update waits.</summary>
+    private async Task UpdateAsync()
+    {
+        error = (await Reload.RunAsync(ApplyAsync))?.Message;
+    }
+
+    private async Task ApplyAsync(CancellationToken cancellationToken)
+    {
+        if (module is null) return;
+        try
+        {
+            await module.InvokeAsync<bool>("apply", cancellationToken);
+        }
+        catch (JSException ex)
+        {
+            throw new InvalidOperationException(ex.Message, ex);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (module is not null)
+            {
+                await module.InvokeVoidAsync("unsubscribe");
+                await module.DisposeAsync();
+            }
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or JSException)
+        {
+        }
+        self?.Dispose();
+    }
+}

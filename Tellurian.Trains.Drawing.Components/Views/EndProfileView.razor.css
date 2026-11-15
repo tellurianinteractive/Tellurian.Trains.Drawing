@@ -1,0 +1,3 @@
+.drawing-view-error {
+    color: var(--drawing-error, #b32121);
+}

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppName" xml:space="preserve"><value>Module Draw</value></data>
+  <data name="AppDescription" xml:space="preserve"><value>Draw end profiles, modules and hall plans for model railway module meetings.</value></data>
+  <data name="Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Open" xml:space="preserve"><value>Open…</value></data>
+  <data name="Drafts" xml:space="preserve"><value>Resume work</value></data>
+  <data name="NoDrafts" xml:space="preserve"><value>There is no work in progress.</value></data>
+  <data name="RecentFiles" xml:space="preserve"><value>Recent files</value></data>
+  <data name="NoRecentFiles" xml:space="preserve"><value>No files opened yet.</value></data>
+  <data name="UnsavedChanges" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="NotSavedToFile" xml:space="preserve"><value>Not saved to a file</value></data>
+  <data name="SaveReminder" xml:space="preserve"><value>Drafts are kept only in this browser. Save your work to a file.</value></data>
+  <data name="PickAgain" xml:space="preserve"><value>This browser can't re-open files by itself. Use Open… and pick {0}.</value></data>
+  <data name="FileNotAvailable" xml:space="preserve"><value>{0} isn't available any more. Use Open… to pick it.</value></data>
+  <data name="CouldNotOpen" xml:space="preserve"><value>These files couldn't be opened:</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="SaveDownload" xml:space="preserve"><value>Save (download)</value></data>
+  <data name="SaveAs" xml:space="preserve"><value>Save as…</value></data>
+  <data name="DownloadNote" xml:space="preserve"><value>This browser can't save in place: Save downloads a new file. Choose the old file to replace it.</value></data>
+  <data name="Discard" xml:space="preserve"><value>Discard draft</value></data>
+  <data name="DiscardUnsaved" xml:space="preserve"><value>Discard the unsaved changes to {0}?</value></data>
+  <data name="Changed" xml:space="preserve"><value>Changed</value></data>
+  <data name="File" xml:space="preserve"><value>File</value></data>
+  <data name="DraftNotFound" xml:space="preserve"><value>This drawing isn't open any more.</value></data>
+  <data name="EditorComing" xml:space="preserve"><value>This is a read-only view. The editor for this kind of drawing comes in a later version.</value></data>
+  <data name="StorageError" xml:space="preserve"><value>The browser's storage couldn't be used: {0}</value></data>
+  <data name="FileError" xml:space="preserve"><value>The file operation failed: {0}</value></data>
+  <data name="Kind_EndProfile" xml:space="preserve"><value>End profile</value></data>
+  <data name="Kind_Module" xml:space="preserve"><value>Module</value></data>
+  <data name="Kind_Hall" xml:space="preserve"><value>Hall</value></data>
+  <data name="Kind_HallPlan" xml:space="preserve"><value>Hall plan</value></data>
+  <data name="Kind_Catalogue" xml:space="preserve"><value>Catalogue</value></data>
+  <data name="NewModule" xml:space="preserve"><value>New module…</value></data>
+  <data name="NewModuleTitle" xml:space="preserve"><value>New module</value></data>
+  <data name="NewModuleName" xml:space="preserve"><value>New module</value></data>
+  <data name="Template" xml:space="preserve"><value>Template</value></data>
+  <data name="Template_Straight" xml:space="preserve"><value>Straight</value></data>
+  <data name="Template_Curve" xml:space="preserve"><value>Curve</value></data>
+  <data name="Template_StraightAndCurve" xml:space="preserve"><value>Straight and curve</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Standard" xml:space="preserve"><value>Standard</value></data>
+  <data name="EndProfile" xml:space="preserve"><value>End profile</value></data>
+  <data name="OneTrack" xml:space="preserve"><value>1 track</value></data>
+  <data name="TrackCount" xml:space="preserve"><value>{0} tracks</value></data>
+  <data name="StraightLength" xml:space="preserve"><value>Straight length (mm)</value></data>
+  <data name="Radius" xml:space="preserve"><value>Radius (mm)</value></data>
+  <data name="Angle" xml:space="preserve"><value>Angle (°)</value></data>
+  <data name="Width" xml:space="preserve"><value>Width (mm)</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Empty: the end plate's width</value></data>
+  <data name="CurveDirection" xml:space="preserve"><value>Curve direction</value></data>
+  <data name="CurveDirection_Left" xml:space="preserve"><value>Left</value></data>
+  <data name="CurveDirection_Right" xml:space="preserve"><value>Right</value></data>
+  <data name="StraightPosition" xml:space="preserve"><value>Straight part</value></data>
+  <data name="StraightPosition_Before" xml:space="preserve"><value>Before the curve</value></data>
+  <data name="StraightPosition_After" xml:space="preserve"><value>After the curve</value></data>
+  <data name="StraightPosition_Split" xml:space="preserve"><value>Half before, half after</value></data>
+  <data name="Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="NotDrawn" xml:space="preserve"><value>The module couldn't be drawn:</value></data>
+  <data name="DrawnWithNotes" xml:space="preserve"><value>The module was drawn. Check these notes:</value></data>
+  <data name="OpenDrawing" xml:space="preserve"><value>Open the drawing</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Enter a name.</value></data>
+  <data name="EndProfileRequired" xml:space="preserve"><value>Choose an end profile.</value></data>
+  <data name="MustBePositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
+  <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
+  <data name="Catalogue" xml:space="preserve"><value>Catalogue</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standards, add-ons and end profiles. The built-in entries come with the app; your own entries are kept in this browser and can be exported as a file.</value></data>
+  <data name="ImportFiles" xml:space="preserve"><value>Import files…</value></data>
+  <data name="ImportArchive" xml:space="preserve"><value>Import ZIP…</value></data>
+  <data name="ImportFolder" xml:space="preserve"><value>Import folder…</value></data>
+  <data name="ExportCatalogue" xml:space="preserve"><value>Export your catalogue…</value></data>
+  <data name="ImportPreview" xml:space="preserve"><value>End profiles to import</value></data>
+  <data name="NoEndProfilesFound" xml:space="preserve"><value>The files contain no end profiles.</value></data>
+  <data name="Import" xml:space="preserve"><value>Import</value></data>
+  <data name="ImportStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Differences" xml:space="preserve"><value>Differences</value></data>
+  <data name="ImportStatus_New" xml:space="preserve"><value>New</value></data>
+  <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Already in the catalogue</value></data>
+  <data name="ImportStatus_Changed" xml:space="preserve"><value>Differs from the catalogue</value></data>
+  <data name="ImportChoiceNote" xml:space="preserve"><value>Ticked profiles are added to your catalogue. A profile that differs replaces the one in the catalogue, keeping its id, so modules that use it get the imported drawing.</value></data>
+  <data name="ImportSelected" xml:space="preserve"><value>Import {0} selected</value></data>
+  <data name="Imported" xml:space="preserve"><value>{0} end profile(s) imported.</value></data>
+  <data name="Exported" xml:space="preserve"><value>Your catalogue was saved as {0}.</value></data>
+  <data name="Change_Designation" xml:space="preserve"><value>designation</value></data>
+  <data name="Change_Scale" xml:space="preserve"><value>scale</value></data>
+  <data name="Change_Standards" xml:space="preserve"><value>standards</value></data>
+  <data name="Change_Tracks" xml:space="preserve"><value>tracks</value></data>
+  <data name="Change_ScrewHoles" xml:space="preserve"><value>screw holes</value></data>
+  <data name="Change_Dowels" xml:space="preserve"><value>dowels</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>plate outline</value></data>
+  <data name="Change_GroundLine" xml:space="preserve"><value>ground line</value></data>
+  <data name="Change_Source" xml:space="preserve"><value>source</value></data>
+  <data name="EndProfiles" xml:space="preserve"><value>End profiles</value></data>
+  <data name="Scale" xml:space="preserve"><value>Scale</value></data>
+  <data name="Standards" xml:space="preserve"><value>Standards</value></data>
+  <data name="Tracks" xml:space="preserve"><value>Tracks</value></data>
+  <data name="Origin" xml:space="preserve"><value>Origin</value></data>
+  <data name="Origin_BuiltIn" xml:space="preserve"><value>Built in</value></data>
+  <data name="Origin_User" xml:space="preserve"><value>Yours</value></data>
+  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Yours, replaces built-in</value></data>
+  <data name="Copy" xml:space="preserve"><value>Copy</value></data>
+  <data name="CopySuffix" xml:space="preserve"><value>copy</value></data>
+  <data name="Copied" xml:space="preserve"><value>Copied as {0}.</value></data>
+  <data name="Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="RestoreBuiltIn" xml:space="preserve"><value>Restore built-in</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Delete {0} from your catalogue?</value></data>
+  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Remove your version of {0} and use the built-in one again?</value></data>
+  <data name="Gauge" xml:space="preserve"><value>Gauge (mm)</value></data>
+  <data name="RailTopHeight" xml:space="preserve"><value>Rail top (mm)</value></data>
+  <data name="AddOns" xml:space="preserve"><value>Add-ons</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>A new version is available.</value></data>
+  <data name="UpdateNow" xml:space="preserve"><value>Update</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>The update was postponed because your work couldn't be stored: {0}</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="EditEntry" xml:space="preserve"><value>Edit {0}</value></data>
+  <data name="NewStandard" xml:space="preserve"><value>New standard…</value></data>
+  <data name="NewAddOn" xml:space="preserve"><value>New add-on…</value></data>
+  <data name="NewOverride" xml:space="preserve"><value>New override…</value></data>
+  <data name="EditOverride" xml:space="preserve"><value>Edit override</value></data>
+  <data name="AddOn" xml:space="preserve"><value>Add-on</value></data>
+  <data name="Overrides" xml:space="preserve"><value>Compatibility overrides</value></data>
+  <data name="NoOverrides" xml:space="preserve"><value>There are no overrides. Joints are classified by the rules alone.</value></data>
+  <data name="OverrideIntro" xml:space="preserve"><value>An override replaces the rule result for one pair of end profiles, for known exceptions. Use it only where the rules give the wrong answer.</value></data>
+  <data name="EditBuiltInNote" xml:space="preserve"><value>This entry is built in. Saving it creates your own version, which replaces the built-in one until you restore it.</value></data>
+  <data name="EntryNotFound" xml:space="preserve"><value>The catalogue entry doesn't exist.</value></data>
+  <data name="None" xml:space="preserve"><value>(none)</value></data>
+  <data name="RailSystem_TwoRail" xml:space="preserve"><value>Two-rail</value></data>
+  <data name="RailSystem_ThreeRail" xml:space="preserve"><value>Three-rail</value></data>
+  <data name="Fit_Fits" xml:space="preserve"><value>Fits</value></data>
+  <data name="Fit_FitsWithMismatch" xml:space="preserve"><value>Fits with mismatch</value></data>
+  <data name="Fit_FitsWithClamps" xml:space="preserve"><value>Fits with clamps</value></data>
+  <data name="Fit_Incompatible" xml:space="preserve"><value>Incompatible</value></data>
+  <data name="Field_ShortName" xml:space="preserve"><value>Short name</value></data>
+  <data name="Field_Scale" xml:space="preserve"><value>Scale</value></data>
+  <data name="Field_RailSystem" xml:space="preserve"><value>Rail system</value></data>
+  <data name="Field_NormalGauge" xml:space="preserve"><value>Normal gauge (mm)</value></data>
+  <data name="Field_NarrowGauge" xml:space="preserve"><value>Narrow gauge (mm)</value></data>
+  <data name="Field_RailTopHeight" xml:space="preserve"><value>Rail top above floor (mm)</value></data>
+  <data name="Field_MinimumClearance" xml:space="preserve"><value>Minimum clearance (mm)</value></data>
+  <data name="Field_OperatorSpaceDepth" xml:space="preserve"><value>Operator space depth (mm)</value></data>
+  <data name="Field_DefaultCurveRadius" xml:space="preserve"><value>Default curve radius (mm)</value></data>
+  <data name="Field_MinimumReverseCurveRadius" xml:space="preserve"><value>Minimum reverse curve radius (mm)</value></data>
+  <data name="Field_DefaultSingleTrackEndProfileId" xml:space="preserve"><value>Default single-track end profile</value></data>
+  <data name="Field_DefaultDoubleTrackEndProfileId" xml:space="preserve"><value>Default double-track end profile</value></data>
+  <data name="Field_TrackColor" xml:space="preserve"><value>Track colour</value></data>
+  <data name="Field_TrackSystem" xml:space="preserve"><value>Track system</value></data>
+  <data name="Field_Couplings" xml:space="preserve"><value>Couplings</value></data>
+  <data name="Field_Electricity" xml:space="preserve"><value>Electricity</value></data>
+  <data name="Field_Wheelset" xml:space="preserve"><value>Wheelset</value></data>
+  <data name="Field_SourceTitle" xml:space="preserve"><value>Source document</value></data>
+  <data name="Field_SourceUrl" xml:space="preserve"><value>Source URL</value></data>
+  <data name="Field_SourceRevision" xml:space="preserve"><value>Source revision</value></data>
+  <data name="Field_BaseStandardId" xml:space="preserve"><value>Base standard</value></data>
+  <data name="Field_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Field_FirstEndProfileId" xml:space="preserve"><value>First end profile</value></data>
+  <data name="Field_SecondEndProfileId" xml:space="preserve"><value>Second end profile</value></data>
+  <data name="Field_Fit" xml:space="preserve"><value>Result</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Problem_ShortNameMissing" xml:space="preserve"><value>{0}: enter a name.</value></data>
+  <data name="Problem_ShortNameInUse" xml:space="preserve"><value>{0}: the name is already used.</value></data>
+  <data name="Problem_ScaleUnknown" xml:space="preserve"><value>{0}: choose a scale from the catalogue.</value></data>
+  <data name="Problem_NotPositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
+  <data name="Problem_EndProfileNotOfStandard" xml:space="preserve"><value>{0}: choose an end profile of this standard.</value></data>
+  <data name="Problem_TrackColorInvalid" xml:space="preserve"><value>{0} must be a colour such as #1f5fbf.</value></data>
+  <data name="Problem_BaseStandardUnknown" xml:space="preserve"><value>{0}: choose a standard from the catalogue.</value></data>
+  <data name="Problem_EndProfileUnknown" xml:space="preserve"><value>{0}: choose an end profile from the catalogue.</value></data>
+  <data name="Problem_SameEndProfile" xml:space="preserve"><value>{0} must differ from the first end profile.</value></data>
+  <data name="Problem_DifferentScales" xml:space="preserve"><value>{0} must be of the same scale as the first end profile.</value></data>
+  <data name="Problem_OverrideExists" xml:space="preserve"><value>{0}: there already is an override for these end profiles.</value></data>
+  <data name="Sandbox" xml:space="preserve"><value>Canvas sandbox</value></data>
+  <data name="SandboxIntro" xml:space="preserve"><value>A test drawing for the editor: click or drag a rubber band to select, drag to move (Shift: straight, Alt: no snapping), Ctrl+Z to undo. Pan with the middle button or Space + drag, zoom with the wheel or a pinch.</value></data>
+  <data name="ZoomToFit" xml:space="preserve"><value>Zoom to fit</value></data>
+  <data name="Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Redo" xml:space="preserve"><value>Redo</value></data>
+  <data name="SelectedCount" xml:space="preserve"><value>{0} selected</value></data>
+  <data name="RailTop" xml:space="preserve"><value>Top of rail</value></data>
+  <data name="CannotShow" xml:space="preserve"><value>The drawing can't be shown.</value></data>
+  <data name="Tool_Select" xml:space="preserve"><value>Select</value></data>
+  <data name="Tool_Path" xml:space="preserve"><value>Draw</value></data>
+  <data name="Tool_Measure" xml:space="preserve"><value>Measure</value></data>
+  <data name="Tool_Dimension" xml:space="preserve"><value>Dimension</value></data>
+  <data name="ArcMode" xml:space="preserve"><value>Arcs</value></data>
+  <data name="PathHelp" xml:space="preserve"><value>Click to start a path.</value></data>
+  <data name="PathHelpDrawing" xml:space="preserve"><value>Click to add points; click the start to close, Enter to finish, Backspace to undo a point, Escape to cancel.</value></data>
+  <data name="DimensionHelp" xml:space="preserve"><value>Click two points, then where the dimension line goes.</value></data>
+  <data name="MeasureResult" xml:space="preserve"><value>Distance {0} mm (dx {1}, dy {2}), direction {3}°</value></data>
+  <data name="ResetSandbox" xml:space="preserve"><value>Reset</value></data>
+  <data name="SavedInBrowser" xml:space="preserve"><value>Saved in this browser</value></data>
+  <data name="Properties" xml:space="preserve"><value>Properties</value></data>
+  <data name="NothingSelected" xml:space="preserve"><value>Nothing is selected.</value></data>
+  <data name="InvalidNumber" xml:space="preserve"><value>Not a valid number.</value></data>
+  <data name="Depth" xml:space="preserve"><value>Depth (mm)</value></data>
+  <data name="NewEndProfile" xml:space="preserve"><value>New end profile…</value></data>
+  <data name="NewEndProfileTitle" xml:space="preserve"><value>New end profile</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start from a rectangular end plate with tracks; then draw the outline, ground line and screw holes in the editor.</value></data>
+  <data name="Designation" xml:space="preserve"><value>Designation</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Plate width (mm)</value></data>
+  <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Top edge below rail top (mm)</value></data>
+  <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Bottom edge below rail top (mm)</value></data>
+  <data name="NumberOfTracks" xml:space="preserve"><value>Number of tracks</value></data>
+  <data name="CentreDistance" xml:space="preserve"><value>Track centre distance, c/c (mm)</value></data>
+  <data name="CopyScrewHolesFrom" xml:space="preserve"><value>Copy screw holes from</value></data>
+  <data name="DesignationRequired" xml:space="preserve"><value>Enter a designation.</value></data>
+  <data name="PlateEdgesOrder" xml:space="preserve"><value>The bottom edge must be further below rail top than the top edge.</value></data>
+  <data name="TrackCountRange" xml:space="preserve"><value>The number of tracks must be 0–8.</value></data>
+  <data name="EpTool_Select" xml:space="preserve"><value>Select</value></data>
+  <data name="EpTool_Outline" xml:space="preserve"><value>Outline</value></data>
+  <data name="EpTool_GroundLine" xml:space="preserve"><value>Ground line</value></data>
+  <data name="EpTool_Track" xml:space="preserve"><value>Track</value></data>
+  <data name="EpTool_ScrewHole" xml:space="preserve"><value>Screw hole</value></data>
+  <data name="EpItem_Track" xml:space="preserve"><value>Track</value></data>
+  <data name="EpItem_ScrewHole" xml:space="preserve"><value>Screw hole</value></data>
+  <data name="EpItem_Dowel" xml:space="preserve"><value>Dowel</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>End-plate outline</value></data>
+  <data name="EpItem_GroundLine" xml:space="preserve"><value>Ground line</value></data>
+  <data name="EndProfileProperties" xml:space="preserve"><value>End profile</value></data>
+  <data name="MirrorScrewHoles" xml:space="preserve"><value>Mirror screw holes</value></data>
+  <data name="Offset" xml:space="preserve"><value>Offset from centre (mm)</value></data>
+  <data name="Diameter" xml:space="preserve"><value>Diameter (mm)</value></data>
+  <data name="Label" xml:space="preserve"><value>Label</value></data>
+  <data name="ScrewHolePattern" xml:space="preserve"><value>Screw-hole pattern</value></data>
+  <data name="Derived" xml:space="preserve"><value>Derived properties</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Plate size</value></data>
+  <data name="Offsets" xml:space="preserve"><value>Track offsets</value></data>
+  <data name="ScrewHoles" xml:space="preserve"><value>Screw holes</value></data>
+  <data name="Symmetry" xml:space="preserve"><value>Symmetry</value></data>
+  <data name="Symmetric" xml:space="preserve"><value>Symmetric</value></data>
+  <data name="AsymmetricIn" xml:space="preserve"><value>Asymmetric: {0}</value></data>
+  <data name="Difference_TrackPositions" xml:space="preserve"><value>tracks</value></data>
+  <data name="Difference_ScrewHoles" xml:space="preserve"><value>screw holes</value></data>
+  <data name="Difference_GroundLine" xml:space="preserve"><value>ground line</value></data>
+  <data name="Difference_Outline" xml:space="preserve"><value>outline</value></data>
+  <data name="Difference_Dowels" xml:space="preserve"><value>dowels</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Click the corners of the end plate; click the first corner to close it. The new outline replaces the old one.</value></data>
+  <data name="GroundLineHelp" xml:space="preserve"><value>Click the points of the landscape surface from left to right; press Enter to finish. It replaces the old ground line.</value></data>
+  <data name="ScrewHoleHelp" xml:space="preserve"><value>Click where a screw hole goes; it snaps to edges, other holes and the grid.</value></data>
+  <data name="TrackHelp" xml:space="preserve"><value>Click where a track goes; its rail top is always at the rail-top line.</value></data>
+  <data name="EndProfileSelectHelp" xml:space="preserve"><value>Click to select, drag to move (Shift: straight, Alt: no snapping), Delete to remove. Seen from outside the module.</value></data>
+  <data name="SaveToCatalogue" xml:space="preserve"><value>Save to my catalogue</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} is saved in your catalogue.</value></data>
+  <data name="EditAsDraft" xml:space="preserve"><value>Edit</value></data>
+  <data name="ArchivePane" xml:space="preserve"><value>Archive</value></data>
+  <data name="EditPane" xml:space="preserve"><value>Edit</value></data>
+  <data name="EpTool_UpperEdge" xml:space="preserve"><value>Upper edge</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Click the points of the plate's upper edge from left to right; press Enter to finish. The sides follow the first and last points.</value></data>
+  <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Click to add points; Enter finishes, Backspace removes a point, Escape cancels.</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Plate</value></data>
+  <data name="PlateDepth" xml:space="preserve"><value>Bottom below rail top (mm)</value></data>
+  <data name="AddPoint" xml:space="preserve"><value>Add point</value></data>
+  <data name="DeletePoint" xml:space="preserve"><value>Delete point</value></data>
+  <data name="PlateHelp" xml:space="preserve"><value>The upper edge is also the ground line compared at joints. Drag the points in the drawing or type them in mm; Y is negative below rail top.</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plate point</value></data>
+  <data name="MeasureFrom" xml:space="preserve"><value>Measure from</value></data>
+  <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>Rail top and centre line</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plate's lower left corner</value></data>
+  <data name="DetailDimensions" xml:space="preserve"><value>Dimension screw holes and points</value></data>
+  <data name="OffsetFromLeft" xml:space="preserve"><value>Distance from left edge (mm)</value></data>
+  <data name="SegmentType" xml:space="preserve"><value>Type</value></data>
+  <data name="SegmentStart" xml:space="preserve"><value>Start</value></data>
+  <data name="SegmentKind_Line" xml:space="preserve"><value>Line</value></data>
+  <data name="SegmentKind_Arc" xml:space="preserve"><value>Arc</value></data>
+  <data name="SegmentKind_Fillet" xml:space="preserve"><value>Fillet</value></data>
+  <data name="ArcCentre" xml:space="preserve"><value>Centre</value></data>
+  <data name="FilletEnd" xml:space="preserve"><value>Ends at</value></data>
+  <data name="FilletSide_Above" xml:space="preserve"><value>Centre above</value></data>
+  <data name="FilletSide_Below" xml:space="preserve"><value>Centre below</value></data>
+  <data name="FilletSide_Auto" xml:space="preserve"><value>Centre: best fit</value></data>
+  <data name="Print" xml:space="preserve"><value>Print</value></data>
+  <data name="CreatingModule" xml:space="preserve"><value>Please wait. Creating module {0}…</value></data>
+  <data name="InformationTitle" xml:space="preserve"><value>Welcome to Module Draw</value></data>
+  <data name="InformationIntro" xml:space="preserve"><value>Module Draw is for drawing model railway end profiles, modules and hall plans for module meetings.</value></data>
+  <data name="InformationPreRelease" xml:space="preserve"><value>This is a pre-release for trying out. You can draw end profiles and create modules from templates. Editing modules, halls and hall plans comes later.</value></data>
+  <data name="InformationStorage" xml:space="preserve"><value>Drafts are saved automatically in this browser while you work. Save your drawings to files to keep them and to share them.</value></data>
+  <data name="InformationBrowsers" xml:space="preserve"><value>Use a desktop computer, preferably with Chrome or Edge. Module Draw works offline and can be installed as an app.</value></data>
+  <data name="InformationContinue" xml:space="preserve"><value>Get started</value></data>
+</root>

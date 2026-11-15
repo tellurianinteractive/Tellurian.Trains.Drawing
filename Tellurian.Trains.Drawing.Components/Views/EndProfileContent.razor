@@ -1,0 +1,107 @@
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.EndProfiles
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+
+@* The SVG content of an end profile in end view (world coordinates), shared by the read-only view and the editor. *@
+@if (Show(EndProfileLayers.Outline) && Profile.Outline is { } outline)
+{
+    <path class="@Classes("ep-outline", EndProfileItem.Outline)" d="@SvgPath.From(outline)" />
+}
+@if (Show(EndProfileLayers.GroundLine) && Profile.GroundLine is { } ground)
+{
+    <path class="@Classes("ep-ground", EndProfileItem.GroundLine)" d="@SvgPath.From(ground)" />
+}
+@if (Show(EndProfileLayers.RailTop))
+{
+    <line class="ep-rail-top" x1="@SvgPath.Number(RailTopFrom)" y1="0" x2="@SvgPath.Number(RailTopTo)" y2="0" />
+    @if (Show(EndProfileLayers.Labels))
+    {
+        <WorldText At="new(RailTopTo, TextSize * 0.6)" Text="@RailTopText" Size="TextSize" Anchor="end" Baseline="auto" Fill="#c24b1b" />
+    }
+}
+@if (Show(EndProfileLayers.Tracks))
+{
+    @for (var i = 0; i < Profile.Tracks.Count; i++)
+    {
+        var track = Profile.Tracks[i];
+        var railWidth = TrackCrossSection.RailWidth(track.Gauge);
+        var sleeperLength = TrackCrossSection.SleeperLength(track.Gauge);
+        <g class="@Classes("ep-track", EndProfileItem.Track(i))" style="@($"--track-color: {TrackColor}")">
+            <rect class="ep-sleeper" x="@SvgPath.Number(track.Offset - sleeperLength / 2)" y="@SvgPath.Number(-TrackCrossSection.Height)" width="@SvgPath.Number(sleeperLength)" height="@SvgPath.Number(TrackCrossSection.SleeperHeight)" />
+            <rect class="ep-rail" x="@SvgPath.Number(track.Offset - track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+            <rect class="ep-rail" x="@SvgPath.Number(track.Offset + track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+            <line class="ep-track-centre" x1="@SvgPath.Number(track.Offset)" y1="@SvgPath.Number(-TrackCrossSection.Height)" x2="@SvgPath.Number(track.Offset)" y2="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+        </g>
+        @if (Show(EndProfileLayers.Labels) && track.Label is { } label)
+        {
+            <WorldText At="new(track.Offset, TrackCrossSection.RailHeight + TextSize)" Text="@label" Size="TextSize" />
+        }
+    }
+}
+@if (Show(EndProfileLayers.ScrewHoles))
+{
+    @for (var i = 0; i < Profile.ScrewHoles.Count; i++)
+    {
+        var hole = Profile.ScrewHoles[i];
+        <circle class="@Classes("ep-screw-hole", EndProfileItem.ScrewHole(i))" cx="@SvgPath.Number(hole.Center.X)" cy="@SvgPath.Number(hole.Center.Y)" r="@SvgPath.Number(hole.Diameter / 2)" />
+    }
+}
+@if (ShowPlatePoints && PlateShape.From(Profile) is { } plate)
+{
+    var half = HandleSize / 2;
+    @for (var i = 0; i < plate.UpperEdge.Count; i++)
+    {
+        var point = plate.UpperEdge[i];
+        <rect class="@Classes("ep-plate-point", EndProfileItem.PlatePoint(i))" x="@SvgPath.Number(point.X - half)" y="@SvgPath.Number(point.Y - half)" width="@SvgPath.Number(HandleSize)" height="@SvgPath.Number(HandleSize)" />
+    }
+}
+@if (Show(EndProfileLayers.Dowels))
+{
+    @for (var i = 0; i < Profile.Dowels.Count; i++)
+    {
+        var dowel = Profile.Dowels[i];
+        <circle class="@Classes("ep-dowel", EndProfileItem.Dowel(i))" cx="@SvgPath.Number(dowel.Center.X)" cy="@SvgPath.Number(dowel.Center.Y)" r="@SvgPath.Number(dowel.Diameter / 2)" />
+    }
+}
+
+@code {
+    private const double MarginPerSize = 0.05;
+
+    [Parameter, EditorRequired] public EndProfile Profile { get; set; } = default!;
+    [Parameter] public string TrackColor { get; set; } = Model.Catalogue.ModuleStandard.DefaultTrackColor;
+    [Parameter] public EndProfileLayers Layers { get; set; } = EndProfileLayers.All;
+    [Parameter] public string RailTopText { get; set; } = "Top of rail";
+
+    /// <summary>The text height in millimetres.</summary>
+    [Parameter] public double TextSize { get; set; } = 10;
+
+    /// <summary>Shows handles on the points of the plate's upper edge, for editing.</summary>
+    [Parameter] public bool ShowPlatePoints { get; set; }
+
+    /// <summary>The size of the point handles in millimetres; the editor passes a few pixels at its zoom.</summary>
+    [Parameter] public double HandleSize { get; set; } = 3;
+
+    /// <summary>Highlighted items, e.g. the editor's selection.</summary>
+    [Parameter] public IReadOnlyCollection<EndProfileItem>? Selected { get; set; }
+
+    private double RailTopFrom => Bounds(Profile).Min.X;
+    private double RailTopTo => Bounds(Profile).Max.X;
+
+    private bool Show(EndProfileLayers layer) => Layers.HasFlag(layer);
+
+    private string Classes(string cssClass, EndProfileItem item) =>
+        Selected?.Contains(item) == true ? $"{cssClass} selected" : cssClass;
+
+    /// <summary>The area to show for a profile: its drawing with the rail top and a margin.</summary>
+    public static BoundingBox Bounds(EndProfile profile)
+    {
+        var box = BoundingBox.Empty.Including(Point.Origin);
+        if (profile.Outline is { } outline) box = box.Union(outline.ToPath().Bounds);
+        if (profile.GroundLine is { } ground) box = box.Union(ground.ToPath().Bounds);
+        foreach (var track in profile.Tracks) box = box.Union(Editing.EndProfiles.EndProfileScene.TrackBounds(track));
+        foreach (var hole in profile.ScrewHoles.Concat(profile.Dowels)) box = box.Including(hole.Center);
+        return box.Inflated(Math.Max(Math.Max(box.Width, box.Height) * MarginPerSize, 10));
+    }
+}

@@ -8,6 +8,12 @@ namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 /// </summary>
 public static class EndProfileTemplate
 {
+    /// <summary>
+    /// Screw holes whose rim comes closer than this to the plate's edges are left out, e.g. holes copied from a
+    /// higher plate that would end up outside a lower one, mm.
+    /// </summary>
+    public const double MinimumScrewHoleEdgeDistance = 10;
+
     public static EndProfile Create(EndProfileTemplateParameters parameters)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(parameters.PlateWidth);
@@ -26,10 +32,19 @@ public static class EndProfileTemplate
             Outline = PathDrawing.Polyline([new(-half, bottom), new(half, bottom), new(half, top), new(-half, top)], isClosed: true),
             GroundLine = PathDrawing.Polyline([new(-half, top), new(half, top)]),
             Tracks = [.. parameters.TrackOffsets.Select(offset => new EndProfileTrack { Offset = offset, Gauge = parameters.Gauge, RailSystem = parameters.RailSystem })],
-            ScrewHoles = [.. parameters.ScrewHoles.Select(p => new Circle(p, parameters.ScrewHoleDiameter))],
+            ScrewHoles = [.. parameters.ScrewHoles
+                .Select(p => new Circle(p, parameters.ScrewHoleDiameter))
+                .Where(h => FitsInPlate(h, half, top, bottom))],
             ScrewHolePattern = parameters.ScrewHolePattern,
             Source = parameters.Source,
         };
+    }
+
+    /// <summary>True if the hole's rim is at least <see cref="MinimumScrewHoleEdgeDistance"/> inside the rectangular plate.</summary>
+    public static bool FitsInPlate(Circle hole, double halfWidth, double top, double bottom)
+    {
+        var margin = MinimumScrewHoleEdgeDistance + hole.Diameter / 2;
+        return Math.Abs(hole.Center.X) <= halfWidth - margin && hole.Center.Y <= top - margin && hole.Center.Y >= bottom + margin;
     }
 
     /// <summary>Offsets of <paramref name="count"/> tracks centred on the centre line, <paramref name="centreDistance"/> apart.</summary>

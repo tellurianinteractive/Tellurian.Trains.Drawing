@@ -1,0 +1,16 @@
+@using Tellurian.Trains.Drawing.Model.Catalogue
+
+@if (Problems.Count > 0)
+{
+    <ul class="error problems" role="alert">
+        @foreach (var problem in Problems)
+        {
+            <li>@T.Format($"Problem_{problem.Code}", T[$"Field_{problem.Property}"])</li>
+        }
+    </ul>
+}
+
+@code {
+    /// <summary>The problems with a catalogue entry, each shown with the label of its field.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<CatalogueProblem> Problems { get; set; } = [];
+}

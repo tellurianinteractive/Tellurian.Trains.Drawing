@@ -1,6 +1,6 @@
 {
-  "name": "Tellurian Trains Drawing",
-  "short_name": "Trains Drawing",
+  "name": "Module Draw",
+  "short_name": "Module Draw",
   "id": "./",
   "start_url": "./",
   "display": "standalone",

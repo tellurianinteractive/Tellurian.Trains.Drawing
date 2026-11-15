@@ -20,14 +20,14 @@ public static class DrawingFileSchema
     private const string Definitions = "$defs";
     private const string ModelNamespace = "Tellurian.Trains.Drawing";
 
-    /// <summary>The kinds that have a schema so far.</summary>
-    public static IReadOnlyList<DrawingFileKind> Kinds { get; } = [DrawingFileKind.EndProfile, DrawingFileKind.Module, DrawingFileKind.Catalogue];
+    /// <summary>The kinds that have a schema: all of them.</summary>
+    public static IReadOnlyList<DrawingFileKind> Kinds { get; } = Enum.GetValues<DrawingFileKind>();
 
     /// <summary>The published file name, e.g. <c>module.v1.json</c>.</summary>
     public static string FileName(DrawingFileKind kind) =>
         $"{kind.ToString().ToLowerInvariant()}.v{DrawingFileFormat.CurrentSchemaVersion(kind)}.json";
 
-    /// <exception cref="NotSupportedException">The kind has no schema yet.</exception>
+    /// <exception cref="NotSupportedException">The kind is unknown.</exception>
     public static JsonObject Create(DrawingFileKind kind)
     {
         var context = DrawingJsonContext.Default;
@@ -36,7 +36,9 @@ public static class DrawingFileSchema
             DrawingFileKind.EndProfile => context.DrawingFileEndProfile,
             DrawingFileKind.Module => context.DrawingFileModuleFileContent,
             DrawingFileKind.Catalogue => context.DrawingFileDrawingCatalogue,
-            _ => throw new NotSupportedException($"There is no schema for {kind} files yet."),
+            DrawingFileKind.Hall => context.DrawingFileHall,
+            DrawingFileKind.HallPlan => context.DrawingFileHallPlan,
+            _ => throw new NotSupportedException($"There is no schema for {kind} files."),
         };
         var definitions = new SortedDictionary<string, JsonNode>(StringComparer.Ordinal);
         var exporterOptions = new JsonSchemaExporterOptions

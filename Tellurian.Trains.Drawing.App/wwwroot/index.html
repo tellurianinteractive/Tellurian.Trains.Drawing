@@ -4,13 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tellurian Trains Drawing</title>
+    <title>Module Draw</title>
     <meta name="description" content="Draw model railway end profiles, modules and hall plans." />
     <base href="/" />
     <link rel="preload" id="webassembly" />
     <link rel="stylesheet" href="css/app.css" />
-    <!-- If you add any scoped CSS files, uncomment the following to load them
-    <link href="Tellurian.Trains.Drawing.App.styles.css" rel="stylesheet" /> -->
+    <link href="Tellurian.Trains.Drawing.App.styles.css" rel="stylesheet" />
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
@@ -31,11 +30,16 @@
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
-    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
-    <div id="update-available" hidden>
-        A new version is available.
-        <button type="button" id="update-now">Update</button>
-    </div>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js" autostart="false"></script>
+    <script>
+        // The UI culture is chosen before .NET starts (ADR 0003), so the right ICU data and satellite
+        // assemblies are loaded. Changing language stores the new culture and reloads (AP-7: SafeReload).
+        (function () {
+            let culture = null;
+            try { culture = localStorage.getItem('tellurian-drawing-culture'); } catch { }
+            Blazor.start(culture ? { applicationCulture: culture } : {});
+        })();
+    </script>
     <script src="js/service-worker-registration.js"></script>
 </body>
 

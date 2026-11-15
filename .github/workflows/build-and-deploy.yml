@@ -238,5 +238,8 @@ jobs:
           if gh release view "v$VERSION" > /dev/null 2>&1; then
             echo "Release v$VERSION already exists (forced redeploy)."
           else
-            gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Release $VERSION" --notes-file release-notes.md
+            # Versions before 1.0 and versions with a suffix (1.0.0-beta) are pre-releases.
+            prerelease=()
+            case "$VERSION" in 0.*|*-*) prerelease=(--prerelease) ;; esac
+            gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Release $VERSION" --notes-file release-notes.md "${prerelease[@]}"
           fi

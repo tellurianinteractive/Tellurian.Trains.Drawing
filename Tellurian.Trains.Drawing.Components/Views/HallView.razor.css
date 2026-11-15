@@ -1,0 +1,49 @@
+.hl-floor {
+    fill: var(--drawing-floor, #fbfaf7);
+    stroke: none;
+}
+
+.hl-walls {
+    fill: none;
+    stroke: var(--drawing-wall, #1d232b);
+    stroke-width: 4;
+    stroke-linejoin: miter;
+}
+
+.hl-obstacle {
+    fill: var(--drawing-obstacle-fill, #c9ced6);
+    stroke: var(--drawing-obstacle, #5f6b7a);
+    stroke-width: 1.5;
+}
+
+    .hl-obstacle.pillar {
+        fill: var(--drawing-pillar-fill, #8a939f);
+    }
+
+.hl-door {
+    stroke: var(--drawing-floor, #fbfaf7);
+    stroke-width: 6;
+}
+
+.hl-keep-free {
+    fill: rgba(47, 143, 70, 0.08);
+    stroke: rgba(47, 143, 70, 0.7);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+}
+
+    .hl-keep-free.emergency {
+        fill: rgba(47, 143, 70, 0.16);
+    }
+
+.hl-no-go {
+    fill: rgba(179, 33, 33, 0.1);
+    stroke: rgba(179, 33, 33, 0.7);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+}
+
+
+.drawing-view-error {
+    color: var(--drawing-error, #b32121);
+}

@@ -24,6 +24,13 @@ public sealed record EndProfile
     /// <summary>The end-plate outline: a closed path. Shown for information; it isn't a fit criterion.</summary>
     public PathDrawing? Outline { get; init; }
 
+    /// <summary>
+    /// The end plate as entered (EP-3): its upper edge's segments (lines, arcs, fillets) and its bottom. When present,
+    /// <see cref="Outline"/> and <see cref="GroundLine"/> are generated from it; they are still stored for readers
+    /// that don't know the plate.
+    /// </summary>
+    public PlateShape? Plate { get; init; }
+
     /// <summary>The landscape surface across the end: an open path.</summary>
     public PathDrawing? GroundLine { get; init; }
 
@@ -48,6 +55,7 @@ public sealed record EndProfile
     /// <summary>The drawing mirrored about its centre line (X → −X).</summary>
     public EndProfile MirroredX() => this with
     {
+        Plate = null,
         Outline = Outline?.MirroredX(),
         GroundLine = GroundLine?.MirroredX(),
         Tracks = [.. Tracks.Select(t => t.MirroredX())],
@@ -58,6 +66,12 @@ public sealed record EndProfile
     /// <summary>The drawing as it is built at an exit with <paramref name="orientation"/>.</summary>
     public EndProfile Oriented(ProfileOrientation orientation) =>
         orientation == ProfileOrientation.Mirrored ? MirroredX() : this;
+
+    /// <summary>
+    /// A copy to edit as a user profile (CA-2): a new id, no Registry id and revision 0; the source is kept
+    /// so the copy still says where it came from.
+    /// </summary>
+    public EndProfile Copy(string designation) => this with { Id = Guid.NewGuid(), Designation = designation, RegistryId = null, Revision = 0 };
 
     public override string ToString() => Designation;
 }
