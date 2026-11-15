@@ -24,6 +24,18 @@ public sealed class CountriesTests
     }
 
     [TestMethod]
+    public async Task SettingsSurviveARestartAndAskTheBrowserToKeepThem()
+    {
+        var workbench = new InMemoryWorkbench();
+        await new SettingsService(workbench).SaveAsync(new() { UserName = "Anna", CountryId = 1, ApiKey = "key" });
+
+        var afterRestart = await new SettingsService(workbench).GetAsync();
+
+        Assert.AreEqual(new UserSettings { UserName = "Anna", CountryId = 1, ApiKey = "key" }, afterRestart);
+        Assert.AreEqual(1, workbench.PersistenceRequests);
+    }
+
+    [TestMethod]
     public async Task TheSettingsGiveTheCountryCode()
     {
         var settings = new SettingsService(new InMemoryWorkbench());

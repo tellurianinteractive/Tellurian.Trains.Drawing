@@ -1,0 +1,36 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Model.Files
+
+@* A drawing's revision log (EX-10): who saved it and the last date each of them did, newest first.
+   Read-only and without JS, so it also works in static rendering. Spans both columns of a property panel. *@
+<section class="revision-log" aria-label="@Title">
+    <h3 class="revision-log-title">@Title</h3>
+    @if (Log.Count == 0)
+    {
+        <p class="revision-log-empty">@EmptyText</p>
+    }
+    else
+    {
+        <table class="revision-log-table">
+            <tbody>
+                @foreach (var entry in Log)
+                {
+                    <tr>
+                        <td class="revision-log-name">@entry.Name</td>
+                        <td class="revision-log-date"><time datetime="@entry.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)">@entry.Date.ToString("d", CultureInfo.CurrentCulture)</time></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>
+
+@code {
+    /// <summary>The entries, newest first, as in the drawing.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<DrawingRevision> Log { get; set; } = [];
+
+    [Parameter] public string Title { get; set; } = "Revision log";
+
+    /// <summary>Shown when nobody with a user name has saved the drawing yet.</summary>
+    [Parameter] public string EmptyText { get; set; } = "Not saved with a user name yet.";
+}

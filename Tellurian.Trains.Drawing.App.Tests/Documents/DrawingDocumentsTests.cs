@@ -117,6 +117,22 @@ public sealed class DrawingDocumentsTests
     }
 
     [TestMethod]
+    public async Task EditsAfterASaveKeepTheRecordedLog()
+    {
+        await new global::Tellurian.Trains.Drawing.App.Settings.SettingsService(_workbench).SaveAsync(new() { UserName = "Anna" });
+        var (_, json) = TestDrawings.Hall();
+        var files = new FakeFileService { FilesToOpen = [new("club.tdhall", json, "h1")] };
+        var documents = Documents(files);
+        var draft = (await documents.OpenAsync()).Drafts.Single();
+        await documents.SaveAsync(draft.Id, saveAs: false);
+
+        // An editor's autosave serializes its own model, which doesn't have the new entry.
+        var edited = await documents.UpdateAsync(draft.Id, json);
+
+        Assert.AreEqual("Anna", Assert.ContainsSingle(DrawingRevisionLog.Read(edited.Json)).Name);
+    }
+
+    [TestMethod]
     public async Task WithoutAUserNameNothingIsRecorded()
     {
         var (_, json) = TestDrawings.Hall();

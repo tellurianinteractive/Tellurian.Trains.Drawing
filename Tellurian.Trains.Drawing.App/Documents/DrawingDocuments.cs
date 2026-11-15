@@ -104,14 +104,15 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
         UpdateAsync(draft.Id, json, cancellationToken);
 
     /// <summary>
-    /// Stores a changed drawing in the stored draft with <paramref name="draftId"/>, keeping its file name and handle,
-    /// so an editor never overwrites what a save to a file has recorded meanwhile.
+    /// Stores a changed drawing in the stored draft with <paramref name="draftId"/>, keeping its file name, handle and
+    /// revision log (EX-10), so an editor never overwrites what a save to a file has recorded meanwhile.
     /// </summary>
     /// <exception cref="KeyNotFoundException">The draft doesn't exist any more.</exception>
     public async Task<Draft> UpdateAsync(Guid draftId, string json, CancellationToken cancellationToken = default)
     {
         var draft = await workbench.GetDraftAsync(draftId, cancellationToken) ?? throw new KeyNotFoundException($"There is no draft {draftId}.");
         var identity = DrawingIdentity.Read(json);
+        json = DrawingRevisionLog.KeepLog(json, draft.Json);
         var updated = draft with { Json = json, Name = identity.Name, HasUnsavedChanges = true, Modified = time.GetUtcNow() };
         await workbench.SaveDraftAsync(updated, cancellationToken);
         return updated;

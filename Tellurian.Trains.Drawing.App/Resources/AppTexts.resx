@@ -304,4 +304,7 @@
   <data name="Field_Countries" xml:space="preserve"><value>Countries</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Two-letter country codes, e.g. SE, separated by commas. Empty: the standard applies in all countries.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: use two-letter country codes such as SE.</value></data>
+  <data name="RevisionLog" xml:space="preserve"><value>Revision log</value></data>
+  <data name="NoRevisions" xml:space="preserve"><value>Not saved by anyone with a user name yet.</value></data>
+  <data name="Warning_NoUserName" xml:space="preserve"><value>No user name in the settings: when you save a drawing, it is not recorded in the revision log.</value></data>
 </root>

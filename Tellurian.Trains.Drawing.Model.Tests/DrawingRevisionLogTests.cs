@@ -57,6 +57,20 @@ public sealed class DrawingRevisionLogTests
     }
 
     [TestMethod]
+    public void AChangedDrawingKeepsTheRecordedLog()
+    {
+        var saved = DrawingRevisionLog.Record(DrawingFileSerializer.Serialize(TestCatalogue.FremoSingle), "Anna", Monday);
+        var edited = DrawingFileSerializer.Serialize(TestCatalogue.FremoSingle with { Designation = "Edited" });
+
+        var kept = DrawingRevisionLog.KeepLog(edited, saved);
+
+        var profile = DrawingFileSerializer.DeserializeEndProfile(kept);
+        Assert.AreEqual("Edited", profile.Designation);
+        Assert.AreEqual("Anna", Assert.ContainsSingle(DrawingRevisionLog.Read(kept)).Name);
+        Assert.AreEqual("Anna", Assert.ContainsSingle(profile.RevisionLog).Name);
+    }
+
+    [TestMethod]
     public void CatalogueFilesHaveNoLog()
     {
         var json = DrawingFileSerializer.Serialize(TestCatalogue.Instance);
