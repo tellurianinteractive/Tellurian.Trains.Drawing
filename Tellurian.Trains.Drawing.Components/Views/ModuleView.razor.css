@@ -27,9 +27,18 @@
         stroke-opacity: 0.55;
     }
 
-.md-exit {
-    fill: var(--drawing-exit, #1d232b);
+/* End profile shading (ModuleDrawing §9.1): dark where the profile is above rail top, light where it is below. */
+.md-profile {
+    stroke: none;
 }
+
+    .md-profile.above {
+        fill: var(--drawing-profile-above, #7a6646);
+    }
+
+    .md-profile.below {
+        fill: var(--drawing-profile-below, #e2d6bf);
+    }
 
 .md-operator-space {
     fill: rgba(27, 110, 194, 0.07);

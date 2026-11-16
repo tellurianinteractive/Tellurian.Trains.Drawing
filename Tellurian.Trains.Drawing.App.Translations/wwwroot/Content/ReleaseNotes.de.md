@@ -1,5 +1,14 @@
 # Versionshinweise
 
+## Version 0.6.0
+Veröffentlicht am 2026-11-16
+- Neues Modul: Ende B kann ein anderes Endprofil als Ende A haben, auch von einer anderen Norm im selben Maßstab, zum Beispiel FREMO an einem Ende und MMM am anderen. Markiere das Modul als Endewender, wenn ein asymmetrisches Endprofil die Seite wechselt. Ein asymmetrisches Endprofil wie FREMO-H0-B96 wird jetzt an Ende B gespiegelt, sodass die hohe Seite auf derselben Seite des Gleises bleibt und zwei solche Module ohne Abweichungen passen.
+- Modulzeichnungen zeigen die Art des Endprofils wie DWG- und SKP-Zeichnungen: Die Form des Endprofils wird an jedem Ende ins Modul geklappt, dunkel, wo das Profil über Schienenoberkante liegt, und hell, wo es darunter liegt. Der Name des Endprofils steht entlang jedes Endes im Modul. Bezeichnungen und Pfeile der Enden werden nicht mehr gezeichnet.
+- Endprofile haben einen Kurznamen, zum Beispiel *B96*, der in Modulzeichnungen angezeigt wird. Ohne Kurznamen wird die Bezeichnung angezeigt. Die eingebauten FREMO-Endprofile haben die Kurznamen *B96*, *B96f* und *2E96*.
+- Modulzeichnungen füllen das Fenster, mit den Dateiaktionen daneben, und lassen sich drucken: *Drucken* druckt die Zeichnung allein mit dem Namen des Moduls, eingepasst in eine Seite im Querformat.
+- Ein Modul wird durch das FREMO-Kürzel des Besitzers und eine FREMO-Nummer bezeichnet, zum Beispiel *SFjä 012*, durch einen Namen oder durch beides. Eine FREMO-Nummer braucht das Kürzel; ohne Nummer braucht das Modul einen Namen. Du kannst auch den vollständigen Namen des Besitzers angeben; das kann jemand anderes sein als du. Du gibst sie unter *Neues Modul* ein und änderst sie im Bereich *Eigenschaften* neben der Modulzeichnung. Die App zeigt die FREMO-Bezeichnung zusammen mit dem Namen.
+- Die FREMO-Bezeichnung des Moduls, zum Beispiel *SFjä 7900*, oder sonst sein Name steht auf dem Modul, mit dem Namen des Besitzers in kleinerer Schrift darunter. Der Text verläuft entlang des Gleises, mittig zwischen den Enden, oberhalb des Gleises, so wie du ihn liest.
+
 ## Version 0.5.0
 Veröffentlicht am 2026-11-15
 - Zeichnungen werden als normale JSON-Dateien gespeichert, benannt nach ihrer Art, zum Beispiel *Station Nord.module.json* oder *FREMO-H0-B96.endprofile.json*. Sie lassen sich in jedem JSON-Editor öffnen. Dateien mit den früheren Endungen (.tdmodule, .tdendprofile usw.) lassen sich weiterhin öffnen.

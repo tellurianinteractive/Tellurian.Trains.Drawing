@@ -5,6 +5,7 @@ namespace Tellurian.Trains.Drawing.Model.Catalogue;
 public enum EndProfileChanges
 {
     None = 0,
+    /// <summary>The designation or the short name.</summary>
     Designation = 1 << 0,
     Scale = 1 << 1,
     Standards = 1 << 2,

@@ -1,0 +1,103 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Components.Properties
+@using Tellurian.Trains.Drawing.Model.Modules
+@inject DrawingDocuments Documents
+
+@* The properties of a module drawing (MD-2): how it is identified, the FREMO way or by a name. Each change is stored
+   in the draft at once (autosave); problems are shown but don't stop the change, so the fields can be filled in any order. *@
+@if (_content is { } content)
+{
+    var module = content.Module;
+    <section class="pane module-properties" aria-label="@T["Properties"]">
+        <h2>@T["Properties"]</h2>
+        <div class="property-grid">
+            <TextField Label="@T["OwnerPrefix"]" Value="@module.Owners.FirstOrDefault()?.Prefix" ValueChanged="v => ApplyAsync(module.WithOwnerPrefix(v))" />
+            <TextField Label="@T["FremoNumber"]" Value="@module.FremoNumber?.ToString(CultureInfo.CurrentCulture)" ValueChanged="SetFremoNumberAsync" />
+            <TextField Label="@T["Name"]" Value="@module.Name" ValueChanged="v => ApplyAsync(module.WithName(v))" />
+            <TextField Label="@T["OwnerName"]" Value="@module.Owners.FirstOrDefault()?.Name" ValueChanged="v => ApplyAsync(module.WithOwnerName(v))" />
+        </div>
+        @{ var problems = Problems(module).ToList(); }
+        @if (problems.Count > 0)
+        {
+            <ul class="error module-problems" role="alert">
+                @foreach (var problem in problems)
+                {
+                    <li>@problem</li>
+                }
+            </ul>
+        }
+        <p class="pane-help">@T["ModuleIdentificationHelp"]</p>
+        @if (_message is not null)
+        {
+            <p class="error" role="alert">@_message</p>
+        }
+    </section>
+}
+
+@code {
+    private ModuleFileContent? _content;
+    private string? _shownJson;
+    private bool _fremoNumberInvalid;
+    private string? _message;
+
+    [Parameter, EditorRequired] public Draft Draft { get; set; } = default!;
+    [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Draft.Json == _shownJson) return;
+        _shownJson = Draft.Json;
+        try
+        {
+            _content = DrawingFileSerializer.DeserializeModule(Draft.Json);
+        }
+        catch (DrawingFileException)
+        {
+            _content = null;
+        }
+    }
+
+    private IEnumerable<string> Problems(Module module)
+    {
+        if (_fremoNumberInvalid) yield return T["ModuleProblem_FremoNumberOutOfRange"];
+        foreach (var problem in ModuleValidation.Validate(module).Where(p => !(_fremoNumberInvalid && p.Code == ModuleProblemCode.FremoNumberOutOfRange)))
+            yield return T[$"ModuleProblem_{problem.Code}"];
+    }
+
+    private async Task SetFremoNumberAsync(string? text)
+    {
+        if (_content is null) return;
+        if (text is null)
+        {
+            _fremoNumberInvalid = false;
+            await ApplyAsync(_content.Module.WithFremoNumber(null));
+        }
+        else if (int.TryParse(text, NumberStyles.Integer, CultureInfo.CurrentCulture, out var number))
+        {
+            _fremoNumberInvalid = false;
+            await ApplyAsync(_content.Module.WithFremoNumber(number));
+        }
+        else
+        {
+            _fremoNumberInvalid = true;
+        }
+    }
+
+    private async Task ApplyAsync(Module module)
+    {
+        if (_content is null) return;
+        _message = null;
+        var content = _content with { Module = module };
+        try
+        {
+            var draft = await Documents.UpdateAsync(Draft.Id, DrawingFileSerializer.Serialize(content));
+            _content = content;
+            _shownJson = draft.Json;
+            await DraftChanged.InvokeAsync(draft);
+        }
+        catch (Exception ex) when (ex is StorageException or KeyNotFoundException)
+        {
+            _message = T.Format("StorageError", ex.Message);
+        }
+    }
+}

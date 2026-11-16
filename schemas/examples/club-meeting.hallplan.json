@@ -2,12 +2,12 @@
   "format": "tellurian-drawing",
   "kind": "hallPlan",
   "schemaVersion": 1,
-  "appVersion": "0.4.0",
+  "appVersion": "0.5.0",
   "content": {
-    "id": "9eaed3a8-4610-44aa-9fe2-4c239b844191",
+    "id": "b7baa769-dbab-4cf5-bc91-f5baf6c782f9",
     "name": "Club meeting",
     "hall": {
-      "id": "5292cae8-08a7-4bf5-8214-0a87e62c21ba",
+      "id": "ef935c16-06bc-4228-ae23-bf63c32fecb4",
       "name": "Club hall",
       "address": "Station Road 1",
       "outline": {
@@ -50,7 +50,7 @@
       "minimumAisleWidth": 1200,
       "obstacles": [
         {
-          "id": "2cf6e40a-28c7-4ee0-9c20-dfa9982722b5",
+          "id": "160d32a9-f6c3-42db-b309-e3ab0908f241",
           "kind": "pillar",
           "area": {
             "start": {
@@ -80,7 +80,7 @@
           "label": "P1"
         },
         {
-          "id": "c64888dc-c6f5-4987-900d-75fceff82a1c",
+          "id": "c77ab5d8-ee8a-4d7a-90b6-af402a98e307",
           "kind": "pillar",
           "area": {
             "start": {
@@ -121,7 +121,7 @@
           }
         },
         {
-          "id": "0ed32af2-13b7-4ef4-bc80-f6606f3e378b",
+          "id": "e0528130-684b-4044-b968-ab18d7c806b3",
           "kind": "furniture",
           "area": {
             "start": {
@@ -165,7 +165,7 @@
       ],
       "doors": [
         {
-          "id": "148049ca-9632-4dc4-b26f-5cb55d90122a",
+          "id": "846f608d-c035-49de-b400-0c66c6f2b0c5",
           "kind": "door",
           "position": {
             "x": 1500,
@@ -177,7 +177,7 @@
           "label": "Entrance"
         },
         {
-          "id": "973b0b45-bb80-4f77-b774-4aa724aea25c",
+          "id": "4a9bfa05-750e-4188-83f9-d4433ab74cab",
           "kind": "emergencyExit",
           "position": {
             "x": 12000,
@@ -190,7 +190,7 @@
       ],
       "noGoZones": [
         {
-          "id": "8938d826-c017-4bde-a7be-65cc93c5a34b",
+          "id": "8daf8a53-efe4-4417-a973-910cf5a420d4",
           "area": {
             "start": {
               "x": 5600,
@@ -256,9 +256,9 @@
     },
     "layouts": [
       {
-        "id": "14a0712b-be2c-4fd2-8bc6-30870e875ce4",
+        "id": "37ec7e42-105e-4c93-8bb0-372dcb7d27ee",
         "name": "Main",
-        "anchorModuleId": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
+        "anchorModuleId": "874af93e-8eb1-44a6-9e55-deedf98144cc",
         "anchorPose": {
           "x": 2000,
           "y": 2000,
@@ -277,31 +277,31 @@
           },
           "second": {
             "kind": "obstacle",
-            "obstacleId": "2cf6e40a-28c7-4ee0-9c20-dfa9982722b5"
+            "obstacleId": "160d32a9-f6c3-42db-b309-e3ab0908f241"
           },
           "angleWall": 0
         },
         "lines": [
           {
-            "id": "8d9a3b64-aff0-4896-ba50-eb39bf9a247a",
+            "id": "4f108d38-6f9e-4587-9109-a945f7f78cec",
             "name": "Main line",
             "entries": [
               {
-                "moduleId": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
+                "moduleId": "874af93e-8eb1-44a6-9e55-deedf98144cc",
                 "entryExit": "W",
                 "exitExit": "E",
                 "legAdjustment": 0
               },
               {
-                "moduleId": "24a2e937-0b99-4879-b9f6-7690f4b28c2a",
+                "moduleId": "fb6dddc0-4c2b-4781-b12a-ce8f29e724a3",
                 "entryExit": "E",
                 "exitExit": "W",
                 "legAdjustment": 5,
                 "note": "Bends the other way"
               },
               {
-                "moduleId": "acbd4742-59ec-4940-abd3-b64775f128c3",
-                "variantId": "584d3087-950c-42e2-9dba-406747603ae2",
+                "moduleId": "013c21ec-7168-4251-9a40-84ad4e11170e",
+                "variantId": "4bc4f842-1bce-45ac-8f99-55848598b68f",
                 "entryExit": "W",
                 "exitExit": "E",
                 "legAdjustment": 0
@@ -309,17 +309,17 @@
             ]
           },
           {
-            "id": "5e7c3072-e7ff-455b-999c-1fb35b08990b",
+            "id": "0ec03360-9860-4816-8747-073364e456fd",
             "name": "Branch",
             "entries": [
               {
-                "moduleId": "2b2bbbfe-bef0-4d8b-a50f-04b91926342a",
+                "moduleId": "1d079d02-3c33-4935-b36f-3f6566326b74",
                 "entryExit": "W",
                 "legAdjustment": 0
               }
             ],
             "startAt": {
-              "moduleId": "acbd4742-59ec-4940-abd3-b64775f128c3",
+              "moduleId": "013c21ec-7168-4251-9a40-84ad4e11170e",
               "exitLabel": "E2"
             }
           }
@@ -329,11 +329,11 @@
     "joints": [
       {
         "first": {
-          "moduleId": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
+          "moduleId": "874af93e-8eb1-44a6-9e55-deedf98144cc",
           "exitLabel": "E"
         },
         "second": {
-          "moduleId": "24a2e937-0b99-4879-b9f6-7690f4b28c2a",
+          "moduleId": "fb6dddc0-4c2b-4781-b12a-ce8f29e724a3",
           "exitLabel": "E"
         },
         "joinMethodOverride": "clamped",
@@ -343,7 +343,7 @@
     ],
     "publicAreas": [
       {
-        "id": "8dbb299e-eef3-44e2-8253-08a19d0ca0db",
+        "id": "be8fb3ec-e6ab-48a4-8d6f-df4f5dea8147",
         "area": {
           "start": {
             "x": 4000,
@@ -386,7 +386,7 @@
     ],
     "walkingPaths": [
       {
-        "id": "1d664f74-7845-4e4d-be92-0940a63c12c8",
+        "id": "43945750-9d6d-4935-b70b-25dd3caa7ced",
         "centreLine": {
           "start": {
             "x": 1000,
@@ -416,10 +416,10 @@
     ],
     "acknowledgements": [
       {
-        "id": "797bb6bd-b55a-4842-b14e-bbbd2de4e53b",
+        "id": "431c3914-8076-4e98-8f45-a845f5436579",
         "findingCode": "VA-11",
         "moduleIds": [
-          "acbd4742-59ec-4940-abd3-b64775f128c3"
+          "013c21ec-7168-4251-9a40-84ad4e11170e"
         ],
         "fingerprint": "sample",
         "note": "Operator space overlaps the stage edge",
@@ -428,7 +428,7 @@
     ],
     "modules": [
       {
-        "id": "b1bc815d-8e0d-4fd3-9cb4-ba116f7263e9",
+        "id": "874af93e-8eb1-44a6-9e55-deedf98144cc",
         "name": "Straight",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -449,7 +449,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "7038ebeb-f9a1-4f06-9cea-65d14a582a59",
+            "id": "290175d1-7a85-48c0-a8de-bf5a26fd2144",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -476,7 +476,7 @@
                   "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
                   "name": "FREMO-H0-B96"
                 },
-                "orientation": "normal",
+                "orientation": "mirrored",
                 "railTopOffset": 0,
                 "pose": {
                   "x": 1200,
@@ -608,7 +608,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "98bf3d06-5748-4e50-9fe4-64db8017f285",
+                "id": "ddfa401a-9061-4bf8-8d5a-f417b70b997a",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -622,9 +622,10 @@
               "straight": 1200
             },
             "autoDraw": {
-              "generatorVersion": "1.0",
+              "generatorVersion": "1.1",
               "parameters": {
                 "name": "Straight",
+                "owners": [],
                 "standard": "FREMO/H0-RE",
                 "straight": 1200,
                 "exits": [
@@ -642,6 +643,7 @@
                 "isEndOfLine": false,
                 "isDuckunder": false,
                 "isTurntable": false,
+                "isEndProfileSwitcher": false,
                 "isOperationPlace": false,
                 "curveDirection": "left",
                 "straightPosition": "before",
@@ -653,7 +655,7 @@
         ]
       },
       {
-        "id": "24a2e937-0b99-4879-b9f6-7690f4b28c2a",
+        "id": "fb6dddc0-4c2b-4781-b12a-ce8f29e724a3",
         "name": "Curve",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -674,7 +676,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "408ff289-e40e-4972-8ecd-ec8f1b76c84e",
+            "id": "badde9bd-1978-4174-b988-741da4582e2f",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -701,7 +703,7 @@
                   "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
                   "name": "FREMO-H0-B96"
                 },
-                "orientation": "normal",
+                "orientation": "mirrored",
                 "railTopOffset": 0,
                 "pose": {
                   "x": 1000.0000000000002,
@@ -839,7 +841,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "3ab78ec1-76b9-4b44-ae50-62d9bad3ec99",
+                "id": "d27f79b0-4c2a-4520-8feb-d010ba72809b",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -854,9 +856,10 @@
               "angle": 30
             },
             "autoDraw": {
-              "generatorVersion": "1.0",
+              "generatorVersion": "1.1",
               "parameters": {
                 "name": "Curve",
+                "owners": [],
                 "standard": "FREMO/H0-RE",
                 "radius": 2000,
                 "angle": 30,
@@ -875,6 +878,7 @@
                 "isEndOfLine": false,
                 "isDuckunder": false,
                 "isTurntable": false,
+                "isEndProfileSwitcher": false,
                 "isOperationPlace": false,
                 "curveDirection": "left",
                 "straightPosition": "before",
@@ -886,7 +890,7 @@
         ]
       },
       {
-        "id": "acbd4742-59ec-4940-abd3-b64775f128c3",
+        "id": "013c21ec-7168-4251-9a40-84ad4e11170e",
         "name": "Junction",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -907,7 +911,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "584d3087-950c-42e2-9dba-406747603ae2",
+            "id": "4bc4f842-1bce-45ac-8f99-55848598b68f",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -934,7 +938,7 @@
                   "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
                   "name": "FREMO-H0-B96"
                 },
-                "orientation": "normal",
+                "orientation": "mirrored",
                 "railTopOffset": 0,
                 "pose": {
                   "x": 1500,
@@ -950,7 +954,7 @@
                   "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
                   "name": "FREMO-H0-B96"
                 },
-                "orientation": "normal",
+                "orientation": "mirrored",
                 "railTopOffset": 0,
                 "pose": {
                   "x": 1500,
@@ -1117,7 +1121,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "912353df-10f1-42f9-ab84-42f781423741",
+                "id": "d16e3cb3-867d-4f03-8c12-a8edd290abfb",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1131,9 +1135,10 @@
               "straight": 1500
             },
             "autoDraw": {
-              "generatorVersion": "1.0",
+              "generatorVersion": "1.1",
               "parameters": {
                 "name": "Junction",
+                "owners": [],
                 "standard": "FREMO/H0-RE",
                 "straight": 1500,
                 "exits": [
@@ -1156,6 +1161,7 @@
                 "isEndOfLine": false,
                 "isDuckunder": false,
                 "isTurntable": false,
+                "isEndProfileSwitcher": false,
                 "isOperationPlace": false,
                 "curveDirection": "left",
                 "straightPosition": "before",
@@ -1167,7 +1173,7 @@
         ]
       },
       {
-        "id": "2b2bbbfe-bef0-4d8b-a50f-04b91926342a",
+        "id": "1d079d02-3c33-4935-b36f-3f6566326b74",
         "name": "Terminus",
         "standard": {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -1189,7 +1195,7 @@
         "revisionLog": [],
         "variants": [
           {
-            "id": "f4ff2cca-296b-4929-a868-21e07d2f17a0",
+            "id": "69052c63-4ab3-4e8f-9486-fe6b6329d83f",
             "name": "",
             "isDefault": true,
             "exits": [
@@ -1325,7 +1331,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "64b1276f-79c3-430d-8c24-f86c01a5d046",
+                "id": "e055e130-1626-42ab-ab27-86d6fe83e1da",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1337,7 +1343,7 @@
                   "y": -25,
                   "heading": 180
                 },
-                "id": "9bfe8356-6017-4dbb-b6c6-0739c3c3c42f",
+                "id": "d8f33b39-80fa-493a-8c89-53b0ef2733a3",
                 "isMainTrack": false,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1360,7 +1366,7 @@
                   ],
                   "isClosed": false
                 },
-                "id": "b53ba315-32fc-4b92-a104-7f25de4cf1ab",
+                "id": "bc8e7233-40cc-4f38-9a3c-319eb1ab6890",
                 "isMainTrack": true,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1372,7 +1378,7 @@
                   "y": 25,
                   "heading": 180
                 },
-                "id": "ccea90e8-a357-4e5f-ba35-5ab348e0d118",
+                "id": "5116df8f-d4c7-4275-87e1-f67640b28a46",
                 "isMainTrack": false,
                 "isNarrowGauge": false,
                 "isGenerated": true
@@ -1386,9 +1392,10 @@
               "straight": 1200
             },
             "autoDraw": {
-              "generatorVersion": "1.0",
+              "generatorVersion": "1.1",
               "parameters": {
                 "name": "Terminus",
+                "owners": [],
                 "standard": "FREMO/H0-RE",
                 "straight": 1200,
                 "numberOfThroughTracks": 2,
@@ -1402,6 +1409,7 @@
                 "isEndOfLine": true,
                 "isDuckunder": false,
                 "isTurntable": false,
+                "isEndProfileSwitcher": false,
                 "isOperationPlace": false,
                 "curveDirection": "left",
                 "straightPosition": "before",
@@ -1417,6 +1425,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
         "designation": "FREMO-H0-B96",
+        "shortName": "B96",
         "scale": "H0",
         "standards": [
           {
@@ -1706,6 +1715,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
         "designation": "FREMO-H0-2E96",
+        "shortName": "2E96",
         "scale": "H0",
         "standards": [
           {

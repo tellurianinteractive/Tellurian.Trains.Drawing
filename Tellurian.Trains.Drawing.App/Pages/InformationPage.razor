@@ -1,25 +1,15 @@
 @page "/"
 @page "/information"
+@inject ContentDocuments Content
 
-@* The information page: the app's first page, also opened from the app name in the top menu. *@
+@* The information page: the app's first page, also opened from the app name in the top menu.
+   Its text is the localised Markdown document Content/Information.md in the Translations project. *@
 <PageTitle>@T["AppName"]</PageTitle>
 
 <article class="information">
     <h1>@T["InformationTitle"]</h1>
 
-    <section id="general">
-        <h2>@T["InformationGeneral"]</h2>
-        <p>@T["InformationIntro"]</p>
-        <p>@T["InformationPreRelease"]</p>
-        <p>@T["InformationStorage"]</p>
-        <p>@T["InformationOffline"]</p>
-    </section>
-
-    <section id="browser-support">
-        <h2>@T["InformationBrowserSupport"]</h2>
-        <p>@T["InformationBrowsers"]</p>
-        <p>@T["InformationOtherBrowsers"]</p>
-    </section>
+    @((MarkupString)html)
 
     <div class="toolbar">
         <a class="button primary" id="get-started" href="@Home.Url">@T["InformationContinue"]</a>
@@ -28,4 +18,9 @@
 
 @code {
     public const string Url = "";
+
+    private string html = "";
+
+    protected override async Task OnInitializedAsync() =>
+        html = await Content.HtmlAsync(ContentDocuments.Information, System.Globalization.CultureInfo.CurrentUICulture);
 }

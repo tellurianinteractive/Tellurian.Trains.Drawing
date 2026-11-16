@@ -20,6 +20,7 @@ The domain follows the sibling repository **Module Registry** (`../Modules Regis
 - `Tellurian.Trains.Drawing.Editing` – UI-independent editor state: commands, undo/redo, snapping, tools.
 - `Tellurian.Trains.Drawing.Components` – Razor class library with **all** view and editor components and their collocated JS (`*.razor.js`). Reused by the Module Registry (Blazor Server), so it must work in any render mode: no WebAssembly-only APIs, JS interop only after first render, read-only display without JS.
 - `Tellurian.Trains.Drawing.App` – Blazor WASM PWA: shell, pages, IndexedDB storage, file access, service worker. No drawing components here.
+- `Tellurian.Trains.Drawing.App.Translations` – **all** the app's texts in one place: short UI strings in `Resources/AppTexts.<language>.resx`, longer texts (information page, release notes) as Markdown in `wwwroot/Content/<Name>.<language>.md`, read through `ContentDocuments` over HTTP (`_content/Tellurian.Trains.Drawing.App.Translations/Content`). Same principle as the Timetable Planning app's `Planning.App.Translations`.
 - `*.Tests` – MSTest.Sdk on Microsoft Testing Platform (version pinned in `global.json`); Components and App tests use bUnit.
 
 Geometry, Model, Editing and Components are packable NuGet libraries (spec NF-10). Module auto-draw (spec MD-20) is a public API in Model so the Registry can generate module JSON server-side.
@@ -42,11 +43,12 @@ dotnet pack Tellurian.Trains.Drawing.Components               # pack libraries o
 - Use `System.Text.Json` source generation (trim/AOT safe); no reflection-based serialization.
 - The module and end profile file formats are public contracts (spec EX-7): schema changes must be backward compatible within a major schema version and are logged. The JSON Schemas and examples in `schemas/` (not deployed) are generated from the code: after a deliberate change, run the Model tests with `TELLURIAN_UPDATE_SCHEMAS=1` and log it in `schemas/CHANGELOG.md`. The Module Registry builds its API from them.
 - UI strings in English resources first; languages en, de, da, sv, nb (Tellurian.Localization). German addresses the user with "du", not "Sie": the users are hobbyists.
+- Texts longer than a sentence or two, or with several paragraphs or headings, go in a Markdown document in the Translations project, not in RESX. Every document exists in all five languages (`Name.md` in English, `Name.sv.md` and so on); a test fails when one is missing.
 - UI changes must be checked in a browser; the AOT Release build before releases.
 
 ## Release
 
-CI (`.github/workflows/build-and-deploy.yml`) builds and tests every push and pull request. A push to `master` deploys when `<Version>` in `Directory.Build.props` has no tag `v<Version>`; it then tags and creates a GitHub release. Every release needs a `RELEASENOTES.md` section (`## Release x.y.z`, `Released yyyy-MM-dd`, at least one bullet; `- Maintenance update.` for internal-only changes). Release notes are translated into every UI language: `RELEASENOTES.sv.md`, `.de.md`, `.da.md` and `.nb.md` get the same releases and dates (translated headings, e.g. `## Version x.y.z`), using the app's own UI terms; a test fails when a translation is missing or out of step. The app shows the notes in the UI language, falling back to English. Pull requests from this repository get an Azure preview environment.
+CI (`.github/workflows/build-and-deploy.yml`) builds and tests every push and pull request. A push to `master` deploys when `<Version>` in `Directory.Build.props` has no tag `v<Version>`; it then tags and creates a GitHub release. Every release needs a section in `Tellurian.Trains.Drawing.App.Translations/wwwroot/Content/ReleaseNotes.md` (`## Release x.y.z`, `Released yyyy-MM-dd`, at least one bullet; `- Maintenance update.` for internal-only changes). Release notes are translated into every UI language: `ReleaseNotes.sv.md`, `.de.md`, `.da.md` and `.nb.md` beside it get the same releases and dates (translated headings, e.g. `## Version x.y.z`), using the app's own UI terms; a test fails when a translation is missing or out of step. The app shows the notes in the UI language, falling back to English. Pull requests from this repository get an Azure preview environment.
 
 ## Azure
 

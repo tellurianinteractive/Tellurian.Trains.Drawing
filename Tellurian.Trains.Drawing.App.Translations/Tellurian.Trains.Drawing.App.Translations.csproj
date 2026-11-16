@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <!-- All the app's texts in one place: short UI texts in Resources/AppTexts.<language>.resx, longer texts
+       (information page, release notes) in wwwroot/Content/<Name>.<language>.md. The Markdown files are
+       static web assets, fetched over HTTP from _content/Tellurian.Trains.Drawing.App.Translations/Content
+       and cached by the service worker for offline use (ADR 0003). -->
+
+  <ItemGroup>
+    <PackageReference Include="Tellurian.Localization" Version="1.5.0" />
+    <PackageReference Include="Tellurian.Utilities" Version="1.3.4" />
+  </ItemGroup>
+
+</Project>

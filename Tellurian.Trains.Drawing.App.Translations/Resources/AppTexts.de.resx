@@ -47,6 +47,10 @@
   <data name="Name" xml:space="preserve"><value>Name</value></data>
   <data name="Standard" xml:space="preserve"><value>Norm</value></data>
   <data name="EndProfile" xml:space="preserve"><value>Endprofil</value></data>
+  <data name="FirstEndProfile" xml:space="preserve"><value>Endprofil an Ende A</value></data>
+  <data name="SecondEndProfile" xml:space="preserve"><value>Endprofil an Ende B</value></data>
+  <data name="SameEndProfile" xml:space="preserve"><value>Wie Ende A</value></data>
+  <data name="IsEndewender" xml:space="preserve"><value>Endewender (das asymmetrische Endprofil wechselt die Seite)</value></data>
   <data name="OneTrack" xml:space="preserve"><value>1 Gleis</value></data>
   <data name="TrackCount" xml:space="preserve"><value>{0} Gleise</value></data>
   <data name="StraightLength" xml:space="preserve"><value>Gerade Länge (mm)</value></data>
@@ -66,7 +70,15 @@
   <data name="NotDrawn" xml:space="preserve"><value>Das Modul konnte nicht gezeichnet werden:</value></data>
   <data name="DrawnWithNotes" xml:space="preserve"><value>Das Modul wurde gezeichnet. Prüfe diese Hinweise:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Zeichnung öffnen</value></data>
-  <data name="NameRequired" xml:space="preserve"><value>Gib einen Namen ein.</value></data>
+  <data name="ModuleIdentification" xml:space="preserve"><value>Identifikation</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-Module werden durch das Kürzel des Besitzers und eine Nummer bezeichnet, z. B. SFjä 012. Andere Module haben einen Namen. Gib eine FREMO-Nummer mit Kürzel, einen Namen oder beides ein.</value></data>
+  <data name="OwnerPrefix" xml:space="preserve"><value>FREMO-Kürzel des Besitzers</value></data>
+  <data name="FremoNumber" xml:space="preserve"><value>FREMO-Modulnummer</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Vollständiger Name des Besitzers</value></data>
+  <data name="OwnerNameHelp" xml:space="preserve"><value>Optional; der Besitzer kann jemand anderes sein als du. Beim Hochladen in das Modulregister wird Fehlendes ergänzt.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Gib einen Namen oder eine FREMO-Nummer mit dem Kürzel des Besitzers ein.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Gib zur FREMO-Nummer das FREMO-Kürzel des Besitzers ein.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>Die FREMO-Nummer muss zwischen 1 und 9999 liegen.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Wähle ein Endprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} muss größer als 0 sein.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} muss größer als 0 und höchstens 360 sein.</value></data>
@@ -201,6 +213,7 @@
   <data name="NewEndProfileTitle" xml:space="preserve"><value>Neues Endprofil</value></data>
   <data name="NewEndProfileIntro" xml:space="preserve"><value>Beginne mit einem rechteckigen Kopfstück mit Gleisen; zeichne dann Umriss, Geländelinie und Schraubenlöcher im Editor.</value></data>
   <data name="Designation" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="EndProfileShortName" xml:space="preserve"><value>Kurzname</value></data>
   <data name="PlateWidth" xml:space="preserve"><value>Breite des Kopfstücks (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Oberkante unter SOK (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Unterkante unter SOK (mm)</value></data>
@@ -275,10 +288,6 @@
   <data name="Print" xml:space="preserve"><value>Drucken</value></data>
   <data name="CreatingModule" xml:space="preserve"><value>Bitte warten. Modul {0} wird erstellt…</value></data>
   <data name="InformationTitle" xml:space="preserve"><value>Willkommen beim Modulzeichner</value></data>
-  <data name="InformationIntro" xml:space="preserve"><value>Der Modulzeichner dient zum Zeichnen von Endprofilen, Modulen und Hallenplänen für Modultreffen.</value></data>
-  <data name="InformationPreRelease" xml:space="preserve"><value>Dies ist eine Vorabversion zum Ausprobieren. Du kannst Endprofile zeichnen und Module aus Vorlagen erstellen. Das Bearbeiten von Modulen, Hallen und Hallenplänen folgt später.</value></data>
-  <data name="InformationStorage" xml:space="preserve"><value>Entwürfe werden während der Arbeit automatisch in diesem Browser gespeichert. Speichere deine Zeichnungen als Dateien, um sie zu behalten und weiterzugeben.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Verwende einen Computer mit einem Chromium-basierten Browser, zum Beispiel Chrome, Edge, Brave, Vivaldi oder Opera, oder Chromium unter Linux. In diesen Browsern öffnet und speichert der Modulzeichner deine Dateien direkt.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Loslegen</value></data>
   <data name="ReleaseNotes" xml:space="preserve"><value>Versionshinweise</value></data>
   <data name="Override" xml:space="preserve"><value>Passungsausnahme</value></data>
@@ -286,10 +295,6 @@
   <data name="NoProblems" xml:space="preserve"><value>Keine Probleme gefunden.</value></data>
   <data name="Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="UnknownEndProfile" xml:space="preserve"><value>unbekanntes Endprofil</value></data>
-  <data name="InformationGeneral" xml:space="preserve"><value>Allgemein</value></data>
-  <data name="InformationBrowserSupport" xml:space="preserve"><value>Unterstützte Browser</value></data>
-  <data name="InformationOffline" xml:space="preserve"><value>Der Modulzeichner funktioniert offline und kann als App installiert werden.</value></data>
-  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox und Safari funktionieren auch, aber mit Einschränkungen: Diese Browser können nicht direkt in die geöffnete Datei speichern, deshalb ist Speichern ein Download. Je nach Browsereinstellung landet die Datei im Download-Ordner, oder du wählst, wo sie gespeichert wird; wähle die ursprüngliche Datei, um sie zu ersetzen. Zuletzt verwendete Dateien und Ordner musst du zum Öffnen erneut auswählen.</value></data>
   <data name="Settings" xml:space="preserve"><value>Einstellungen</value></data>
   <data name="Field_UserName" xml:space="preserve"><value>Benutzername</value></data>
   <data name="UserNameHelp" xml:space="preserve"><value>Wird mit dem Datum im Änderungsprotokoll jeder Zeichnung gespeichert, die du speicherst, um zu zeigen, wer Änderungen gemacht hat.</value></data>

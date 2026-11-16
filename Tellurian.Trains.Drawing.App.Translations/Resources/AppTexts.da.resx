@@ -47,6 +47,10 @@
   <data name="Name" xml:space="preserve"><value>Navn</value></data>
   <data name="Standard" xml:space="preserve"><value>Standard</value></data>
   <data name="EndProfile" xml:space="preserve"><value>Endeprofil</value></data>
+  <data name="FirstEndProfile" xml:space="preserve"><value>Endeprofil i ende A</value></data>
+  <data name="SecondEndProfile" xml:space="preserve"><value>Endeprofil i ende B</value></data>
+  <data name="SameEndProfile" xml:space="preserve"><value>Samme som ende A</value></data>
+  <data name="IsEndewender" xml:space="preserve"><value>Endevender (den asymmetriske endeprofil skifter side)</value></data>
   <data name="OneTrack" xml:space="preserve"><value>1 spor</value></data>
   <data name="TrackCount" xml:space="preserve"><value>{0} spor</value></data>
   <data name="StraightLength" xml:space="preserve"><value>Lige længde (mm)</value></data>
@@ -66,7 +70,15 @@
   <data name="NotDrawn" xml:space="preserve"><value>Modulet kunne ikke tegnes:</value></data>
   <data name="DrawnWithNotes" xml:space="preserve"><value>Modulet blev tegnet. Kontrollér disse bemærkninger:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Åbn tegningen</value></data>
-  <data name="NameRequired" xml:space="preserve"><value>Angiv et navn.</value></data>
+  <data name="ModuleIdentification" xml:space="preserve"><value>Identifikation</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-moduler identificeres med ejerens præfiks og et nummer, f.eks. SFjä 012. Andre moduler har et navn. Angiv et FREMO-nummer med præfiks, et navn eller begge dele.</value></data>
+  <data name="OwnerPrefix" xml:space="preserve"><value>Ejerens FREMO-præfiks</value></data>
+  <data name="FremoNumber" xml:space="preserve"><value>FREMO-modulnummer</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Ejerens fulde navn</value></data>
+  <data name="OwnerNameHelp" xml:space="preserve"><value>Valgfrit; ejeren kan være en anden end dig. Ved upload til Modulregistret udfyldes det, der mangler.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Angiv et navn eller et FREMO-nummer med ejerens præfiks.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Angiv ejerens FREMO-præfiks til FREMO-nummeret.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>FREMO-nummeret skal være 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Vælg en endeprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} skal være større end 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} skal være større end 0 og højst 360.</value></data>
@@ -201,6 +213,7 @@
   <data name="NewEndProfileTitle" xml:space="preserve"><value>Ny endeprofil</value></data>
   <data name="NewEndProfileIntro" xml:space="preserve"><value>Start med en rektangulær endeplade med spor; tegn derefter omrids, terrænlinje og skruehuller i editoren.</value></data>
   <data name="Designation" xml:space="preserve"><value>Betegnelse</value></data>
+  <data name="EndProfileShortName" xml:space="preserve"><value>Kort navn</value></data>
   <data name="PlateWidth" xml:space="preserve"><value>Pladens bredde (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Overkant under skinneoverkant (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Underkant under skinneoverkant (mm)</value></data>
@@ -275,10 +288,6 @@
   <data name="Print" xml:space="preserve"><value>Udskriv</value></data>
   <data name="CreatingModule" xml:space="preserve"><value>Vent venligst. Opretter modulet {0}…</value></data>
   <data name="InformationTitle" xml:space="preserve"><value>Velkommen til Modultegneren</value></data>
-  <data name="InformationIntro" xml:space="preserve"><value>Modultegneren er til at tegne endeprofiler, moduler og hal-planer til modultræf.</value></data>
-  <data name="InformationPreRelease" xml:space="preserve"><value>Dette er en forhåndsversion til afprøvning. Du kan tegne endeprofiler og oprette moduler ud fra skabeloner. Redigering af moduler, haller og hal-planer kommer senere.</value></data>
-  <data name="InformationStorage" xml:space="preserve"><value>Kladder gemmes automatisk i denne browser, mens du arbejder. Gem dine tegninger som filer for at beholde og dele dem.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Brug en computer med en Chromium-baseret browser, for eksempel Chrome, Edge, Brave, Vivaldi eller Opera, eller Chromium på Linux. I disse browsere åbner og gemmer Modultegneren dine filer direkte.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Kom i gang</value></data>
   <data name="ReleaseNotes" xml:space="preserve"><value>Udgivelsesnoter</value></data>
   <data name="Override" xml:space="preserve"><value>Undtagelse for pasning</value></data>
@@ -286,10 +295,6 @@
   <data name="NoProblems" xml:space="preserve"><value>Ingen problemer fundet.</value></data>
   <data name="Close" xml:space="preserve"><value>Luk</value></data>
   <data name="UnknownEndProfile" xml:space="preserve"><value>ukendt endeprofil</value></data>
-  <data name="InformationGeneral" xml:space="preserve"><value>Generelt</value></data>
-  <data name="InformationBrowserSupport" xml:space="preserve"><value>Understøttede browsere</value></data>
-  <data name="InformationOffline" xml:space="preserve"><value>Modultegneren virker offline og kan installeres som en app.</value></data>
-  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox og Safari virker også, men med begrænsninger: de kan ikke gemme direkte i den fil, du åbnede, så at gemme bliver en download. Afhængigt af browserens indstillinger havner filen i mappen til overførsler, eller du vælger, hvor den skal gemmes; vælg den oprindelige fil for at erstatte den. Seneste filer og mapper skal vælges igen for at blive åbnet.</value></data>
   <data name="Settings" xml:space="preserve"><value>Indstillinger</value></data>
   <data name="Field_UserName" xml:space="preserve"><value>Brugernavn</value></data>
   <data name="UserNameHelp" xml:space="preserve"><value>Gemmes med dato i ændringsloggen for hver tegning, du gemmer, for at vise, hvem der har lavet ændringer.</value></data>

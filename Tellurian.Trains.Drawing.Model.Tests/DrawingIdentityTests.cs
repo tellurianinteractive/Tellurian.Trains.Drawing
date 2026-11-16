@@ -22,6 +22,22 @@ public sealed class DrawingIdentityTests
     }
 
     [TestMethod]
+    public void ModuleNameIncludesTheFremoDesignation()
+    {
+        var module = TestModules.Straight() with { Name = "Tellby", FremoNumber = 12, Owners = [new() { Prefix = "SFjä" }] };
+        var identity = DrawingIdentity.Read(DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, TestCatalogue.Lookup)));
+        Assert.AreEqual("SFjä 012 Tellby", identity.Name);
+    }
+
+    [TestMethod]
+    public void ModuleWithoutANameIsNamedByItsFremoDesignation()
+    {
+        var module = TestModules.Straight() with { Name = "", FremoNumber = 1234, Owners = [new() { Prefix = "SFjä" }] };
+        var identity = DrawingIdentity.Read(DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, TestCatalogue.Lookup)));
+        Assert.AreEqual("SFjä 1234", identity.Name);
+    }
+
+    [TestMethod]
     public void ReadsHallsAndHallPlans()
     {
         var plan = TestHalls.Plan(TestCatalogue.Instance);

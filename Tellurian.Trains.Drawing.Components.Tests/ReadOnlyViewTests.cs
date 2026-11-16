@@ -94,12 +94,39 @@ public sealed partial class ReadOnlyViewTests
             [nameof(Views.ModuleView.Standard)] = Catalogue.FindStandard("FREMO/H0-RE"),
         });
         Assert.AreEqual(variant.Sections.Count, Count(html, "md-section"));
-        Assert.AreEqual(variant.Exits.Count, Count(html, "md-exit"));
+        // The end profile's short name is drawn at each exit; exit labels aren't.
+        Assert.AreEqual(variant.Exits.Count, Count(html, "md-profile-name"));
+        StringAssert.Contains(html, ">B96</text>");
+        Assert.AreEqual(0, Count(html, "md-exit-label"));
+        // Every exit's end profile is shown by shading inside the module (ModuleDrawing §9.1).
+        Assert.IsGreaterThanOrEqualTo(variant.Exits.Count, Count(html, "md-profile"));
         Assert.AreEqual(variant.Exits.Count, Count(html, "md-end-plate"));
         Assert.AreEqual(variant.Tracks.Sum(t => t.Routes().Count), Count(html, "md-track"));
         Assert.AreEqual(1, Count(html, "md-public-side"));
-        StringAssert.Contains(html, ">A</text>");
         StringAssert.Contains(html, "aria-label=\"Station\"");
+    }
+
+    [TestMethod]
+    public async Task ModuleViewWritesTheFremoDesignationAndTheOwnerOnTheModule()
+    {
+        var module = Station() with { FremoNumber = 7900, Owners = [new() { Prefix = "SFjä", Name = "Stefan Fjällemark" }] };
+        var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
+        {
+            [nameof(Views.ModuleView.Module)] = module,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+        });
+        StringAssert.Contains(html, ">SFjä 7900</text>");
+        StringAssert.Contains(html, ">Stefan Fjällemark</text>");
+        Assert.AreEqual(1, Count(html, "md-module-name"));
+        Assert.AreEqual(1, Count(html, "md-module-owner"));
+    }
+
+    [TestMethod]
+    public async Task ModuleViewWritesTheNameWithoutOwner()
+    {
+        var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = Station() });
+        StringAssert.Contains(html, ">Station</text>");
+        Assert.AreEqual(0, Count(html, "md-module-owner"));
     }
 
     [TestMethod]
@@ -114,6 +141,45 @@ public sealed partial class ReadOnlyViewTests
         });
         Assert.AreEqual(module.DefaultVariant.Exits.Count, Count(html, "md-end-plate"));
         Assert.AreEqual(0, Count(html, "md-track"));
+    }
+
+    [TestMethod]
+    public async Task ModuleViewRendersAPrintSheetOnlyWithAPrintTitle()
+    {
+        var module = Station();
+        var plain = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
+        {
+            [nameof(Views.ModuleView.Module)] = module,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+        });
+        Assert.AreEqual(0, Count(plain, "print-sheet"));
+
+        var printable = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
+        {
+            [nameof(Views.ModuleView.Module)] = module,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.PrintTitle)] = "Station Nord",
+        });
+        Assert.AreEqual(1, Count(printable, "print-sheet"));
+        Assert.AreEqual(1, Count(printable, "md-print-title"));
+        StringAssert.Contains(printable, ">Station Nord</text>");
+        // The drawing is in both the canvas and the sheet.
+        Assert.AreEqual(2 * module.DefaultVariant.Sections.Count, Count(printable, "md-section"));
+    }
+
+    // The app passes the current catalogue: a short name set after the module was drawn shows, although the
+    // module file embeds the profile as it was.
+    [TestMethod]
+    public async Task ModuleViewFromAFilePrefersTheGivenEndProfiles()
+    {
+        var module = Station();
+        var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, Catalogue.FindEndProfile));
+        var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
+        {
+            [nameof(Views.ModuleView.Json)] = json,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)(id => Catalogue.FindEndProfile(id) is { } p ? p with { ShortName = "NEW" } : null),
+        });
+        StringAssert.Contains(html, ">NEW</text>");
     }
 
     [TestMethod]

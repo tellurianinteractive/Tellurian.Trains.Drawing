@@ -302,6 +302,16 @@ a.button {
         gap: 0.2rem;
     }
 
+    .form .identification {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+        gap: 0.75rem;
+    }
+
+        .form .identification > .note {
+            grid-column: 1 / -1;
+        }
+
     .form .choices label {
         display: inline-flex;
         gap: 0.3rem;
@@ -510,6 +520,18 @@ label.inline {
         grid-template-columns: minmax(4.5rem, 40%) minmax(0, 1fr);
     }
 
+/* The module properties pane lays out its fields itself, so that its problems stay inside the pane. */
+.module-properties .property-grid {
+    display: grid;
+    gap: 0.35rem 0.6rem;
+    align-items: center;
+}
+
+.module-problems {
+    margin: 0.4rem 0;
+    padding-left: 1.2rem;
+}
+
 .pane {
     border: 1px solid var(--app-border);
     border-radius: 4px;
@@ -673,9 +695,25 @@ label.stacked {
         margin: 10mm;
     }
 
-    .app-header, .editor-layout, #update-available, #blazor-error-ui {
+    .app-header, .editor-layout:not(:has(.print-sheet)), #update-available, #blazor-error-ui {
         display: none !important;
     }
+
+    /* A module drawing's print sheet is inside the editor layout (an end profile's is beside it):
+       keep the layout, but print only the sheet. */
+    .editor-layout:has(.print-sheet) {
+        display: block;
+        height: auto;
+    }
+
+        .editor-layout:has(.print-sheet) .editor-canvas {
+            border: none;
+        }
+
+        .editor-layout:has(.print-sheet) .editor-side,
+        .editor-layout:has(.print-sheet) .editor-canvas > :not(.print-sheet) {
+            display: none !important;
+        }
 
     .app-main:has(.print-sheet) {
         padding: 0;

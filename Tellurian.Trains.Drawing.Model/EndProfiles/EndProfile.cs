@@ -15,6 +15,16 @@ public sealed record EndProfile
     /// <summary>The designation, e.g. "FREMO-H0-B96" or "MMM480" (Registry <c>ModuleEndProfile.Designation</c>).</summary>
     public required string Designation { get; init; }
 
+    /// <summary>
+    /// A short name, e.g. "B96", printed along the end plate in module drawings (ModuleDrawing §9);
+    /// null or empty uses <see cref="Designation"/>.
+    /// </summary>
+    public string? ShortName { get; init; }
+
+    /// <summary>The short name, or the designation when there is none.</summary>
+    [JsonIgnore]
+    public string ShortNameOrDesignation => string.IsNullOrWhiteSpace(ShortName) ? Designation : ShortName.Trim();
+
     /// <summary>The short name of the scale.</summary>
     public required string Scale { get; init; }
 

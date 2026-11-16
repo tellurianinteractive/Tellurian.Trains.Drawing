@@ -66,6 +66,14 @@ public sealed class BuiltInCatalogueTests
     }
 
     [TestMethod]
+    [DataRow("FREMO-H0-B96", "B96")]
+    [DataRow("FREMO-H0-B96f", "B96f")]
+    [DataRow("FREMO-H0-2E96", "2E96")]
+    [DataRow("MMM480", "MMM480")]
+    public void EndProfilesHaveShortNames(string designation, string shortName) =>
+        Assert.AreEqual(shortName, Profile(designation).ShortNameOrDesignation);
+
+    [TestMethod]
     public void SameSymmetricProfileFits() => Assert.AreEqual(JointFit.Fits, Fit("MMM480", "MMM480"));
 
     // B96 is a mountain profile: two ends fit only when one of them is built mirrored.
@@ -75,6 +83,63 @@ public sealed class BuiltInCatalogueTests
         var b96 = Profile("FREMO-H0-B96");
         Assert.AreEqual(JointFit.Fits, JointFitEvaluator.Evaluate(b96, ProfileOrientation.Normal, b96, ProfileOrientation.Mirrored).Fit);
         Assert.AreEqual(JointFit.FitsWithMismatch, JointFitEvaluator.Evaluate(b96, ProfileOrientation.Normal, b96, ProfileOrientation.Normal).Fit);
+    }
+
+    private static ModuleVariant Straight(string standard, string west, string east, bool isEndewender = false) =>
+        ModuleAutoDraw.Create(new()
+        {
+            Name = "Test",
+            Standard = standard,
+            Straight = 1000,
+            IsEndProfileSwitcher = isEndewender,
+            Exits =
+            [
+                new() { Label = "W", Direction = ExitDirection.West, EndProfile = west },
+                new() { Label = "E", Direction = ExitDirection.East, EndProfile = east },
+            ],
+        }, Catalogue).Module!.DefaultVariant;
+
+    private static JointFit Joint(ModuleExit a, ModuleExit b) =>
+        JointFitEvaluator.Evaluate(Profile(a.EndProfile.Name), a.Orientation, Profile(b.EndProfile.Name), b.Orientation, Catalogue.Overrides).Fit;
+
+    // ModuleDrawing §4.3: the far end of an asymmetric profile is mirrored, so the high side of B96 stays on
+    // the same side of the track and two such modules join without mismatch.
+    [TestMethod]
+    public void AutoDrawMirrorsAnAsymmetricProfileAtTheFarEnd()
+    {
+        var module = Straight("FREMO/H0-RE", "FREMO-H0-B96", "FREMO-H0-B96");
+        CollectionAssert.AreEqual(new[] { ProfileOrientation.Normal, ProfileOrientation.Mirrored }, module.Exits.Select(e => e.Orientation).ToArray());
+        Assert.AreEqual(JointFit.Fits, Joint(module.Exits[1], module.Exits[0]));
+    }
+
+    // An Endewender turns the profile over: the high side of B96 changes side, so the far end isn't mirrored.
+    [TestMethod]
+    public void EndewenderDoesNotMirrorTheFarEnd()
+    {
+        var module = Straight("FREMO/H0-RE", "FREMO-H0-B96", "FREMO-H0-B96", isEndewender: true);
+        Assert.IsTrue(module.Exits.All(e => e.Orientation == ProfileOrientation.Normal));
+        Assert.AreEqual(JointFit.FitsWithMismatch, Joint(module.Exits[1], module.Exits[0]));
+    }
+
+    [TestMethod]
+    public void AutoDrawDoesNotMirrorASymmetricProfile() =>
+        Assert.IsTrue(Straight("MMM-2R", "MMM480", "MMM480").Exits.All(e => e.Orientation == ProfileOrientation.Normal));
+
+    // A module may have end profiles of different standards, e.g. FREMO at one end and MMM at the other.
+    [TestMethod]
+    public void TemplateCanHaveAnEndProfileOfAnotherStandardAtEachEnd()
+    {
+        var result = new ModuleTemplate
+        {
+            Kind = ModuleTemplateKind.Straight,
+            Name = "Transition",
+            Standard = Catalogue.FindStandard("FREMO/H0-RE")!,
+            EndProfile = Profile("FREMO-H0-B96"),
+            SecondEndProfile = Profile("MMM480"),
+            Straight = 1000,
+        }.Create(Catalogue);
+        Assert.IsTrue(result.IsDrawn, string.Join("; ", result.Notes));
+        CollectionAssert.AreEqual(new[] { "FREMO-H0-B96", "MMM480" }, result.Module!.DefaultVariant.Exits.Select(e => e.EndProfile.Name).ToArray());
     }
 
     // Exit criterion of Phase 2: the built-in pairs are classified as expected.

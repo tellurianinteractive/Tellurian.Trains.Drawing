@@ -70,7 +70,7 @@ public static class EndProfileImport
     public static EndProfileChanges Changes(EndProfile existing, EndProfile imported)
     {
         var changes = EndProfileChanges.None;
-        if (!Same(existing.Designation, imported.Designation)) changes |= EndProfileChanges.Designation;
+        if (!Same(existing.Designation, imported.Designation) || !Same(existing.ShortNameOrDesignation, imported.ShortNameOrDesignation)) changes |= EndProfileChanges.Designation;
         if (!Same(existing.Scale, imported.Scale)) changes |= EndProfileChanges.Scale;
         if (!existing.Standards.Select(s => s.Id).ToHashSet().SetEquals(imported.Standards.Select(s => s.Id))) changes |= EndProfileChanges.Standards;
         if (EndProfileComparison.CompareTracks(existing.Tracks, imported.Tracks, Tolerance.Length) != FitDifferences.None) changes |= EndProfileChanges.Tracks;

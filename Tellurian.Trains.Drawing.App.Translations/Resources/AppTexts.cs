@@ -1,4 +1,4 @@
-namespace Tellurian.Trains.Drawing.App.Resources;
+namespace Tellurian.Trains.Drawing.App.Translations.Resources;
 
 /// <summary>
 /// Marker type for the AppTexts RESX files (ADR 0003). ResourceManager(Type) uses this type's full name

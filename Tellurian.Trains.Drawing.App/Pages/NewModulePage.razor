@@ -3,6 +3,7 @@
 @using Tellurian.Trains.Drawing.Model.AutoDraw
 @using Tellurian.Trains.Drawing.Model.Catalogue
 @using Tellurian.Trains.Drawing.Model.EndProfiles
+@using Tellurian.Trains.Drawing.Model.Modules
 @inject CatalogueService Catalogues
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
@@ -32,10 +33,27 @@ else
             }
         </fieldset>
 
-        <label>
-            <span>@T["Name"]</span>
-            <input id="name" @bind="form.Name" required />
-        </label>
+        <fieldset class="identification">
+            <legend>@T["ModuleIdentification"]</legend>
+            <small class="note">@T["ModuleIdentificationHelp"]</small>
+            <label>
+                <span>@T["OwnerPrefix"]</span>
+                <input id="ownerPrefix" @bind="form.OwnerPrefix" maxlength="10" autocomplete="off" />
+            </label>
+            <label>
+                <span>@T["FremoNumber"]</span>
+                <input id="fremoNumber" type="number" min="@ModuleValidation.MinFremoNumber" max="@ModuleValidation.MaxFremoNumber" step="1" @bind="form.FremoNumber" />
+            </label>
+            <label>
+                <span>@T["Name"]</span>
+                <input id="name" @bind="form.Name" />
+            </label>
+            <label>
+                <span>@T["OwnerName"]</span>
+                <input id="ownerName" @bind="form.OwnerName" autocomplete="off" />
+                <small class="note">@T["OwnerNameHelp"]</small>
+            </label>
+        </fieldset>
 
         <label>
             <span>@T["Standard"]</span>
@@ -48,14 +66,27 @@ else
         </label>
 
         <label>
-            <span>@T["EndProfile"]</span>
+            <span>@T["FirstEndProfile"]</span>
             <select id="endProfile" @bind="form.EndProfileId">
                 @foreach (var profile in EndProfiles)
                 {
-                    <option value="@profile.Id">@profile.Designation (@(profile.Tracks.Count == 1 ? T["OneTrack"] : T.Format("TrackCount", profile.Tracks.Count)))</option>
+                    <option value="@profile.Id">@ProfileText(profile)</option>
                 }
             </select>
         </label>
+
+        <label>
+            <span>@T["SecondEndProfile"]</span>
+            <select id="secondEndProfile" @bind="form.SecondEndProfileId">
+                <option value="@Guid.Empty">@T["SameEndProfile"]</option>
+                @foreach (var profile in EndProfilesOfScale)
+                {
+                    <option value="@profile.Id">@ProfileText(profile)</option>
+                }
+            </select>
+        </label>
+
+        <label class="inline"><input type="checkbox" id="endewender" @bind="form.IsEndewender" /> @T["IsEndewender"]</label>
 
         @if (form.Kind != ModuleTemplateKind.Curve)
         {
@@ -159,6 +190,15 @@ else
     private IEnumerable<EndProfile> EndProfiles =>
         catalogue is null ? [] : catalogue.EndProfilesOf(form.StandardId).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
 
+    /// <summary>End B may have an end profile of any standard of the same scale, e.g. FREMO at end A and MMM at end B.</summary>
+    private IEnumerable<EndProfile> EndProfilesOfScale =>
+        catalogue?.FindStandard(form.StandardId) is { } standard
+            ? catalogue.EndProfiles.Where(p => p.Scale == standard.Scale).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation)
+            : [];
+
+    private string ProfileText(EndProfile profile) =>
+        $"{profile.Designation} ({(profile.Tracks.Count == 1 ? T["OneTrack"] : T.Format("TrackCount", profile.Tracks.Count))})";
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -185,6 +225,7 @@ else
     {
         form.StandardId = standard.Id;
         form.EndProfileId = EndProfiles.FirstOrDefault()?.Id ?? Guid.Empty;
+        if (!EndProfilesOfScale.Any(p => p.Id == form.SecondEndProfileId)) form.SecondEndProfileId = Guid.Empty;
         form.Radius = standard.DefaultCurveRadius ?? Form.FallbackRadius;
     }
 
@@ -194,7 +235,7 @@ else
         errors = Validate().ToList();
         if (errors.Count > 0 || catalogue is null) return;
 
-        creating = form.Name.Trim();
+        creating = Model.Modules.Module.TitleOf(form.Name, form.OwnerPrefix, form.FremoNumber);
         StateHasChanged();
         // Drawing a module takes a while in the browser; let it show the wait message first.
         await Task.Delay(ShowMessageDelay);
@@ -214,8 +255,12 @@ else
         {
             Kind = form.Kind,
             Name = form.Name.Trim(),
+            FremoNumber = form.FremoNumber,
+            Owner = Owner(),
             Standard = catalogue.FindStandard(form.StandardId)!,
             EndProfile = catalogue.FindEndProfile(form.EndProfileId)!,
+            SecondEndProfile = catalogue.FindEndProfile(form.SecondEndProfileId),
+            IsEndProfileSwitcher = form.IsEndewender,
             Straight = form.Straight ?? 0,
             Radius = form.Radius ?? 0,
             Angle = form.Angle ?? 0,
@@ -245,7 +290,7 @@ else
 
     private IEnumerable<string> Validate()
     {
-        if (string.IsNullOrWhiteSpace(form.Name)) yield return T["NameRequired"];
+        foreach (var problem in ModuleValidation.Validate(form.Name, form.OwnerPrefix, form.FremoNumber)) yield return T[$"ModuleProblem_{problem.Code}"];
         if (catalogue?.FindEndProfile(form.EndProfileId) is null) yield return T["EndProfileRequired"];
         if (form.Kind != ModuleTemplateKind.Curve && form.Straight is not > 0) yield return T.Format("MustBePositive", T["StraightLength"]);
         if (form.Kind != ModuleTemplateKind.Straight)
@@ -256,14 +301,28 @@ else
         if (form.Width is <= 0) yield return T.Format("MustBePositive", T["Width"]);
     }
 
+    /// <summary>The owner as entered; null when neither the prefix nor the name is given.</summary>
+    private Owner? Owner() =>
+        string.IsNullOrWhiteSpace(form.OwnerPrefix) && string.IsNullOrWhiteSpace(form.OwnerName)
+            ? null
+            : new() { Name = form.OwnerName?.Trim() ?? string.Empty, Prefix = string.IsNullOrWhiteSpace(form.OwnerPrefix) ? null : form.OwnerPrefix.Trim() };
+
     private sealed class Form
     {
         public const double FallbackRadius = 2000;
 
         public ModuleTemplateKind Kind { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string? OwnerPrefix { get; set; }
+        public int? FremoNumber { get; set; }
+        public string? OwnerName { get; set; }
         public Guid StandardId { get; set; }
         public Guid EndProfileId { get; set; }
+
+        /// <summary><see cref="Guid.Empty"/>: the same as end A.</summary>
+        public Guid SecondEndProfileId { get; set; }
+
+        public bool IsEndewender { get; set; }
         public double? Straight { get; set; } = 1000;
         public double? Radius { get; set; } = FallbackRadius;
         public double? Angle { get; set; } = 30;

@@ -7,6 +7,7 @@ namespace Tellurian.Trains.Drawing.Geometry;
 public readonly record struct Angle(double Degrees)
 {
     public static Angle Zero => new(0);
+    public static Angle Quarter => new(90);
     public static Angle Half => new(180);
 
     public double Radians => Degrees * Math.PI / 180.0;

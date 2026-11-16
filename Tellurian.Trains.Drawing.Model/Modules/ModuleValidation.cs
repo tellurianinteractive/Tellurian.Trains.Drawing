@@ -1,0 +1,35 @@
+namespace Tellurian.Trains.Drawing.Model.Modules;
+
+/// <summary>
+/// Checks how a module is identified (MD-2). A module is identified either the FREMO way, by the owner's prefix and a
+/// module number (e.g. <c>SFjä 012</c>), or by a name, as in other standards and in some countries also for FREMO modules.
+/// So a FREMO number needs the first owner's prefix, and without a FREMO number the module needs a name.
+/// The owner's full name is optional; an upload to the Module Registry fills in what is missing.
+/// </summary>
+public static class ModuleValidation
+{
+    public const int MinFremoNumber = 1;
+    public const int MaxFremoNumber = 9999;
+
+    public static IReadOnlyList<ModuleProblem> Validate(Module module)
+    {
+        ArgumentNullException.ThrowIfNull(module);
+        return Validate(module.Name, module.Owners.Count > 0 ? module.Owners[0].Prefix : null, module.FremoNumber);
+    }
+
+    /// <summary>Validates the identifying properties as entered, before a module exists.</summary>
+    public static IReadOnlyList<ModuleProblem> Validate(string? name, string? prefix, int? fremoNumber)
+    {
+        var problems = new List<ModuleProblem>();
+        if (fremoNumber is { } number)
+        {
+            if (number is < MinFremoNumber or > MaxFremoNumber) problems.Add(new(ModuleProblemCode.FremoNumberOutOfRange, nameof(Module.FremoNumber)));
+            if (string.IsNullOrWhiteSpace(prefix)) problems.Add(new(ModuleProblemCode.PrefixMissing, nameof(Owner.Prefix)));
+        }
+        else if (string.IsNullOrWhiteSpace(name))
+        {
+            problems.Add(new(ModuleProblemCode.NameMissing, nameof(Module.Name)));
+        }
+        return problems;
+    }
+}

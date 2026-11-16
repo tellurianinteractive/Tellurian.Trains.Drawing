@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Resources;
 using System.Text.RegularExpressions;
 using Tellurian.Trains.Drawing.App.Catalogue;
-using Tellurian.Trains.Drawing.App.Resources;
+using Tellurian.Trains.Drawing.App.Translations.Resources;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
@@ -18,20 +18,10 @@ public sealed partial class AppTextsTests
     [GeneratedRegex("""T(?:\.Format\()?\[?\(?"(?<key>[A-Za-z_]+)"[\],]""")]
     private static partial Regex TextKey();
 
-    private static string AppDirectory
-    {
-        get
-        {
-            var directory = new DirectoryInfo(AppContext.BaseDirectory);
-            while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Tellurian.Trains.Drawing.slnx"))) directory = directory.Parent;
-            return Path.Combine(directory?.FullName ?? throw new DirectoryNotFoundException("The repository root wasn't found."), "Tellurian.Trains.Drawing.App");
-        }
-    }
-
     [TestMethod]
     public void EveryTextUsedInMarkupExistsInEnglish()
     {
-        var keys = Directory.GetFiles(AppDirectory, "*.razor", SearchOption.AllDirectories)
+        var keys = Directory.GetFiles(RepositoryPaths.App, "*.razor", SearchOption.AllDirectories)
             .SelectMany(f => TextKey().Matches(File.ReadAllText(f)).Select(m => (File: Path.GetFileName(f), Key: m.Groups["key"].Value)))
             .ToList();
         Assert.IsNotEmpty(keys);
@@ -93,7 +83,7 @@ public sealed partial class AppTextsTests
         Assert.AreEqual(expected, Resources.GetString("Drafts", CultureInfo.GetCultureInfo(culture)));
 
     private static Dictionary<string, string> ReadResx(string fileName) =>
-        System.Xml.Linq.XDocument.Load(Path.Combine(AppDirectory, "Resources", fileName)).Root!.Elements("data")
+        System.Xml.Linq.XDocument.Load(Path.Combine(RepositoryPaths.Translations, "Resources", fileName)).Root!.Elements("data")
             .ToDictionary(d => (string)d.Attribute("name")!, d => (string)d.Element("value")!);
 
     private static string[] Placeholders(string text) => [.. Regex.Matches(text, @"\{\d+\}").Select(m => m.Value).Order()];

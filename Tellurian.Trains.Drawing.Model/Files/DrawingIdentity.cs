@@ -23,11 +23,12 @@ public sealed record DrawingIdentity(DrawingFileKind Kind, Guid? Id, string Name
             return header.Kind switch
             {
                 DrawingFileKind.Catalogue => new(header.Kind, null, Text(content, "version") ?? string.Empty, 0),
+                DrawingFileKind.Module => new(header.Kind, ReadId(drawing), ModuleTitle(drawing), ReadRevision(drawing)),
                 _ => new(
                     header.Kind,
                     ReadId(drawing),
                     Text(drawing, header.Kind == DrawingFileKind.EndProfile ? "designation" : "name") ?? string.Empty,
-                    (int?)drawing?["revision"] ?? 0),
+                    ReadRevision(drawing)),
             };
         }
         catch (Exception ex) when (ex is InvalidOperationException or FormatException or JsonException)
@@ -38,6 +39,12 @@ public sealed record DrawingIdentity(DrawingFileKind Kind, Guid? Id, string Name
 
     private static Guid? ReadId(JsonObject? drawing) =>
         Text(drawing, "id") is { } id ? Guid.Parse(id) : null;
+
+    private static int ReadRevision(JsonObject? drawing) => (int?)drawing?["revision"] ?? 0;
+
+    /// <summary>The module's <see cref="Modules.Module.Title"/>: the FREMO designation and the name.</summary>
+    private static string ModuleTitle(JsonObject? module) =>
+        Modules.Module.TitleOf(Text(module, "name"), Text((module?["owners"] as JsonArray)?.FirstOrDefault() as JsonObject, "prefix"), (int?)module?["fremoNumber"]);
 
     private static string? Text(JsonObject? node, string name) => (string?)node?[name];
 }

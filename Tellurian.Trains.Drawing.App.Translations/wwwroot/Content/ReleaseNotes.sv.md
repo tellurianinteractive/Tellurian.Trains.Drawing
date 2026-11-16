@@ -1,5 +1,14 @@
 # Versionsinformation
 
+## Version 0.6.0
+Utgiven 2026-11-16
+- Ny modul: ände B kan ha en annan ändprofil än ände A, även av en annan standard i samma skala, till exempel FREMO i ena änden och MMM i den andra. Markera modulen som ändevändare när en osymmetrisk ändprofil byter sida. En osymmetrisk ändprofil, som FREMO-H0-B96, speglas nu i ände B, så att den höga sidan stannar på samma sida om spåret och två sådana moduler passar utan avvikelser.
+- Modulritningar visar typen av ändprofil som DWG- och SKP-ritningar gör: ändprofilens form viks in i modulen vid varje ände, mörk där profilen ligger över rälsöverkant och ljus där den ligger under. Ändprofilens namn står längs varje ände, inne i modulen. Ändarnas beteckningar och pilar ritas inte längre.
+- Ändprofiler har ett kortnamn, till exempel *B96*, som visas i modulritningar. Utan kortnamn visas beteckningen. De inbyggda FREMO-ändprofilerna har kortnamnen *B96*, *B96f* och *2E96*.
+- Modulritningar fyller fönstret, med filåtgärderna bredvid, och kan skrivas ut: *Skriv ut* skriver ut ritningen ensam med modulens namn, anpassad till en liggande sida.
+- En modul identifieras med ägarens FREMO-prefix och ett FREMO-nummer, till exempel *SFjä 012*, med ett namn eller med båda. Ett FREMO-nummer kräver prefixet; utan nummer behöver modulen ett namn. Ägarens fullständiga namn kan också anges; ägaren kan vara någon annan än du. Ange dem i *Ny modul* och ändra dem i rutan *Egenskaper* bredvid modulritningen. Appen visar FREMO-beteckningen tillsammans med namnet.
+- Modulens FREMO-beteckning, till exempel *SFjä 7900*, eller annars dess namn, står på modulen, med ägarens namn i mindre text under. Texten går längs spåret, centrerad mellan ändarna, ovanför spåret som du läser den.
+
 ## Version 0.5.0
 Utgiven 2026-11-15
 - Ritningar sparas som vanliga JSON-filer, namngivna efter sin typ, till exempel *Station Nord.module.json* eller *FREMO-H0-B96.endprofile.json*. De öppnas i vilken JSON-redigerare som helst. Filer som sparats med de tidigare filändelserna (.tdmodule, .tdendprofile och så vidare) går fortfarande att öppna.

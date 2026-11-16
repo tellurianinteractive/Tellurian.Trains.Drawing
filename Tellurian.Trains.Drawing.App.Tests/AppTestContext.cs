@@ -1,13 +1,16 @@
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using Tellurian.Localization;
 using Tellurian.Localization.DependencyInjection;
+using Tellurian.Localization.Implementatioms;
 using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Files;
-using Tellurian.Trains.Drawing.App.Resources;
 using Tellurian.Trains.Drawing.App.Storage;
 using Tellurian.Trains.Drawing.App.Tests.Fakes;
+using Tellurian.Trains.Drawing.App.Translations;
+using Tellurian.Trains.Drawing.App.Translations.Resources;
 
 namespace Tellurian.Trains.Drawing.App.Tests;
 
@@ -20,6 +23,9 @@ internal sealed class AppTestContext : BunitContext
         Services.AddLanguageService(AppLanguages.All);
         Services.AddResxResourceProviders([typeof(AppTexts)]);
         Services.AddSingleton<Texts>();
+        // The app fetches the Markdown documents over HTTP; the tests read the same files from the source folder.
+        Services.AddKeyedSingleton<IResourceProvider>(ContentDocuments.MarkdownProvider, new MarkdownResourceProvider(RepositoryPaths.Content, AppLanguages.Neutral));
+        Services.AddScoped<ContentDocuments>();
         Services.AddSingleton<TimeProvider>(Time);
         Services.AddSingleton<IWorkbench>(Workbench);
         Services.AddSingleton<IFileService>(Files);

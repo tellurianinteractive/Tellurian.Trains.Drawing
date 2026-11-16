@@ -34,15 +34,15 @@ public sealed class InformationPageTests
     }
 
     [TestMethod]
-    public void InformationHasGeneralAndBrowserSupportSections()
+    public void InformationHasGeneralAndBrowserSupportSectionsFromItsMarkdownDocument()
     {
         using var context = new AppTestContext();
         var page = context.Render<InformationPage>();
 
-        CollectionAssert.AreEqual(new[] { "General", "Browser support" }, page.FindAll("h2").Select(h => h.TextContent).ToArray());
-        var browsers = page.Find("#browser-support").TextContent;
-        StringAssert.Contains(browsers, "Chromium-based");
-        StringAssert.Contains(browsers, "Firefox and Safari");
+        page.WaitForAssertion(() => CollectionAssert.AreEqual(new[] { "General", "Browser support" }, page.FindAll("h2").Select(h => h.TextContent).ToArray()));
+        var text = page.Find(".information").TextContent;
+        StringAssert.Contains(text, "Chromium-based");
+        StringAssert.Contains(text, "Firefox and Safari");
     }
 
     [TestMethod]

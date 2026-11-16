@@ -53,8 +53,8 @@ Two warnings help the user:
 |---|---|
 | Label | E.g. "A", "B", or "West 1" (Registry *ModuleExit.Label*). |
 | Direction | *West*, *East* or *Undefined*. Convention from the Registry: stand at the operation place with the module to the north; West is on your left and East on your right. |
-| End profile | Must belong to the module's standard (MD-5). |
-| Profile orientation | *Normal* / *Mirrored* (asymmetric profiles only). |
+| End profile | Each exit has its own. It must be of the module's scale, but may belong to another standard than the module's, e.g. FREMO at one end and MMM at the other (MD-5). |
+| Profile orientation | *Normal* (as drawn) / *Mirrored*. The end plate can be fitted either side out; the orientation only matters for asymmetric profiles (§4.3). |
 | Pose | The centre point of the end plate on its joint face, plus a heading pointing out of the module. |
 | Rail-top offset | 0 = the standard's rail-top height (ramp modules only). |
 
@@ -62,7 +62,25 @@ Two warnings help the user:
 - An **end plate** is a straight edge through the exit's position, perpendicular to its heading. Its length is the **plate width of the end profile**.
 - It has two **corners**: the *left corner* and the *right corner*, as seen standing outside the module and looking at the end plate. This matches the end view in the profile drawing.
 - The **track positions** at the end plate come from the end profile's track offsets (spec §3.1, end view X axis = the exit's lateral axis).
-- End plates are drawn with a thicker line than the sides, and the end profile designation is written along them.
+- End plates are drawn with a thicker line than the sides, and the end profile's short name is written along them, inside the module (§9).
+
+### 4.3 Profile orientation and the Endewender
+An end profile is drawn in end view, seen from outside the module. An exit builds it either **as drawn**
+(*Normal*) or **mirrored**: the end plate, often 10–12 mm plywood, can be fitted either side out.
+For a symmetric profile the two are the same.
+
+For an **asymmetric** profile, such as the high side of FREMO-H0-B96, the orientation decides on which side
+of the track the asymmetric feature is. The two ends of a module are seen from opposite directions, so the
+feature stays on the **same side of the track** when one end is *Normal* and the other *Mirrored*. Then two
+such modules join without mismatch (spec §3.2).
+
+An **Endewender** (Registry flag *IsEndProfileSwitcher*, Swedish *ändevändare*) turns the profile over: the
+feature is on one side of the track at one end and on the other side at the other end, so both ends have the
+same orientation. Endewenders are needed to make a line of asymmetric modules continue the other way round.
+
+Auto-draw sets the orientation accordingly: the first exit is *Normal*; exits at the far end of the main path
+are *Mirrored* when their profile is asymmetric, unless the module is an Endewender. The user can change the
+orientation of any exit.
 
 ## 5. Outline: end plates and sides
 
@@ -192,6 +210,7 @@ The parameters map one-to-one to Module Registry data. The ones marked *new* are
 | Exits (label, direction, end profile) | *ModuleExit* rows; exits with the *Internal* profile become internal joints | inferred when missing (§8.6) |
 | End of line | *Module.IsEndOfLine* | from the number of exits |
 | Duck-under | *Module.IsDuckunder* | false |
+| Endewender | *Module.IsEndProfileSwitcher* | false; decides the orientation of asymmetric profiles at the far exits (§4.3) |
 | Operation place | the module is the *Station.PrimaryModule* | false |
 | *new* **Curve direction** | – | **Left**, seen travelling from the first exit to the second |
 | *new* **Straight position** | – | **Before** the curve, seen from the first exit (alternatives: *after*, *split equally*) |
@@ -263,17 +282,35 @@ The app supports this by including the **derived values** in the module file (pe
 | Element | Style |
 |---|---|
 | Baseboard | Light grey fill, dark grey outline, 1 px (screen). |
-| End plate | Dark outline, 3 px. Profile designation along the plate. |
+| End plate | Dark outline, 3 px. |
 | Section line | Dashed dark grey. |
 | Track | The standard's colour (default blue `#1f5fbf`). A band at low zoom, rails at high zoom. |
 | Operator space | Hatched, neutral (e.g. grey-green), transparent. |
 | Public side | A thick dotted edge in a distinct colour, with an "eye" symbol. |
 | Duck-under area | Diagonal cross-hatch, with a "duck-under" symbol. |
-| Exit marker | The label plus a W/E arrow outside the end plate. |
+| End profile shading | The form of the end profile, folded into the module from each end plate: dark where the profile is above rail top and light where it is below (§9.1). |
+| End profile name | The end profile's **short name** (its designation if it has none), in bold, turned 90° to run along the end plate, just inside the module beyond the shading. |
+| Exit label | Not drawn: real modules aren't marked with exit labels. The label is still data, used by hall plans. Nothing is drawn outside the module's area. |
 | Auto-drawn parts | Shown normally. A small "auto" badge appears in the property panel, not in the drawing. |
 
 The colours are design tokens with dark-mode variants (spec AP-5). In hall plans the same styles
 apply. Joint fit markers (spec HP-11) are drawn on top.
+
+### 9.1 End profile shading
+The kind of end profile is shown in plan view the way DWG and SKP module drawings do it. The
+profile's upper edge is **folded into the module** about the end plate: a point of the edge at height
+*y* above or below rail top is drawn |*y*| inwards from the plate, at its lateral position. The area
+between the plate and the folded edge is filled
+- **dark** where the edge is **above rail top**, e.g. the mountain side of FREMO-H0-B96;
+- **light** where it is **below rail top**, e.g. the ballast shoulders and a low side.
+
+So the shading has the form of the profile, at true size. The upper edge is the profile's ground line,
+or the top of the plate outline when there is no ground line. The profile is taken as built at the
+exit, so a mirrored exit shows mirrored shading. Where the edge crosses rail top, dark and light meet
+at the plate.
+
+In the app, the drawing uses the end profiles as they are in the catalogue, so a changed short name
+shows at once; profiles that aren't in the catalogue are taken from the module file.
 
 ## 10. Validation inside a module drawing
 
@@ -281,7 +318,7 @@ apply. Joint fit markers (spec HP-11) are drawn on top.
 |---|---|
 | A variant without exits | Warning |
 | The End-of-line flag doesn't match the number of exits | Warning |
-| An exit's end profile doesn't belong to the module's standard | Warning |
+| An exit's end profile is of another scale than the module | Error |
 | A track ends at an exit off a profile track position, or a profile track position has no track | Warning (MD-7) |
 | A custom side crosses itself or another side (the outline isn't simple) | Error |
 | The derived length, width or angle differs from the entered Registry values | Warning (MD-10) |

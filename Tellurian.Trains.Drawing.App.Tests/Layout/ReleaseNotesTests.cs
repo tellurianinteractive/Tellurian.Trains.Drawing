@@ -2,8 +2,9 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
-using Tellurian.Trains.Drawing.App.Help;
+using Microsoft.Extensions.DependencyInjection;
 using Tellurian.Trains.Drawing.App.Layout;
+using Tellurian.Trains.Drawing.App.Translations;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Layout;
 
@@ -25,10 +26,10 @@ public sealed class ReleaseNotesTests
         Assert.IsNotNull(button.QuerySelector("i.fa-bullhorn"));
         button.Click();
 
+        layout.WaitForAssertion(() => Assert.IsNotEmpty(layout.FindAll(".release-notes li")));
         var notes = layout.Find(".modal-panel.release-notes");
         Assert.AreEqual("Release notes", notes.QuerySelector("h1")!.TextContent);
         Assert.AreEqual($"Release {AppVersion.Current}", notes.QuerySelector("h2")!.TextContent);
-        Assert.IsNotEmpty(notes.QuerySelectorAll("li"));
 
         layout.Find(".modal-panel .close").Click();
         Assert.IsEmpty(layout.FindAll(".release-notes"));
@@ -40,14 +41,14 @@ public sealed class ReleaseNotesTests
         using var context = new AppTestContext();
         var layout = RenderLayout(context);
         layout.Find("#release-notes-button").Click();
-        layout.Find(".modal-backdrop").Click();
+        layout.WaitForElement(".modal-backdrop").Click();
         Assert.IsEmpty(layout.FindAll(".release-notes"));
     }
 
     [TestMethod]
-    public void MarkdownIsConvertedToHtmlWithoutItsTitle()
+    public async Task MarkdownIsConvertedToHtmlWithoutItsTitle()
     {
-        var html = MarkdownDocuments.Html(MarkdownDocuments.ReleaseNotes);
+        var html = await Html(ContentDocuments.ReleaseNotes, "en");
 
         StringAssert.Contains(html, "<strong>Module Draw</strong>");
         Assert.DoesNotContain("Release Notes</h1>", html);
@@ -55,31 +56,54 @@ public sealed class ReleaseNotesTests
     }
 
     [TestMethod]
-    public void AMissingDocumentThrows() =>
-        Assert.ThrowsExactly<FileNotFoundException>(() => MarkdownDocuments.Html("MISSING.md"));
+    public async Task AMissingDocumentIsEmpty() =>
+        Assert.AreEqual("", await Html("Missing", "en"));
 
     /// <summary>Release notes are translated into every UI language (CLAUDE.md): same versions and dates as the English notes.</summary>
     [TestMethod]
     public void ReleaseNotesAreTranslatedIntoEveryLanguage()
     {
-        var english = Releases(MarkdownDocuments.Markdown(MarkdownDocuments.ReleaseNotes));
+        var english = Releases(File.ReadAllText(ContentFile(ContentDocuments.ReleaseNotes, AppLanguages.Neutral)));
         Assert.IsNotEmpty(english);
         foreach (var language in AppLanguages.All.Where(l => l.TwoLetterCode != AppLanguages.Neutral))
         {
-            var name = MarkdownDocuments.TranslatedName(MarkdownDocuments.ReleaseNotes, language.TwoLetterCode);
-            Assert.IsTrue(MarkdownDocuments.Exists(name), $"{name} is missing.");
-            CollectionAssert.AreEqual(english, Releases(MarkdownDocuments.Markdown(name)), $"{name} must have the same releases and dates as RELEASENOTES.md.");
+            var path = ContentFile(ContentDocuments.ReleaseNotes, language.TwoLetterCode);
+            Assert.IsTrue(File.Exists(path), $"{Path.GetFileName(path)} is missing.");
+            CollectionAssert.AreEqual(english, Releases(File.ReadAllText(path)), $"{Path.GetFileName(path)} must have the same releases and dates as ReleaseNotes.md.");
         }
     }
 
+    /// <summary>Every longer text is written in English and translated into every other UI language.</summary>
     [TestMethod]
-    public void ReleaseNotesAreShownInTheUiLanguageWithEnglishAsFallback()
+    public void EveryContentDocumentIsTranslatedIntoEveryLanguage()
     {
-        Assert.AreEqual("RELEASENOTES.sv.md", MarkdownDocuments.ResourceName(MarkdownDocuments.ReleaseNotes, CultureInfo.GetCultureInfo("sv-SE")));
-        Assert.AreEqual("RELEASENOTES.md", MarkdownDocuments.ResourceName(MarkdownDocuments.ReleaseNotes, CultureInfo.GetCultureInfo("en")));
-        Assert.AreEqual("RELEASENOTES.md", MarkdownDocuments.ResourceName(MarkdownDocuments.ReleaseNotes, CultureInfo.GetCultureInfo("fr")));
-        StringAssert.Contains(MarkdownDocuments.Html(MarkdownDocuments.ReleaseNotes, CultureInfo.GetCultureInfo("de-DE")), "Version 0.1.0");
+        var documents = Directory.GetFiles(RepositoryPaths.Content, "*.md", SearchOption.AllDirectories)
+            .Select(f => Path.GetRelativePath(RepositoryPaths.Content, f).Split('.')[0])
+            .Distinct()
+            .ToList();
+        CollectionAssert.IsSubsetOf(new[] { ContentDocuments.Information, ContentDocuments.ReleaseNotes }, documents);
+        foreach (var document in documents)
+            foreach (var language in AppLanguages.All)
+                Assert.IsTrue(File.Exists(ContentFile(document, language.TwoLetterCode)), $"{document} has no {language.TwoLetterCode} translation.");
     }
+
+    [TestMethod]
+    public async Task ReleaseNotesAreShownInTheUiLanguageWithEnglishAsFallback()
+    {
+        StringAssert.Contains(await Html(ContentDocuments.ReleaseNotes, "de-DE"), "Version 0.1.0");
+        StringAssert.Contains(await Html(ContentDocuments.ReleaseNotes, "sv-SE"), "Utgiven");
+        StringAssert.Contains(await Html(ContentDocuments.ReleaseNotes, "fr"), "Release 0.1.0");
+    }
+
+    private static async Task<string> Html(string document, string culture)
+    {
+        using var context = new AppTestContext();
+        return await context.Services.GetRequiredService<ContentDocuments>().HtmlAsync(document, CultureInfo.GetCultureInfo(culture));
+    }
+
+    /// <summary>The source file of a document, e.g. <c>ReleaseNotes.md</c> in English and <c>ReleaseNotes.sv.md</c> in Swedish.</summary>
+    private static string ContentFile(string document, string language) =>
+        Path.Combine(RepositoryPaths.Content, language == AppLanguages.Neutral ? $"{document}.md" : $"{document}.{language}.md");
 
     /// <summary>Each release as "version date", from its level-two heading and the date that follows.</summary>
     private static string[] Releases(string markdown) =>

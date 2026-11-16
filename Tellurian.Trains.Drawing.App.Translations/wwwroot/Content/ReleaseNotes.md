@@ -1,5 +1,14 @@
 # Release Notes
 
+## Release 0.6.0
+Released 2026-11-16
+- New module: end B can have another end profile than end A, also of another standard of the same scale, e.g. FREMO at one end and MMM at the other. Mark the module as an Endewender when an asymmetric end profile changes side. An asymmetric end profile, such as FREMO-H0-B96, is now mirrored at end B, so that its high side stays on the same side of the track and two such modules fit without mismatch.
+- Module drawings show the kind of end profile the way DWG and SKP drawings do: the form of the end profile is folded into the module at each end, dark where the profile is above rail top and light where it is below. The end profile's name is written along each end, inside the module. Exit labels and arrows are no longer drawn.
+- End profiles have a short name, e.g. *B96*, shown in module drawings. Without one, the designation is shown. The built-in FREMO end profiles have the short names *B96*, *B96f* and *2E96*.
+- Module drawings fill the window, with the file actions beside them, and can be printed: *Print* prints the drawing alone with the module's name, fitted to a landscape page.
+- A module is identified by the owner's FREMO prefix and a FREMO number, e.g. *SFjä 012*, by a name, or by both. A FREMO number needs the prefix; without one, the module needs a name. The owner's full name can be given too; it may be someone other than you. Enter them in *New module*, and change them in the *Properties* pane beside the module drawing. The app shows the FREMO designation with the name.
+- The module's FREMO designation, e.g. *SFjä 7900*, or else its name, is written on the module, with the owner's name in smaller text under it. It runs along the track, centred between the ends, above the track as you read it.
+
 ## Release 0.5.0
 Released 2026-11-15
 - Drawings are saved as plain JSON files, named after the kind, e.g. *Station Nord.module.json* or *FREMO-H0-B96.endprofile.json*. They open in any JSON editor. Files saved with the earlier extensions (.tdmodule, .tdendprofile and so on) still open.

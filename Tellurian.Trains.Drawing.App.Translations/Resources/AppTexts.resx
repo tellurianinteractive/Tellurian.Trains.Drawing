@@ -47,6 +47,10 @@
   <data name="Name" xml:space="preserve"><value>Name</value></data>
   <data name="Standard" xml:space="preserve"><value>Standard</value></data>
   <data name="EndProfile" xml:space="preserve"><value>End profile</value></data>
+  <data name="FirstEndProfile" xml:space="preserve"><value>End profile at end A</value></data>
+  <data name="SecondEndProfile" xml:space="preserve"><value>End profile at end B</value></data>
+  <data name="SameEndProfile" xml:space="preserve"><value>Same as end A</value></data>
+  <data name="IsEndewender" xml:space="preserve"><value>Endewender (the asymmetric end profile changes side)</value></data>
   <data name="OneTrack" xml:space="preserve"><value>1 track</value></data>
   <data name="TrackCount" xml:space="preserve"><value>{0} tracks</value></data>
   <data name="StraightLength" xml:space="preserve"><value>Straight length (mm)</value></data>
@@ -66,7 +70,15 @@
   <data name="NotDrawn" xml:space="preserve"><value>The module couldn't be drawn:</value></data>
   <data name="DrawnWithNotes" xml:space="preserve"><value>The module was drawn. Check these notes:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Open the drawing</value></data>
-  <data name="NameRequired" xml:space="preserve"><value>Enter a name.</value></data>
+  <data name="ModuleIdentification" xml:space="preserve"><value>Identification</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO modules are identified by the owner's prefix and a number, e.g. SFjä 012. Other modules have a name. Give a FREMO number with the prefix, a name, or both.</value></data>
+  <data name="OwnerPrefix" xml:space="preserve"><value>Owner's FREMO prefix</value></data>
+  <data name="FremoNumber" xml:space="preserve"><value>FREMO module number</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Owner's full name</value></data>
+  <data name="OwnerNameHelp" xml:space="preserve"><value>Optional; the owner may be someone other than you. Uploading to the Module Registry fills in what is missing.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Enter a name, or a FREMO number with the owner's prefix.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Enter the owner's FREMO prefix with the FREMO number.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>The FREMO number must be 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Choose an end profile.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
@@ -201,6 +213,7 @@
   <data name="NewEndProfileTitle" xml:space="preserve"><value>New end profile</value></data>
   <data name="NewEndProfileIntro" xml:space="preserve"><value>Start from a rectangular end plate with tracks; then draw the outline, ground line and screw holes in the editor.</value></data>
   <data name="Designation" xml:space="preserve"><value>Designation</value></data>
+  <data name="EndProfileShortName" xml:space="preserve"><value>Short name</value></data>
   <data name="PlateWidth" xml:space="preserve"><value>Plate width (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Top edge below rail top (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Bottom edge below rail top (mm)</value></data>
@@ -275,10 +288,6 @@
   <data name="Print" xml:space="preserve"><value>Print</value></data>
   <data name="CreatingModule" xml:space="preserve"><value>Please wait. Creating module {0}…</value></data>
   <data name="InformationTitle" xml:space="preserve"><value>Welcome to Module Draw</value></data>
-  <data name="InformationIntro" xml:space="preserve"><value>Module Draw is for drawing model railway end profiles, modules and hall plans for module meetings.</value></data>
-  <data name="InformationPreRelease" xml:space="preserve"><value>This is a pre-release for trying out. You can draw end profiles and create modules from templates. Editing modules, halls and hall plans comes later.</value></data>
-  <data name="InformationStorage" xml:space="preserve"><value>Drafts are saved automatically in this browser while you work. Save your drawings to files to keep them and to share them.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Use a desktop computer with a Chromium-based browser, such as Chrome, Edge, Brave, Vivaldi or Opera, or Chromium on Linux. In these browsers Module Draw opens and saves your files directly.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Get started</value></data>
   <data name="ReleaseNotes" xml:space="preserve"><value>Release notes</value></data>
   <data name="Override" xml:space="preserve"><value>Compatibility override</value></data>
@@ -286,10 +295,6 @@
   <data name="NoProblems" xml:space="preserve"><value>No problems found.</value></data>
   <data name="Close" xml:space="preserve"><value>Close</value></data>
   <data name="UnknownEndProfile" xml:space="preserve"><value>unknown end profile</value></data>
-  <data name="InformationGeneral" xml:space="preserve"><value>General</value></data>
-  <data name="InformationBrowserSupport" xml:space="preserve"><value>Browser support</value></data>
-  <data name="InformationOffline" xml:space="preserve"><value>Module Draw works offline and can be installed as an app.</value></data>
-  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox and Safari work too, with limitations: they can't save straight back to the file you opened, so saving is a download. Depending on the browser's settings, the file goes to your downloads folder or you choose where to save it; choose the original file to replace it. Recent files and folders must be picked again to be opened.</value></data>
   <data name="Settings" xml:space="preserve"><value>Settings</value></data>
   <data name="Field_UserName" xml:space="preserve"><value>User name</value></data>
   <data name="UserNameHelp" xml:space="preserve"><value>Recorded with the date in the revision log of each drawing you save, to show who made changes.</value></data>

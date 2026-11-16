@@ -25,6 +25,16 @@ public sealed class ModuleTemplateTests
         ModuleMeasurement.Derive(result.Module!.DefaultVariant, Catalogue.FindEndProfile);
 
     [TestMethod]
+    public void TemplateKeepsTheFremoNumberAndTheOwner()
+    {
+        var owner = new Modules.Owner { Name = "Stefan Fjällemark", Prefix = "SFjä" };
+        var module = (Template(ModuleTemplateKind.Straight) with { Name = "", FremoNumber = 12, Owner = owner }).Create(Catalogue).Module!;
+        Assert.AreEqual(12, module.FremoNumber);
+        Assert.AreEqual(owner, module.Owners.Single());
+        Assert.AreEqual("SFjä 012", module.Title);
+    }
+
+    [TestMethod]
     public void StraightTemplateHasTwoExitsAndTheGivenLength()
     {
         var result = Template(ModuleTemplateKind.Straight).Create(Catalogue);

@@ -1,7 +1,7 @@
 @using Tellurian.Trains.Drawing.Geometry
 
 @* Text in world coordinates, upright although the world group is flipped (Y up). The size is in millimetres. *@
-<text class="@Class" transform="@Transform" font-size="@SvgPath.Number(Size)" font-family="system-ui, sans-serif" fill="@Fill" text-anchor="@Anchor" dominant-baseline="@Baseline">@Text</text>
+<text class="@Class" transform="@Transform" font-size="@SvgPath.Number(Size)" font-family="system-ui, sans-serif" font-weight="@FontWeight" fill="@Fill" text-anchor="@Anchor" dominant-baseline="@Baseline">@Text</text>
 
 @code {
     [Parameter, EditorRequired] public Point At { get; set; }
@@ -20,6 +20,9 @@
     [Parameter] public string Baseline { get; set; } = "middle";
 
     [Parameter] public string? Class { get; set; }
+
+    /// <summary>E.g. "bold"; null leaves it to the host's CSS.</summary>
+    [Parameter] public string? FontWeight { get; set; }
 
     /// <summary>
     /// The text colour, as a presentation attribute: scoped CSS of the view doesn't reach this component's

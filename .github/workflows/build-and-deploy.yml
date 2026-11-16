@@ -32,6 +32,8 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   SWA_NAME: tellurian-trains-drawing
   SWA_RESOURCE_GROUP: Tellurian.Trains
+  # The English release notes, kept with all the app's other texts in the Translations project.
+  RELEASE_NOTES: Tellurian.Trains.Drawing.App.Translations/wwwroot/Content/ReleaseNotes.md
 
 jobs:
   build:
@@ -81,19 +83,19 @@ jobs:
             echo "deploy=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # Every release has a section with its date and at least one bullet in RELEASENOTES.md
+      # Every release has a section with its date and at least one bullet in the release notes
       # (changes that affect users or security, otherwise "- Maintenance update.").
       - name: Check release notes
         if: steps.version.outputs.deploy == 'true'
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          tr -d '\r' < RELEASENOTES.md | awk -v heading="## Release $VERSION" '
+          tr -d '\r' < "$RELEASE_NOTES" | awk -v heading="## Release $VERSION" '
             found == 2 { if ($0 ~ /^- /) ok = 1; exit }
             found == 1 { if ($0 ~ /^Released [0-9]{4}-[0-9]{2}-[0-9]{2}$/) found = 2; else exit; next }
             $0 == heading { found = 1 }
             END { exit ok ? 0 : 1 }
-          ' || { echo "::error::RELEASENOTES.md needs a section '## Release $VERSION', then 'Released yyyy-MM-dd', then at least one bullet (e.g. '- Maintenance update.')."; exit 1; }
+          ' || { echo "::error::$RELEASE_NOTES needs a section '## Release $VERSION', then 'Released yyyy-MM-dd', then at least one bullet (e.g. '- Maintenance update.')."; exit 1; }
 
       # Published on every run, so that the AOT build is verified for every change.
       - name: Publish (AOT)
@@ -197,7 +199,7 @@ jobs:
     env:
       VERSION: ${{ needs.build.outputs.version }}
     steps:
-      - uses: actions/checkout@v7 # For RELEASENOTES.md.
+      - uses: actions/checkout@v7 # For the release notes.
 
       - uses: actions/download-artifact@v8
         with:
@@ -235,7 +237,7 @@ jobs:
             $0 == heading { found = 1; next }
             found && /^## / { exit }
             found && !/^Released / { print }
-          ' <(tr -d '\r' < RELEASENOTES.md) > release-notes.md
+          ' <(tr -d '\r' < "$RELEASE_NOTES") > release-notes.md
           if [ ! -s release-notes.md ]; then echo "- Maintenance update." > release-notes.md; fi
           if gh release view "v$VERSION" > /dev/null 2>&1; then
             echo "Release v$VERSION already exists (forced redeploy)."
