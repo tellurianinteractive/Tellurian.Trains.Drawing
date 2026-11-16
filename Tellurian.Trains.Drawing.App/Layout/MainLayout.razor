@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@using Tellurian.Trains.Drawing.App.Help
+@inject ContentDocuments Content
 
 <header class="app-header">
     <span class="app-title">
@@ -22,7 +22,7 @@
         <article class="modal-panel release-notes" role="dialog" aria-labelledby="release-notes-title" @onclick:stopPropagation>
             <button type="button" class="close" title="@T["Close"]" aria-label="@T["Close"]" @onclick="ToggleReleaseNotes"><i class="fa-solid fa-xmark"></i></button>
             <h1 id="release-notes-title">@T["ReleaseNotes"]</h1>
-            @((MarkupString)MarkdownDocuments.Html(MarkdownDocuments.ReleaseNotes, System.Globalization.CultureInfo.CurrentUICulture))
+            @((MarkupString)releaseNotesHtml)
         </article>
     </div>
 }
@@ -35,6 +35,12 @@
 
 @code {
     private bool showReleaseNotes;
+    private string releaseNotesHtml = "";
 
-    private void ToggleReleaseNotes() => showReleaseNotes = !showReleaseNotes;
+    private async Task ToggleReleaseNotes()
+    {
+        showReleaseNotes = !showReleaseNotes;
+        if (showReleaseNotes && releaseNotesHtml.Length == 0)
+            releaseNotesHtml = await Content.HtmlAsync(ContentDocuments.ReleaseNotes, System.Globalization.CultureInfo.CurrentUICulture);
+    }
 }

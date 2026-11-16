@@ -163,7 +163,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         var extras = rest.Where(e => e != second).ToList();
 
         var firstExit = Exit(first, main.StartPose.Reversed());
-        var secondExit = Exit(second, main.EndPose);
+        var secondExit = Exit(second, main.EndPose, FarEndOrientation(second));
         var length = main.Length;
 
         if (extras.Count > 0) return Junction(standard, main, firstExit, secondExit, first, second, extras, internalJoints);
@@ -213,7 +213,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         var east = extras.Where(e => e.Direction != ExitDirection.West).ToList();
         var west = extras.Where(e => e.Direction == ExitDirection.West).ToList();
         var endPose = main.EndPose;
-        var eastExits = east.Select((e, i) => Exit(e, endPose with { Position = endPose.Position + endPose.Left * (spacing * (i + 1)) }, provisional: true));
+        var eastExits = east.Select((e, i) => Exit(e, endPose with { Position = endPose.Position + endPose.Left * (spacing * (i + 1)) }, FarEndOrientation(e), provisional: true));
         var westExits = west.Select((e, i) => Exit(e, firstExit.Pose with { Position = main.StartPose.Position + main.StartPose.Left * (spacing * (i + 1)) }, provisional: true)).Reverse();
         IReadOnlyList<ModuleExit> ordered = [firstExit, secondExit, .. eastExits, .. westExits];
 
@@ -432,25 +432,37 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
 
     private static FlexTrack Generated(SegmentPath path) => new() { Path = PathDrawing.From(path), IsMainTrack = true, IsGenerated = true };
 
-    private static ModuleExit Exit(ResolvedExit exit, Pose pose, bool provisional = false) => new()
+    private static ModuleExit Exit(ResolvedExit exit, Pose pose, ProfileOrientation orientation = ProfileOrientation.Normal, bool provisional = false) => new()
     {
         Label = exit.Label,
         Direction = exit.Direction,
         EndProfile = new(exit.Profile.Id, exit.Profile.Designation),
+        Orientation = orientation,
         Pose = pose,
         IsPositionProvisional = provisional,
     };
+
+    /// <summary>
+    /// The orientation of an exit at the far end of the main path (ModuleDrawing §4.3). Each end is seen from outside,
+    /// so an asymmetric profile is mirrored there to keep its asymmetric feature on the same side of the track,
+    /// unless the module turns it over (<i>Endewender</i>).
+    /// </summary>
+    private ProfileOrientation FarEndOrientation(ResolvedExit exit) =>
+        _p.IsEndProfileSwitcher || EndProfileAnalysis.Analyze(exit.Profile).IsSymmetric ? ProfileOrientation.Normal : ProfileOrientation.Mirrored;
 
     private Module Module(ModuleStandard standard, IReadOnlyList<CatalogueReference> addOns, ModuleVariant variant) => new()
     {
         Id = _p.ModuleId ?? Guid.NewGuid(),
         Name = _p.Name,
+        FremoNumber = _p.FremoNumber,
+        Owners = _p.Owners,
         Standard = new(standard.Id, standard.ShortName),
         Scale = standard.Scale,
         AddOns = addOns,
         NumberOfThroughTracks = _p.NumberOfThroughTracks,
         IsDuckunder = _p.IsDuckunder,
         IsTurntable = _p.IsTurntable,
+        IsEndProfileSwitcher = _p.IsEndProfileSwitcher,
         IsEndOfLine = _p.IsEndOfLine || variant.Exits.Count == 1,
         Variants =
         [

@@ -6,8 +6,9 @@ using Tellurian.Trains.Drawing.App;
 using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Files;
-using Tellurian.Trains.Drawing.App.Resources;
 using Tellurian.Trains.Drawing.App.Storage;
+using Tellurian.Trains.Drawing.App.Translations;
+using Tellurian.Trains.Drawing.App.Translations.Resources;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,8 +20,10 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 // culture to Blazor.start({ applicationCulture }), so the right ICU data and satellite assemblies load.
 builder.Services.AddLanguageService(AppLanguages.All);
 builder.Services.AddResxResourceProviders([typeof(AppTexts)]);
-builder.Services.AddHttpMarkdownResourceProvider("Content", neutralLanguage: AppLanguages.Neutral);
+builder.Services.AddHttpMarkdownResourceProvider(ContentDocuments.BasePath, neutralLanguage: AppLanguages.Neutral);
 builder.Services.AddSingleton<Texts>();
+// Scoped like the HTTP Markdown provider it reads from (WebAssembly has one scope, so it still caches for the session).
+builder.Services.AddScoped<ContentDocuments>();
 
 // Files and the workbench (ADR 0002). WebAssembly has one scope, so these are singletons.
 builder.Services.AddSingleton(TimeProvider.System);

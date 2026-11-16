@@ -9,7 +9,7 @@ namespace Tellurian.Trains.Drawing.Model.AutoDraw;
 public static class ModuleAutoDraw
 {
     /// <summary>Recorded on every auto-drawn variant.</summary>
-    public const string GeneratorVersion = "1.0";
+    public const string GeneratorVersion = "1.1";
 
     /// <summary>The Registry end profile designation for joints between sections.</summary>
     public const string InternalEndProfile = "Internal";

@@ -47,6 +47,10 @@
   <data name="Name" xml:space="preserve"><value>Namn</value></data>
   <data name="Standard" xml:space="preserve"><value>Standard</value></data>
   <data name="EndProfile" xml:space="preserve"><value>Ändprofil</value></data>
+  <data name="FirstEndProfile" xml:space="preserve"><value>Ändprofil i ände A</value></data>
+  <data name="SecondEndProfile" xml:space="preserve"><value>Ändprofil i ände B</value></data>
+  <data name="SameEndProfile" xml:space="preserve"><value>Samma som ände A</value></data>
+  <data name="IsEndewender" xml:space="preserve"><value>Ändevändare (den osymmetriska ändprofilen byter sida)</value></data>
   <data name="OneTrack" xml:space="preserve"><value>1 spår</value></data>
   <data name="TrackCount" xml:space="preserve"><value>{0} spår</value></data>
   <data name="StraightLength" xml:space="preserve"><value>Rak längd (mm)</value></data>
@@ -66,7 +70,15 @@
   <data name="NotDrawn" xml:space="preserve"><value>Modulen kunde inte ritas:</value></data>
   <data name="DrawnWithNotes" xml:space="preserve"><value>Modulen ritades. Kontrollera de här anmärkningarna:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Öppna ritningen</value></data>
-  <data name="NameRequired" xml:space="preserve"><value>Ange ett namn.</value></data>
+  <data name="ModuleIdentification" xml:space="preserve"><value>Identifiering</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-moduler identifieras med ägarens prefix och ett nummer, t.ex. SFjä 012. Andra moduler har ett namn. Ange ett FREMO-nummer med prefix, ett namn eller båda.</value></data>
+  <data name="OwnerPrefix" xml:space="preserve"><value>Ägarens FREMO-prefix</value></data>
+  <data name="FremoNumber" xml:space="preserve"><value>FREMO-modulnummer</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Ägarens fullständiga namn</value></data>
+  <data name="OwnerNameHelp" xml:space="preserve"><value>Valfritt; ägaren kan vara någon annan än du. Uppladdning till Modulregistret fyller i det som saknas.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Ange ett namn, eller ett FREMO-nummer med ägarens prefix.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Ange ägarens FREMO-prefix till FREMO-numret.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>FREMO-numret måste vara 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Välj en ändprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} måste vara större än 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} måste vara större än 0 och högst 360.</value></data>
@@ -201,6 +213,7 @@
   <data name="NewEndProfileTitle" xml:space="preserve"><value>Ny ändprofil</value></data>
   <data name="NewEndProfileIntro" xml:space="preserve"><value>Börja från en rektangulär ändplatta med spår; rita sedan kontur, marklinje och skruvhål i redigeraren.</value></data>
   <data name="Designation" xml:space="preserve"><value>Beteckning</value></data>
+  <data name="EndProfileShortName" xml:space="preserve"><value>Kortnamn</value></data>
   <data name="PlateWidth" xml:space="preserve"><value>Plattans bredd (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Överkant under RÖK (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Underkant under RÖK (mm)</value></data>
@@ -275,10 +288,6 @@
   <data name="Print" xml:space="preserve"><value>Skriv ut</value></data>
   <data name="CreatingModule" xml:space="preserve"><value>Vänta. Skapar modulen {0}…</value></data>
   <data name="InformationTitle" xml:space="preserve"><value>Välkommen till Modulritaren</value></data>
-  <data name="InformationIntro" xml:space="preserve"><value>Modulritaren är till för att rita ändprofiler, moduler och hallplaner för modulträffar.</value></data>
-  <data name="InformationPreRelease" xml:space="preserve"><value>Detta är en förhandsversion att prova på. Du kan rita ändprofiler och skapa moduler från mallar. Redigering av moduler, hallar och hallplaner kommer senare.</value></data>
-  <data name="InformationStorage" xml:space="preserve"><value>Utkast sparas automatiskt i den här webbläsaren medan du arbetar. Spara dina ritningar som filer för att behålla dem och dela dem.</value></data>
-  <data name="InformationBrowsers" xml:space="preserve"><value>Använd en dator med en Chromium-baserad webbläsare, till exempel Chrome, Edge, Brave, Vivaldi eller Opera, eller Chromium på Linux. I dessa webbläsare öppnar och sparar Modulritaren dina filer direkt.</value></data>
   <data name="InformationContinue" xml:space="preserve"><value>Kom igång</value></data>
   <data name="ReleaseNotes" xml:space="preserve"><value>Versionsinformation</value></data>
   <data name="Override" xml:space="preserve"><value>Undantag för passning</value></data>
@@ -286,10 +295,6 @@
   <data name="NoProblems" xml:space="preserve"><value>Inga problem hittades.</value></data>
   <data name="Close" xml:space="preserve"><value>Stäng</value></data>
   <data name="UnknownEndProfile" xml:space="preserve"><value>okänd ändprofil</value></data>
-  <data name="InformationGeneral" xml:space="preserve"><value>Allmänt</value></data>
-  <data name="InformationBrowserSupport" xml:space="preserve"><value>Webbläsare som stöds</value></data>
-  <data name="InformationOffline" xml:space="preserve"><value>Modulritaren fungerar utan uppkoppling och kan installeras som en app.</value></data>
-  <data name="InformationOtherBrowsers" xml:space="preserve"><value>Firefox och Safari fungerar också, men med begränsningar: de kan inte spara direkt i filen du öppnade, så att spara blir en nedladdning. Beroende på webbläsarens inställningar hamnar filen i mappen för nedladdningar, eller så väljer du var den ska sparas; välj originalfilen för att ersätta den. Senaste filer och mappar måste väljas på nytt för att öppnas.</value></data>
   <data name="Settings" xml:space="preserve"><value>Inställningar</value></data>
   <data name="Field_UserName" xml:space="preserve"><value>Användarnamn</value></data>
   <data name="UserNameHelp" xml:space="preserve"><value>Sparas med datum i ändringsloggen för varje ritning du sparar, för att visa vem som gjort ändringar.</value></data>

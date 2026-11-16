@@ -3,6 +3,7 @@
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
+@inject IJSRuntime JS
 @inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Views
@@ -56,56 +57,64 @@ else if (draft is not null && draft.Kind == DrawingFileKind.EndProfile)
 }
 else if (draft is not null)
 {
-    <h1>@draft.Name</h1>
-    <p class="kind">@T[$"Kind_{draft.Kind}"]</p>
-
-    <div class="toolbar">
-        <button type="button" class="primary" @onclick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
-        @if (Documents.CanSaveInPlace)
-        {
-            <button type="button" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
-        }
-        <button type="button" @onclick="DiscardAsync">@T["Discard"]</button>
+    @* Module and hall drawings: the view fills the window, with the file actions beside it (as in the end profile editor). *@
+    <div class="editor-layout">
+        <div class="editor-canvas">
+            @switch (draft.Kind)
+            {
+                case DrawingFileKind.Module:
+                    <ModuleView Json="@draft.Json" Standard="@_standard" EndProfiles="FindEndProfile" PrintTitle="@draft.Name" Error="@T["CannotShow"]" />
+                    break;
+                case DrawingFileKind.Hall:
+                    <HallView Json="@draft.Json" Error="@T["CannotShow"]" />
+                    break;
+            }
+        </div>
+        <aside class="editor-side">
+            <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+                <h2>@T["ArchivePane"]</h2>
+                <p class="archive-name"><b>@draft.Name</b> <span class="kind">@T[$"Kind_{draft.Kind}"]</span></p>
+                <p class="detail">@(draft.FileName ?? T["NotSavedToFile"])</p>
+                <div class="pane-buttons">
+                    <button type="button" class="primary" id="save" @onclick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
+                    @if (Documents.CanSaveInPlace)
+                    {
+                        <button type="button" id="save-as" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
+                    }
+                    @if (draft.Kind == DrawingFileKind.Module)
+                    {
+                        <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
+                    }
+                    <button type="button" id="discard" @onclick="DiscardAsync">@T["Discard"]</button>
+                </div>
+                <p>
+                    @if (draft.HasUnsavedChanges)
+                    {
+                        <span class="badge unsaved">@T["UnsavedChanges"]</span>
+                    }
+                    else
+                    {
+                        <span class="badge saved">@T["Saved"]</span>
+                    }
+                </p>
+                @if (!Documents.CanSaveInPlace)
+                {
+                    <p class="note">@T["DownloadNote"]</p>
+                }
+                @if (message is not null)
+                {
+                    <p class="error" role="alert">@message</p>
+                }
+                <p class="detail">@T["Changed"]: <time datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time></p>
+                <RevisionLogList Log="@DrawingRevisionLog.Read(draft.Json)" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
+                <p class="pane-help">@T["EditorComing"]</p>
+            </section>
+            @if (draft.Kind == DrawingFileKind.Module)
+            {
+                <ModulePropertiesPane @key="draft.Id" Draft="draft" DraftChanged="d => draft = d" />
+            }
+        </aside>
     </div>
-    @if (!Documents.CanSaveInPlace)
-    {
-        <p class="note">@T["DownloadNote"]</p>
-    }
-    @if (message is not null)
-    {
-        <p class="error" role="alert">@message</p>
-    }
-
-    <dl class="properties">
-        <dt>@T["File"]</dt>
-        <dd>@(draft.FileName ?? T["NotSavedToFile"])</dd>
-        <dt>@T["Changed"]</dt>
-        <dd><time datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time></dd>
-    </dl>
-    <RevisionLogList Log="@DrawingRevisionLog.Read(draft.Json)" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
-    <p class="status">
-        @if (draft.HasUnsavedChanges)
-        {
-            <span class="badge unsaved">@T["UnsavedChanges"]</span>
-        }
-        else
-        {
-            <span class="badge saved">@T["Saved"]</span>
-        }
-    </p>
-
-    <div class="drawing-view">
-        @switch (draft.Kind)
-        {
-            case DrawingFileKind.Module:
-                <ModuleView Json="@draft.Json" Standard="@_standard" Error="@T["CannotShow"]" />
-                break;
-            case DrawingFileKind.Hall:
-                <HallView Json="@draft.Json" Error="@T["CannotShow"]" />
-                break;
-        }
-    </div>
-    <p class="note">@T["EditorComing"]</p>
 }
 
 @code {
@@ -118,6 +127,13 @@ else if (draft is not null)
     public static string Url(Guid id) => $"drawing/{id}";
 
     private Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard? _standard;
+    private Tellurian.Trains.Drawing.Model.Catalogue.DrawingCatalogue? _catalogue;
+
+    /// <summary>
+    /// The end profile as it is now in the catalogue, so that changes such as a new short name show; the module
+    /// view falls back to the copy embedded in the module file.
+    /// </summary>
+    private Tellurian.Trains.Drawing.Model.EndProfiles.EndProfile? FindEndProfile(Guid id) => _catalogue?.FindEndProfile(id);
 
     /// <summary>The track colour of an end profile's first standard.</summary>
     private async Task<string?> TrackColorOfAsync(Draft? draft)
@@ -156,12 +172,25 @@ else if (draft is not null)
         {
             draft = await Workbench.GetDraftAsync(Id);
             notFound = draft is null;
+            _catalogue = draft?.Kind == DrawingFileKind.Module ? await Catalogues.GetAsync() : null;
             _standard = await StandardOfAsync(draft);
             _trackColor = await TrackColorOfAsync(draft);
         }
         catch (StorageException ex)
         {
             message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task PrintAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("print");
+        }
+        catch (JSException)
+        {
+            // Printing isn't available, e.g. in a restricted browser; nothing is lost.
         }
     }
 

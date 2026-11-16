@@ -4,7 +4,7 @@
   "schemaVersion": 1,
   "appVersion": "0.1.0",
   "content": {
-    "version": "0.2-provisional",
+    "version": "0.3-provisional",
     "scales": [
       {
         "shortName": "H0",
@@ -98,6 +98,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
         "designation": "FREMO-H0-B96",
+        "shortName": "B96",
         "scale": "H0",
         "standards": [
           {
@@ -386,6 +387,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d06",
         "designation": "FREMO-H0-B96f",
+        "shortName": "B96f",
         "scale": "H0",
         "standards": [
           {
@@ -660,6 +662,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
         "designation": "FREMO-H0-2E96",
+        "shortName": "2E96",
         "scale": "H0",
         "standards": [
           {

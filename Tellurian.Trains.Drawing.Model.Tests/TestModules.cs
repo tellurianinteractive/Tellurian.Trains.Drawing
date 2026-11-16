@@ -57,7 +57,8 @@ internal static class TestModules
         };
         return module with
         {
-            Owners = [new() { Name = "A. Owner", Share = 0.5, RegistryPersonId = 17 }, new() { Name = "Club", RegistryGroupId = 3 }],
+            FremoNumber = 12,
+            Owners = [new() { Name = "A. Owner", Prefix = "AOw", Share = 0.5, RegistryPersonId = 17 }, new() { Name = "Club", RegistryGroupId = 3 }],
             Theme = "Sweden 1970s",
             RepresentsFromYear = 1965,
             RepresentsUptoYear = 1980,

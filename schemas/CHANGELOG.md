@@ -5,6 +5,25 @@ changes are allowed. Schema version 1 is a draft until it is frozen (implementat
 until then it may still change.
 
 ## Version 1 (draft)
+### 2026-11-16 (module identification)
+- Modules have an optional `fremoNumber` (1–9999, Registry `FremoNumber`), and owners an optional `prefix`
+  (the owner's FREMO prefix, e.g. `SFjä`, Registry `FremoOwnerSignature`). The first owner's prefix and the number
+  form the FREMO designation, e.g. `SFjä 012`. Readers that don't know them ignore them.
+- A module's `name` and an owner's `name` are no longer required; they may be empty. A module needs a name unless it
+  has a FREMO number with the first owner's prefix. Writers still write both, as empty strings when not given.
+- The auto-draw `parameters` have `fremoNumber` and `owners`.
+
+### 2026-11-16 (end profile short name)
+- End profiles have an optional `shortName`, e.g. `B96`, printed along the end plate in module drawings.
+  When it is missing, the `designation` is used. Readers that don't know it ignore it.
+
+### 2026-11-16 (exit orientation, Endewender)
+- The auto-draw `parameters` of a module variant have `isEndProfileSwitcher` (the module is an *Endewender*,
+  Registry flag). Readers that don't know it ignore it.
+- Auto-draw generator version 1.1: an exit at the far end of the main path gets `orientation: mirrored` when its
+  end profile is asymmetric, unless the module is an Endewender. The meaning of `orientation` is unchanged.
+- An exit's `endProfile` may belong to another standard of the module's scale than the module's own standard.
+
 ### 2026-11-15 (file names)
 - Drawing files are plain JSON files. Suggested names end with the kind and `.json`: `.endprofile.json`,
   `.module.json`, `.hall.json`, `.hallplan.json`, `.catalogue.json`. Readers identify a file by `format` and `kind`,

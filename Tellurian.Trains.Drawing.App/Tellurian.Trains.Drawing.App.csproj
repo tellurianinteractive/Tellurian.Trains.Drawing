@@ -20,13 +20,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tellurian.Trains.Drawing.Components\Tellurian.Trains.Drawing.Components.csproj" />
+    <ProjectReference Include="..\Tellurian.Trains.Drawing.App.Translations\Tellurian.Trains.Drawing.App.Translations.csproj" />
   </ItemGroup>
 
-  <!-- Markdown documents shown in the app (release notes, later help texts), embedded so they work offline. -->
   <ItemGroup>
-    <!-- English in RELEASENOTES.md, translations in RELEASENOTES.<language>.md. WithCulture="false" keeps the
-         translations in the main assembly instead of satellite assemblies. -->
-    <EmbeddedResource Include="..\RELEASENOTES*.md" LogicalName="%(Filename)%(Extension)" WithCulture="false" />
     <!-- The Module Registry's countries, an excerpt of its database until it has an API for them. -->
     <EmbeddedResource Include="Settings\countries.json" LogicalName="countries.json" />
   </ItemGroup>

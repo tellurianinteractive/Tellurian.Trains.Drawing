@@ -1,5 +1,14 @@
 # Udgivelsesnoter
 
+## Version 0.6.0
+Udgivet 2026-11-16
+- Nyt modul: ende B kan have en anden endeprofil end ende A, også af en anden standard i samme skala, for eksempel FREMO i den ene ende og MMM i den anden. Markér modulet som endevender, når en asymmetrisk endeprofil skifter side. En asymmetrisk endeprofil, som FREMO-H0-B96, spejles nu i ende B, så den høje side bliver på samme side af sporet, og to sådanne moduler passer uden afvigelser.
+- Modultegninger viser typen af endeprofil, som DWG- og SKP-tegninger gør: endeprofilens form foldes ind i modulet ved hver ende, mørk, hvor profilen ligger over skinneoverkant, og lys, hvor den ligger under. Endeprofilens navn står langs hver ende, inde i modulet. Endernes betegnelser og pile tegnes ikke længere.
+- Endeprofiler har et kort navn, for eksempel *B96*, som vises i modultegninger. Uden kort navn vises betegnelsen. De indbyggede FREMO-endeprofiler har de korte navne *B96*, *B96f* og *2E96*.
+- Modultegninger fylder vinduet, med filhandlingerne ved siden af, og kan udskrives: *Udskriv* udskriver tegningen alene med modulets navn, tilpasset en liggende side.
+- Et modul identificeres med ejerens FREMO-præfiks og et FREMO-nummer, for eksempel *SFjä 012*, med et navn eller med begge dele. Et FREMO-nummer kræver præfikset; uden nummer skal modulet have et navn. Ejerens fulde navn kan også angives; ejeren kan være en anden end dig. Angiv dem i *Nyt modul*, og ret dem i ruden *Egenskaber* ved siden af modultegningen. Appen viser FREMO-betegnelsen sammen med navnet.
+- Modulets FREMO-betegnelse, for eksempel *SFjä 7900*, eller ellers dets navn, står på modulet, med ejerens navn i mindre tekst nedenunder. Teksten går langs sporet, centreret mellem enderne, over sporet, som du læser den.
+
 ## Version 0.5.0
 Udgivet 2026-11-15
 - Tegninger gemmes som almindelige JSON-filer, navngivet efter deres type, for eksempel *Station Nord.module.json* eller *FREMO-H0-B96.endprofile.json*. De kan åbnes i enhver JSON-editor. Filer, der er gemt med de tidligere filtyper (.tdmodule, .tdendprofile og så videre), kan stadig åbnes.

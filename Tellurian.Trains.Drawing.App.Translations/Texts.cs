@@ -1,7 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Tellurian.Localization;
+using Tellurian.Trains.Drawing.App.Translations.Resources;
 
-namespace Tellurian.Trains.Drawing.App.Resources;
+namespace Tellurian.Trains.Drawing.App.Translations;
 
 /// <summary>The app's UI texts in the current UI culture, e.g. <c>@T["Save"]</c> in markup.</summary>
 public sealed class Texts([FromKeyedServices(Texts.ResxProviders)] IResourceProviderGroup resx)

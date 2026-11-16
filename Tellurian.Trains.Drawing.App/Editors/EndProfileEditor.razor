@@ -204,6 +204,7 @@
                     case null when _selection.IsEmpty:
                         var profile = _document.Current;
                         <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p with { Designation = v })); }" />
+                        <TextField Label="@T["EndProfileShortName"]" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim() }))" />
                         <TextField Label="@T["Scale"]" Value="@profile.Scale" ReadOnly="true" />
                         <TextField Label="@T["Standards"]" Value="@string.Join(", ", profile.Standards.Select(s => s.Name))" ReadOnly="true" />
                         <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ScrewHolePattern = v }))" />

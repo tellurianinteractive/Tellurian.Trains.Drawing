@@ -9,8 +9,14 @@ public sealed record AutoDrawParameters
     /// <summary>The module id to use; a new one is created if null.</summary>
     public Guid? ModuleId { get; init; }
 
-    /// <summary>Registry <c>FullName</c>.</summary>
-    public required string Name { get; init; }
+    /// <summary>Registry <c>FullName</c>; may be empty for a module identified by its FREMO designation.</summary>
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>Registry <c>FremoNumber</c>.</summary>
+    public int? FremoNumber { get; init; }
+
+    /// <summary>Registry <c>ModuleOwnership</c>; the first owner's prefix forms the FREMO designation.</summary>
+    public IReadOnlyList<Modules.Owner> Owners { get; init; } = [];
 
     /// <summary>The standard's short name, e.g. "FREMO/H0-RE" or "MMM-2R".</summary>
     public required string Standard { get; init; }
@@ -37,6 +43,12 @@ public sealed record AutoDrawParameters
     public bool IsEndOfLine { get; init; }
     public bool IsDuckunder { get; init; }
     public bool IsTurntable { get; init; }
+
+    /// <summary>
+    /// The module turns an asymmetric end profile over (<i>Endewender</i>, Registry flag), so an asymmetric profile
+    /// isn't mirrored at the far exits (ModuleDrawing §4.3).
+    /// </summary>
+    public bool IsEndProfileSwitcher { get; init; }
 
     /// <summary>The module is the operation place of a station (Registry <c>Station.PrimaryModule</c>).</summary>
     public bool IsOperationPlace { get; init; }

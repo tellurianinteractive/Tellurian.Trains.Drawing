@@ -9,7 +9,6 @@
     <File Path="infra/azuredeploy.parameters.json" />
     <File Path="infra/README.md" />
     <File Path="README.md" />
-    <File Path="RELEASENOTES.md" />
   </Folder>
   <Folder Name="/docs/">
     <File Path="docs/adr/0001-svg-canvas.md" />
@@ -21,6 +20,7 @@
     <File Path="docs/UseCases.md" />
   </Folder>
   <Project Path="Tellurian.Trains.Drawing.App.Tests/Tellurian.Trains.Drawing.App.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Drawing.App.Translations/Tellurian.Trains.Drawing.App.Translations.csproj" />
   <Project Path="Tellurian.Trains.Drawing.App/Tellurian.Trains.Drawing.App.csproj" />
   <Project Path="Tellurian.Trains.Drawing.Components.Tests/Tellurian.Trains.Drawing.Components.Tests.csproj" />
   <Project Path="Tellurian.Trains.Drawing.Components/Tellurian.Trains.Drawing.Components.csproj" />

@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.4.0",
+  "appVersion": "0.5.0",
   "content": {
     "module": {
-      "id": "295c6595-a817-441c-a59f-90e505628313",
+      "id": "033db44a-9c42-43ba-ab34-ddba072ee75a",
       "name": "Station",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
@@ -27,7 +27,7 @@
       "revisionLog": [],
       "variants": [
         {
-          "id": "976e6bb6-d75d-4d26-a209-b51502cc3a04",
+          "id": "eb7e6524-eba2-4e65-afd3-28a08129b4af",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -54,7 +54,7 @@
                 "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
                 "name": "FREMO-H0-B96"
               },
-              "orientation": "normal",
+              "orientation": "mirrored",
               "railTopOffset": 0,
               "pose": {
                 "x": 3000,
@@ -319,7 +319,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "1f1d2a18-b0f3-492d-ba42-6f333d99f374",
+              "id": "415b3b78-6f66-40b8-aad7-2b38a4d221b6",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -380,9 +380,10 @@
             "numberOfSections": 3
           },
           "autoDraw": {
-            "generatorVersion": "1.0",
+            "generatorVersion": "1.1",
             "parameters": {
               "name": "Station",
+              "owners": [],
               "standard": "FREMO/H0-RE",
               "straight": 3000,
               "width": 600,
@@ -403,6 +404,7 @@
               "isEndOfLine": false,
               "isDuckunder": false,
               "isTurntable": false,
+              "isEndProfileSwitcher": false,
               "isOperationPlace": true,
               "curveDirection": "left",
               "straightPosition": "before",
@@ -417,6 +419,7 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
         "designation": "FREMO-H0-B96",
+        "shortName": "B96",
         "scale": "H0",
         "standards": [
           {
@@ -706,7 +709,7 @@
     ],
     "measures": [
       {
-        "variantId": "976e6bb6-d75d-4d26-a209-b51502cc3a04",
+        "variantId": "eb7e6524-eba2-4e65-afd3-28a08129b4af",
         "measures": {
           "length": 3000,
           "straight": 3000,

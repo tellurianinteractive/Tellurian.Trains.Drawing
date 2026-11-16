@@ -1,5 +1,14 @@
 # Versjonsmerknader
 
+## Versjon 0.6.0
+Utgitt 2026-11-16
+- Ny modul: ende B kan ha en annen endeprofil enn ende A, også av en annen standard i samme skala, for eksempel FREMO i den ene enden og MMM i den andre. Merk modulen som endevender når en asymmetrisk endeprofil bytter side. En asymmetrisk endeprofil, som FREMO-H0-B96, speiles nå i ende B, slik at den høye siden blir på samme side av sporet og to slike moduler passer uten avvik.
+- Modultegninger viser typen endeprofil slik DWG- og SKP-tegninger gjør: endeprofilens form brettes inn i modulen ved hver ende, mørk der profilen ligger over skinneoverkant, og lys der den ligger under. Endeprofilens navn står langs hver ende, inne i modulen. Endenes betegnelser og piler tegnes ikke lenger.
+- Endeprofiler har et kortnavn, for eksempel *B96*, som vises i modultegninger. Uten kortnavn vises betegnelsen. De innebygde FREMO-endeprofilene har kortnavnene *B96*, *B96f* og *2E96*.
+- Modultegninger fyller vinduet, med filhandlingene ved siden av, og kan skrives ut: *Skriv ut* skriver ut tegningen alene med modulens navn, tilpasset en liggende side.
+- En modul identifiseres med eierens FREMO-prefiks og et FREMO-nummer, for eksempel *SFjä 012*, med et navn eller med begge deler. Et FREMO-nummer krever prefikset; uten nummer må modulen ha et navn. Eierens fulle navn kan også oppgis; eieren kan være en annen enn deg. Oppgi dem i *Ny modul*, og endre dem i ruten *Egenskaper* ved siden av modultegningen. Appen viser FREMO-betegnelsen sammen med navnet.
+- Modulens FREMO-betegnelse, for eksempel *SFjä 7900*, eller ellers navnet, står på modulen, med eierens navn i mindre tekst under. Teksten går langs sporet, midt mellom endene, over sporet slik du leser den.
+
 ## Versjon 0.5.0
 Utgitt 2026-11-15
 - Tegninger lagres som vanlige JSON-filer, navngitt etter typen, for eksempel *Station Nord.module.json* eller *FREMO-H0-B96.endprofile.json*. De kan åpnes i hvilken som helst JSON-redigerer. Filer som er lagret med de tidligere filendelsene (.tdmodule, .tdendprofile og så videre), kan fortsatt åpnes.

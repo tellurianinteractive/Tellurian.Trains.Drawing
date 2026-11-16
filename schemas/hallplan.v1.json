@@ -164,6 +164,18 @@
         "name": {
           "type": "string"
         },
+        "fremoNumber": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "owners": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Owner"
+          }
+        },
         "standard": {
           "type": "string"
         },
@@ -236,6 +248,9 @@
         "isTurntable": {
           "type": "boolean"
         },
+        "isEndProfileSwitcher": {
+          "type": "boolean"
+        },
         "isOperationPlace": {
           "type": "boolean"
         },
@@ -263,7 +278,6 @@
         }
       },
       "required": [
-        "name",
         "standard"
       ]
     },
@@ -412,6 +426,12 @@
         },
         "designation": {
           "type": "string"
+        },
+        "shortName": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "scale": {
           "type": "string"
@@ -1032,6 +1052,12 @@
         "name": {
           "type": "string"
         },
+        "fremoNumber": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "standard": {
           "$ref": "#/$defs/CatalogueReference"
         },
@@ -1140,7 +1166,6 @@
       },
       "required": [
         "id",
-        "name",
         "standard",
         "scale",
         "variants"
@@ -1552,6 +1577,12 @@
         "name": {
           "type": "string"
         },
+        "prefix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "share": {
           "type": [
             "number",
@@ -1570,10 +1601,7 @@
             "null"
           ]
         }
-      },
-      "required": [
-        "name"
-      ]
+      }
     },
     "PathDrawing": {
       "type": "object",

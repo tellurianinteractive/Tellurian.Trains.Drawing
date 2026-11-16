@@ -2,10 +2,10 @@
   "format": "tellurian-drawing",
   "kind": "module",
   "schemaVersion": 1,
-  "appVersion": "0.4.0",
+  "appVersion": "0.5.0",
   "content": {
     "module": {
-      "id": "ce36bad1-5f9d-4335-bcf1-8105e162d2fc",
+      "id": "e881c531-28d8-4174-8493-6ada123b3f85",
       "name": "Summer curve",
       "standard": {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
@@ -31,7 +31,7 @@
       "revisionLog": [],
       "variants": [
         {
-          "id": "7b6505b3-6ab3-465e-b365-44fc3ab39b12",
+          "id": "cc4a3753-bc5a-4ac5-b1a5-8387cb5e7fd2",
           "name": "",
           "isDefault": true,
           "exits": [
@@ -280,7 +280,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "45253424-7f7d-432f-bdb2-b5386aaf9603",
+              "id": "dc25b526-5c9a-47ac-8664-b05cd209e7e2",
               "isMainTrack": true,
               "isNarrowGauge": false,
               "isGenerated": true
@@ -296,9 +296,10 @@
             "angle": 45
           },
           "autoDraw": {
-            "generatorVersion": "1.0",
+            "generatorVersion": "1.1",
             "parameters": {
               "name": "Summer curve",
+              "owners": [],
               "standard": "MMM-2R/SSM",
               "straight": 300,
               "radius": 1500,
@@ -307,6 +308,7 @@
               "isEndOfLine": false,
               "isDuckunder": false,
               "isTurntable": false,
+              "isEndProfileSwitcher": false,
               "isOperationPlace": false,
               "curveDirection": "left",
               "straightPosition": "split",
@@ -416,7 +418,7 @@
     ],
     "measures": [
       {
-        "variantId": "7b6505b3-6ab3-465e-b365-44fc3ab39b12",
+        "variantId": "cc4a3753-bc5a-4ac5-b1a5-8387cb5e7fd2",
         "measures": {
           "length": 1478.0972450961724,
           "straight": 299.9999999999999,

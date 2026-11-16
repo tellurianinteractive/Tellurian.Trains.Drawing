@@ -37,6 +37,15 @@ and the Markdown provider took it for the translation. The Debug dev server does
 4. **The service worker caches `.md` files**, so help works offline.
 5. **Suggested library improvement:** `HttpMarkdownResourceProvider` in Tellurian.Localization should treat a response with `Content-Type: text/html` as *missing*, and so should a network error while offline (fall back to the neutral file). That would protect every app behind an SPA fallback, including the Debug dev server, without relying on host configuration.
 
+### Amendment (2026-11-16): all texts in one project
+Following the Timetable Planning app (`Planning.App.Translations`), every translatable text lives in the
+project **Tellurian.Trains.Drawing.App.Translations**: the RESX files (`Resources/AppTexts.<language>.resx`)
+and the longer texts as Markdown (`wwwroot/Content/<Name>.<language>.md`), including the release notes,
+which earlier were embedded resources from `RELEASENOTES*.md` at the repository root. The Markdown files are
+static web assets served from `_content/Tellurian.Trains.Drawing.App.Translations/Content`, read with
+`AddHttpMarkdownResourceProvider` through `ContentDocuments`, and cached by the service worker (`.md`). Every
+document is written in all five languages, which a test checks, so the fallback is a safety net only.
+
 ## Consequences
 - Changing language reloads the app. That's acceptable, since it rarely happens, **provided no data is lost** (spec AP-7): the reload goes through the safe-reload service, which writes all unsaved drawings as drafts, waits for confirmation, and reopens them in the same state afterwards. If the drafts can't be written, the language isn't changed until the user has saved.
 - Help files must exist at least in English, the neutral language. The other languages are optional.

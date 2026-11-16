@@ -22,6 +22,7 @@ Tellurian.Trains.Drawing/
 ├── Tellurian.Trains.Drawing.Editing/     # UI-independent editor state: documents, commands, undo/redo, snapping, tools
 ├── Tellurian.Trains.Drawing.Components/  # Razor class library: ALL view and editor components + their JS modules (reused by the Module Registry)
 ├── Tellurian.Trains.Drawing.App/         # Blazor WASM standalone PWA (AOT): shell, pages, storage, files, service worker
+├── Tellurian.Trains.Drawing.App.Translations/ # All the app's texts: RESX for UI strings, Markdown for longer texts and release notes
 ├── Tellurian.Trains.Drawing.Geometry.Tests/
 ├── Tellurian.Trains.Drawing.Model.Tests/
 ├── Tellurian.Trains.Drawing.Editing.Tests/
@@ -29,7 +30,7 @@ Tellurian.Trains.Drawing/
 └── Tellurian.Trains.Drawing.App.Tests/   # bUnit tests of app pages
 ```
 
-Dependencies run in one direction: `App → Components → Editing → Model → Geometry`. Only `Components` and `App` reference Blazor. Geometry, Model and Editing are plain `net11.0` class libraries, testable without a browser (NF-5).
+Dependencies run in one direction: `App → Components → Editing → Model → Geometry`, and `App → App.Translations`. Only `Components` and `App` reference Blazor. Geometry, Model and Editing are plain `net11.0` class libraries, testable without a browser (NF-5).
 
 **Reuse by the Module Registry (NF-10).** Geometry, Model, Editing and Components are packable libraries (NuGet). The Registry, which runs on Blazor Server, can:
 - embed the **display components** to show end profile, module and hall plan drawings (EX-8);
@@ -369,7 +370,7 @@ In priority order (to be confirmed):
 | EP-11 | 13 |
 | MD-1 | 3 |
 | MD-2, MD-4, MD-4a, MD-5, MD-9, MD-13, MD-17, MD-18, MD-19 | 6 |
-| MD-3, MD-10, MD-20, MD-22 | 2 (logic), 6 (UI) |
+| MD-3, MD-10, MD-20, MD-22, MD-23 | 2 (logic), 6 (UI) |
 | MD-21 | 2 (standard colour), 4 (rendering) |
 | MD-6, MD-7, MD-8 | 7 |
 | MD-7a | 2 (logic), 6 (UI) |

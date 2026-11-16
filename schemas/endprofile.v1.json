@@ -110,6 +110,12 @@
         "designation": {
           "type": "string"
         },
+        "shortName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "scale": {
           "type": "string"
         },
