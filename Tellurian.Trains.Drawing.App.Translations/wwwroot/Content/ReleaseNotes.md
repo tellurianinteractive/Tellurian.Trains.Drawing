@@ -9,6 +9,7 @@ Released 2026-11-17
 - The hall shows its floor area and its effective floor area: without pillars, furniture, the areas kept free in front of doors and no-go zones.
 - *Print* prints the hall on a landscape page, with its size and floor areas in the middle.
 - Numbers are shown and typed the way your language writes them, e.g. 12,5 in Swedish and 12.5 in English.
+- A button in the upper right corner of every drawing fits the whole drawing in view again, also for module drawings.
 
 ## Release 0.6.0
 Released 2026-11-16

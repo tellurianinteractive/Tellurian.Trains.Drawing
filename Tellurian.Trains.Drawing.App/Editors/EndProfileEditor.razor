@@ -25,7 +25,7 @@
 {
     <div class="editor-layout">
         <div class="editor-canvas">
-            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@_document.Current.Designation"
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@T["ZoomToFit"]" Label="@_document.Current.Designation"
                            OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
                 <ChildContent>
                     <EndProfileContent Profile="Shown" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="_view.ToWorld(12)" Selected="_selection.Items"
@@ -83,7 +83,6 @@
                     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
                     <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
                     <button type="button" id="mirror-holes" @onclick="MirrorHoles">@T["MirrorScrewHoles"]</button>
-                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ZoomBounds)">@T["ZoomToFit"]</button>
                     <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
                 </div>
                 <p class="pane-help" aria-live="polite">@Status</p>

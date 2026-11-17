@@ -34,7 +34,6 @@
 <div class="toolbar">
     <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
-    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(_document.Current.Bounds)">@T["ZoomToFit"]</button>
     <button type="button" id="reset" @onclick="Reset">@T["ResetSandbox"]</button>
     <span class="detail" id="autosave">@AutosaveText</span>
     <span class="detail" id="pointer">@_pointer</span>
@@ -42,7 +41,7 @@
 
 <div class="sandbox-editor">
 <div class="sandbox-canvas">
-    <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
+    <DrawingCanvas FitArea="_document.Current.Bounds" FitText="@T["ZoomToFit"]" @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
                    OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
         <ChildContent>
             @foreach (var shape in _document.Current.Shapes)

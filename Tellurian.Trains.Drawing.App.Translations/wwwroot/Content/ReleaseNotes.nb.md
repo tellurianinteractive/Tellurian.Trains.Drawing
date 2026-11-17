@@ -9,6 +9,7 @@ Utgitt 2026-11-17
 - Hallen viser gulvarealet og det brukbare gulvarealet: uten søyler, inventar, områdene som skal holdes frie foran dører, og sperrede områder.
 - *Skriv ut* skriver ut hallen på en side i liggende format, med størrelsen og gulvarealene i midten.
 - Tall vises og skrives slik språket ditt skriver dem, f.eks. 12,5 på norsk og 12.5 på engelsk.
+- En knapp øverst til høyre i hver tegning viser hele tegningen igjen, også for modultegninger.
 
 ## Versjon 0.6.0
 Utgitt 2026-11-16

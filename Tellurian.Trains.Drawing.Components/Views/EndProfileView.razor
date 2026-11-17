@@ -11,7 +11,7 @@
 }
 else
 {
-    <DrawingCanvas Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+    <DrawingCanvas FitText="@FitText" Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
                    PanWithPrimaryButton="true" Label="@(Label ?? _profile.Designation)" Class="end-profile-view">
         <EndProfileContent Profile="_profile" TrackColor="@TrackColor" Layers="Layers" RailTopText="@RailTopText" TextSize="TextSize" />
     </DrawingCanvas>
@@ -45,6 +45,9 @@ else
     [Parameter] public string Error { get; set; } = "The end profile can't be shown.";
 
     [Parameter] public string? Label { get; set; }
+
+    /// <summary>The tooltip of the fit-in-view button; the host passes its translation.</summary>
+    [Parameter] public string FitText { get; set; } = "Fit in view";
 
     /// <summary>The initial size in pixels, before the real size is known.</summary>
     [Parameter] public double Width { get; set; } = 600;

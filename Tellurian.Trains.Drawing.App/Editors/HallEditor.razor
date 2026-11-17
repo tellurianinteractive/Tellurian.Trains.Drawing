@@ -25,7 +25,7 @@
 {
     <div class="editor-layout">
         <div class="editor-canvas">
-            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@_document.Current.Name"
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@T["ZoomToFit"]" Label="@_document.Current.Name"
                            OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
                 <ChildContent>
                     <HallContent Hall="Shown" TextSize="_view.ToWorld(12)" Selected="_selection.Items" ShowCorners="true" HandleSize="_view.ToWorld(8)" />
@@ -102,7 +102,6 @@
                     <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
                     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
                     <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
-                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ZoomBounds)">@T["ZoomToFit"]</button>
                     <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
                 </div>
                 <p class="pane-help" aria-live="polite">@Status</p>

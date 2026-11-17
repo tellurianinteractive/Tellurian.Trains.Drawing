@@ -9,6 +9,7 @@ Veröffentlicht am 2026-11-17
 - Die Halle zeigt ihre Bodenfläche und ihre nutzbare Bodenfläche: ohne Säulen, Einbauten, die Flächen, die vor Türen frei bleiben müssen, und Sperrflächen.
 - *Drucken* druckt die Halle auf einer Seite im Querformat, mit ihrer Größe und den Bodenflächen in der Mitte.
 - Zahlen werden so angezeigt und eingegeben, wie deine Sprache sie schreibt, z. B. 12,5 auf Deutsch und 12.5 auf Englisch.
+- Eine Schaltfläche in der oberen rechten Ecke jeder Zeichnung zeigt wieder die ganze Zeichnung, auch bei Modulzeichnungen.
 
 ## Version 0.6.0
 Veröffentlicht am 2026-11-16

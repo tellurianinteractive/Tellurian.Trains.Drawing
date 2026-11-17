@@ -9,6 +9,7 @@ Utgiven 2026-11-17
 - Hallen visar sin golvyta och sin användbara golvyta: utan pelare, inredning, ytorna som ska hållas fria framför dörrar och spärrade ytor.
 - *Skriv ut* skriver ut hallen på en liggande sida, med storleken och golvytorna i mitten.
 - Tal visas och skrivs som ditt språk skriver dem, t.ex. 12,5 på svenska och 12.5 på engelska.
+- En knapp i övre högra hörnet av varje ritning visar hela ritningen igen, även för modulritningar.
 
 ## Version 0.6.0
 Utgiven 2026-11-16

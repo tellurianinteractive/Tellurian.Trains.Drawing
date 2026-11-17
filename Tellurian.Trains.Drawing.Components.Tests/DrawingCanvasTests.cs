@@ -46,6 +46,45 @@ public sealed class DrawingCanvasTests
     }
 
     [TestMethod]
+    public void FitButtonShowsTheWholeDrawing()
+    {
+        using var context = Context();
+        var view = View;
+        var drawing = new Geometry.BoundingBox(new(0, 0), new(20000, 12000));
+        var canvas = context.Render<DrawingCanvas>(p => p
+            .Add(c => c.Viewport, View)
+            .Add(c => c.FitArea, drawing)
+            .Add(c => c.FitText, "Zoom to fit")
+            .Add(c => c.ViewportChanged, EventCallback.Factory.Create<Viewport>(new object(), v => view = v)));
+
+        var button = canvas.Find("button.drawing-fit");
+        Assert.AreEqual("Zoom to fit", button.GetAttribute("title"));
+        button.Click();
+
+        Assert.IsTrue(view.VisibleWorld.Contains(drawing.Min) && view.VisibleWorld.Contains(drawing.Max), "The whole drawing is in view.");
+        Assert.IsTrue(view.Center.IsCloseTo(drawing.Center, Precision));
+    }
+
+    [TestMethod]
+    public void NoFitButtonWithoutAnAreaToFit()
+    {
+        using var context = Context();
+        var canvas = context.Render<DrawingCanvas>(p => p.Add(c => c.Viewport, View));
+        Assert.IsEmpty(canvas.FindAll("button.drawing-fit"));
+    }
+
+    [TestMethod]
+    public async Task NoFitButtonWhenRenderedStatically()
+    {
+        var html = await StaticRendering.RenderAsync<DrawingCanvas>(new Dictionary<string, object?>
+        {
+            [nameof(DrawingCanvas.Viewport)] = View,
+            [nameof(DrawingCanvas.AutoFit)] = new Geometry.BoundingBox(new(0, 0), new(1000, 1000)),
+        });
+        Assert.DoesNotContain("drawing-fit", html, "It can't work without interactivity.");
+    }
+
+    [TestMethod]
     public void GridSpacingFollowsTheScale()
     {
         using var context = Context();

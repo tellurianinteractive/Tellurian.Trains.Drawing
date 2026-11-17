@@ -34,6 +34,13 @@
             </g>
         }
     </svg>
+    @if (_isInteractive && (FitArea ?? AutoFit) is { } fitArea)
+    {
+        @* Fit in view: shows the whole drawing again after panning and zooming. Only once interactive, as it can't work in static rendering. *@
+        <button type="button" class="drawing-fit" title="@FitText" aria-label="@FitText" @onclick="() => FitAsync(fitArea)">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4" /></svg>
+        </button>
+    }
     @if (ShowScaleBar)
     {
         var length = NiceSteps.ScaleBarLength(Viewport.Scale);
@@ -94,6 +101,19 @@
 
     private bool _userMovedView;
 
+    /// <summary>The area the fit button shows, e.g. the drawing with its dimensions; <see cref="AutoFit"/> without it.</summary>
+    [Parameter] public BoundingBox? FitArea { get; set; }
+
+    /// <summary>The fit button's tooltip and accessible name; the host passes its translation.</summary>
+    [Parameter] public string FitText { get; set; } = "Fit in view";
+
+    /// <summary>Shows the whole drawing; after that, a resize fits it again until the user pans or zooms.</summary>
+    private async Task FitAsync(BoundingBox area)
+    {
+        await ZoomToAsync(area);
+        _userMovedView = false;
+    }
+
     /// <summary>Shows <paramref name="area"/> (zoom to fit, zoom to selection).</summary>
     public Task ZoomToAsync(BoundingBox area) => SetViewAsync(Viewport.ZoomTo(area));
 
@@ -111,9 +131,14 @@
         if (_instance is not null && Viewport != _jsView) await PushViewAsync(Viewport);
     }
 
+    /// <summary>True after the first render in an interactive render mode; static rendering never gets there.</summary>
+    private bool _isInteractive;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+        _isInteractive = true;
+        StateHasChanged();
         try
         {
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Tellurian.Trains.Drawing.Components/Canvas/DrawingCanvas.razor.js");

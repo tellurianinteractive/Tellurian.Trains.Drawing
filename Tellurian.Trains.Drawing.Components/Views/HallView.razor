@@ -10,7 +10,7 @@
 }
 else
 {
-    <DrawingCanvas Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+    <DrawingCanvas FitText="@FitText" Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
                    PanWithPrimaryButton="true" Label="@(Label ?? _hall.Name)" Class="hall-view">
         <HallContent Hall="_hall" Layers="Layers" TextSize="TextSize" />
     </DrawingCanvas>
@@ -36,6 +36,9 @@ else
     [Parameter] public bool ShowScaleBar { get; set; } = true;
     [Parameter] public string Error { get; set; } = "The hall can't be shown.";
     [Parameter] public string? Label { get; set; }
+
+    /// <summary>The tooltip of the fit-in-view button; the host passes its translation.</summary>
+    [Parameter] public string FitText { get; set; } = "Fit in view";
     [Parameter] public double Width { get; set; } = 800;
     [Parameter] public double Height { get; set; } = 500;
 

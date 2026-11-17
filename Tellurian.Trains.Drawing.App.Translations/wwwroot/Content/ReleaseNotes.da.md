@@ -9,6 +9,7 @@ Udgivet 2026-11-17
 - Hallen viser sit gulvareal og sit brugbare gulvareal: uden søjler, inventar, områderne, der skal holdes frie foran døre, og spærrede områder.
 - *Udskriv* udskriver hallen på en side i liggende format, med størrelsen og gulvarealerne i midten.
 - Tal vises og skrives, som dit sprog skriver dem, f.eks. 12,5 på dansk og 12.5 på engelsk.
+- En knap i øverste højre hjørne af hver tegning viser hele tegningen igen, også for modultegninger.
 
 ## Version 0.6.0
 Udgivet 2026-11-16

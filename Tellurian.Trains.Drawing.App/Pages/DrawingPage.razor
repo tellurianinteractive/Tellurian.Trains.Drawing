@@ -39,7 +39,7 @@ else if (draft is not null)
             @switch (draft.Kind)
             {
                 case DrawingFileKind.Module:
-                    <ModuleView Json="@draft.Json" Standard="@_standard" EndProfiles="FindEndProfile" PrintTitle="@draft.Name" Error="@T["CannotShow"]" />
+                    <ModuleView FitText="@T["ZoomToFit"]" Json="@draft.Json" Standard="@_standard" EndProfiles="FindEndProfile" PrintTitle="@draft.Name" Error="@T["CannotShow"]" />
                     break;
             }
         </div>
