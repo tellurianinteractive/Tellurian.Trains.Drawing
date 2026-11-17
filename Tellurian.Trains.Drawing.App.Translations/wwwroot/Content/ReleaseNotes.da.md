@@ -1,5 +1,15 @@
 # Udgivelsesnoter
 
+## Version 0.7.0
+Udgivet 2026-11-17
+- Haleditor: *Ny hal…* på startsiden starter med et rektangel. Tegn andre vægge, træk hjørner og vægge, eller skriv hjørnerne, væggenes længder og buer i panelet *Vægge*. Hallens mål er i meter; du kan også skrive f.eks. 450 mm.
+- Tilføj runde og firkantede søjler, inventar, døre, nødudgange og spærrede områder. Markér noget for at ændre størrelsen med dets håndtag, og træk inden i det for at flytte det. Et fastgørelsesgitter, 0,1 m, medmindre du vælger et andet, gør rektangler lette at tegne.
+- Døre bliver i deres væg. En markeret dør viser afstandene fra hjørnerne til åbningen, som du også kan skrive.
+- Markér de døre, hvor moduler kan bæres ind og ud; de får en blå dobbeltpil. Nødudgange er grønne, med et nødudgangsskilt, der peger mod udgangen. Etiketter står altid øverst.
+- Hallen viser sit gulvareal og sit brugbare gulvareal: uden søjler, inventar, områderne, der skal holdes frie foran døre, og spærrede områder.
+- *Udskriv* udskriver hallen på en side i liggende format, med størrelsen og gulvarealerne i midten.
+- Tal vises og skrives, som dit sprog skriver dem, f.eks. 12,5 på dansk og 12.5 på engelsk.
+
 ## Version 0.6.0
 Udgivet 2026-11-16
 - Nyt modul: ende B kan have en anden endeprofil end ende A, også af en anden standard i samme skala, for eksempel FREMO i den ene ende og MMM i den anden. Markér modulet som endevender, når en asymmetrisk endeprofil skifter side. En asymmetrisk endeprofil, som FREMO-H0-B96, spejles nu i ende B, så den høje side bliver på samme side af sporet, og to sådanne moduler passer uden afvigelser.

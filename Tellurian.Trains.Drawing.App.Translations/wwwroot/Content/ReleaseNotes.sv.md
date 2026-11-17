@@ -1,5 +1,15 @@
 # Versionsinformation
 
+## Version 0.7.0
+Utgiven 2026-11-17
+- Hallredigerare: *Ny hall…* på startsidan börjar med en rektangel. Rita andra väggar, dra hörn och väggar, eller skriv hörnen, väggarnas längder och bågar i panelen *Väggar*. Hallens mått anges i meter; du kan också skriva t.ex. 450 mm.
+- Lägg till runda och fyrkantiga pelare, inredning, dörrar, nödutgångar och spärrade ytor. Markera något för att ändra storleken med dess handtag, och dra inuti det för att flytta det. Ett fästrutnät, 0,1 m om du inte väljer ett annat, gör det lätt att rita rektanglar.
+- Dörrar stannar i sin vägg. En markerad dörr visar avstånden från hörnen till öppningen, som du också kan skriva.
+- Markera dörrarna där moduler kan bäras in och ut; de får en blå dubbelpil. Nödutgångar är gröna, med en nödutgångsskylt som pekar mot utgången. Etiketter syns alltid överst.
+- Hallen visar sin golvyta och sin användbara golvyta: utan pelare, inredning, ytorna som ska hållas fria framför dörrar och spärrade ytor.
+- *Skriv ut* skriver ut hallen på en liggande sida, med storleken och golvytorna i mitten.
+- Tal visas och skrivs som ditt språk skriver dem, t.ex. 12,5 på svenska och 12.5 på engelska.
+
 ## Version 0.6.0
 Utgiven 2026-11-16
 - Ny modul: ände B kan ha en annan ändprofil än ände A, även av en annan standard i samma skala, till exempel FREMO i ena änden och MMM i den andra. Markera modulen som ändevändare när en osymmetrisk ändprofil byter sida. En osymmetrisk ändprofil, som FREMO-H0-B96, speglas nu i ände B, så att den höga sidan stannar på samma sida om spåret och två sådana moduler passar utan avvikelser.

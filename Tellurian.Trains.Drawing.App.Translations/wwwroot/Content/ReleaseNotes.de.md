@@ -1,5 +1,15 @@
 # Versionshinweise
 
+## Version 0.7.0
+Veröffentlicht am 2026-11-17
+- Halleneditor: *Neue Halle…* auf der Startseite beginnt mit einem Rechteck. Zeichne andere Wände, ziehe Ecken und Wände oder gib die Ecken, Wandlängen und Bögen im Bereich *Wände* ein. Hallenmaße sind in Metern; du kannst auch z. B. 450 mm eingeben.
+- Füge runde und eckige Säulen, Einbauten, Türen, Notausgänge und Sperrflächen hinzu. Wähle etwas aus, um seine Größe mit den Griffen zu ändern, und ziehe darin, um es zu verschieben. Ein Fangraster, 0,1 m, wenn du kein anderes wählst, macht Rechtecke leicht.
+- Türen bleiben in ihrer Wand. Eine ausgewählte Tür zeigt ihre Abstände von den Ecken bis zur Öffnung, die du auch eingeben kannst.
+- Markiere die Türen, durch die Module hinein- und hinausgetragen werden können; sie bekommen einen blauen Doppelpfeil. Notausgänge sind grün, mit einem Notausgangszeichen, das zum Ausgang zeigt. Beschriftungen sind immer oben lesbar.
+- Die Halle zeigt ihre Bodenfläche und ihre nutzbare Bodenfläche: ohne Säulen, Einbauten, die Flächen, die vor Türen frei bleiben müssen, und Sperrflächen.
+- *Drucken* druckt die Halle auf einer Seite im Querformat, mit ihrer Größe und den Bodenflächen in der Mitte.
+- Zahlen werden so angezeigt und eingegeben, wie deine Sprache sie schreibt, z. B. 12,5 auf Deutsch und 12.5 auf Englisch.
+
 ## Version 0.6.0
 Veröffentlicht am 2026-11-16
 - Neues Modul: Ende B kann ein anderes Endprofil als Ende A haben, auch von einer anderen Norm im selben Maßstab, zum Beispiel FREMO an einem Ende und MMM am anderen. Markiere das Modul als Endewender, wenn ein asymmetrisches Endprofil die Seite wechselt. Ein asymmetrisches Endprofil wie FREMO-H0-B96 wird jetzt an Ende B gespiegelt, sodass die hohe Seite auf derselben Seite des Gleises bleibt und zwei solche Module ohne Abweichungen passen.

@@ -1,5 +1,15 @@
 # Release Notes
 
+## Release 0.7.0
+Released 2026-11-17
+- Hall editor: *New hall…* on the start page starts from a rectangle. Draw other walls, drag corners and walls, or type the corners, wall lengths and arcs in the *Walls* pane. Hall measures are in metres; you can also type e.g. 450 mm.
+- Add round and square pillars, furniture, doors, emergency exits and no-go zones. Select an item to resize it with its handles, and drag inside it to move it. A snap grid, 0.1 m unless you choose another, makes rectangles easy to draw.
+- Doors stay in their wall. A selected door shows its distances from the corners to the opening, which you can also type.
+- Mark the doors through which modules can be carried in and out; they get a blue double arrow. Emergency exits are green, with an emergency exit sign pointing towards the exit. Labels are always readable on top.
+- The hall shows its floor area and its effective floor area: without pillars, furniture, the areas kept free in front of doors and no-go zones.
+- *Print* prints the hall on a landscape page, with its size and floor areas in the middle.
+- Numbers are shown and typed the way your language writes them, e.g. 12,5 in Swedish and 12.5 in English.
+
 ## Release 0.6.0
 Released 2026-11-16
 - New module: end B can have another end profile than end A, also of another standard of the same scale, e.g. FREMO at one end and MMM at the other. Mark the module as an Endewender when an asymmetric end profile changes side. An asymmetric end profile, such as FREMO-H0-B96, is now mirrored at end B, so that its high side stays on the same side of the track and two such modules fit without mismatch.

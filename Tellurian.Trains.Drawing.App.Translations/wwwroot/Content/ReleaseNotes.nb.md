@@ -1,5 +1,15 @@
 # Versjonsmerknader
 
+## Versjon 0.7.0
+Utgitt 2026-11-17
+- Hallredigering: *Ny hall…* på startsiden starter med et rektangel. Tegn andre vegger, dra hjørner og vegger, eller skriv hjørnene, veggenes lengder og buer i panelet *Vegger*. Hallens mål er i meter; du kan også skrive f.eks. 450 mm.
+- Legg til runde og firkantede søyler, inventar, dører, nødutganger og sperrede områder. Merk noe for å endre størrelsen med håndtakene, og dra inni det for å flytte det. Et festerutenett, 0,1 m hvis du ikke velger et annet, gjør det lett å tegne rektangler.
+- Dører blir i veggen sin. En merket dør viser avstandene fra hjørnene til åpningen, som du også kan skrive.
+- Merk dørene der moduler kan bæres inn og ut; de får en blå dobbeltpil. Nødutganger er grønne, med et nødutgangsskilt som peker mot utgangen. Etiketter står alltid øverst.
+- Hallen viser gulvarealet og det brukbare gulvarealet: uten søyler, inventar, områdene som skal holdes frie foran dører, og sperrede områder.
+- *Skriv ut* skriver ut hallen på en side i liggende format, med størrelsen og gulvarealene i midten.
+- Tall vises og skrives slik språket ditt skriver dem, f.eks. 12,5 på norsk og 12.5 på engelsk.
+
 ## Versjon 0.6.0
 Utgitt 2026-11-16
 - Ny modul: ende B kan ha en annen endeprofil enn ende A, også av en annen standard i samme skala, for eksempel FREMO i den ene enden og MMM i den andre. Merk modulen som endevender når en asymmetrisk endeprofil bytter side. En asymmetrisk endeprofil, som FREMO-H0-B96, speiles nå i ende B, slik at den høye siden blir på samme side av sporet og to slike moduler passer uten avvik.
