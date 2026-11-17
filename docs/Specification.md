@@ -1,6 +1,6 @@
 # Tellurian Trains Drawing – Specification
 
-Status: **Draft 0.25** (2026-11-13) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
+Status: **Draft 0.26** (2026-11-17) – for review. Implementation plan: [ImplementationPlan.md](ImplementationPlan.md).
 Requirement IDs (e.g. `MD-12`) are stable and are referenced from the implementation plan.
 Priority: **M** = must (first release), **S** = should (first release if time allows), **L** = later.
 
@@ -55,7 +55,7 @@ Terms and properties follow the **Module Registry** so that a later import maps 
 | **Section** | A physically separate baseboard part of a module. | Label, outline (closed path) in module coordinates. |
 | **Internal joint** | The fixed joint between two sections of the same module. The owner designs the **internal end profile** freely; it does not have to follow any standard. | The two sections, position along their common edge, optional internal end profile drawing (user end profile, not tied to a standard). |
 | **Exit** (*ModuleExit*) | An **outer** module end that can connect to another module. **Each exit has its own end profile**, of the module's scale; the exits of one module may have different end profiles, **also of different standards**, e.g. FREMO at one end and MMM at the other. The end plate (often 10–12 mm plywood) can be fitted either side out, so the profile is built **as drawn or mirrored** (profile orientation). | Label (e.g. "A", "East"), direction (*Eastwards/Westwards/Undefined*), end profile, **profile orientation** (*Normal* / *Mirrored*, only meaningful for asymmetric profiles), **rail-top offset** (mm relative to the standard's rail-top height; **0 = standard**, e.g. 1300 mm above floor; non-zero only on ramp modules), **pose** (position + outward heading in module coordinates). |
-| **Hall** | A room where a hall plan is built. | Name, outline (polygon), obstacles, doors, no-go zones, notes. |
+| **Hall** | A room where a hall plan is built. | Name, outline (polygon), obstacles, doors (some marked as module entrances), no-go zones, notes. |
 | **Hall plan** | A hall plus the modules placed in it. | Name, hall, primary standard, **accepted standards** (one or more, e.g. FREMO H0-RE and MMM-2R), **preferred add-ons** (e.g. MMM-Modern), **module collection**, **lines**, **public areas**, **walking paths**, acknowledgements, settings (tolerances, clearance, path width). |
 | **Module collection** | The module files available to a hall plan, imported from a ZIP archive, a shared folder or single files (UC-7). | Modules (read-only copies with revision), source (ZIP / folder / files), import time. |
 | **Layout** | All modules of a hall plan that are joined to each other: a main line with its branches and rejoining lines. A hall plan normally has one layout. Separate layouts in the same hall are possible. | **Anchor module**, the anchor's pose in hall coordinates, **anchor dimensions** (HP-21), its lines. |
@@ -192,6 +192,8 @@ The structure of a module drawing (exits → end plates → sides → sections �
 | HA-3 | M | Hall properties: name, address/notes, default minimum aisle width. |
 | HA-4 | S | A background floor plan image with two-point calibration. |
 | HA-5 | M | Halls are stored separately and can be reused by several hall plans. A hall plan keeps an embedded copy (§6). |
+| HA-7 | M | **Module entrances**: mark the doors and emergency exits through which modules can be carried in and out of the hall. They are shown with their own symbol in the hall drawing and in hall plans, and listed in the hall's properties. |
+| HA-8 | M | **Effective floor area**: besides the floor area inside the walls, show the floor area that can be used: without pillars, furniture, the keep-free zones of doors and emergency exits, and no-go zones. Overlaps are counted once. |
 | HA-6 | – | *Replaced by HP-17 (public areas belong to the hall plan, since they depend on how the modules are placed).* |
 
 ### 5.5 Hall planning (HP)

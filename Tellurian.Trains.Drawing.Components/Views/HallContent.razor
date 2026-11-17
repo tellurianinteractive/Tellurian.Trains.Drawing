@@ -1,0 +1,140 @@
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Editing.Halls
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+@using Tellurian.Trains.Drawing.Model.Halls
+
+@* The SVG content of a hall in plan view (world coordinates), shared by the read-only view and the editor. *@
+@if (Show(HallLayers.Walls))
+{
+    <path class="hl-floor" d="@SvgPath.From(Hall.Outline)" />
+}
+@if (Show(HallLayers.NoGoZones))
+{
+    @for (var i = 0; i < Hall.NoGoZones.Count; i++)
+    {
+        var zone = Hall.NoGoZones[i];
+        <path class="@Classes("hl-no-go", HallItem.NoGoZone(i))" d="@SvgPath.From(zone.Area)" />
+    }
+}
+@if (Show(HallLayers.Doors))
+{
+    @for (var i = 0; i < Hall.Doors.Count; i++)
+    {
+        var door = Hall.Doors[i];
+        var item = HallItem.Door(i);
+        <path class="@Classes(door.Kind == DoorKind.EmergencyExit ? "hl-keep-free emergency" : "hl-keep-free", item)" d="@SvgPath.From(door.KeepFreeZone())" />
+        @if (door.Kind == DoorKind.EmergencyExit)
+        {
+            var sign = HallScene.EmergencySign(door);
+            <EmergencyExitSign Center="sign.Center" Size="sign.Size" Rotation="sign.Rotation" Mirrored="sign.Mirrored" />
+        }
+        @if (door.IsModuleEntrance)
+        {
+            <path class="hl-module-entrance" d="@SvgPath.Polyline(HallScene.EntranceSymbol(door), isClosed: true)" />
+        }
+    }
+}
+@if (Show(HallLayers.Obstacles))
+{
+    @for (var i = 0; i < Hall.Obstacles.Count; i++)
+    {
+        var obstacle = Hall.Obstacles[i];
+        <path class="@Classes(obstacle.Kind == ObstacleKind.Pillar ? "hl-obstacle pillar" : "hl-obstacle", HallItem.Obstacle(i))" d="@SvgPath.From(obstacle.Area)" />
+    }
+}
+@if (Show(HallLayers.Walls))
+{
+    <path class="hl-walls" d="@SvgPath.From(Hall.Outline)" />
+    @if (Show(HallLayers.Doors))
+    {
+        @* The openings are drawn over the walls: a gap for a door, a green bar for an emergency exit. *@
+        @for (var i = 0; i < Hall.Doors.Count; i++)
+        {
+            var door = Hall.Doors[i];
+            var (a, b) = HallScene.Opening(door);
+            <line class="@Classes(door.Kind == DoorKind.EmergencyExit ? "hl-door emergency" : "hl-door", HallItem.Door(i))" x1="@SvgPath.Number(a.X)" y1="@SvgPath.Number(a.Y)" x2="@SvgPath.Number(b.X)" y2="@SvgPath.Number(b.Y)" />
+        }
+    }
+    @if (Selected is { Count: > 0 })
+    {
+        var walls = Hall.Outline.ToPath().Segments;
+        @for (var i = 0; i < walls.Count; i++)
+        {
+            if (!Selected.Contains(HallItem.Wall(i))) continue;
+            <path class="hl-wall selected" d="@SvgPath.From(new SegmentPath([walls[i]]))" />
+        }
+    }
+}
+@if (Show(HallLayers.Labels))
+{
+    @* All texts on top of every item, wall and opening, with a halo, so they can be read where items are close. *@
+    <g class="hl-labels">
+        @if (Show(HallLayers.NoGoZones))
+        {
+            @foreach (var zone in Hall.NoGoZones)
+            {
+                <WorldText At="zone.Area.ToPath().Bounds.Center" Text="@zone.Reason" Size="TextSize" Class="hl-label" />
+            }
+        }
+        @if (Show(HallLayers.Obstacles))
+        {
+            @foreach (var obstacle in Hall.Obstacles.Where(o => o.Label is not null))
+            {
+                <WorldText At="obstacle.Area.ToPath().Bounds.Center" Text="@obstacle.Label" Size="TextSize" Class="hl-label" />
+            }
+        }
+        @if (Show(HallLayers.Doors))
+        {
+            @foreach (var door in Hall.Doors.Where(d => d.Label is not null))
+            {
+                <WorldText At="HallScene.LabelPosition(door, door.Label!, TextSize)" Text="@door.Label" Size="TextSize" Class="hl-label" />
+            }
+        }
+    </g>
+}
+@if (ShowCorners)
+{
+    var half = HandleSize / 2;
+    var corners = PathCorners.From(Hall.Outline).Corners;
+    @for (var i = 0; i < corners.Count; i++)
+    {
+        var corner = corners[i];
+        <rect class="@Classes("hl-corner", HallItem.Corner(i))" x="@SvgPath.Number(corner.X - half)" y="@SvgPath.Number(corner.Y - half)" width="@SvgPath.Number(HandleSize)" height="@SvgPath.Number(HandleSize)" />
+    }
+}
+
+@if (ShowCorners && Selected is { Count: > 0 })
+{
+    @* The handles that resize the selected items. *@
+    var half = HandleSize / 2;
+    @foreach (var owner in Selected.Select(i => i.Owner).Distinct())
+    {
+        @foreach (var (handle, at) in HallHandles.Of(Hall, owner))
+        {
+            <rect class="@Classes("hl-handle", handle)" x="@SvgPath.Number(at.X - half)" y="@SvgPath.Number(at.Y - half)" width="@SvgPath.Number(HandleSize)" height="@SvgPath.Number(HandleSize)" />
+        }
+    }
+}
+
+@code {
+    [Parameter, EditorRequired] public Hall Hall { get; set; } = default!;
+    [Parameter] public HallLayers Layers { get; set; } = HallLayers.All;
+
+    /// <summary>The text height in millimetres.</summary>
+    [Parameter] public double TextSize { get; set; } = 200;
+
+    /// <summary>Shows handles on the corners of the walls and on the selected items, for editing.</summary>
+    [Parameter] public bool ShowCorners { get; set; }
+
+    /// <summary>The size of the corner handles in millimetres; the editor passes a few pixels at its zoom.</summary>
+    [Parameter] public double HandleSize { get; set; } = 100;
+
+    /// <summary>Highlighted items, e.g. the editor's selection.</summary>
+    [Parameter] public IReadOnlyCollection<HallItem>? Selected { get; set; }
+
+    private bool Show(HallLayers layer) => Layers.HasFlag(layer);
+
+    private string Classes(string cssClass, HallItem item) =>
+        Selected?.Contains(item) == true ? $"{cssClass} selected" : cssClass;
+}

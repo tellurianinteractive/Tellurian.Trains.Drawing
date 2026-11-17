@@ -25,6 +25,9 @@ public sealed record Door
 
     public string? Label { get; init; }
 
+    /// <summary>True if modules can be carried in and out of the hall through this door (HA-7).</summary>
+    public bool IsModuleEntrance { get; init; }
+
     /// <summary>The keep-free zone: the width of the opening, <see cref="KeepFreeDepth"/> into the hall.</summary>
     public PathDrawing KeepFreeZone()
     {

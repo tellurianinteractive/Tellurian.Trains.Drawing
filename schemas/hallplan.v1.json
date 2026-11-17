@@ -377,6 +377,9 @@
             "string",
             "null"
           ]
+        },
+        "isModuleEntrance": {
+          "type": "boolean"
         }
       },
       "required": [

@@ -1,0 +1,62 @@
+@using Tellurian.Trains.Drawing.Geometry
+
+@* An emergency exit sign in the established style (ISO 7010 E001/E002): a green square with a white figure running
+   to a door. A simplified drawing of our own, in world coordinates (Y up), centred on Center and turned so the figure
+   runs towards the exit; mirrored, it runs the other way. Only fills, so it scales with the drawing. *@
+<g class="emergency-exit-sign" transform="@Transform">
+    <rect class="ees-background" x="0" y="0" width="@Box" height="@Box" rx="6" />
+    <path class="ees-figure" fill-rule="evenodd" d="M58 12 H88 V88 H58 Z M64 18 V82 H82 V18 Z" />
+    <circle class="ees-figure" cx="42" cy="79" r="7.5" />
+    @foreach (var limb in Limbs)
+    {
+        <path class="ees-figure" d="@SvgPath.Polyline(Thick(limb.From, limb.To, limb.Width), isClosed: true)" />
+        <circle class="ees-figure" cx="@SvgPath.Number(limb.To.X)" cy="@SvgPath.Number(limb.To.Y)" r="@SvgPath.Number(limb.Width / 2)" />
+    }
+</g>
+
+@code {
+    /// <summary>The side of the box the sign is drawn in.</summary>
+    private const double Box = 100;
+
+    /// <summary>The figure's limbs as thick segments in the 100 × 100 box: torso, legs and arms, running to the right.</summary>
+    private static readonly (Point From, Point To, double Width)[] Limbs =
+    [
+        (new(43, 67), new(33, 45), 11),
+        (new(33, 45), new(45, 33), 9),
+        (new(45, 33), new(50, 14), 8),
+        (new(33, 45), new(22, 31), 9),
+        (new(22, 31), new(9, 26), 8),
+        (new(43, 65), new(53, 56), 7),
+        (new(53, 56), new(60, 65), 6),
+        (new(43, 65), new(31, 59), 7),
+        (new(31, 59), new(21, 64), 6),
+    ];
+
+    /// <summary>The centre of the sign in world coordinates.</summary>
+    [Parameter, EditorRequired] public Point Center { get; set; }
+
+    /// <summary>The side of the sign in millimetres.</summary>
+    [Parameter, EditorRequired] public double Size { get; set; }
+
+    /// <summary>The direction the figure runs, from the X axis (or the opposite direction when mirrored).</summary>
+    [Parameter] public Angle Rotation { get; set; }
+
+    /// <summary>True for the variant that runs to the left in its own frame, so the sign never stands upside down.</summary>
+    [Parameter] public bool Mirrored { get; set; }
+
+    private string Transform
+    {
+        get
+        {
+            var scale = Size / Box;
+            return $"translate({SvgPath.Number(Center.X)} {SvgPath.Number(Center.Y)}) rotate({SvgPath.Number(Rotation.Degrees)}) " +
+                $"scale({SvgPath.Number(Mirrored ? -scale : scale)} {SvgPath.Number(scale)}) translate({SvgPath.Number(-Box / 2)} {SvgPath.Number(-Box / 2)})";
+        }
+    }
+
+    private static Point[] Thick(Point from, Point to, double width)
+    {
+        var side = (to - from).Normalized.LeftNormal * (width / 2);
+        return [from + side, to + side, to - side, from - side];
+    }
+}

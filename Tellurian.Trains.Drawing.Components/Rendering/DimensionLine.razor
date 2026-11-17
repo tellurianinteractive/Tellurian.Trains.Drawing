@@ -1,3 +1,5 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Editing.Input
 @using Tellurian.Trains.Drawing.Geometry
 @using Tellurian.Trains.Drawing.Model
 
@@ -16,7 +18,7 @@
     <line class="dimension-line" x1="@SvgPath.Number(start.X)" y1="@SvgPath.Number(start.Y)" x2="@SvgPath.Number(end.X)" y2="@SvgPath.Number(end.Y)" stroke="@Stroke" stroke-width="1" />
     <line class="dimension-tick" x1="@SvgPath.Number((start - tick).X)" y1="@SvgPath.Number((start - tick).Y)" x2="@SvgPath.Number((start + tick).X)" y2="@SvgPath.Number((start + tick).Y)" stroke="@Stroke" stroke-width="1.5" />
     <line class="dimension-tick" x1="@SvgPath.Number((end - tick).X)" y1="@SvgPath.Number((end - tick).Y)" x2="@SvgPath.Number((end + tick).X)" y2="@SvgPath.Number((end + tick).Y)" stroke="@Stroke" stroke-width="1.5" />
-    <WorldText At="textAt" Text="@(Dimension.Text ?? Value(Dimension.Length))" Size="TextSize" Rotation="direction.Direction" Fill="@Stroke" Class="dimension-text" />
+    <WorldText At="textAt" Text="@(Dimension.Text ?? (Format ?? Value)(Dimension.Length))" Size="TextSize" Rotation="direction.Direction" Fill="@Stroke" Class="dimension-text" />
 </g>
 
 @code {
@@ -30,7 +32,10 @@
     [Parameter] public string Stroke { get; set; } = "#5f6b7a";
     [Parameter] public string? Class { get; set; }
 
-    /// <summary>A length in millimetres as shown: whole millimetres, or tenths below 100 mm.</summary>
+    /// <summary>How the measured length in millimetres is written, e.g. in metres; <see cref="Value"/> by default.</summary>
+    [Parameter] public Func<double, string>? Format { get; set; }
+
+    /// <summary>A length in millimetres as shown in the UI culture: whole millimetres, or tenths below 100 mm.</summary>
     public static string Value(double millimetres) =>
-        millimetres < 100 ? SvgPath.Number(Math.Round(millimetres, 1)) : SvgPath.Number(Math.Round(millimetres));
+        NumberInput.Format(millimetres, millimetres < 100 ? 1 : 0, CultureInfo.CurrentCulture);
 }

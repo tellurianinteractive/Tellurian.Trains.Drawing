@@ -1,0 +1,70 @@
+@page "/new/hall"
+@using Tellurian.Trains.Drawing.Model.Halls
+@inject DrawingDocuments Documents
+@inject NavigationManager Navigation
+
+<PageTitle>@T["NewHallTitle"]</PageTitle>
+
+<h1>@T["NewHallTitle"]</h1>
+<p class="note">@T["NewHallIntro"]</p>
+
+<form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
+    <label><span>@T["Name"]</span><input id="hall-name" @bind="form.Name" /></label>
+    <label><span>@T["HallWidthMetres"]</span><DecimalInput id="hall-width" @bind-Value="form.Width" LengthUnit="Tellurian.Trains.Drawing.Editing.Input.LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" /></label>
+    <label><span>@T["HallDepthMetres"]</span><DecimalInput id="hall-depth" @bind-Value="form.Depth" LengthUnit="Tellurian.Trains.Drawing.Editing.Input.LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" /></label>
+
+    @if (errors.Count > 0)
+    {
+        <ul class="error" role="alert">
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    }
+
+    <div class="toolbar">
+        <button type="submit" class="primary">@T["Create"]</button>
+        <a class="button" href="@Home.Url">@T["Cancel"]</a>
+    </div>
+</form>
+
+@code {
+    public const string Url = "new/hall";
+
+    private const double DefaultWidth = 20000;
+    private const double DefaultDepth = 12000;
+
+    private readonly Form form = new();
+    private IReadOnlyList<string> errors = [];
+
+    private async Task CreateAsync()
+    {
+        errors = Validate().ToList();
+        if (errors.Count > 0) return;
+        var hall = Hall.Rectangle(form.Name.Trim(), form.Width!.Value, form.Depth!.Value);
+        try
+        {
+            var draft = await Documents.CreateAsync(Model.Files.DrawingFileSerializer.Serialize(hall));
+            Navigation.NavigateTo(DrawingPage.Url(draft.Id));
+        }
+        catch (StorageException ex)
+        {
+            errors = [T.Format("StorageError", ex.Message)];
+        }
+    }
+
+    private IEnumerable<string> Validate()
+    {
+        if (string.IsNullOrWhiteSpace(form.Name)) yield return T["HallNameRequired"];
+        if (form.Width is not > 0) yield return T.Format("MustBePositive", T["HallWidthMetres"]);
+        if (form.Depth is not > 0) yield return T.Format("MustBePositive", T["HallDepthMetres"]);
+    }
+
+    private sealed class Form
+    {
+        public string Name { get; set; } = string.Empty;
+        public double? Width { get; set; } = DefaultWidth;
+        public double? Depth { get; set; } = DefaultDepth;
+    }
+}

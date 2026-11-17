@@ -314,4 +314,72 @@
   <data name="Warning_NoUserName" xml:space="preserve"><value>Kein Benutzername in den Einstellungen: Wenn du eine Zeichnung speicherst, wird das nicht im Änderungsprotokoll festgehalten.</value></data>
   <data name="AllScales" xml:space="preserve"><value>(alle Maßstäbe)</value></data>
   <data name="ScaleHelp" xml:space="preserve"><value>Nur Normen und Endprofile in diesem Maßstab werden angeboten, mit ihren Zusätzen. Anfragen an das Modulregister gelten ebenfalls diesem Maßstab.</value></data>
+  <data name="NewHall" xml:space="preserve"><value>Neue Halle…</value></data>
+  <data name="NewHallTitle" xml:space="preserve"><value>Neue Halle</value></data>
+  <data name="NewHallIntro" xml:space="preserve"><value>Beginne mit einer rechteckigen Halle; füge dann im Editor Säulen, Einbauten, Türen, Notausgänge und Sperrflächen hinzu oder zeichne andere Wände.</value></data>
+  <data name="HallNameRequired" xml:space="preserve"><value>Die Halle braucht einen Namen.</value></data>
+  <data name="HallTool_Select" xml:space="preserve"><value>Auswählen</value></data>
+  <data name="HallTool_Walls" xml:space="preserve"><value>Wände</value></data>
+  <data name="HallTool_RoundPillar" xml:space="preserve"><value>Runde Säule</value></data>
+  <data name="HallTool_SquarePillar" xml:space="preserve"><value>Eckige Säule</value></data>
+  <data name="HallTool_Furniture" xml:space="preserve"><value>Einbauten</value></data>
+  <data name="HallTool_Door" xml:space="preserve"><value>Tür</value></data>
+  <data name="HallTool_EmergencyExit" xml:space="preserve"><value>Notausgang</value></data>
+  <data name="HallTool_NoGoZone" xml:space="preserve"><value>Sperrfläche</value></data>
+  <data name="HallSelectHelp" xml:space="preserve"><value>Klicken wählt aus, Ziehen verschiebt (Umschalt: gerade, Alt: ohne Fangen), Entf löscht. Ziehe eine Ecke oder eine Wand, um die Form der Halle zu ändern; Türen folgen ihrer Wand.</value></data>
+  <data name="HallWallsHelp" xml:space="preserve"><value>Klicke auf die Ecken der Wände und noch einmal auf die erste Ecke, um sie zu schließen. Die neuen Wände ersetzen die alten.</value></data>
+  <data name="HallAreaHelpDrawing" xml:space="preserve"><value>Klicken fügt Ecken hinzu; ein Klick auf die erste Ecke schließt. Rücktaste entfernt eine Ecke, Escape bricht ab.</value></data>
+  <data name="HallFurnitureHelp" xml:space="preserve"><value>Klicke auf die Ecken der Einbauten, z. B. einer Bühne oder einer Theke, und noch einmal auf die erste Ecke, um sie zu schließen.</value></data>
+  <data name="HallNoGoHelp" xml:space="preserve"><value>Klicke auf die Ecken einer Fläche, auf der nichts stehen darf, z. B. vor einem Feuerlöschschrank, und noch einmal auf die erste Ecke, um sie zu schließen.</value></data>
+  <data name="HallPillarHelp" xml:space="preserve"><value>Klicke dorthin, wo die Mitte der Säule ist; ändere die Größe in den Eigenschaften.</value></data>
+  <data name="HallDoorHelp" xml:space="preserve"><value>Klicke auf eine Wand, wo die Tür ist. Die Fläche davor muss frei bleiben.</value></data>
+  <data name="HallItem_Corner" xml:space="preserve"><value>Ecke</value></data>
+  <data name="HallItem_Wall" xml:space="preserve"><value>Wand</value></data>
+  <data name="HallItem_Obstacle" xml:space="preserve"><value>Hindernis</value></data>
+  <data name="HallItem_Door" xml:space="preserve"><value>Tür</value></data>
+  <data name="HallItem_NoGoZone" xml:space="preserve"><value>Sperrfläche</value></data>
+  <data name="HallProperties" xml:space="preserve"><value>Halle</value></data>
+  <data name="WallsPane" xml:space="preserve"><value>Wände</value></data>
+  <data name="HallWidth" xml:space="preserve"><value>Breite</value></data>
+  <data name="HallDepth" xml:space="preserve"><value>Tiefe</value></data>
+  <data name="WallLength" xml:space="preserve"><value>Länge</value></data>
+  <data name="WallArc" xml:space="preserve"><value>Bogen</value></data>
+  <data name="AddCorner" xml:space="preserve"><value>Ecke hinzufügen</value></data>
+  <data name="DeleteCorner" xml:space="preserve"><value>Ecke löschen</value></data>
+  <data name="WallsHelp" xml:space="preserve"><value>Maße in Metern; du kannst auch z. B. 450 mm eingeben. Eine neue Länge verschiebt die Ecke, an der die Wand endet. Ein Bogen ungleich 0° macht die Wand gebogen.</value></data>
+  <data name="ObstacleKind" xml:space="preserve"><value>Art</value></data>
+  <data name="ObstacleKind_Pillar" xml:space="preserve"><value>Säule</value></data>
+  <data name="ObstacleKind_Furniture" xml:space="preserve"><value>Einbauten</value></data>
+  <data name="CentreX" xml:space="preserve"><value>Mitte X</value></data>
+  <data name="CentreY" xml:space="preserve"><value>Mitte Y</value></data>
+  <data name="HallDiameter" xml:space="preserve"><value>Durchmesser</value></data>
+  <data name="Rotation" xml:space="preserve"><value>Drehung</value></data>
+  <data name="DoorKind" xml:space="preserve"><value>Art</value></data>
+  <data name="DoorKind_Door" xml:space="preserve"><value>Tür</value></data>
+  <data name="DoorKind_EmergencyExit" xml:space="preserve"><value>Notausgang</value></data>
+  <data name="KeepFreeDepth" xml:space="preserve"><value>Davor freihalten</value></data>
+  <data name="NoGoReason" xml:space="preserve"><value>Grund</value></data>
+  <data name="NoGoDefaultReason" xml:space="preserve"><value>Sperrfläche</value></data>
+  <data name="HallAddress" xml:space="preserve"><value>Adresse</value></data>
+  <data name="MinimumAisleWidth" xml:space="preserve"><value>Mindestbreite der Gänge</value></data>
+  <data name="MinimumAisleWidthHelp" xml:space="preserve"><value>0 verwendet den Mindestabstand der Norm des Hallenplans.</value></data>
+  <data name="HallSize" xml:space="preserve"><value>Größe</value></data>
+  <data name="FloorArea" xml:space="preserve"><value>Bodenfläche</value></data>
+  <data name="HallWalls" xml:space="preserve"><value>Wände</value></data>
+  <data name="HallObstacles" xml:space="preserve"><value>Hindernisse</value></data>
+  <data name="HallDoors" xml:space="preserve"><value>Türen und Ausgänge</value></data>
+  <data name="HallNoGoZones" xml:space="preserve"><value>Sperrflächen</value></data>
+  <data name="IsModuleEntrance" xml:space="preserve"><value>Module können hier hinein- und hinausgetragen werden</value></data>
+  <data name="ModuleEntrances" xml:space="preserve"><value>Moduleingänge</value></data>
+  <data name="NoModuleEntrances" xml:space="preserve"><value>Keiner markiert</value></data>
+  <data name="HallWidthMetres" xml:space="preserve"><value>Breite (m)</value></data>
+  <data name="HallDepthMetres" xml:space="preserve"><value>Tiefe (m)</value></data>
+  <data name="DoorWall" xml:space="preserve"><value>Wand</value></data>
+  <data name="WallBetweenCorners" xml:space="preserve"><value>Wand {0} (Ecken {1}–{2})</value></data>
+  <data name="DoorFromCorner" xml:space="preserve"><value>Ecke {0} bis zur Öffnung</value></data>
+  <data name="DoorToCorner" xml:space="preserve"><value>Öffnung bis Ecke {0}</value></data>
+  <data name="DoorPositionHelp" xml:space="preserve"><value>Gemessen entlang der Wand bis zu den Kanten der Öffnung, wie in der Zeichnung.</value></data>
+  <data name="SnapGrid" xml:space="preserve"><value>Fangraster</value></data>
+  <data name="SnapGridOff" xml:space="preserve"><value>Aus (folgt dem Zoom)</value></data>
+  <data name="EffectiveFloorArea" xml:space="preserve"><value>Nutzbare Bodenfläche</value></data>
 </root>

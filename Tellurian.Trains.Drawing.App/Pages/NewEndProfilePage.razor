@@ -28,15 +28,15 @@
                 }
             </select>
         </label>
-        <label><span>@T["PlateWidth"]</span><input id="plate-width" type="number" step="any" @bind="form.PlateWidth" /></label>
-        <label><span>@T["PlateTopBelowRailTop"]</span><input id="plate-top" type="number" step="any" @bind="form.TopBelowRailTop" /></label>
-        <label><span>@T["PlateBottomBelowRailTop"]</span><input id="plate-bottom" type="number" step="any" @bind="form.BottomBelowRailTop" /></label>
+        <label><span>@T["PlateWidth"]</span><DecimalInput id="plate-width" @bind-Value="form.PlateWidth" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["PlateTopBelowRailTop"]</span><DecimalInput id="plate-top" @bind-Value="form.TopBelowRailTop" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["PlateBottomBelowRailTop"]</span><DecimalInput id="plate-bottom" @bind-Value="form.BottomBelowRailTop" InvalidText="@T["InvalidNumber"]" /></label>
         <label><span>@T["NumberOfTracks"]</span><input id="track-count" type="number" min="0" max="8" @bind="form.TrackCount" /></label>
         @if (form.TrackCount > 1)
         {
-            <label><span>@T["CentreDistance"]</span><input id="centre-distance" type="number" step="any" @bind="form.CentreDistance" /></label>
+            <label><span>@T["CentreDistance"]</span><DecimalInput id="centre-distance" @bind-Value="form.CentreDistance" InvalidText="@T["InvalidNumber"]" /></label>
         }
-        <label><span>@T["Gauge"]</span><input id="gauge" type="number" step="any" @bind="form.Gauge" /></label>
+        <label><span>@T["Gauge"]</span><DecimalInput id="gauge" @bind-Value="form.Gauge" InvalidText="@T["InvalidNumber"]" /></label>
         <label>
             <span>@T["CopyScrewHolesFrom"]</span>
             <select id="holes-from" @bind="form.ScrewHolesFrom">

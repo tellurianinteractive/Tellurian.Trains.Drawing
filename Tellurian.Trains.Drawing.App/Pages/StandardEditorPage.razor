@@ -40,13 +40,13 @@
                 }
             </select>
         </label>
-        <label><span>@T["Field_NormalGauge"]</span><input id="normalGauge" type="number" step="any" @bind="form.NormalGauge" /></label>
-        <label><span>@T["Field_NarrowGauge"]</span><input type="number" step="any" @bind="form.NarrowGauge" /></label>
-        <label><span>@T["Field_RailTopHeight"]</span><input id="railTopHeight" type="number" step="any" @bind="form.RailTopHeight" /></label>
-        <label><span>@T["Field_MinimumClearance"]</span><input type="number" step="any" @bind="form.MinimumClearance" /></label>
-        <label><span>@T["Field_OperatorSpaceDepth"]</span><input type="number" step="any" @bind="form.OperatorSpaceDepth" /></label>
-        <label><span>@T["Field_DefaultCurveRadius"]</span><input type="number" step="any" @bind="form.DefaultCurveRadius" /></label>
-        <label><span>@T["Field_MinimumReverseCurveRadius"]</span><input type="number" step="any" @bind="form.MinimumReverseCurveRadius" /></label>
+        <label><span>@T["Field_NormalGauge"]</span><DecimalInput id="normalGauge" @bind-Value="form.NormalGauge" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_NarrowGauge"]</span><DecimalInput @bind-Value="form.NarrowGauge" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_RailTopHeight"]</span><DecimalInput id="railTopHeight" @bind-Value="form.RailTopHeight" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_MinimumClearance"]</span><DecimalInput @bind-Value="form.MinimumClearance" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_OperatorSpaceDepth"]</span><DecimalInput @bind-Value="form.OperatorSpaceDepth" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_DefaultCurveRadius"]</span><DecimalInput @bind-Value="form.DefaultCurveRadius" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_MinimumReverseCurveRadius"]</span><DecimalInput @bind-Value="form.MinimumReverseCurveRadius" InvalidText="@T["InvalidNumber"]" /></label>
         <label>
             <span>@T["Field_DefaultSingleTrackEndProfileId"]</span>
             <select @bind="form.DefaultSingleTrackEndProfileId">

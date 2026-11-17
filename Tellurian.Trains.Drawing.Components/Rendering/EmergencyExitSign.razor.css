@@ -1,0 +1,9 @@
+.ees-background {
+    fill: var(--drawing-emergency, #1e8a3c);
+    stroke: none;
+}
+
+.ees-figure {
+    fill: #ffffff;
+    stroke: none;
+}

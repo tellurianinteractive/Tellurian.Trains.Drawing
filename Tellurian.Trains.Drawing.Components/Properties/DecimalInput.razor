@@ -1,0 +1,72 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Editing.Input
+
+@* A decimal number for forms, written the way the UI culture writes numbers (NumberInput), unlike a browser number
+   field, which follows the browser's language. Use with @bind-Value; invalid text is marked and gives null. *@
+<input @attributes="AdditionalAttributes" class="@CssClass" type="text" inputmode="decimal" autocomplete="off"
+       value="@_text" aria-invalid="@(_invalid ? "true" : "false")" title="@(_invalid ? InvalidText : null)"
+       @oninput="OnInput" @onchange="OnChange" />
+
+@code {
+    private string _text = string.Empty;
+    private bool _invalid;
+    private double? _shown;
+    private bool _hasShown;
+
+    [Parameter] public double? Value { get; set; }
+    [Parameter] public EventCallback<double?> ValueChanged { get; set; }
+    [Parameter] public Quantity Quantity { get; set; } = Quantity.Length;
+
+    /// <summary>The most decimals shown, in <see cref="LengthUnit"/> for lengths; typed values keep their precision.</summary>
+    [Parameter] public int Decimals { get; set; } = 3;
+
+    /// <summary>The unit a length is shown and typed in; the value is always in millimetres.</summary>
+    [Parameter] public LengthUnit LengthUnit { get; set; } = LengthUnit.Millimetre;
+
+    /// <summary>The tooltip of invalid input; the host passes its translation.</summary>
+    [Parameter] public string InvalidText { get; set; } = "Not a valid number.";
+
+    /// <summary>Other attributes, e.g. <c>id</c>, <c>placeholder</c> or <c>class</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass
+    {
+        get
+        {
+            var extra = AdditionalAttributes?.TryGetValue("class", out var value) == true ? value as string : null;
+            return string.Join(' ', new[] { "decimal-input", extra, _invalid ? "invalid" : null }.Where(c => !string.IsNullOrEmpty(c)));
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        // A value from outside replaces the text, unless it is the value the text already gave.
+        if (_hasShown && Value == _shown) return;
+        _hasShown = true;
+        _shown = Value;
+        _text = Format(Value);
+        _invalid = false;
+    }
+
+    private void OnInput(ChangeEventArgs e) => _text = e.Value as string ?? string.Empty;
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        _text = e.Value as string ?? string.Empty;
+        double? value = null;
+        if (string.IsNullOrWhiteSpace(_text)) _invalid = false;
+        else if (NumberInput.TryParse(_text, Quantity, CultureInfo.CurrentCulture, out var parsed, LengthUnit))
+        {
+            _invalid = false;
+            value = parsed;
+            _text = Format(parsed);
+        }
+        else _invalid = true;
+        _shown = value;
+        await ValueChanged.InvokeAsync(value);
+    }
+
+    private string Format(double? value) => value is { } number
+        ? NumberInput.Format(Quantity == Quantity.Length ? number / LengthUnit.Millimetres() : number, Decimals, CultureInfo.CurrentCulture)
+        : string.Empty;
+}

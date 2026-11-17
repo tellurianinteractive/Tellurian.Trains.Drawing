@@ -236,13 +236,15 @@ This comes first among the editors because module exits (Phase 6) depend on end 
 **Exit criteria:** a two-track station module with turnouts can be drawn whose tracks land exactly on the end-profile positions.
 **Requirements:** MD-6, MD-7, MD-8.
 
-### Phase 8 – Hall editor (≈1–2 weeks)
+### Phase 8 – Hall editor (≈1–2 weeks) — code complete 2026-11-17; browser check pending
 1. Hall from a rectangle or polygon walls, reusing the path tool (HA-1).
 2. Pillars (rectangle/round), fixed furniture, doors/emergency exits with keep-free zones, no-go zones (HA-2).
 3. Hall properties and default aisle width (HA-3).
 4. Hall library and reuse. Embedded copy in hall plans (HA-5).
 
-**Requirements:** HA-1, HA-2, HA-3, HA-5.
+**Requirements:** HA-1, HA-2, HA-3, HA-5, HA-7, HA-8.
+
+*As built:* *New hall* starts from a rectangle; the editor (`HallEditor`, `HallScene`, `HallCommands`) draws walls with the path tool (lines and tangent arcs) or edits them as a table of corners with wall lengths and arc angles (`PathCorners` in Model), and places round and square pillars, furniture, doors, emergency exits and no-go zones. Any door can be marked as a module entrance (HA-7), drawn with a double arrow. The derived measures show the effective floor area (HA-8) beside the floor area, computed exactly by `AreaMeasure` in Geometry. Doors always sit in a wall (`Hall.PoseOnWall`) and follow it when the walls change. Halls are saved as `.hall.json` files and appear among recent files; a separate hall library (HA-5) waits for hall planning (Phase 9), which embeds a copy of the hall file.
 
 ### Phase 9 – Hall planning (≈3 weeks)
 Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-10). There is no free placement of single modules.
@@ -378,7 +380,7 @@ In priority order (to be confirmed):
 | MD-14 | 13 |
 | MD-16 | Later |
 | MD-15 | Later |
-| HA-1, HA-2, HA-3, HA-5 | 8 |
+| HA-1, HA-2, HA-3, HA-5, HA-7, HA-8 | 8 |
 | HA-4 | 13 |
 | HA-6 | replaced by HP-17 |
 | HP-1 … HP-7, HP-11, HP-12, HP-13 | 9 (HP-6 framework in 4; "Level from here" in 13) |

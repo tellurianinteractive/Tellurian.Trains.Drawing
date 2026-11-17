@@ -16,4 +16,10 @@ public static class Tolerance
 
     /// <summary>Default maximum distance between an arc and its tessellated chords.</summary>
     public const double Chord = 0.05;
+
+    /// <summary>
+    /// Maximum distance between an arc and its chords when measuring areas, e.g. of round pillars: coarse enough to keep
+    /// the measure fast, while the area lost is about two thirds of a square millimetre per millimetre of arc.
+    /// </summary>
+    public const double AreaChord = 1;
 }

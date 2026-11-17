@@ -21,6 +21,13 @@ public interface ISelectableScene<TDocument, TId> where TDocument : class where 
     /// <summary>The snap targets of an item, e.g. its corners and edges; used to snap other items to it.</summary>
     IEnumerable<SnapTarget> SnapTargetsOf(TDocument document, TId id);
 
+    /// <summary>
+    /// True if <paramref name="target"/> moves with the <paramref name="dragged"/> items, so a drag mustn't snap to it:
+    /// by default the targets of the dragged items themselves. A scene overrides it when a target depends on
+    /// other items, e.g. a wall on its corners.
+    /// </summary>
+    bool MovesWith(SnapTarget target, IReadOnlySet<TId> dragged) => target.Source is TId id && dragged.Contains(id);
+
     /// <summary>The command that moves <paramref name="ids"/> by <paramref name="offset"/>.</summary>
     IEditCommand<TDocument> Move(IReadOnlyList<TId> ids, Vector offset);
 }

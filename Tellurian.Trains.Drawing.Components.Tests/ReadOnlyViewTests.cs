@@ -193,7 +193,24 @@ public sealed partial class ReadOnlyViewTests
 
         var labelled = await StaticRendering.RenderAsync<Rendering.DimensionLine>(new Dictionary<string, object?> { [nameof(Rendering.DimensionLine.Dimension)] = dimension with { Text = "c/c" } });
         StringAssert.Contains(labelled, ">c/c</text>");
-        Assert.AreEqual("45.3", Rendering.DimensionLine.Value(45.26));
+    }
+
+    [TestMethod]
+    public void DimensionValuesAreWrittenInTheUiCulture()
+    {
+        var culture = System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en");
+            Assert.AreEqual("45.3", Rendering.DimensionLine.Value(45.26));
+            Assert.AreEqual("1234", Rendering.DimensionLine.Value(1234.4));
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("sv");
+            Assert.AreEqual("45,3", Rendering.DimensionLine.Value(45.26));
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = culture;
+        }
     }
 
     [TestMethod]
@@ -202,13 +219,20 @@ public sealed partial class ReadOnlyViewTests
         var hall = Hall.Rectangle("Club hall", 12000, 8000) with
         {
             Obstacles = [Obstacle.RoundPillar(new(4000, 4000), 400) with { Label = "P1" }],
-            Doors = [new() { Position = new(new(1500, 0), new(90)), Width = 1000, Kind = DoorKind.EmergencyExit }],
+            Doors =
+            [
+                new() { Position = new(new(1500, 0), new(90)), Width = 1000, Kind = DoorKind.EmergencyExit },
+                new() { Position = new(new(6000, 0), new(90)), Width = 2000, IsModuleEntrance = true },
+            ],
             NoGoZones = [new() { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose" }],
         };
         var html = await StaticRendering.RenderAsync<HallView>(new Dictionary<string, object?> { [nameof(Views.HallView.Json)] = DrawingFileSerializer.Serialize(hall) });
         Assert.AreEqual(1, Count(html, "hl-walls"));
         Assert.AreEqual(1, Count(html, "pillar"));
-        Assert.AreEqual(1, Count(html, "emergency"));
+        Assert.AreEqual(1, Count(html, "hl-keep-free emergency"), "One of the two doors is an emergency exit.");
+        Assert.AreEqual(1, Count(html, "hl-door emergency"));
+        Assert.AreEqual(1, Count(html, "emergency-exit-sign"));
+        Assert.AreEqual(1, Count(html, "hl-module-entrance"));
         Assert.AreEqual(1, Count(html, "hl-no-go"));
         StringAssert.Contains(html, ">Fire hose</text>");
         StringAssert.Contains(html, ">P1</text>");

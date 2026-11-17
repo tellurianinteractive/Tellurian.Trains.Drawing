@@ -58,6 +58,26 @@ public sealed class SnapEngineTests
     }
 
     [TestMethod]
+    public void AFineGridCatchesEveryPointWhenItAlwaysSnaps()
+    {
+        var engine = new SnapEngine(cellSize: 100) { GridSpacing = 100 };
+        Assert.AreEqual(SnapKind.None, engine.Snap(new(140, 360), Reach).Kind, "Too far from a grid point.");
+
+        engine.SnapsAlwaysToGrid = true;
+        var result = engine.Snap(new(140, 360), Reach);
+        Assert.AreEqual(SnapKind.Grid, result.Kind);
+        Assert.AreEqual(new Point(100, 400), result.Point);
+    }
+
+    [TestMethod]
+    public void TargetsWithinReachWinOverAGridThatAlwaysSnaps()
+    {
+        var engine = Engine();
+        engine.SnapsAlwaysToGrid = true;
+        Assert.AreEqual(SnapKind.Edge, engine.Snap(new(260, 7), Reach).Kind);
+    }
+
+    [TestMethod]
     public void DisabledKindsAndExcludedTargetsAreIgnored()
     {
         var engine = Engine();

@@ -9,9 +9,9 @@
            value="@_text" placeholder="@(Value is null ? MixedText : null)" readonly="@ReadOnly"
            aria-invalid="@(_invalid ? "true" : "false")" title="@(_invalid ? InvalidText : null)"
            @oninput="OnInput" @onchange="OnChange" @onkeydown="OnKeyDown" />
-    @if (Unit is not null)
+    @if (ShownUnit is not null)
     {
-        <span class="number-field-unit" aria-hidden="true">@Unit</span>
+        <span class="number-field-unit" aria-hidden="true">@ShownUnit</span>
     }
 </span>
 
@@ -33,7 +33,11 @@
     /// <summary>The unit shown after the field, e.g. "mm" or "°".</summary>
     [Parameter] public string? Unit { get; set; } = "mm";
 
+    /// <summary>The decimals shown and kept, in <see cref="LengthUnit"/> for lengths.</summary>
     [Parameter] public int Decimals { get; set; } = 1;
+
+    /// <summary>The unit a length is shown and typed in; the value is always in millimetres.</summary>
+    [Parameter] public LengthUnit LengthUnit { get; set; } = LengthUnit.Millimetre;
     [Parameter] public double? Min { get; set; }
     [Parameter] public double? Max { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
@@ -44,12 +48,20 @@
     /// <summary>The tooltip of invalid input; the host passes its translation.</summary>
     [Parameter] public string InvalidText { get; set; } = "Not a valid number.";
 
+    /// <summary>Millimetres per shown unit: 1000 for a length shown in metres, otherwise 1.</summary>
+    private double Factor => Quantity == Quantity.Length ? LengthUnit.Millimetres() : 1;
+
+    /// <summary>The unit after the field; the default "mm" follows <see cref="LengthUnit"/>.</summary>
+    private string? ShownUnit => Quantity == Quantity.Length && Unit == "mm" ? LengthUnit.Symbol() : Unit;
+
+    private string Shown(double value) => NumberInput.Format(value / Factor, Decimals, CultureInfo.CurrentCulture);
+
     protected override void OnParametersSet()
     {
         // A new value from outside replaces the text, unless the user is typing.
         if (_isEditing && Value == _shown) return;
         _shown = Value;
-        _text = Value is { } value ? NumberInput.Format(value, Decimals, CultureInfo.CurrentCulture) : string.Empty;
+        _text = Value is { } value ? Shown(value) : string.Empty;
         _invalid = false;
         _isEditing = false;
     }
@@ -80,22 +92,22 @@
             Restore();
             return;
         }
-        if (!NumberInput.TryParse(_text, Quantity, out var parsed) || parsed < Min || parsed > Max)
+        if (!NumberInput.TryParse(_text, Quantity, CultureInfo.CurrentCulture, out var parsed, LengthUnit) || parsed < Min || parsed > Max)
         {
             _invalid = true;
             return;
         }
         _invalid = false;
         _isEditing = false;
-        var rounded = Math.Round(parsed, Decimals, MidpointRounding.AwayFromZero);
-        _text = NumberInput.Format(rounded, Decimals, CultureInfo.CurrentCulture);
-        if (Value is not { } current || Math.Abs(current - rounded) > Math.Pow(10, -Decimals) / 2) await ValueChanged.InvokeAsync(rounded);
+        var rounded = Math.Round(parsed / Factor, Decimals, MidpointRounding.AwayFromZero) * Factor;
+        _text = Shown(rounded);
+        if (Value is not { } current || Math.Abs(current - rounded) > Math.Pow(10, -Decimals) / 2 * Factor) await ValueChanged.InvokeAsync(rounded);
     }
 
     private void Restore()
     {
         _isEditing = false;
         _invalid = false;
-        _text = Value is { } value ? NumberInput.Format(value, Decimals, CultureInfo.CurrentCulture) : string.Empty;
+        _text = Value is { } value ? Shown(value) : string.Empty;
     }
 }

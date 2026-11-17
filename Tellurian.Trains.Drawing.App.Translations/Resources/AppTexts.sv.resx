@@ -314,4 +314,72 @@
   <data name="Warning_NoUserName" xml:space="preserve"><value>Inget användarnamn i inställningarna: när du sparar en ritning registreras det inte i ändringsloggen.</value></data>
   <data name="AllScales" xml:space="preserve"><value>(alla skalor)</value></data>
   <data name="ScaleHelp" xml:space="preserve"><value>Bara standarder och ändprofiler i den här skalan visas, med deras tillägg. Frågor till Modulregistret gäller också den här skalan.</value></data>
+  <data name="NewHall" xml:space="preserve"><value>Ny hall…</value></data>
+  <data name="NewHallTitle" xml:space="preserve"><value>Ny hall</value></data>
+  <data name="NewHallIntro" xml:space="preserve"><value>Börja med en rektangulär hall; lägg sedan till pelare, inredning, dörrar, nödutgångar och spärrade ytor i redigeraren, eller rita andra väggar.</value></data>
+  <data name="HallNameRequired" xml:space="preserve"><value>Hallen behöver ett namn.</value></data>
+  <data name="HallTool_Select" xml:space="preserve"><value>Markera</value></data>
+  <data name="HallTool_Walls" xml:space="preserve"><value>Väggar</value></data>
+  <data name="HallTool_RoundPillar" xml:space="preserve"><value>Rund pelare</value></data>
+  <data name="HallTool_SquarePillar" xml:space="preserve"><value>Fyrkantig pelare</value></data>
+  <data name="HallTool_Furniture" xml:space="preserve"><value>Inredning</value></data>
+  <data name="HallTool_Door" xml:space="preserve"><value>Dörr</value></data>
+  <data name="HallTool_EmergencyExit" xml:space="preserve"><value>Nödutgång</value></data>
+  <data name="HallTool_NoGoZone" xml:space="preserve"><value>Spärrad yta</value></data>
+  <data name="HallSelectHelp" xml:space="preserve"><value>Klicka för att markera, dra för att flytta (Skift: rakt, Alt: utan fästning), Delete för att ta bort. Dra ett hörn eller en vägg för att ändra hallens form; dörrarna följer sin vägg.</value></data>
+  <data name="HallWallsHelp" xml:space="preserve"><value>Klicka på väggarnas hörn och klicka på det första hörnet igen för att sluta dem. De nya väggarna ersätter de gamla.</value></data>
+  <data name="HallAreaHelpDrawing" xml:space="preserve"><value>Klicka för att lägga till hörn; klicka på det första hörnet för att sluta. Backsteg tar bort ett hörn, Escape avbryter.</value></data>
+  <data name="HallFurnitureHelp" xml:space="preserve"><value>Klicka på inredningens hörn, t.ex. en scen eller en disk, och klicka på det första hörnet igen för att sluta den.</value></data>
+  <data name="HallNoGoHelp" xml:space="preserve"><value>Klicka på hörnen av en yta där inget får ställas, t.ex. framför ett brandskåp, och klicka på det första hörnet igen för att sluta den.</value></data>
+  <data name="HallPillarHelp" xml:space="preserve"><value>Klicka där pelarens mitt är; ändra storleken i egenskaperna.</value></data>
+  <data name="HallDoorHelp" xml:space="preserve"><value>Klicka på en vägg där dörren är. Ytan framför den ska hållas fri.</value></data>
+  <data name="HallItem_Corner" xml:space="preserve"><value>Hörn</value></data>
+  <data name="HallItem_Wall" xml:space="preserve"><value>Vägg</value></data>
+  <data name="HallItem_Obstacle" xml:space="preserve"><value>Hinder</value></data>
+  <data name="HallItem_Door" xml:space="preserve"><value>Dörr</value></data>
+  <data name="HallItem_NoGoZone" xml:space="preserve"><value>Spärrad yta</value></data>
+  <data name="HallProperties" xml:space="preserve"><value>Hall</value></data>
+  <data name="WallsPane" xml:space="preserve"><value>Väggar</value></data>
+  <data name="HallWidth" xml:space="preserve"><value>Bredd</value></data>
+  <data name="HallDepth" xml:space="preserve"><value>Djup</value></data>
+  <data name="WallLength" xml:space="preserve"><value>Längd</value></data>
+  <data name="WallArc" xml:space="preserve"><value>Båge</value></data>
+  <data name="AddCorner" xml:space="preserve"><value>Lägg till hörn</value></data>
+  <data name="DeleteCorner" xml:space="preserve"><value>Ta bort hörn</value></data>
+  <data name="WallsHelp" xml:space="preserve"><value>Mått i meter; du kan också skriva t.ex. 450 mm. En ny längd flyttar hörnet där väggen slutar. En båge som inte är 0° gör väggen böjd.</value></data>
+  <data name="ObstacleKind" xml:space="preserve"><value>Typ</value></data>
+  <data name="ObstacleKind_Pillar" xml:space="preserve"><value>Pelare</value></data>
+  <data name="ObstacleKind_Furniture" xml:space="preserve"><value>Inredning</value></data>
+  <data name="CentreX" xml:space="preserve"><value>Mitt X</value></data>
+  <data name="CentreY" xml:space="preserve"><value>Mitt Y</value></data>
+  <data name="HallDiameter" xml:space="preserve"><value>Diameter</value></data>
+  <data name="Rotation" xml:space="preserve"><value>Vridning</value></data>
+  <data name="DoorKind" xml:space="preserve"><value>Typ</value></data>
+  <data name="DoorKind_Door" xml:space="preserve"><value>Dörr</value></data>
+  <data name="DoorKind_EmergencyExit" xml:space="preserve"><value>Nödutgång</value></data>
+  <data name="KeepFreeDepth" xml:space="preserve"><value>Fritt framför</value></data>
+  <data name="NoGoReason" xml:space="preserve"><value>Orsak</value></data>
+  <data name="NoGoDefaultReason" xml:space="preserve"><value>Spärrad yta</value></data>
+  <data name="HallAddress" xml:space="preserve"><value>Adress</value></data>
+  <data name="MinimumAisleWidth" xml:space="preserve"><value>Minsta gångbredd</value></data>
+  <data name="MinimumAisleWidthHelp" xml:space="preserve"><value>0 använder minsta fria avstånd i hallplanens standard.</value></data>
+  <data name="HallSize" xml:space="preserve"><value>Storlek</value></data>
+  <data name="FloorArea" xml:space="preserve"><value>Golvyta</value></data>
+  <data name="HallWalls" xml:space="preserve"><value>Väggar</value></data>
+  <data name="HallObstacles" xml:space="preserve"><value>Hinder</value></data>
+  <data name="HallDoors" xml:space="preserve"><value>Dörrar och utgångar</value></data>
+  <data name="HallNoGoZones" xml:space="preserve"><value>Spärrade ytor</value></data>
+  <data name="IsModuleEntrance" xml:space="preserve"><value>Moduler kan bäras in och ut här</value></data>
+  <data name="ModuleEntrances" xml:space="preserve"><value>Modulingångar</value></data>
+  <data name="NoModuleEntrances" xml:space="preserve"><value>Ingen markerad</value></data>
+  <data name="HallWidthMetres" xml:space="preserve"><value>Bredd (m)</value></data>
+  <data name="HallDepthMetres" xml:space="preserve"><value>Djup (m)</value></data>
+  <data name="DoorWall" xml:space="preserve"><value>Vägg</value></data>
+  <data name="WallBetweenCorners" xml:space="preserve"><value>Vägg {0} (hörn {1}–{2})</value></data>
+  <data name="DoorFromCorner" xml:space="preserve"><value>Hörn {0} till öppningen</value></data>
+  <data name="DoorToCorner" xml:space="preserve"><value>Öppningen till hörn {0}</value></data>
+  <data name="DoorPositionHelp" xml:space="preserve"><value>Mäts längs väggen till öppningens kanter, som i ritningen.</value></data>
+  <data name="SnapGrid" xml:space="preserve"><value>Fästrutnät</value></data>
+  <data name="SnapGridOff" xml:space="preserve"><value>Av (följer zoomen)</value></data>
+  <data name="EffectiveFloorArea" xml:space="preserve"><value>Användbar golvyta</value></data>
 </root>

@@ -1,0 +1,673 @@
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Properties
+@using Tellurian.Trains.Drawing.Components.Rendering
+@using Tellurian.Trains.Drawing.Components.Views
+@using Tellurian.Trains.Drawing.Editing.Commands
+@using Tellurian.Trains.Drawing.Editing.Halls
+@using Tellurian.Trains.Drawing.Editing.Input
+@using Tellurian.Trains.Drawing.Editing.Selection
+@using Tellurian.Trains.Drawing.Editing.Snapping
+@using Tellurian.Trains.Drawing.Editing.Tools
+@using Tellurian.Trains.Drawing.Editing.Viewing
+@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model
+@using Tellurian.Trains.Drawing.Model.Halls
+@implements IAsyncDisposable
+@inject DrawingDocuments Documents
+@inject IWorkbench Workbench
+@inject SafeReload Reload
+@inject TimeProvider Time
+@inject IJSRuntime JS
+
+@* The hall editor (Phase 8, HA-1…HA-3): plan view with tools, the walls as a table of corners, a property panel and derived measures. *@
+@if (_document is not null)
+{
+    <div class="editor-layout">
+        <div class="editor-canvas">
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" Label="@_document.Current.Name"
+                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+                <ChildContent>
+                    <HallContent Hall="Shown" TextSize="_view.ToWorld(12)" Selected="_selection.Items" ShowCorners="true" HandleSize="_view.ToWorld(8)" />
+                    @if (SingleSelected is { Kind: HallItemKind.Door } selectedDoor)
+                    {
+                        @foreach (var dimension in HallScene.DoorDimensions(Shown, selectedDoor.Index, _view.ToWorld(DimensionOffsetPixels)))
+                        {
+                            <DimensionLine Dimension="dimension" TextSize="_view.ToWorld(DimensionTextPixels)" Format="DimensionMetres" />
+                        }
+                    }
+                </ChildContent>
+                <Overlay>
+                    @if (_select.RubberBand is { } band)
+                    {
+                        <rect class="editor-rubber-band" x="@SvgPath.Number(band.Min.X)" y="@SvgPath.Number(band.Min.Y)" width="@SvgPath.Number(band.Width)" height="@SvgPath.Number(band.Height)" />
+                    }
+                    @if (ActivePathOrNull?.Preview is { } preview)
+                    {
+                        <path class="editor-preview" d="@SvgPath.From(preview)" />
+                    }
+                    @if (ActivePlaceOrNull?.Preview is { } place)
+                    {
+                        @switch (_activeTool)
+                        {
+                            case HallTool.RoundPillar:
+                                <circle class="editor-preview" cx="@SvgPath.Number(place.X)" cy="@SvgPath.Number(place.Y)" r="@SvgPath.Number(HallCommands.DefaultPillarDiameter / 2)" />
+                                break;
+                            case HallTool.SquarePillar:
+                                <rect class="editor-preview" x="@SvgPath.Number(place.X - HallCommands.DefaultPillarSide / 2)" y="@SvgPath.Number(place.Y - HallCommands.DefaultPillarSide / 2)"
+                                      width="@SvgPath.Number(HallCommands.DefaultPillarSide)" height="@SvgPath.Number(HallCommands.DefaultPillarSide)" />
+                                break;
+                            default:
+                                var door = new Door { Position = _document.Current.PoseOnWall(place), Width = _activeTool == HallTool.EmergencyExit ? HallCommands.DefaultEmergencyExitWidth : HallCommands.DefaultDoorWidth };
+                                <path class="editor-preview" d="@SvgPath.From(door.KeepFreeZone())" />
+                                break;
+                        }
+                    }
+                    @if (Snapped is { } snap)
+                    {
+                        <circle class="editor-snap" cx="@SvgPath.Number(snap.Point.X)" cy="@SvgPath.Number(snap.Point.Y)" r="@SvgPath.Number(_view.ToWorld(5))" />
+                    }
+                </Overlay>
+            </DrawingCanvas>
+        </div>
+        <aside class="editor-side">
+            <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+                <h2>@T["ArchivePane"]</h2>
+                @ArchiveContent
+                <p class="detail" id="autosave">@AutosaveText</p>
+            </section>
+            <section class="pane edit-pane" aria-label="@T["EditPane"]">
+                <h2>@T["EditPane"]</h2>
+                <div class="pane-buttons" role="toolbar">
+                    @foreach (var tool in Enum.GetValues<HallTool>())
+                    {
+                        <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
+                                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"HallTool_{tool}"]</button>
+                    }
+                </div>
+                @if (ActivePathOrNull is { } path)
+                {
+                    <label class="inline"><input type="checkbox" id="arc-mode" checked="@(path.Mode == PathStepMode.TangentArc)" @onchange="ToggleArc" /> @T["ArcMode"]</label>
+                }
+                <label class="stacked">
+                    <span>@T["SnapGrid"]</span>
+                    <select id="snap-grid" value="@_gridSpacing.ToString(CultureInfo.InvariantCulture)" @onchange="ChooseGridAsync">
+                        @foreach (var spacing in GridSpacings)
+                        {
+                            <option value="@spacing.ToString(CultureInfo.InvariantCulture)">@(spacing == 0 ? T["SnapGridOff"] : $"{Metres(spacing, 2)} m")</option>
+                        }
+                    </select>
+                </label>
+                <div class="pane-buttons">
+                    <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
+                    <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
+                    <button type="button" id="delete" disabled="@_selection.IsEmpty" title="Delete" @onclick="DeleteSelection">@T["Delete"]</button>
+                    <button type="button" id="zoom-fit" @onclick="() => _canvas!.ZoomToAsync(ZoomBounds)">@T["ZoomToFit"]</button>
+                    <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
+                </div>
+                <p class="pane-help" aria-live="polite">@Status</p>
+            </section>
+            <section class="pane walls-pane" aria-label="@T["WallsPane"]">
+                <h2>@T["WallsPane"]</h2>
+                @{
+                    var walls = Corners;
+                }
+                @if (walls.TryGetRectangle(out _, out var hallWidth, out var hallDepth, out var rotation) && rotation.Normalized.IsCloseTo(Angle.Zero, Tolerance.Angle))
+                {
+                    <div class="property-grid">
+                        <NumberField Label="@T["HallWidth"]" Value="hallWidth" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetRectangle(v, hallDepth))" />
+                        <NumberField Label="@T["HallDepth"]" Value="hallDepth" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetRectangle(hallWidth, v))" />
+                    </div>
+                }
+                <table class="plate-points wall-corners">
+                    <thead><tr><th>#</th><th>X (m)</th><th>Y (m)</th><th>@T["WallLength"] (m)</th><th>@T["WallArc"]</th></tr></thead>
+                    <tbody>
+                        @for (var i = 0; i < walls.Corners.Count; i++)
+                        {
+                            var index = i;
+                            var corner = walls.Corners[i];
+                            var sweep = walls.Sweeps[i];
+                            <tr class="@(_selection.Contains(HallItem.Corner(i)) || _selection.Contains(HallItem.Wall(i)) ? "selected" : null)">
+                                <td><button type="button" class="link" @onclick="() => _selection.Select(HallItem.Corner(index))">@(i + 1)</button></td>
+                                <td><NumberField Label="" Unit="@null" Decimals="3" LengthUnit="LengthUnit.Metre" Value="corner.X" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetCorner(index, new(v, corner.Y)))" /></td>
+                                <td><NumberField Label="" Unit="@null" Decimals="3" LengthUnit="LengthUnit.Metre" Value="corner.Y" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetCorner(index, new(corner.X, v)))" /></td>
+                                <td><NumberField Label="" Unit="@null" Decimals="3" LengthUnit="LengthUnit.Metre" Value="walls.LengthOf(i)" Min="1" ReadOnly="@(sweep != 0)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallLength(index, v))" /></td>
+                                <td><NumberField Label="" Unit="°" Quantity="Quantity.Angle" Decimals="1" Value="sweep" Min="-359" Max="359" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallSweep(index, v))" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pane-buttons">
+                    <button type="button" id="add-corner" @onclick="AddCorner">@T["AddCorner"]</button>
+                    <button type="button" id="delete-corner" disabled="@(!_selection.Items.Any(i => i.Kind == HallItemKind.Corner) || walls.Corners.Count <= walls.MinimumCorners)" @onclick="DeleteSelection">@T["DeleteCorner"]</button>
+                </div>
+                <p class="pane-help">@T["WallsHelp"]</p>
+            </section>
+            <PropertyPanel Title="@SelectionTitle" Class="pane">
+                @{
+                    var hall = _document.Current;
+                }
+                @switch (SingleSelected)
+                {
+                    case { Kind: HallItemKind.Obstacle } item when item.Index < hall.Obstacles.Count:
+                        var obstacle = hall.Obstacles[item.Index];
+                        <label class="property-label" for="obstacle-kind">@T["ObstacleKind"]</label>
+                        <select id="obstacle-kind" value="@obstacle.Kind" @onchange="e => { if (Enum.TryParse<ObstacleKind>(e.Value as string, out var kind)) Apply(HallCommands.SetObstacle(item.Index, obstacle with { Kind = kind })); }">
+                            @foreach (var kind in Enum.GetValues<ObstacleKind>())
+                            {
+                                <option value="@kind">@T[$"ObstacleKind_{kind}"]</option>
+                            }
+                        </select>
+                        <TextField Label="@T["Label"]" Value="@obstacle.Label" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Label = Trimmed(v) }))" />
+                        @if (obstacle.TryGetCircle(out var circleCenter, out var diameter))
+                        {
+                            <NumberField Label="@T["CentreX"]" Value="circleCenter.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Circle(new(v, circleCenter.Y), diameter) }))" />
+                            <NumberField Label="@T["CentreY"]" Value="circleCenter.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Circle(new(circleCenter.X, v), diameter) }))" />
+                            <NumberField Label="@T["HallDiameter"]" Value="diameter" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Circle(circleCenter, v) }))" />
+                        }
+                        else if (obstacle.TryGetRectangle(out var center, out var width, out var depth, out var turn))
+                        {
+                            <NumberField Label="@T["CentreX"]" Value="center.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(new(v, center.Y), width, depth, turn) }))" />
+                            <NumberField Label="@T["CentreY"]" Value="center.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(new(center.X, v), width, depth, turn) }))" />
+                            <NumberField Label="@T["HallWidth"]" Value="width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, v, depth, turn) }))" />
+                            <NumberField Label="@T["HallDepth"]" Value="depth" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, v, turn) }))" />
+                            <NumberField Label="@T["Rotation"]" Value="turn.Signed.Degrees" Unit="°" Quantity="Quantity.Angle" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, depth, new(v)) }))" />
+                        }
+                        break;
+                    case { Kind: HallItemKind.Door } item when item.Index < hall.Doors.Count:
+                        var door = hall.Doors[item.Index];
+                        <label class="property-label" for="door-kind">@T["DoorKind"]</label>
+                        <select id="door-kind" value="@door.Kind" @onchange="e => { if (Enum.TryParse<DoorKind>(e.Value as string, out var kind)) Apply(HallCommands.SetDoor(item.Index, door with { Kind = kind })); }">
+                            @foreach (var kind in Enum.GetValues<DoorKind>())
+                            {
+                                <option value="@kind">@T[$"DoorKind_{kind}"]</option>
+                            }
+                        </select>
+                        <TextField Label="@T["Label"]" Value="@door.Label" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { Label = Trimmed(v) }))" />
+                        <NumberField Label="@T["HallWidth"]" Value="door.Width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { Width = v }))" />
+                        <label class="inline"><input type="checkbox" id="module-entrance" checked="@door.IsModuleEntrance"
+                               @onchange="e => Apply(HallCommands.SetDoor(item.Index, door with { IsModuleEntrance = e.Value is true }))" /> @T["IsModuleEntrance"]</label>
+                        var (doorWall, along) = hall.WallPositionOf(door.Position.Position);
+                        var wallLength = hall.Wall(doorWall).Length;
+                        var endCorner = (doorWall + 1) % hall.WallCount;
+                        var fromCorner = along - door.Width / 2;
+                        <label class="property-label" for="door-wall">@T["DoorWall"]</label>
+                        <select id="door-wall" value="@doorWall" @onchange="e => { if (int.TryParse(e.Value as string, out var wall)) Apply(HallCommands.SetDoorPosition(item.Index, wall, fromCorner + door.Width / 2)); }">
+                            @for (var w = 0; w < hall.WallCount; w++)
+                            {
+                                <option value="@w">@T.Format("WallBetweenCorners", w + 1, w + 1, (w + 1) % hall.WallCount + 1)</option>
+                            }
+                        </select>
+                        <NumberField Label="@T.Format("DoorFromCorner", doorWall + 1)" Value="fromCorner" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
+                                     ValueChanged="v => Apply(HallCommands.SetDoorPosition(item.Index, doorWall, v + door.Width / 2))" />
+                        <NumberField Label="@T.Format("DoorToCorner", endCorner + 1)" Value="wallLength - along - door.Width / 2" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
+                                     ValueChanged="v => Apply(HallCommands.SetDoorPosition(item.Index, doorWall, wallLength - v - door.Width / 2))" />
+                        <p class="pane-help">@T["DoorPositionHelp"]</p>
+                        <NumberField Label="@T["KeepFreeDepth"]" Value="door.KeepFreeDepth" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { KeepFreeDepth = v }))" />
+                        break;
+                    case { Kind: HallItemKind.NoGoZone } item when item.Index < hall.NoGoZones.Count:
+                        var zone = hall.NoGoZones[item.Index];
+                        <TextField Label="@T["NoGoReason"]" Value="@zone.Reason" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetNoGoZone(item.Index, zone with { Reason = v.Trim() })); }" />
+                        break;
+                    case { Kind: HallItemKind.Corner } item when item.Index < Corners.Corners.Count:
+                        var point = Corners.Corners[item.Index];
+                        <NumberField Label="X" Value="point.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetCorner(item.Index, new(v, point.Y)))" />
+                        <NumberField Label="Y" Value="point.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetCorner(item.Index, new(point.X, v)))" />
+                        break;
+                    case { Kind: HallItemKind.Wall } item when item.Index < Corners.StepCount:
+                        <NumberField Label="@T["WallLength"]" Value="Corners.LengthOf(item.Index)" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" ReadOnly="@(Corners.Sweeps[item.Index] != 0)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallLength(item.Index, v))" />
+                        <NumberField Label="@T["WallArc"]" Value="Corners.Sweeps[item.Index]" Unit="°" Quantity="Quantity.Angle" Min="-359" Max="359" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallSweep(item.Index, v))" />
+                        break;
+                    case null when _selection.IsEmpty:
+                        <TextField Label="@T["Name"]" Value="@hall.Name" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetProperties(h => h with { Name = v.Trim() })); }" />
+                        <TextField Label="@T["HallAddress"]" Value="@hall.Address" ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { Address = Trimmed(v) }))" />
+                        <TextField Label="@T["Field_Note"]" Value="@hall.Note" ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { Note = Trimmed(v) }))" />
+                        <NumberField Label="@T["MinimumAisleWidth"]" Value="hall.MinimumAisleWidth ?? 0" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
+                                     ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { MinimumAisleWidth = v > 0 ? v : null }))" />
+                        <p class="pane-help">@T["MinimumAisleWidthHelp"]</p>
+                        <RevisionLogList Log="RevisionLog" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
+                        break;
+                    default:
+                        <p class="property-note">@T.Format("SelectedCount", _selection.Count)</p>
+                        break;
+                }
+            </PropertyPanel>
+
+            <section class="pane derived" aria-label="@T["Derived"]">
+                <h2>@T["Derived"]</h2>
+                @{
+                    var bounds = _document.Current.Outline.ToPath().Bounds;
+                }
+                <dl class="properties">
+                    <dt>@T["HallSize"]</dt>
+                    <dd id="hall-size">@Metres(bounds.Width) × @Metres(bounds.Height) m</dd>
+                    <dt>@T["FloorArea"]</dt>
+                    <dd id="floor-area">@SquareMetres(_document.Current.FloorArea) m²</dd>
+                    <dt>@T["EffectiveFloorArea"]</dt>
+                    <dd id="effective-floor-area">@SquareMetres(EffectiveFloorArea) m²</dd>
+                    <dt>@T["HallWalls"]</dt>
+                    <dd id="wall-count">@_document.Current.WallCount</dd>
+                    <dt>@T["HallObstacles"]</dt>
+                    <dd id="obstacle-count">@_document.Current.Obstacles.Count</dd>
+                    <dt>@T["HallDoors"]</dt>
+                    <dd id="door-count">@_document.Current.Doors.Count</dd>
+                    <dt>@T["ModuleEntrances"]</dt>
+                    <dd id="module-entrances">@ModuleEntrancesText</dd>
+                    <dt>@T["HallNoGoZones"]</dt>
+                    <dd id="no-go-count">@_document.Current.NoGoZones.Count</dd>
+                </dl>
+            </section>
+        </aside>
+    </div>
+    var sheet = HallSheet.Create(_document.Current, PrintedInformation);
+    <div class="print-sheet" aria-hidden="true">
+        @* The hall as printed, fitted to a landscape page whatever the zoom; the print styles show it instead of the editor. *@
+        <svg class="print-drawing" viewBox="@sheet.ViewBox" preserveAspectRatio="xMidYMid meet">
+            <g transform="scale(1,-1)">
+                <HallContent Hall="_document.Current" TextSize="sheet.TextSize" />
+                @* The size and floor areas, large in the middle of the hall, with a halo where they cross an item. *@
+                <g class="print-information" style="paint-order: stroke; stroke: #fbfaf7; stroke-width: 4px; stroke-linejoin: round">
+                    @for (var i = 0; i < sheet.Information.Count; i++)
+                    {
+                        var line = sheet.Information[i];
+                        <WorldText At="line.Center" Text="@line.Text" Size="line.Size" FontWeight="@(i == 0 ? "bold" : "normal")" />
+                    }
+                </g>
+                <WorldText At="sheet.Title.Center" Text="@sheet.Title.Text" Size="sheet.Title.Size" FontWeight="bold" />
+                @if (sheet.Subtitle is { } subtitle)
+                {
+                    <WorldText At="subtitle.Center" Text="@subtitle.Text" Size="subtitle.Size" />
+                }
+                @{
+                    var barEnd = sheet.ScaleBarStart + new Vector(sheet.ScaleBarLength, 0);
+                    var tick = new Vector(0, sheet.TextSize / 2);
+                }
+                <g class="print-scale-bar" stroke="#1d232b" stroke-width="1">
+                    <line x1="@SvgPath.Number(sheet.ScaleBarStart.X)" y1="@SvgPath.Number(sheet.ScaleBarStart.Y)" x2="@SvgPath.Number(barEnd.X)" y2="@SvgPath.Number(barEnd.Y)" />
+                    <line x1="@SvgPath.Number(sheet.ScaleBarStart.X)" y1="@SvgPath.Number((sheet.ScaleBarStart + tick).Y)" x2="@SvgPath.Number(sheet.ScaleBarStart.X)" y2="@SvgPath.Number((sheet.ScaleBarStart - tick).Y)" />
+                    <line x1="@SvgPath.Number(barEnd.X)" y1="@SvgPath.Number((barEnd + tick).Y)" x2="@SvgPath.Number(barEnd.X)" y2="@SvgPath.Number((barEnd - tick).Y)" />
+                </g>
+                <WorldText At="Point.Lerp(sheet.ScaleBarStart, barEnd, 0.5) - new Vector(0, sheet.TextSize * 1.2)" Text="@($"{Metres(sheet.ScaleBarLength, 1)} m")" Size="sheet.TextSize" />
+            </g>
+        </svg>
+    </div>
+}
+
+@code {
+    private static readonly double SnapPixels = SnapEngine.DefaultTolerancePixels;
+    private const double ZoomMarginPixels = 24;
+
+    /// <summary>The room around the hall when the editor opens, as a share of its larger extent.</summary>
+    private const double MarginPerExtent = 0.05;
+
+    private readonly SelectionSet<HallItem> _selection = new();
+    private readonly HallScene _scene = new();
+    private readonly SnapEngine _snap = new(HallScene.IndexCellSize);
+    private EditorDocument<Hall>? _document;
+    private EditorSession<Hall>? _session;
+    private SelectMoveTool<Hall, HallItem> _select = default!;
+    private PathTool<Hall> _walls = default!;
+    private PathTool<Hall> _furniture = default!;
+    private PathTool<Hall> _noGoZone = default!;
+    private PlaceTool<Hall> _roundPillar = default!;
+    private PlaceTool<Hall> _squarePillar = default!;
+    private PlaceTool<Hall> _door = default!;
+    private PlaceTool<Hall> _emergencyExit = default!;
+    private HallTool _activeTool = HallTool.Select;
+    private DrawingCanvas? _canvas;
+    private Viewport _view = default!;
+    private string? _storageError;
+    private string? _revisionLogJson;
+    private IReadOnlyList<Model.Files.DrawingRevision> _revisionLog = [];
+    private PathCorners? _corners;
+    private Hall? _cornersOf;
+
+    /// <summary>The draft being edited.</summary>
+    [Parameter, EditorRequired] public Draft Draft { get; set; } = default!;
+
+    /// <summary>The host's file actions and status, shown in the Archive pane.</summary>
+    [Parameter] public RenderFragment? ArchiveContent { get; set; }
+
+    /// <summary>Raised after each autosave with the updated draft, e.g. for an unsaved-changes badge.</summary>
+    [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
+
+    /// <summary>The hall as edited now.</summary>
+    public Hall? Current => _document?.Current;
+
+    /// <summary>Saves unsaved edits to the draft at once, e.g. before saving to a file.</summary>
+    public async Task<bool> FlushAsync() => _session is null || await _session.FlushAsync();
+
+    /// <summary>The revision log from the draft, which saving to a file updates (EX-10); read again only when the draft changes.</summary>
+    private IReadOnlyList<Model.Files.DrawingRevision> RevisionLog
+    {
+        get
+        {
+            if (!ReferenceEquals(_revisionLogJson, Draft.Json))
+            {
+                _revisionLogJson = Draft.Json;
+                _revisionLog = Model.Files.DrawingRevisionLog.Read(Draft.Json);
+            }
+            return _revisionLog;
+        }
+    }
+
+    private Hall? _effectiveAreaOf;
+    private double _effectiveArea;
+
+    /// <summary>The effective floor area (HA-8) of the hall as saved, worked out again only when the hall changes.</summary>
+    private double EffectiveFloorArea
+    {
+        get
+        {
+            if (!ReferenceEquals(_effectiveAreaOf, _document!.Current))
+            {
+                _effectiveAreaOf = _document.Current;
+                _effectiveArea = _document.Current.EffectiveFloorArea;
+            }
+            return _effectiveArea;
+        }
+    }
+
+    /// <summary>The corners of the walls as shown, worked out again only when the hall changes.</summary>
+    private PathCorners Corners
+    {
+        get
+        {
+            var shown = Shown;
+            if (!ReferenceEquals(shown, _cornersOf) || _corners is null)
+            {
+                _cornersOf = shown;
+                _corners = PathCorners.From(shown.Outline);
+            }
+            return _corners;
+        }
+    }
+
+    private double SnapTolerance => _view.ToWorld(SnapPixels);
+
+    /// <summary>The hall with a dragged selection shown where it is being moved.</summary>
+    private Hall Shown => _select.DragOffset is { } offset ? HallCommands.Move([.. _selection.Items], offset).Apply(_document!.Current) : _document!.Current;
+
+    private ITool Active => _activeTool switch
+    {
+        HallTool.Walls => _walls,
+        HallTool.Furniture => _furniture,
+        HallTool.NoGoZone => _noGoZone,
+        HallTool.RoundPillar => _roundPillar,
+        HallTool.SquarePillar => _squarePillar,
+        HallTool.Door => _door,
+        HallTool.EmergencyExit => _emergencyExit,
+        _ => _select,
+    };
+
+    private PathTool<Hall>? ActivePathOrNull => Active as PathTool<Hall>;
+    private PlaceTool<Hall>? ActivePlaceOrNull => Active as PlaceTool<Hall>;
+
+    private SnapResult? Snapped => ActivePathOrNull?.Snapped ?? ActivePlaceOrNull?.Snapped ?? (_activeTool == HallTool.Select ? _select.Snapped : null);
+
+    private BoundingBox ZoomBounds => Shown.Outline.ToPath().Bounds.Inflated(_view.ToWorld(ZoomMarginPixels));
+
+    /// <summary>The one selected item, or the item of the one selected handle.</summary>
+    private HallItem? SingleSelected => _selection.Count == 1 ? _selection.Items[0].Owner : null;
+
+    private string SelectionTitle => SingleSelected is { } item ? T[$"HallItem_{item.Kind}"] : T["HallProperties"];
+
+    private string Status => _activeTool switch
+    {
+        HallTool.Walls => T[_walls.IsDrawing ? "HallAreaHelpDrawing" : "HallWallsHelp"],
+        HallTool.Furniture => T[_furniture.IsDrawing ? "HallAreaHelpDrawing" : "HallFurnitureHelp"],
+        HallTool.NoGoZone => T[_noGoZone.IsDrawing ? "HallAreaHelpDrawing" : "HallNoGoHelp"],
+        HallTool.RoundPillar or HallTool.SquarePillar => T["HallPillarHelp"],
+        HallTool.Door or HallTool.EmergencyExit => T["HallDoorHelp"],
+        _ => T["HallSelectHelp"],
+    };
+
+    private string AutosaveText =>
+        _storageError is not null ? T.Format("StorageError", _storageError)
+        : _session?.Autosave.LastError is { } error ? T.Format("StorageError", error.Message)
+        : _session?.Autosave.IsPending == true ? T["UnsavedChanges"]
+        : T["SavedInBrowser"];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var hall = Model.Files.DrawingFileSerializer.DeserializeHall(Draft.Json);
+        _document = new(hall);
+        var bounds = hall.Outline.ToPath().Bounds;
+        _view = Viewport.Fit(bounds.Inflated(Math.Max(bounds.Width, bounds.Height) * MarginPerExtent), 800, 500);
+        _select = new(_document, _selection, _scene, _snap);
+        _walls = new(_document, _snap, HallCommands.SetOutline) { RequiresClosed = true };
+        _furniture = new(_document, _snap, HallCommands.AddFurniture) { RequiresClosed = true };
+        _noGoZone = new(_document, _snap, area => HallCommands.AddNoGoZone(area, T["NoGoDefaultReason"])) { RequiresClosed = true };
+        _roundPillar = new(_document, _snap, p => HallCommands.AddRoundPillar(p));
+        _squarePillar = new(_document, _snap, p => HallCommands.AddRectangularPillar(p));
+        _door = new(_document, _snap, p => HallCommands.AddDoor(p, DoorKind.Door)) { Constrain = OnWall };
+        _emergencyExit = new(_document, _snap, p => HallCommands.AddDoor(p, DoorKind.EmergencyExit)) { Constrain = OnWall };
+        _document.Changed += OnDocumentChanged;
+        _selection.Changed += OnSelectionChanged;
+        Refresh();
+        var key = Draft.Id.ToString();
+        try
+        {
+            if (await Workbench.GetValueAsync(GridSpacingKey) is { } storedGrid && int.TryParse(storedGrid, NumberStyles.Integer, CultureInfo.InvariantCulture, out var grid) && GridSpacings.Contains(grid))
+                _gridSpacing = grid;
+            UseGrid();
+            if (await EditorSession<Hall>.LoadStateAsync(Workbench, key) is { } state)
+            {
+                _view = _view with { Center = new(state.CenterX, state.CenterY), Scale = state.Scale };
+                _selection.Set(state.Selection.Select(s => HallItem.TryParse(s, out var item) ? (HallItem?)item : null).OfType<HallItem>().Where(i => HallHandles.Exists(hall, i)));
+            }
+            _session = new(key, _document, SaveDraftAsync, Workbench, Reload, Time)
+            {
+                CaptureState = () => new(_view.Center.X, _view.Center.Y, _view.Scale, [.. _selection.Items.Select(i => i.ToString())]),
+            };
+            _session.Autosave.Saved += OnAutosaveChanged;
+            _session.Autosave.SaveFailed += OnAutosaveFailed;
+        }
+        catch (StorageException ex)
+        {
+            _storageError = ex.Message;
+        }
+    }
+
+    private Point OnWall(Point point) => _document!.Current.PoseOnWall(point).Position;
+
+    private async Task SaveDraftAsync(Hall hall, CancellationToken cancellationToken)
+    {
+        var draft = await Documents.UpdateAsync(Draft.Id, Model.Files.DrawingFileSerializer.Serialize(hall), cancellationToken);
+        await InvokeAsync(() => DraftChanged.InvokeAsync(draft));
+    }
+
+    private void OnAutosaveChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnAutosaveFailed(object? sender, Exception e) => _ = InvokeAsync(StateHasChanged);
+
+    private void Choose(HallTool tool)
+    {
+        Active.Cancel();
+        _activeTool = tool;
+    }
+
+    private void ToggleArc(ChangeEventArgs e)
+    {
+        if (ActivePathOrNull is { } path) path.Mode = e.Value is true ? PathStepMode.TangentArc : PathStepMode.Line;
+    }
+
+    private void OnDown(CanvasPointerEventArgs e) => Active.PointerDown(e.ToToolPointer(SnapTolerance));
+
+    private void OnMove(CanvasPointerEventArgs e)
+    {
+        UseGrid();
+        Active.PointerMove(e.ToToolPointer(SnapTolerance));
+    }
+
+    private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(SnapTolerance));
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        var command = e.CtrlKey || e.MetaKey;
+        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
+        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
+        else if (Active.KeyDown(e.Key)) return;
+        else if (e.Key is "Delete" or "Backspace" && _activeTool == HallTool.Select) DeleteSelection();
+    }
+
+    private void Apply(IEditCommand<Hall> command)
+    {
+        Active.Cancel();
+        _document!.Apply(command);
+    }
+
+    private void Undo()
+    {
+        Active.Cancel();
+        _document!.Undo();
+    }
+
+    private void Redo()
+    {
+        Active.Cancel();
+        _document!.Redo();
+    }
+
+    private void DeleteSelection()
+    {
+        if (_selection.IsEmpty) return;
+        var items = _selection.Items.ToList();
+        _selection.Clear();
+        Apply(HallCommands.Delete(items));
+    }
+
+    /// <summary>Adds a corner in the middle of the selected wall, or of the wall after the selected corner, or of the last wall.</summary>
+    private void AddCorner()
+    {
+        var walls = Corners;
+        var wall = _selection.Items.Where(i => i.Kind is HallItemKind.Wall or HallItemKind.Corner).Select(i => i.Index).DefaultIfEmpty(walls.StepCount - 1).Max();
+        wall = Math.Min(wall, walls.StepCount - 1);
+        Apply(HallCommands.InsertCorner(wall));
+        _selection.Select(HallItem.Corner(wall + 1));
+    }
+
+    private void OnDocumentChanged(object? sender, EventArgs e)
+    {
+        // Indexes refer to the current lists, so a selection that no longer exists is cleared.
+        var hall = _document!.Current;
+        if (_selection.Items.Any(i => !HallHandles.Exists(hall, i))) _selection.Clear();
+        Refresh();
+    }
+
+    /// <summary>The selected items' handles can be grabbed; a selected handle keeps its item's handles.</summary>
+    private void OnSelectionChanged(object? sender, EventArgs e) => _scene.ShowHandlesFor(_selection.Items);
+
+    private void Refresh()
+    {
+        _snap.Clear();
+        _snap.AddRange(_scene.AllSnapTargets(_document!.Current));
+    }
+
+    /// <summary>The doors marked as module entrances (HA-7), by label or kind and number, or a dash.</summary>
+    private string ModuleEntrancesText
+    {
+        get
+        {
+            var doors = _document!.Current.Doors;
+            var names = doors.Select((d, i) => (Door: d, Number: i + 1)).Where(d => d.Door.IsModuleEntrance)
+                .Select(d => d.Door.Label ?? $"{T[$"DoorKind_{d.Door.Kind}"]} {d.Number}").ToList();
+            return names.Count == 0 ? T["NoModuleEntrances"] : string.Join(", ", names);
+        }
+    }
+
+    private static string? Trimmed(string? text) => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
+
+    /// <summary>The snap grid choices in millimetres; 0 is off, which snaps to a grid by the zoom only near its points.</summary>
+    private static readonly int[] GridSpacings = [0, 50, 100, 250, 500, 1000];
+
+    public const string GridSpacingKey = "hall-snap-grid";
+
+    private int _gridSpacing = 100;
+
+    /// <summary>
+    /// With a snap grid chosen, every point lands on it unless something else is within reach, so drawn furniture and
+    /// zones become rectangular; without one, the grid follows the zoom and only catches points near it.
+    /// </summary>
+    private void UseGrid()
+    {
+        _snap.SnapsAlwaysToGrid = _gridSpacing > 0;
+        _snap.GridSpacing = _gridSpacing > 0 ? _gridSpacing : NiceSteps.GridSpacing(_view.Scale);
+    }
+
+    private async Task ChooseGridAsync(ChangeEventArgs e)
+    {
+        if (!int.TryParse(e.Value as string, NumberStyles.Integer, CultureInfo.InvariantCulture, out var spacing) || !GridSpacings.Contains(spacing)) return;
+        _gridSpacing = spacing;
+        UseGrid();
+        try
+        {
+            await Workbench.SetValueAsync(GridSpacingKey, spacing.ToString(CultureInfo.InvariantCulture));
+        }
+        catch (StorageException)
+        {
+            // Only the preference is lost; the editor still uses the chosen grid.
+        }
+    }
+
+    /// <summary>Printed in the middle of the hall: its size and its floor areas (HA-8).</summary>
+    private IReadOnlyList<string> PrintedInformation
+    {
+        get
+        {
+            var bounds = _document!.Current.Outline.ToPath().Bounds;
+            return
+            [
+                $"{Metres(bounds.Width)} × {Metres(bounds.Height)} m",
+                $"{T["FloorArea"]}: {SquareMetres(_document.Current.FloorArea)} m²",
+                $"{T["EffectiveFloorArea"]}: {SquareMetres(EffectiveFloorArea)} m²",
+            ];
+        }
+    }
+
+    private async Task PrintAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("print");
+        }
+        catch (JSException)
+        {
+            // Printing isn't available, e.g. in a restricted browser; nothing is lost.
+        }
+    }
+
+    private const double DimensionOffsetPixels = 28;
+    private const double DimensionTextPixels = 11;
+
+    /// <summary>A dimension in metres, to the millimetre, as the hall's fields show lengths.</summary>
+    private static string DimensionMetres(double millimetres) => NumberInput.Format(millimetres / 1000, 3, CultureInfo.CurrentCulture);
+
+    private static string Metres(double millimetres, int decimals = 2) => NumberInput.Format(millimetres / 1000, decimals, CultureInfo.CurrentCulture);
+
+    private static string SquareMetres(double squareMillimetres) => NumberInput.Format(squareMillimetres / 1_000_000, 1, CultureInfo.CurrentCulture);
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_document is not null) _document.Changed -= OnDocumentChanged;
+        _selection.Changed -= OnSelectionChanged;
+        if (_session is not null)
+        {
+            _session.Autosave.Saved -= OnAutosaveChanged;
+            _session.Autosave.SaveFailed -= OnAutosaveFailed;
+            await _session.DisposeAsync();
+        }
+    }
+
+    private enum HallTool
+    {
+        Select,
+        Walls,
+        RoundPillar,
+        SquarePillar,
+        Furniture,
+        Door,
+        EmergencyExit,
+        NoGoZone,
+    }
+}

@@ -5,6 +5,11 @@ changes are allowed. Schema version 1 is a draft until it is frozen (implementat
 until then it may still change.
 
 ## Version 1 (draft)
+### 2026-11-17 (module entrances)
+- Doors in halls (and in the hall embedded in a hall plan) have an optional `isModuleEntrance`: true when modules can
+  be carried in and out of the hall through the door (spec HA-7). Missing means false. Readers that don't know it
+  ignore it.
+
 ### 2026-11-16 (module identification)
 - Modules have an optional `fremoNumber` (1–9999, Registry `FremoNumber`), and owners an optional `prefix`
   (the owner's FREMO prefix, e.g. `SFjä`, Registry `FremoOwnerSignature`). The first owner's prefix and the number

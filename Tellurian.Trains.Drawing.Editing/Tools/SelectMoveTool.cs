@@ -122,7 +122,7 @@ public sealed class SelectMoveTool<TDocument, TId> : ITool where TDocument : cla
         if (!pointer.IsSnapSuppressed)
         {
             var dragged = _selection.Items.ToHashSet();
-            var result = _snap.Snap(_grab + raw, pointer.Tolerance, t => t.Source is TId id && dragged.Contains(id));
+            var result = _snap.Snap(_grab + raw, pointer.Tolerance, t => _scene.MovesWith(t, dragged));
             if (result.IsSnapped)
             {
                 raw = result.Point - _grab;

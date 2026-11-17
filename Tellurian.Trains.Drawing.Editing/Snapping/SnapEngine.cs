@@ -19,6 +19,12 @@ public sealed class SnapEngine
     /// <summary>The grid spacing in millimetres; null or zero turns grid snapping off.</summary>
     public double? GridSpacing { get; set; }
 
+    /// <summary>
+    /// True if a point with nothing else within reach always snaps to the nearest grid point, however far it is, e.g.
+    /// to draw rectangles on a fine grid; false if only grid points within reach catch it.
+    /// </summary>
+    public bool SnapsAlwaysToGrid { get; set; }
+
     /// <summary>The kinds to snap to; all by default.</summary>
     public ISet<SnapKind> EnabledKinds { get; } = new HashSet<SnapKind>(Enum.GetValues<SnapKind>().Where(k => k != SnapKind.None));
 
@@ -56,7 +62,7 @@ public sealed class SnapEngine
         if (EnabledKinds.Contains(SnapKind.Grid) && GridSpacing is > 0 and var spacing)
         {
             var grid = new Point(Math.Round(point.X / spacing) * spacing, Math.Round(point.Y / spacing) * spacing);
-            if (grid.DistanceTo(point) <= tolerance) return new(grid, SnapKind.Grid);
+            if (SnapsAlwaysToGrid || grid.DistanceTo(point) <= tolerance) return new(grid, SnapKind.Grid);
         }
         return new(point, SnapKind.None);
     }

@@ -1,4 +1,3 @@
-@using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Drawing.Geometry
 @using Tellurian.Trains.Drawing.Model.Files
@@ -13,50 +12,7 @@ else
 {
     <DrawingCanvas Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
                    PanWithPrimaryButton="true" Label="@(Label ?? _hall.Name)" Class="hall-view">
-        @if (Show(HallLayers.Walls))
-        {
-            <path class="hl-floor" d="@SvgPath.From(_hall.Outline)" />
-        }
-        @if (Show(HallLayers.NoGoZones))
-        {
-            @foreach (var zone in _hall.NoGoZones)
-            {
-                <path class="hl-no-go" d="@SvgPath.From(zone.Area)" />
-                @if (Show(HallLayers.Labels))
-                {
-                    <WorldText At="zone.Area.ToPath().Bounds.Center" Text="@zone.Reason" Size="TextSize" Class="hl-label" />
-                }
-            }
-        }
-        @if (Show(HallLayers.Doors))
-        {
-            @foreach (var door in _hall.Doors)
-            {
-                <path class="@(door.Kind == DoorKind.EmergencyExit ? "hl-keep-free emergency" : "hl-keep-free")" d="@SvgPath.From(door.KeepFreeZone())" />
-                var half = door.Position.Left * (door.Width / 2);
-                <line class="hl-door" x1="@SvgPath.Number((door.Position.Position + half).X)" y1="@SvgPath.Number((door.Position.Position + half).Y)"
-                      x2="@SvgPath.Number((door.Position.Position - half).X)" y2="@SvgPath.Number((door.Position.Position - half).Y)" />
-                @if (Show(HallLayers.Labels) && door.Label is { } label)
-                {
-                    <WorldText At="door.Position.Advanced(door.KeepFreeDepth / 2).Position" Text="@label" Size="TextSize" Class="hl-label" />
-                }
-            }
-        }
-        @if (Show(HallLayers.Obstacles))
-        {
-            @foreach (var obstacle in _hall.Obstacles)
-            {
-                <path class="@(obstacle.Kind == ObstacleKind.Pillar ? "hl-obstacle pillar" : "hl-obstacle")" d="@SvgPath.From(obstacle.Area)" />
-                @if (Show(HallLayers.Labels) && obstacle.Label is { } label)
-                {
-                    <WorldText At="obstacle.Area.ToPath().Bounds.Center" Text="@label" Size="TextSize" Class="hl-label" />
-                }
-            }
-        }
-        @if (Show(HallLayers.Walls))
-        {
-            <path class="hl-walls" d="@SvgPath.From(_hall.Outline)" />
-        }
+        <HallContent Hall="_hall" Layers="Layers" TextSize="TextSize" />
     </DrawingCanvas>
 }
 
@@ -72,7 +28,7 @@ else
     /// <summary>The hall to show; or give <see cref="Json"/>.</summary>
     [Parameter] public Hall? Hall { get; set; }
 
-    /// <summary>A hall file (<c>.tdhall</c>), as an alternative to <see cref="Hall"/>.</summary>
+    /// <summary>A hall file (<c>.hall.json</c>), as an alternative to <see cref="Hall"/>.</summary>
     [Parameter] public string? Json { get; set; }
 
     [Parameter] public HallLayers Layers { get; set; } = HallLayers.All;
@@ -107,6 +63,4 @@ else
         _bounds = box.Inflated(Math.Max(box.Width, box.Height) * MarginPerExtent);
         _view = Viewport.Fit(_bounds, Width, Height);
     }
-
-    private bool Show(HallLayers layer) => Layers.HasFlag(layer);
 }

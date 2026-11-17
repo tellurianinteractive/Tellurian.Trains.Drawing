@@ -92,18 +92,18 @@ else
         {
             <label>
                 <span>@T["StraightLength"]</span>
-                <input id="straight" type="number" min="1" step="any" @bind="form.Straight" />
+                <DecimalInput id="straight" @bind-Value="form.Straight" InvalidText="@T["InvalidNumber"]" />
             </label>
         }
         @if (form.Kind != ModuleTemplateKind.Straight)
         {
             <label>
                 <span>@T["Radius"]</span>
-                <input id="radius" type="number" min="1" step="any" @bind="form.Radius" />
+                <DecimalInput id="radius" @bind-Value="form.Radius" InvalidText="@T["InvalidNumber"]" />
             </label>
             <label>
                 <span>@T["Angle"]</span>
-                <input id="angle" type="number" min="1" max="360" step="any" @bind="form.Angle" />
+                <DecimalInput id="angle" @bind-Value="form.Angle" Quantity="Tellurian.Trains.Drawing.Editing.Input.Quantity.Angle" InvalidText="@T["InvalidNumber"]" />
             </label>
             <label>
                 <span>@T["CurveDirection"]</span>
@@ -129,7 +129,7 @@ else
         }
         <label>
             <span>@T["Width"]</span>
-            <input id="width" type="number" min="1" step="any" @bind="form.Width" placeholder="@T["WidthHint"]" />
+            <DecimalInput id="width" @bind-Value="form.Width" placeholder="@T["WidthHint"]" InvalidText="@T["InvalidNumber"]" />
         </label>
 
         @if (errors.Count > 0)

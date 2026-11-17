@@ -33,7 +33,7 @@ internal static class TestHalls
         ],
         Doors =
         [
-            new() { Position = new(new(1500, 0), new(90)), Width = 1000, Label = "Entrance" },
+            new() { Position = new(new(1500, 0), new(90)), Width = 1000, Label = "Entrance", IsModuleEntrance = true },
             new() { Kind = DoorKind.EmergencyExit, Position = new(new(Width, 4000), new(180)), Width = 1200, KeepFreeDepth = 1500 },
         ],
         NoGoZones = [new() { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose cabinet" }],

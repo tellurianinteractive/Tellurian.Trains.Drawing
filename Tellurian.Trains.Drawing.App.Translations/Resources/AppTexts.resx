@@ -314,4 +314,72 @@
   <data name="Warning_NoUserName" xml:space="preserve"><value>No user name in the settings: when you save a drawing, it is not recorded in the revision log.</value></data>
   <data name="AllScales" xml:space="preserve"><value>(all scales)</value></data>
   <data name="ScaleHelp" xml:space="preserve"><value>Only standards and end profiles of this scale are offered, with their add-ons. Module Registry requests will also ask for this scale.</value></data>
+  <data name="NewHall" xml:space="preserve"><value>New hall…</value></data>
+  <data name="NewHallTitle" xml:space="preserve"><value>New hall</value></data>
+  <data name="NewHallIntro" xml:space="preserve"><value>Start from a rectangular hall; then add pillars, furniture, doors, emergency exits and no-go zones in the editor, or draw other walls.</value></data>
+  <data name="HallNameRequired" xml:space="preserve"><value>The hall needs a name.</value></data>
+  <data name="HallTool_Select" xml:space="preserve"><value>Select</value></data>
+  <data name="HallTool_Walls" xml:space="preserve"><value>Walls</value></data>
+  <data name="HallTool_RoundPillar" xml:space="preserve"><value>Round pillar</value></data>
+  <data name="HallTool_SquarePillar" xml:space="preserve"><value>Square pillar</value></data>
+  <data name="HallTool_Furniture" xml:space="preserve"><value>Furniture</value></data>
+  <data name="HallTool_Door" xml:space="preserve"><value>Door</value></data>
+  <data name="HallTool_EmergencyExit" xml:space="preserve"><value>Emergency exit</value></data>
+  <data name="HallTool_NoGoZone" xml:space="preserve"><value>No-go zone</value></data>
+  <data name="HallSelectHelp" xml:space="preserve"><value>Click to select, drag to move (Shift: straight, Alt: without snapping), Delete to remove. Drag a corner or a wall to reshape the hall; doors follow their wall.</value></data>
+  <data name="HallWallsHelp" xml:space="preserve"><value>Click the corners of the walls and click the first corner again to close them. The new walls replace the old ones.</value></data>
+  <data name="HallAreaHelpDrawing" xml:space="preserve"><value>Click to add corners; click the first corner to close. Backspace removes a corner, Escape cancels.</value></data>
+  <data name="HallFurnitureHelp" xml:space="preserve"><value>Click the corners of the furniture, e.g. a stage or a counter, and click the first corner again to close it.</value></data>
+  <data name="HallNoGoHelp" xml:space="preserve"><value>Click the corners of an area where nothing may be placed, e.g. in front of a fire hose cabinet, and click the first corner again to close it.</value></data>
+  <data name="HallPillarHelp" xml:space="preserve"><value>Click where the centre of the pillar is; change its size in the properties.</value></data>
+  <data name="HallDoorHelp" xml:space="preserve"><value>Click on a wall where the door is. The area in front of it must be kept free.</value></data>
+  <data name="HallItem_Corner" xml:space="preserve"><value>Corner</value></data>
+  <data name="HallItem_Wall" xml:space="preserve"><value>Wall</value></data>
+  <data name="HallItem_Obstacle" xml:space="preserve"><value>Obstacle</value></data>
+  <data name="HallItem_Door" xml:space="preserve"><value>Door</value></data>
+  <data name="HallItem_NoGoZone" xml:space="preserve"><value>No-go zone</value></data>
+  <data name="HallProperties" xml:space="preserve"><value>Hall</value></data>
+  <data name="WallsPane" xml:space="preserve"><value>Walls</value></data>
+  <data name="HallWidth" xml:space="preserve"><value>Width</value></data>
+  <data name="HallDepth" xml:space="preserve"><value>Depth</value></data>
+  <data name="WallLength" xml:space="preserve"><value>Length</value></data>
+  <data name="WallArc" xml:space="preserve"><value>Arc</value></data>
+  <data name="AddCorner" xml:space="preserve"><value>Add corner</value></data>
+  <data name="DeleteCorner" xml:space="preserve"><value>Delete corner</value></data>
+  <data name="WallsHelp" xml:space="preserve"><value>Measures in metres; you can also type e.g. 450 mm. A new length moves the corner where the wall ends. An arc other than 0° makes the wall curved.</value></data>
+  <data name="ObstacleKind" xml:space="preserve"><value>Kind</value></data>
+  <data name="ObstacleKind_Pillar" xml:space="preserve"><value>Pillar</value></data>
+  <data name="ObstacleKind_Furniture" xml:space="preserve"><value>Furniture</value></data>
+  <data name="CentreX" xml:space="preserve"><value>Centre X</value></data>
+  <data name="CentreY" xml:space="preserve"><value>Centre Y</value></data>
+  <data name="HallDiameter" xml:space="preserve"><value>Diameter</value></data>
+  <data name="Rotation" xml:space="preserve"><value>Rotation</value></data>
+  <data name="DoorKind" xml:space="preserve"><value>Kind</value></data>
+  <data name="DoorKind_Door" xml:space="preserve"><value>Door</value></data>
+  <data name="DoorKind_EmergencyExit" xml:space="preserve"><value>Emergency exit</value></data>
+  <data name="KeepFreeDepth" xml:space="preserve"><value>Keep free in front</value></data>
+  <data name="NoGoReason" xml:space="preserve"><value>Reason</value></data>
+  <data name="NoGoDefaultReason" xml:space="preserve"><value>No-go zone</value></data>
+  <data name="HallAddress" xml:space="preserve"><value>Address</value></data>
+  <data name="MinimumAisleWidth" xml:space="preserve"><value>Minimum aisle width</value></data>
+  <data name="MinimumAisleWidthHelp" xml:space="preserve"><value>0 uses the minimum clearance of the hall plan's standard.</value></data>
+  <data name="HallSize" xml:space="preserve"><value>Size</value></data>
+  <data name="FloorArea" xml:space="preserve"><value>Floor area</value></data>
+  <data name="HallWalls" xml:space="preserve"><value>Walls</value></data>
+  <data name="HallObstacles" xml:space="preserve"><value>Obstacles</value></data>
+  <data name="HallDoors" xml:space="preserve"><value>Doors and exits</value></data>
+  <data name="HallNoGoZones" xml:space="preserve"><value>No-go zones</value></data>
+  <data name="IsModuleEntrance" xml:space="preserve"><value>Modules can be carried in and out here</value></data>
+  <data name="ModuleEntrances" xml:space="preserve"><value>Module entrances</value></data>
+  <data name="NoModuleEntrances" xml:space="preserve"><value>None marked</value></data>
+  <data name="HallWidthMetres" xml:space="preserve"><value>Width (m)</value></data>
+  <data name="HallDepthMetres" xml:space="preserve"><value>Depth (m)</value></data>
+  <data name="DoorWall" xml:space="preserve"><value>Wall</value></data>
+  <data name="WallBetweenCorners" xml:space="preserve"><value>Wall {0} (corners {1}–{2})</value></data>
+  <data name="DoorFromCorner" xml:space="preserve"><value>Corner {0} to the opening</value></data>
+  <data name="DoorToCorner" xml:space="preserve"><value>Opening to corner {0}</value></data>
+  <data name="DoorPositionHelp" xml:space="preserve"><value>Measured along the wall to the edges of the opening, as shown in the drawing.</value></data>
+  <data name="SnapGrid" xml:space="preserve"><value>Snap grid</value></data>
+  <data name="SnapGridOff" xml:space="preserve"><value>Off (follows the zoom)</value></data>
+  <data name="EffectiveFloorArea" xml:space="preserve"><value>Effective floor area</value></data>
 </root>

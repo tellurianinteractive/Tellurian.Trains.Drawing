@@ -31,7 +31,7 @@ public sealed class PropertyFieldTests
             .Add(f => f.ValueChanged, EventCallback.Factory.Create<double>(new object(), changed)));
 
     [TestMethod]
-    public void ShowsTheValueInTheCultureWithItsUnit() => InCulture("sv-SE", () =>
+    public void ShowsTheValueInTheCultureWithItsUnit() => InCulture("sv", () =>
     {
         using var context = new BunitContext();
         var field = Field(context, 1200.5, _ => { });
@@ -41,7 +41,7 @@ public sealed class PropertyFieldTests
     });
 
     [TestMethod]
-    public void ChangeCommitsTheParsedValue() => InCulture("sv-SE", () =>
+    public void ChangeCommitsTheParsedValue() => InCulture("sv", () =>
     {
         using var context = new BunitContext();
         double? committed = null;
@@ -167,4 +167,50 @@ public sealed class PropertyFieldTests
         Assert.AreEqual("Nothing", panel.Find(".property-panel-empty").TextContent);
         Assert.IsEmpty(panel.FindAll(".field"));
     }
+
+    private static IRenderedComponent<DecimalInput> Decimal(BunitContext context, double? value, Action<double?> changed) =>
+        context.Render<DecimalInput>(p => p
+            .Add(f => f.Value, value)
+            .Add(f => f.ValueChanged, EventCallback.Factory.Create<double?>(new object(), changed))
+            .AddUnmatched("id", "width"));
+
+    [TestMethod]
+    public void DecimalInputIsWrittenTheSwedishWay() => InCulture("sv", () =>
+    {
+        using var context = new BunitContext();
+        double? changed = null;
+        var input = Decimal(context, 20000.5, v => changed = v);
+        Assert.AreEqual("20000,5", input.Find("#width").GetAttribute("value"));
+
+        input.Find("input").Change("12,5 m");
+
+        Assert.AreEqual(12500, changed);
+        Assert.AreEqual("12500", input.Find("input").GetAttribute("value"));
+    });
+
+    [TestMethod]
+    public void DecimalInputRefusesAnotherCulturesDecimalPoint() => InCulture("sv", () =>
+    {
+        using var context = new BunitContext();
+        double? changed = 1;
+        var input = Decimal(context, 1, v => changed = v);
+
+        input.Find("input").Change("12.5");
+
+        Assert.IsNull(changed, "Invalid text gives no value.");
+        Assert.AreEqual("true", input.Find("input").GetAttribute("aria-invalid"));
+        Assert.AreEqual("12.5", input.Find("input").GetAttribute("value"), "The text is kept for correction.");
+    });
+
+    [TestMethod]
+    public void DecimalInputGroupsThousandsTheEnglishWay() => InCulture("en", () =>
+    {
+        using var context = new BunitContext();
+        double? changed = null;
+        var input = Decimal(context, null, v => changed = v);
+
+        input.Find("input").Change("1,500");
+
+        Assert.AreEqual(1500, changed);
+    });
 }

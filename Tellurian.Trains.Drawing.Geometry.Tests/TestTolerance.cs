@@ -8,4 +8,7 @@ internal static class TestTolerance
 {
     /// <summary>For values that are exact up to floating-point rounding.</summary>
     public const double Precision = 1e-9;
+
+    /// <summary>Relative difference allowed between large computed values, e.g. areas in mm², that are exact up to rounding.</summary>
+    public const double RelativePrecision = 1e-12;
 }
