@@ -50,8 +50,11 @@ public sealed class ReleaseNotesTests
         using var context = new AppTestContext();
         var layout = RenderLayout(context);
         layout.Find("#release-notes-button").Click();
-        layout.WaitForElement(".modal-backdrop").Click();
-        Assert.IsEmpty(layout.FindAll(".release-notes"));
+        // The notes are loaded after the backdrop appears, and that render gives it a new click handler; a click on
+        // the backdrop as first rendered could be lost, so it is clicked once the notes are shown.
+        layout.WaitForAssertion(() => Assert.IsNotEmpty(layout.FindAll(".release-notes li")));
+        layout.Find(".modal-backdrop").Click();
+        layout.WaitForAssertion(() => Assert.IsEmpty(layout.FindAll(".release-notes")));
     }
 
     [TestMethod]
