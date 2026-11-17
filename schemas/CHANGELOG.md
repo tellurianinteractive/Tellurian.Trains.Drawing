@@ -5,6 +5,12 @@ changes are allowed. Schema version 1 is a draft until it is frozen (implementat
 until then it may still change.
 
 ## Version 1 (draft)
+### 2026-11-17 (section lines with bends)
+- Internal joints (in modules, and in the modules embedded in a hall plan) have an optional `bends`: the points where
+  the section line bends between `start` and `end`, in order. Missing or empty means a straight line, as before. The
+  sections are cut from the module's outline by these polylines. Readers that don't know it ignore it.
+- Internal joints always fit: their end profiles are never compared (spec MD-4a, EP-8).
+
 ### 2026-11-17 (module entrances)
 - Doors in halls (and in the hall embedded in a hall plan) have an optional `isModuleEntrance`: true when modules can
   be carried in and out of the hall through the door (spec HA-7). Missing means false. Readers that don't know it

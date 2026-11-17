@@ -1,5 +1,12 @@
 # Versjonsmerknader
 
+## Versjon 0.8.0
+Utgitt 2026-11-17
+- Modulredigering: del en modul i seksjoner. Velg *Seksjonsskjøt* og klikk der modulen er delt; en rett skjøt legges til på tvers av sporet der. Seksjonene trenger ikke være like lange, og lengden langs sporet vises.
+- Merk en skjøt for å skrive inn nøyaktig avstand fra starten langs sporet, eller nøyaktig plassering av hvert punkt. Legg til punkter for å få skjøten til å knekke, og dra skjøter og punkter i tegningen; endene blir på modulens kant.
+- Skjøter mellom seksjoner passer alltid; endeprofiler sammenlignes bare der moduler møtes i en hallplan.
+- Modulens identifikasjon endres ved siden av tegningen og kan angres.
+
 ## Versjon 0.7.2
 Utgitt 2026-11-17
 - *Innstillinger* forteller hvordan du får nettleseren du bruker til å beholde innstillingene og utkastene dine, f.eks. som et unntak i personverninnstillingene i Firefox, med adressen til dette nettstedet å kopiere.

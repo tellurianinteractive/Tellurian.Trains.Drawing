@@ -1,3 +1,4 @@
+@using Tellurian.Trains.Drawing.Components.Canvas
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Drawing.Geometry
@@ -6,7 +7,8 @@
 @using Tellurian.Trains.Drawing.Model.Files
 @using Tellurian.Trains.Drawing.Model.Modules
 
-@* Read-only plan view of a module variant (EX-8), in module coordinates. Works without JS. *@
+@* Plan view of a module variant (EX-8), in module coordinates; read-only and without JS, or the canvas of the module
+   editor, which passes the variant as edited, an overlay and pointer callbacks. *@
 @if (_variant is null)
 {
     <p class="drawing-view-error">@Error</p>
@@ -30,7 +32,7 @@ else
                 }
                 @foreach (var joint in _variant.InternalJoints)
                 {
-                    <line class="md-internal-joint" x1="@SvgPath.Number(joint.Start.X)" y1="@SvgPath.Number(joint.Start.Y)" x2="@SvgPath.Number(joint.End.X)" y2="@SvgPath.Number(joint.End.Y)" />
+                    <path class="md-internal-joint" d="@SvgPath.Polyline(joint.Points)" />
                 }
             }
             @if (Show(ModuleLayers.DuckUnderAreas))
@@ -101,8 +103,9 @@ else
                 }
             }
         </g>;
-    <DrawingCanvas FitText="@FitText" Viewport="_view" ViewportChanged="v => _view = v" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
-                   PanWithPrimaryButton="true" Label="@(Label ?? _module?.Title)" Class="module-view">
+    <DrawingCanvas FitText="@FitText" Viewport="_view" ViewportChanged="OnViewChanged" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+                   PanWithPrimaryButton="!IsEditable" Label="@(Label ?? _module?.Title)" Class="module-view"
+                   OnPointerDown="OnPointerDown" OnPointerMove="OnPointerMove" OnPointerUp="OnPointerUp" OnKeyDownCallback="OnKeyDown" Overlay="Overlay">
         @content
     </DrawingCanvas>
     @if (PrintTitle is not null)
@@ -148,6 +151,26 @@ else
     /// <summary>The variant to show; the default variant if null.</summary>
     [Parameter] public Guid? VariantId { get; set; }
 
+    /// <summary>The variant as edited, shown instead of the module's own; the view keeps its zoom when it changes.</summary>
+    [Parameter] public ModuleVariant? Variant { get; set; }
+
+    /// <summary>True in an editor: the primary button goes to the pointer callbacks, and panning uses the middle button or Space.</summary>
+    [Parameter] public bool IsEditable { get; set; }
+
+    /// <summary>Content drawn above the module, e.g. an editor's handles and previews.</summary>
+    [Parameter] public RenderFragment? Overlay { get; set; }
+
+    [Parameter] public EventCallback<CanvasPointerEventArgs> OnPointerDown { get; set; }
+    [Parameter] public EventCallback<CanvasPointerEventArgs> OnPointerMove { get; set; }
+    [Parameter] public EventCallback<CanvasPointerEventArgs> OnPointerUp { get; set; }
+    [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+    /// <summary>Raised when the view is panned, zoomed or resized, e.g. so an editor can size its handles.</summary>
+    [Parameter] public EventCallback<Viewport> ViewChanged { get; set; }
+
+    /// <summary>The view now shown.</summary>
+    public Viewport View => _view;
+
     /// <summary>
     /// Looks up end profiles for the end plates, shading and names; not needed with <see cref="Json"/>.
     /// With <see cref="Json"/>, profiles it doesn't find are taken from the file.
@@ -181,10 +204,23 @@ else
 
     private double MarkerSize => Math.Max(Math.Max(_bounds.Width, _bounds.Height) * MarkerSizePerExtent, MinimumMarkerSize);
 
+    private async Task OnViewChanged(Viewport view)
+    {
+        _view = view;
+        await ViewChanged.InvokeAsync(view);
+    }
+
+    private Func<Guid, EndProfile?>? _lookup;
+
     protected override void OnParametersSet()
     {
         object? source = Module ?? (object?)Json;
-        if (ReferenceEquals(source, _source) && _variant is not null && (VariantId is null || _variant.Id == VariantId)) return;
+        if (ReferenceEquals(source, _source) && _variant is not null && (VariantId is null || _variant.Id == VariantId))
+        {
+            // An editor's changed variant is drawn again with the same view.
+            if (Variant is { } edited && !ReferenceEquals(edited, _variant)) Show(edited, fit: false);
+            return;
+        }
         _source = source;
         Func<Guid, EndProfile?>? lookup = EndProfiles;
         _module = Module;
@@ -202,15 +238,27 @@ else
                 _module = null;
             }
         }
-        _variant = _module is null ? null : VariantId is { } id ? _module.Variants.FirstOrDefault(v => v.Id == id) : _module.DefaultVariant;
-        if (_variant is null) return;
-        _plates = Plates(_variant, lookup);
-        _shades = Shades(_variant, lookup);
-        _profileNames = ProfileNames(_variant, lookup);
-        _bounds = Bounds(_variant, _plates);
-        _view = Viewport.Fit(_bounds, Width, Height);
+        _lookup = lookup;
+        var variant = Variant ?? (_module is null ? null : VariantId is { } id ? _module.Variants.FirstOrDefault(v => v.Id == id) : _module.DefaultVariant);
+        if (variant is null)
+        {
+            _variant = null;
+            return;
+        }
+        Show(variant, fit: true);
+    }
+
+    /// <summary>Works out what is drawn for <paramref name="variant"/>; <paramref name="fit"/> fits the view to it.</summary>
+    private void Show(ModuleVariant variant, bool fit)
+    {
+        _variant = variant;
+        _plates = Plates(variant, _lookup);
+        _shades = Shades(variant, _lookup);
+        _profileNames = ProfileNames(variant, _lookup);
+        _bounds = Bounds(variant, _plates);
+        if (fit) _view = Viewport.Fit(_bounds, Width, Height);
         _name = ModuleNameLabel.Text(_module!);
-        _namePlacement = _name is null ? null : NamePlacement(_variant, _name, lookup);
+        _namePlacement = _name is null ? null : NamePlacement(variant, _name, _lookup);
     }
 
     private bool Show(ModuleLayers layer) => Layers.HasFlag(layer);

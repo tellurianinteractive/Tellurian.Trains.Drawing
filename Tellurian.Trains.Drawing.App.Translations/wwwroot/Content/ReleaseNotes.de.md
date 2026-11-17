@@ -1,5 +1,12 @@
 # Versionshinweise
 
+## Version 0.8.0
+Veröffentlicht am 2026-11-17
+- Moduleditor: Teile ein Modul in Segmente. Wähle *Segmentstoß* und klicke dort, wo das Modul geteilt ist; dort wird ein gerader Stoß quer zum Gleis hinzugefügt. Die Segmente müssen nicht gleich lang sein, und ihre Länge entlang des Gleises wird angezeigt.
+- Wähle einen Stoß aus, um seinen genauen Abstand vom Anfang entlang des Gleises oder die genaue Lage jedes seiner Punkte einzugeben. Füge Punkte hinzu, damit der Stoß abknickt, und ziehe Stöße und Punkte in der Zeichnung; die Enden bleiben am Modulrand.
+- Stöße zwischen Segmenten passen immer; Endprofile werden nur dort verglichen, wo Module in einem Hallenplan aufeinandertreffen.
+- Die Kennzeichnung des Moduls wird neben der Zeichnung geändert und kann rückgängig gemacht werden.
+
 ## Version 0.7.2
 Veröffentlicht am 2026-11-17
 - *Einstellungen* erklärt, wie dein Browser deine Einstellungen und Entwürfe behält, z. B. als Ausnahme in den Datenschutzeinstellungen von Firefox, mit der Adresse dieser Website zum Kopieren.

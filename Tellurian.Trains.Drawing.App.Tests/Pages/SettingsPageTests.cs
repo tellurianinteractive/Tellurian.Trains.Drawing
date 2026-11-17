@@ -9,11 +9,22 @@ namespace Tellurian.Trains.Drawing.App.Tests.Pages;
 [TestClass]
 public sealed class SettingsPageTests
 {
+    /// <summary>
+    /// The page once the advice for the browser has arrived: it is loaded after the settings are shown, and until then
+    /// a click on a busy machine could be handled after the test looks for its result.
+    /// </summary>
+    private static IRenderedComponent<SettingsPage> RenderPage(AppTestContext context)
+    {
+        var page = context.Render<SettingsPage>();
+        page.WaitForAssertion(() => StringAssert.Contains(page.Find("#keep-data-help").InnerHtml, "<ol>"));
+        return page;
+    }
+
     [TestMethod]
     public void SettingsAreSavedInTheWorkbench()
     {
         using var context = new AppTestContext();
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         page.Find("#userName").Change("  Anna Andersson ");
         page.Find("#apiKey").Change("secret-key");
@@ -32,7 +43,7 @@ public sealed class SettingsPageTests
         using var context = new AppTestContext();
         context.Services.GetRequiredService<SettingsService>().SaveAsync(new() { UserName = "Bo", ApiKey = "k" }).Wait();
 
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         Assert.AreEqual("Bo", page.Find("#userName").GetAttribute("value"));
         Assert.AreEqual("k", page.Find("#apiKey").GetAttribute("value"));
@@ -43,7 +54,7 @@ public sealed class SettingsPageTests
     public void TheScaleIsChosenAmongTheCatalogueScales()
     {
         using var context = new AppTestContext();
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         var options = page.FindAll("#scale option").Select(o => o.GetAttribute("value")).ToArray();
         CollectionAssert.AreEqual(new[] { "", "H0", "N" }, options);
@@ -72,11 +83,11 @@ public sealed class SettingsPageTests
     public void TheApiKeyIsHiddenUntilShown()
     {
         using var context = new AppTestContext();
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         Assert.AreEqual("password", page.Find("#apiKey").GetAttribute("type"));
         page.Find("#toggle-api-key").Click();
-        Assert.AreEqual("text", page.Find("#apiKey").GetAttribute("type"));
+        page.WaitForAssertion(() => Assert.AreEqual("text", page.Find("#apiKey").GetAttribute("type")));
         Assert.AreEqual("Hide", page.Find("#toggle-api-key").TextContent);
     }
 
@@ -96,7 +107,7 @@ public sealed class SettingsPageTests
     {
         using var context = new AppTestContext();
         context.Workbench.IsPersisted = true;
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         Assert.IsNotNull(page.Find("#storage-persisted"));
         Assert.IsEmpty(page.FindAll("#request-persistence"));
@@ -106,12 +117,12 @@ public sealed class SettingsPageTests
     public void StorageThatMayBeClearedCanBeKept()
     {
         using var context = new AppTestContext();
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
         Assert.IsNotNull(page.Find("#storage-not-persisted"));
 
         page.Find("#request-persistence").Click();
 
-        Assert.IsNotNull(page.Find("#storage-persisted"));
+        page.WaitForElement("#storage-persisted");
     }
 
     [TestMethod]
@@ -119,12 +130,12 @@ public sealed class SettingsPageTests
     {
         using var context = new AppTestContext();
         context.Workbench.GrantsPersistence = false;
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         page.Find("#request-persistence").Click();
 
+        page.WaitForElement("#storage-refused");
         Assert.IsNotNull(page.Find("#storage-not-persisted"));
-        Assert.IsNotNull(page.Find("#storage-refused"));
     }
 
     [TestMethod]
@@ -132,7 +143,7 @@ public sealed class SettingsPageTests
     {
         using var context = new AppTestContext();
         context.Services.GetRequiredService<BrowserEnvironment>().Capabilities = new() { Browser = "Firefox" };
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         page.WaitForAssertion(() => StringAssert.Contains(page.Find("#keep-data-help").InnerHtml, "Manage Exceptions"));
         var help = page.Find("#keep-data-help");
@@ -147,7 +158,7 @@ public sealed class SettingsPageTests
     {
         using var context = new AppTestContext();
         context.Workbench.IsPersisted = true;
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         var help = page.Find("#keep-data-help");
         Assert.IsFalse(help.HasAttribute("open"));
@@ -158,11 +169,12 @@ public sealed class SettingsPageTests
     public void SettingsAreExportedWithTheLanguage()
     {
         using var context = new AppTestContext();
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
         page.Find("#userName").Change("Anna");
 
         page.Find("#export-settings").Click();
 
+        page.WaitForAssertion(() => Assert.HasCount(1, context.Files.Saves));
         var (text, name, _, saveAs) = context.Files.Saves.Single();
         Assert.AreEqual("Module Draw settings.json", name);
         Assert.IsTrue(saveAs);
@@ -177,11 +189,11 @@ public sealed class SettingsPageTests
     {
         using var context = new AppTestContext();
         context.Files.FilesToOpen = [new("my settings.json", SettingsFile.Write(new() { UserName = "Bo", ApiKey = "k" }, System.Globalization.CultureInfo.CurrentUICulture.Name))];
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         page.Find("#import-settings").Click();
 
-        Assert.AreEqual("Bo", page.Find("#userName").GetAttribute("value"));
+        page.WaitForAssertion(() => Assert.AreEqual("Bo", page.Find("#userName").GetAttribute("value")));
         Assert.AreEqual("Bo", context.Services.GetRequiredService<SettingsService>().GetAsync().Result.UserName);
         Assert.AreEqual("The settings were imported.", page.Find("#settings-saved").TextContent);
     }
@@ -191,11 +203,11 @@ public sealed class SettingsPageTests
     {
         using var context = new AppTestContext();
         context.Files.FilesToOpen = [new("station.module.json", """{ "format": "tellurian-drawing", "kind": "module" }""")];
-        var page = context.Render<SettingsPage>();
+        var page = RenderPage(context);
 
         page.Find("#import-settings").Click();
 
-        Assert.AreEqual("station.module.json isn't a Module Draw settings file.", page.Find("p.error").TextContent);
+        page.WaitForAssertion(() => Assert.AreEqual("station.module.json isn't a Module Draw settings file.", page.Find("p.error").TextContent));
         Assert.IsFalse(context.Workbench.Values.ContainsKey(SettingsService.StorageKey));
     }
 }

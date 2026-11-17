@@ -197,15 +197,15 @@ This comes first among the editors because module exits (Phase 6) depend on end 
    - screw hole and dowel tools (EP-6);
    - dimensions and labels (EP-10).
 4. Live derived-properties panel, symmetry indicator and mirror ghost highlighting the asymmetric parts (EP-7).
-5. **Compare view** (EP-8):
+5. ~~**Compare view** (EP-8)~~ *Moved to Phase 9 as the joint inspection (decided 2026-11-17): end profiles are compared only where modules meet in a hall plan.*
    - pick two profiles and their orientations;
    - A is shown mirrored over B;
    - a coloured difference overlay with a difference list;
    - the fit result with colour and symbol.
 6. Draw the built-in end profiles in the editor from the FREMO and MMM PDF drawings and verify them (dimensions, screw holes, track positions). This is easier with EP-11 (PDF page as background); consider pulling EP-11 forward into this phase.
 
-**Milestone M1a:** a user can draw an end profile and see whether and how it fits another.
-**Requirements:** EP-1..EP-8, EP-10.
+**Milestone M1a:** a user can draw an end profile. (Whether it fits another is shown where modules meet in a hall plan, Phase 9.)
+**Requirements:** EP-1..EP-7, EP-10.
 
 ### Phase 6 – Module editor: properties, sections, variants, exits (≈3 weeks)
 1. Module properties panel, including the owners list (MD-2).
@@ -222,6 +222,8 @@ This comes first among the editors because module exits (Phase 6) depend on end 
 9. Labels and markers (MD-9).
 10. Derived measures panel per variant with difference flags (MD-10).
 11. Module problems list (precursor of VA).
+
+*As built (2026-11-17, first part):* the module editor (`ModuleEditor`, `ModuleScene`, `ModuleJoints`) defines the sections of a module by **section joints**: polylines across the module with their ends on the outline (schema: `bends` on internal joints). A new joint is straight, at right angles to the track where the user clicks; its distance along the track and its points' X/Y are typed exactly, points are added, moved and deleted, and the sections are cut again from the whole outline (`ModuleSections` in Model) and numbered along the track. Internal joints always fit; nothing compares end profiles in the module editor. The editor works on the default variant; the identification is edited in it as undoable changes.
 
 **Milestone M1b:** a user can draw a multi-section module with variants and exits, and save, export and import it, with its end profiles embedded.
 **Requirements:** MD-2, MD-3, MD-4, MD-4a, MD-5, MD-7a, MD-9, MD-10, MD-13, MD-17, MD-18, MD-19.
@@ -336,7 +338,7 @@ Validation logic lives in `Model` and is unit-tested without UI. Parts of it can
 
 ### Phase 13 – "Should" requirements (release 1.x, ≈3–5 weeks)
 In priority order (to be confirmed):
-1. EP-9 fit matrix; "Level from here" (HP-13).
+1. "Level from here" (HP-13). *(EP-9 fit matrix dropped 2026-11-17.)*
 2. VA-12 public side check and VA-8 enclosed areas (reachability, with duck-under passages).
 3. HP-8/HP-9 colouring by owner/state/status, plus layers.
 4. RP-3 joint list, RP-4 placement numbering.
@@ -366,8 +368,9 @@ In priority order (to be confirmed):
 | CA-6 | as built, 0.4.0 |
 | EP-1 | 3 (library), 5 |
 | EP-2, EP-7 | 2 (logic), 5 (UI) |
-| EP-3 … EP-6, EP-8 | 5 |
-| EP-9 | 13 |
+| EP-3 … EP-6 | 5 |
+| EP-8 | 9 (joint inspection) |
+| EP-9 | dropped |
 | EP-10 | 4 (tool), 5 |
 | EP-11 | 13 |
 | MD-1 | 3 |

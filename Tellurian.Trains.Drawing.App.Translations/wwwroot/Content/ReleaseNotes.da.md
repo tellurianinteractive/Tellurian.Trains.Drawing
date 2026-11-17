@@ -1,5 +1,12 @@
 # Udgivelsesnoter
 
+## Version 0.8.0
+Udgivet 2026-11-17
+- Moduleditor: del et modul i sektioner. Vælg *Sektionssamling* og klik, hvor modulet er delt; der tilføjes en lige samling på tværs af sporet. Sektionerne behøver ikke være lige lange, og deres længde langs sporet vises.
+- Markér en samling for at skrive dens nøjagtige afstand fra starten langs sporet eller den nøjagtige placering af hvert af dens punkter. Tilføj punkter for at få samlingen til at knække, og træk samlinger og punkter i tegningen; enderne bliver på modulets kant.
+- Samlinger mellem sektioner passer altid; endeprofiler sammenlignes kun, hvor moduler mødes i en hal-plan.
+- Modulets identifikation ændres ved siden af tegningen og kan fortrydes.
+
 ## Version 0.7.2
 Udgivet 2026-11-17
 - *Indstillinger* fortæller, hvordan du får den browser, du bruger, til at beholde dine indstillinger og udkast, f.eks. som en undtagelse i Firefox' privatlivsindstillinger, med dette websteds adresse til at kopiere.

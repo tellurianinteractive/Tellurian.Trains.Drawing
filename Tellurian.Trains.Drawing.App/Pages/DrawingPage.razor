@@ -3,7 +3,6 @@
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
-@inject IJSRuntime JS
 @inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Views
@@ -31,63 +30,22 @@ else if (draft is not null && draft.Kind == DrawingFileKind.Hall)
         </ArchiveContent>
     </HallEditor>
 }
+else if (draft is not null && draft.Kind == DrawingFileKind.Module)
+{
+    <ModuleEditor @ref="_moduleEditor" @key="draft.Id" Draft="draft" Standard="@_standard" EndProfiles="FindEndProfile" DraftChanged="d => draft = d">
+        <ArchiveContent>
+            @ArchiveFragment(draft)
+        </ArchiveContent>
+    </ModuleEditor>
+}
 else if (draft is not null)
 {
-    @* Module drawings: the view fills the window, with the file actions beside it (as in the end profile editor). *@
-    <div class="editor-layout">
-        <div class="editor-canvas">
-            @switch (draft.Kind)
-            {
-                case DrawingFileKind.Module:
-                    <ModuleView FitText="@T["ZoomToFit"]" Json="@draft.Json" Standard="@_standard" EndProfiles="FindEndProfile" PrintTitle="@draft.Name" Error="@T["CannotShow"]" />
-                    break;
-            }
-        </div>
-        <aside class="editor-side">
-            <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
-                <h2>@T["ArchivePane"]</h2>
-                <p class="archive-name"><b>@draft.Name</b> <span class="kind">@T[$"Kind_{draft.Kind}"]</span></p>
-                <p class="detail">@(draft.FileName ?? T["NotSavedToFile"])</p>
-                <div class="pane-buttons">
-                    <button type="button" class="primary" id="save" @onclick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
-                    @if (Documents.CanSaveInPlace)
-                    {
-                        <button type="button" id="save-as" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
-                    }
-                    @if (draft.Kind == DrawingFileKind.Module)
-                    {
-                        <button type="button" id="print" @onclick="PrintAsync">@T["Print"]</button>
-                    }
-                    <button type="button" id="discard" @onclick="DiscardAsync">@T["Discard"]</button>
-                </div>
-                <p>
-                    @if (draft.HasUnsavedChanges)
-                    {
-                        <span class="badge unsaved">@T["UnsavedChanges"]</span>
-                    }
-                    else
-                    {
-                        <span class="badge saved">@T["Saved"]</span>
-                    }
-                </p>
-                @if (!Documents.CanSaveInPlace)
-                {
-                    <p class="note">@T["DownloadNote"]</p>
-                }
-                @if (message is not null)
-                {
-                    <p class="error" role="alert">@message</p>
-                }
-                <p class="detail">@T["Changed"]: <time datetime="@draft.Modified.ToString("o")">@draft.Modified.ToLocalTime().ToString("g")</time></p>
-                <RevisionLogList Log="@DrawingRevisionLog.Read(draft.Json)" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
-                <p class="pane-help">@T["EditorComing"]</p>
-            </section>
-            @if (draft.Kind == DrawingFileKind.Module)
-            {
-                <ModulePropertiesPane @key="draft.Id" Draft="draft" DraftChanged="d => draft = d" />
-            }
-        </aside>
-    </div>
+    @* Other kinds of drawing have no editor yet: their file actions only. *@
+    <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+        <h2>@T["ArchivePane"]</h2>
+        @ArchiveFragment(draft)
+        <p class="pane-help">@T["EditorComing"]</p>
+    </section>
 }
 
 @code {
@@ -195,20 +153,9 @@ else if (draft is not null)
         }
     }
 
-    private async Task PrintAsync()
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("print");
-        }
-        catch (JSException)
-        {
-            // Printing isn't available, e.g. in a restricted browser; nothing is lost.
-        }
-    }
-
     private EndProfileEditor? _endProfileEditor;
     private HallEditor? _hallEditor;
+    private ModuleEditor? _moduleEditor;
     private string? _trackColor;
 
     /// <summary>Saves the profile being edited in the user's catalogue, so modules can use it (EP-1).</summary>
@@ -239,6 +186,7 @@ else if (draft is not null)
         {
             if (_endProfileEditor is not null) await _endProfileEditor.FlushAsync();
             if (_hallEditor is not null) await _hallEditor.FlushAsync();
+            if (_moduleEditor is not null) await _moduleEditor.FlushAsync();
             draft = await Documents.SaveAsync(Id, saveAs) ?? draft;
         }
         catch (FileOperationException ex)

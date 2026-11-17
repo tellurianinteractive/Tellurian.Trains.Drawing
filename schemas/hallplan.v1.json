@@ -871,6 +871,12 @@
         "end": {
           "$ref": "#/$defs/Point"
         },
+        "bends": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "endProfile": {
           "anyOf": [
             {

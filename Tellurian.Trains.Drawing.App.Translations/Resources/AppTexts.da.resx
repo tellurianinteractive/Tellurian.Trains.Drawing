@@ -398,4 +398,18 @@
   <data name="SettingsImported" xml:space="preserve"><value>Indstillingerne blev importeret.</value></data>
   <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} er ikke en indstillingsfil til Modultegneren.</value></data>
   <data name="SettingsFileName" xml:space="preserve"><value>Modultegnerens indstillinger</value></data>
+  <data name="ModTool_Select" xml:space="preserve"><value>Markér</value></data>
+  <data name="ModTool_Joint" xml:space="preserve"><value>Sektionssamling</value></data>
+  <data name="ModuleSelectHelp" xml:space="preserve"><value>Klik på en sektionssamling eller et af dens punkter for at markere den; træk for at flytte den (Skift: lige, Alt: uden fastgørelse). Enderne bliver på modulets kant. Delete sletter det markerede.</value></data>
+  <data name="ModuleJointHelp" xml:space="preserve"><value>Klik, hvor modulet er delt: der tilføjes en lige samling på tværs af sporet. Escape går tilbage til Markér.</value></data>
+  <data name="SectionsPane" xml:space="preserve"><value>Sektioner</value></data>
+  <data name="Section" xml:space="preserve"><value>Sektion</value></data>
+  <data name="SectionLength" xml:space="preserve"><value>Længde langs sporet</value></data>
+  <data name="JointBetween" xml:space="preserve"><value>Samling mellem sektion {0} og {1}</value></data>
+  <data name="JointDistance" xml:space="preserve"><value>Afstand fra starten langs sporet</value></data>
+  <data name="AddJointPoint" xml:space="preserve"><value>Tilføj punkt</value></data>
+  <data name="DeleteJointPoint" xml:space="preserve"><value>Slet punkt</value></data>
+  <data name="JointPointsHelp" xml:space="preserve"><value>Skriv punkternes placering, eller træk dem i tegningen. Et nyt punkt tilføjes efter det markerede; flyt det for at få samlingen til at knække. Enderne bliver på modulets kant.</value></data>
+  <data name="SectionsHelp" xml:space="preserve"><value>Et modul med flere sektioner deles af sektionssamlinger. Vælg Sektionssamling og klik, hvor modulet er delt, og markér så samlingen for at angive dens nøjagtige placering. Samlinger mellem sektioner passer altid.</value></data>
+  <data name="NoOutlineForSections" xml:space="preserve"><value>Dette modul har ingen kontur at dele i sektioner.</value></data>
 </root>

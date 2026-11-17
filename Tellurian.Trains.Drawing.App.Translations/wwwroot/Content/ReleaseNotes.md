@@ -1,5 +1,12 @@
 # Release Notes
 
+## Release 0.8.0
+Released 2026-11-17
+- Module editor: divide a module into sections. Choose *Section joint* and click where the module is divided; a straight joint is added across the track there. Sections don't have to be equally long, and their lengths along the track are shown.
+- Select a joint to type its exact distance from the start along the track, or the exact position of each of its points. Add points to make the joint bend, and drag joints and points in the drawing; the ends stay on the module's edge.
+- Joints between sections always fit; end profiles are compared only where modules meet in a hall plan.
+- The module's identification is changed beside the drawing and can be undone.
+
 ## Release 0.7.2
 Released 2026-11-17
 - *Settings* tells how to make the browser you use keep your settings and drafts, e.g. as an exception in Firefox's privacy settings, with this site's address to copy.

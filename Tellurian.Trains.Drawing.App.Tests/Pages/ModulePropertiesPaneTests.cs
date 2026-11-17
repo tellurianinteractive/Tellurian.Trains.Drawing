@@ -34,6 +34,8 @@ public sealed class ModulePropertiesPaneTests
         Enter(page, FremoNumber, "12");
         Enter(page, OwnerName, "Stefan Fjällemark");
 
+        // In the module editor, changes are autosaved to the draft a moment later.
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<Model.Files.ModuleFileContent>.DefaultDelay);
         page.WaitForAssertion(() => Assert.AreEqual("SFjä 012 Tellby", context.Workbench.Drafts[id].Name));
         var module = DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module;
         Assert.AreEqual(12, module.FremoNumber);

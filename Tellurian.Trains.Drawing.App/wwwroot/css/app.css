@@ -618,6 +618,23 @@ label.inline {
     stroke-width: 2;
 }
 
+/* Handles on the points of section joints, and the selected joint, in the module editor. */
+.editor-handle {
+    fill: #ffffff;
+    stroke: #c24b1b;
+    stroke-width: 1.5;
+}
+
+    .editor-handle.selected {
+        fill: #c24b1b;
+    }
+
+.editor-selected-joint {
+    fill: none;
+    stroke: #c24b1b;
+    stroke-width: 3;
+}
+
 
 .plate-points {
     width: 100%;

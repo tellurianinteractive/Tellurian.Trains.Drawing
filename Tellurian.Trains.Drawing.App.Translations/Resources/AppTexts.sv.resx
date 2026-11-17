@@ -398,4 +398,18 @@
   <data name="SettingsImported" xml:space="preserve"><value>Inställningarna importerades.</value></data>
   <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} är ingen inställningsfil för Modulritaren.</value></data>
   <data name="SettingsFileName" xml:space="preserve"><value>Modulritarens inställningar</value></data>
+  <data name="ModTool_Select" xml:space="preserve"><value>Markera</value></data>
+  <data name="ModTool_Joint" xml:space="preserve"><value>Sektionsskarv</value></data>
+  <data name="ModuleSelectHelp" xml:space="preserve"><value>Klicka på en sektionsskarv eller en av dess punkter för att markera den; dra för att flytta den (Skift: rakt, Alt: utan fästning). Ändarna stannar på modulens kant. Delete tar bort det markerade.</value></data>
+  <data name="ModuleJointHelp" xml:space="preserve"><value>Klicka där modulen delas: en rak skarv läggs till tvärs över spåret där. Escape går tillbaka till Markera.</value></data>
+  <data name="SectionsPane" xml:space="preserve"><value>Sektioner</value></data>
+  <data name="Section" xml:space="preserve"><value>Sektion</value></data>
+  <data name="SectionLength" xml:space="preserve"><value>Längd längs spåret</value></data>
+  <data name="JointBetween" xml:space="preserve"><value>Skarv mellan sektion {0} och {1}</value></data>
+  <data name="JointDistance" xml:space="preserve"><value>Avstånd från början längs spåret</value></data>
+  <data name="AddJointPoint" xml:space="preserve"><value>Lägg till punkt</value></data>
+  <data name="DeleteJointPoint" xml:space="preserve"><value>Ta bort punkt</value></data>
+  <data name="JointPointsHelp" xml:space="preserve"><value>Skriv punkternas lägen, eller dra dem i ritningen. En ny punkt läggs till efter den markerade; flytta den för att få skarven att bryta. Ändarna stannar på modulens kant.</value></data>
+  <data name="SectionsHelp" xml:space="preserve"><value>En modul med flera sektioner delas av sektionsskarvar. Välj Sektionsskarv och klicka där modulen delas, markera sedan skarven för att ange dess exakta läge. Skarvar mellan sektioner passar alltid.</value></data>
+  <data name="NoOutlineForSections" xml:space="preserve"><value>Den här modulen har ingen kontur att dela i sektioner.</value></data>
 </root>

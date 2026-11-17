@@ -398,4 +398,18 @@
   <data name="SettingsImported" xml:space="preserve"><value>Die Einstellungen wurden importiert.</value></data>
   <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} ist keine Einstellungsdatei des Modulzeichners.</value></data>
   <data name="SettingsFileName" xml:space="preserve"><value>Modulzeichner-Einstellungen</value></data>
+  <data name="ModTool_Select" xml:space="preserve"><value>Auswählen</value></data>
+  <data name="ModTool_Joint" xml:space="preserve"><value>Segmentstoß</value></data>
+  <data name="ModuleSelectHelp" xml:space="preserve"><value>Klicke auf einen Segmentstoß oder einen seiner Punkte, um ihn auszuwählen; ziehe, um ihn zu verschieben (Umschalt: gerade, Alt: ohne Fangen). Die Enden bleiben am Modulrand. Entf löscht die Auswahl.</value></data>
+  <data name="ModuleJointHelp" xml:space="preserve"><value>Klicke dort, wo das Modul geteilt ist: Dort wird ein gerader Stoß quer zum Gleis hinzugefügt. Escape führt zurück zu Auswählen.</value></data>
+  <data name="SectionsPane" xml:space="preserve"><value>Segmente</value></data>
+  <data name="Section" xml:space="preserve"><value>Segment</value></data>
+  <data name="SectionLength" xml:space="preserve"><value>Länge entlang des Gleises</value></data>
+  <data name="JointBetween" xml:space="preserve"><value>Stoß zwischen Segment {0} und {1}</value></data>
+  <data name="JointDistance" xml:space="preserve"><value>Abstand vom Anfang entlang des Gleises</value></data>
+  <data name="AddJointPoint" xml:space="preserve"><value>Punkt hinzufügen</value></data>
+  <data name="DeleteJointPoint" xml:space="preserve"><value>Punkt löschen</value></data>
+  <data name="JointPointsHelp" xml:space="preserve"><value>Gib die Lage der Punkte ein oder ziehe sie in der Zeichnung. Ein neuer Punkt kommt nach dem ausgewählten; verschiebe ihn, damit der Stoß abknickt. Die Enden bleiben am Modulrand.</value></data>
+  <data name="SectionsHelp" xml:space="preserve"><value>Ein Modul aus mehreren Segmenten wird durch Segmentstöße geteilt. Wähle Segmentstoß und klicke dort, wo das Modul geteilt ist, und wähle dann den Stoß aus, um seine genaue Lage einzugeben. Stöße zwischen Segmenten passen immer.</value></data>
+  <data name="NoOutlineForSections" xml:space="preserve"><value>Dieses Modul hat keinen Umriss, der in Segmente geteilt werden kann.</value></data>
 </root>

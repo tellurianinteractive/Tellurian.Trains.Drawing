@@ -39,6 +39,25 @@ public sealed class Polyline
 
     public bool IsCounterClockwise => SignedArea > 0;
 
+    /// <summary>The centre of area of a closed polyline; the average of its points if it has no area.</summary>
+    public Point Centroid
+    {
+        get
+        {
+            var area = SignedArea;
+            if (!IsClosed || Math.Abs(area) < Tolerance.Length)
+                return new(Points.Average(p => p.X), Points.Average(p => p.Y));
+            double x = 0, y = 0;
+            foreach (var (a, b) in Edges())
+            {
+                var cross = a.X * b.Y - b.X * a.Y;
+                x += (a.X + b.X) * cross;
+                y += (a.Y + b.Y) * cross;
+            }
+            return new(x / (6 * area), y / (6 * area));
+        }
+    }
+
     public (Point Start, Point End) Edge(int index) => (Points[index], Points[(index + 1) % Points.Count]);
 
     public IEnumerable<(Point Start, Point End)> Edges()

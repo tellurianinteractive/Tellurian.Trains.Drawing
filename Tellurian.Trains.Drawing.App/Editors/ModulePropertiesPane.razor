@@ -3,8 +3,10 @@
 @using Tellurian.Trains.Drawing.Model.Modules
 @inject DrawingDocuments Documents
 
-@* The properties of a module drawing (MD-2): how it is identified, the FREMO way or by a name. Each change is stored
-   in the draft at once (autosave); problems are shown but don't stop the change, so the fields can be filled in any order. *@
+@* The properties of a module drawing (MD-2): how it is identified, the FREMO way or by a name. On its own, each change
+   is stored in the draft at once (autosave); in the module editor, which passes Content, each change goes to the editor
+   as ModuleChanged, so it can be undone. Problems are shown but don't stop the change, so the fields can be filled in
+   any order. *@
 @if (_content is { } content)
 {
     var module = content.Module;
@@ -27,6 +29,7 @@
             </ul>
         }
         <p class="pane-help">@T["ModuleIdentificationHelp"]</p>
+        <RevisionLogList Log="@Model.Files.DrawingRevisionLog.Read(Draft.Json)" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
         @if (_message is not null)
         {
             <p class="error" role="alert">@_message</p>
@@ -43,8 +46,19 @@
     [Parameter, EditorRequired] public Draft Draft { get; set; } = default!;
     [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
 
+    /// <summary>The module as edited by an editor; its changes then go to <see cref="ModuleChanged"/> instead of the draft.</summary>
+    [Parameter] public ModuleFileContent? Content { get; set; }
+
+    /// <summary>Raised with the changed module when <see cref="Content"/> is given.</summary>
+    [Parameter] public EventCallback<Module> ModuleChanged { get; set; }
+
     protected override void OnParametersSet()
     {
+        if (Content is not null)
+        {
+            _content = Content;
+            return;
+        }
         if (Draft.Json == _shownJson) return;
         _shownJson = Draft.Json;
         try
@@ -87,6 +101,11 @@
     {
         if (_content is null) return;
         _message = null;
+        if (Content is not null)
+        {
+            await ModuleChanged.InvokeAsync(module);
+            return;
+        }
         var content = _content with { Module = module };
         try
         {

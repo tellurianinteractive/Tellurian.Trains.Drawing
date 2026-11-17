@@ -1,5 +1,12 @@
 # Versionsinformation
 
+## Version 0.8.0
+Utgiven 2026-11-17
+- Modulredigerare: dela en modul i sektioner. Välj *Sektionsskarv* och klicka där modulen delas; en rak skarv läggs till tvärs över spåret där. Sektionerna behöver inte vara lika långa, och deras längd längs spåret visas.
+- Markera en skarv för att skriva dess exakta avstånd från början längs spåret, eller det exakta läget för var och en av dess punkter. Lägg till punkter för att få skarven att bryta, och dra skarvar och punkter i ritningen; ändarna stannar på modulens kant.
+- Skarvar mellan sektioner passar alltid; ändprofiler jämförs bara där moduler möts i en hallplan.
+- Modulens identifiering ändras bredvid ritningen och kan ångras.
+
 ## Version 0.7.2
 Utgiven 2026-11-17
 - *Inställningar* berättar hur du får den webbläsare du använder att behålla dina inställningar och utkast, t.ex. som ett undantag i Firefox sekretessinställningar, med den här webbplatsens adress att kopiera.
