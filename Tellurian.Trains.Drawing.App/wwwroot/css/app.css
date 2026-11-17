@@ -748,6 +748,28 @@ label.stacked {
         color: #8a5a00;
     }
 
+.settings-file {
+    margin-top: 2rem;
+    max-width: 40rem;
+}
+
+.keep-data-help {
+    margin-top: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+}
+
+    .keep-data-help summary {
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .keep-data-help code {
+        user-select: all;
+        word-break: break-all;
+    }
+
 /* A wait message over the page while something slow runs, e.g. drawing a new module. */
 .busy-overlay {
     position: fixed;

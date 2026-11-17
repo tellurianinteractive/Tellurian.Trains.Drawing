@@ -9,7 +9,21 @@ export function capabilities() {
         fileSystemAccess: 'showOpenFilePicker' in window && 'showSaveFilePicker' in window,
         directoryPicker: 'showDirectoryPicker' in window,
         launchQueue: 'launchQueue' in window,
+        browser: browserKind(),
     });
+}
+
+// The browser, for advice that depends on it. Edge and other Chromium browsers also say 'Chrome' in the user agent,
+// so they are recognised first; Chromium browsers that aren't Chrome or Edge get the general advice.
+function browserKind() {
+    const brands = navigator.userAgentData?.brands?.map(b => b.brand) ?? [];
+    const agent = navigator.userAgent;
+    if (brands.includes('Microsoft Edge') || /Edg\//.test(agent)) return 'Edge';
+    if (/Firefox\//.test(agent)) return 'Firefox';
+    if (brands.some(b => /Brave|Opera|Vivaldi/.test(b)) || /OPR\/|Vivaldi\//.test(agent)) return 'Other';
+    if (brands.includes('Google Chrome') || /Chrome\//.test(agent)) return 'Chrome';
+    if (/Safari\//.test(agent)) return 'Safari';
+    return 'Other';
 }
 
 function pickerTypes(extensions) {

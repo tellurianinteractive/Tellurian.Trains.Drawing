@@ -387,4 +387,15 @@
   <data name="StorageNotPersisted" xml:space="preserve"><value>The browser may remove your settings and drafts, e.g. when disk space runs low or the site hasn't been used for a while. Save your drawings to files.</value></data>
   <data name="StorageAskToKeep" xml:space="preserve"><value>Ask the browser to keep them</value></data>
   <data name="StorageRefused" xml:space="preserve"><value>The browser didn't agree. Some browsers agree only after the site has been used for a while, or when it is installed as an app.</value></data>
+  <data name="KeepDataTitle" xml:space="preserve"><value>How to make {0} keep your data</value></data>
+  <data name="YourBrowser" xml:space="preserve"><value>your browser</value></data>
+  <data name="SiteAddress" xml:space="preserve"><value>This site's address</value></data>
+  <data name="SettingsFileTitle" xml:space="preserve"><value>Settings file</value></data>
+  <data name="SettingsFileHelp" xml:space="preserve"><value>Export your settings and language to a file, and import them again if the browser has forgotten them, or in another browser. The file contains your Module Registry API key: keep it to yourself.</value></data>
+  <data name="ExportSettings" xml:space="preserve"><value>Export settings…</value></data>
+  <data name="ImportSettings" xml:space="preserve"><value>Import settings…</value></data>
+  <data name="SettingsExported" xml:space="preserve"><value>The settings were exported.</value></data>
+  <data name="SettingsImported" xml:space="preserve"><value>The settings were imported.</value></data>
+  <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} isn't a Module Draw settings file.</value></data>
+  <data name="SettingsFileName" xml:space="preserve"><value>Module Draw settings</value></data>
 </root>

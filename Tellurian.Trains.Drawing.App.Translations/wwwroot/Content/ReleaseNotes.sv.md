@@ -1,5 +1,11 @@
 # Versionsinformation
 
+## Version 0.7.2
+Utgiven 2026-11-17
+- *Inställningar* berättar hur du får den webbläsare du använder att behålla dina inställningar och utkast, t.ex. som ett undantag i Firefox sekretessinställningar, med den här webbplatsens adress att kopiera.
+- Exportera dina inställningar och ditt språk till en fil, och importera dem igen om webbläsaren har glömt dem, eller i en annan webbläsare.
+- Informationssidan berättar var dina inställningar och utkast sparas.
+
 ## Version 0.7.1
 Utgiven 2026-11-17
 - Appen ber webbläsaren att behålla dina inställningar och utkast så fort den startar. *Inställningar* visar om webbläsaren behåller dem, och kan be den igen.

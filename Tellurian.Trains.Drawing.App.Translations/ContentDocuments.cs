@@ -21,6 +21,12 @@ public sealed class ContentDocuments([FromKeyedServices(ContentDocuments.Markdow
     public const string Information = "Information";
     public const string ReleaseNotes = "ReleaseNotes";
 
+    /// <summary>The browsers that have their own advice on keeping the app's data; the others get <c>KeepDataOther</c>.</summary>
+    public static readonly IReadOnlyList<string> KeepDataBrowsers = ["Chrome", "Edge", "Firefox", "Safari", "Other"];
+
+    /// <summary>How to make <paramref name="browser"/> keep the app's data, e.g. <c>KeepDataFirefox</c>.</summary>
+    public static string KeepData(string browser) => $"KeepData{browser}";
+
     private readonly ConcurrentDictionary<string, string> cache = new();
 
     /// <summary>

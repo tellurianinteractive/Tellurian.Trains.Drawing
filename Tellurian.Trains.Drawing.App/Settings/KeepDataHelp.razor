@@ -1,0 +1,34 @@
+@using System.Globalization
+@inject ContentDocuments Content
+@inject NavigationManager Navigation
+
+@* How to make the browser in use keep the app's data, with the site's address to add as an exception. It loads its own
+   document, so only this part renders again when the document arrives. *@
+<details id="keep-data-help" class="keep-data-help" open="@Open">
+    <summary>@T.Format("KeepDataTitle", BrowserName)</summary>
+    <p>@T["SiteAddress"]: <code id="site-address">@SiteAddress</code></p>
+    @((MarkupString)_html)
+</details>
+
+@code {
+    private string _html = "";
+    private BrowserKind? _loaded;
+
+    /// <summary>The browser to advise about.</summary>
+    [Parameter] public BrowserKind Browser { get; set; }
+
+    /// <summary>Shown open, e.g. while the browser doesn't keep the data.</summary>
+    [Parameter] public bool Open { get; set; }
+
+    /// <summary>The address to add as an exception in the browser's privacy settings, e.g. <c>https://…azurestaticapps.net</c>.</summary>
+    private string SiteAddress => new Uri(Navigation.BaseUri).GetLeftPart(UriPartial.Authority);
+
+    private string BrowserName => Browser == BrowserKind.Other ? T["YourBrowser"] : Browser.ToString();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_loaded == Browser) return;
+        _loaded = Browser;
+        _html = await Content.HtmlAsync(ContentDocuments.KeepData(Browser.ToString()), CultureInfo.CurrentUICulture);
+    }
+}

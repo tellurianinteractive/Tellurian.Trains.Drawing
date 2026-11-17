@@ -1,5 +1,11 @@
 # Versionshinweise
 
+## Version 0.7.2
+Veröffentlicht am 2026-11-17
+- *Einstellungen* erklärt, wie dein Browser deine Einstellungen und Entwürfe behält, z. B. als Ausnahme in den Datenschutzeinstellungen von Firefox, mit der Adresse dieser Website zum Kopieren.
+- Exportiere deine Einstellungen und deine Sprache in eine Datei und importiere sie wieder, wenn der Browser sie vergessen hat, oder in einem anderen Browser.
+- Die Informationsseite erklärt, wo deine Einstellungen und Entwürfe gespeichert werden.
+
 ## Version 0.7.1
 Veröffentlicht am 2026-11-17
 - Die App bittet den Browser gleich beim Start, deine Einstellungen und Entwürfe zu behalten. *Einstellungen* zeigt, ob der Browser sie behält, und kann ihn erneut bitten.

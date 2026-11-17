@@ -10,4 +10,11 @@ public sealed record BrowserCapabilities
 
     /// <summary>Files can be opened from the operating system (manifest file handlers).</summary>
     public bool LaunchQueue { get; init; }
+
+    /// <summary>The browser's name as the script recognised it, e.g. <c>Firefox</c>; see <see cref="Kind"/>.</summary>
+    public string? Browser { get; init; }
+
+    /// <summary>The browser, for advice that depends on it; <see cref="BrowserKind.Other"/> when not recognised.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public BrowserKind Kind => Enum.TryParse<BrowserKind>(Browser, ignoreCase: true, out var kind) ? kind : BrowserKind.Other;
 }

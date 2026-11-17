@@ -1,10 +1,15 @@
 @page "/settings"
+@using System.Globalization
 @using Tellurian.Trains.Drawing.App.Settings
 @inject SettingsService Settings
 @inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
 @inject IWorkbench Workbench
+@inject IFileService Files
+@inject BrowserEnvironment Browser
+@inject SafeReload Reload
 
-@* The user's settings (AP-8): kept in this browser, never written to drawing or catalogue files. *@
+@* The user's settings (AP-8): kept in this browser, never written to drawing or catalogue files. They can be exported
+   to a settings file of their own and imported again, e.g. when the browser has forgotten them. *@
 <PageTitle>@T["Settings"]</PageTitle>
 
 <h1>@T["Settings"]</h1>
@@ -54,12 +59,21 @@
 
         <div class="toolbar">
             <button type="submit" class="primary" id="save-settings">@T["Save"]</button>
-            @if (saved)
+            @if (status is not null)
             {
-                <span class="note" id="settings-saved" role="status">@T["SettingsSaved"]</span>
+                <span class="note" id="settings-saved" role="status">@status</span>
             }
         </div>
     </form>
+
+    <section class="settings-file" aria-labelledby="settings-file-title">
+        <h2 id="settings-file-title">@T["SettingsFileTitle"]</h2>
+        <p class="note">@T["SettingsFileHelp"]</p>
+        <div class="toolbar">
+            <button type="button" id="export-settings" @onclick="ExportAsync">@T["ExportSettings"]</button>
+            <button type="button" id="import-settings" @onclick="ImportAsync">@T["ImportSettings"]</button>
+        </div>
+    </section>
 }
 @if (persisted is { } isPersisted)
 {
@@ -80,6 +94,9 @@
                 <p id="storage-refused" class="note" role="status">@T["StorageRefused"]</p>
             }
         }
+        @* The advice for this browser: open when the browser doesn't keep the data, at hand otherwise, since some
+           browsers' privacy settings delete the data when they close even though it is kept. *@
+        <KeepDataHelp Browser="Browser.Capabilities.Kind" Open="!isPersisted" />
     </section>
 }
 
@@ -89,7 +106,7 @@
     private Form? form;
     private IReadOnlyList<Tellurian.Trains.Drawing.Model.Catalogue.Scale> scales = [];
     private bool showApiKey;
-    private bool saved;
+    private string? status;
     private string? message;
 
     /// <summary>Whether the browser keeps the settings and drafts; null until known, or if it can't be told.</summary>
@@ -100,9 +117,8 @@
     {
         try
         {
-            var settings = await Settings.GetAsync();
             scales = [.. (await Catalogues.GetAsync()).Scales.OrderBy(s => s.ShortName, StringComparer.OrdinalIgnoreCase)];
-            form = new() { UserName = settings.UserName, CountryId = settings.CountryId, Scale = settings.Scale, ApiKey = settings.ApiKey };
+            ShowInForm(await Settings.GetAsync());
             persisted = await Workbench.IsPersistedAsync();
         }
         catch (StorageException ex)
@@ -110,6 +126,9 @@
             message = T.Format("StorageError", ex.Message);
         }
     }
+
+    private void ShowInForm(UserSettings settings) =>
+        form = new() { UserName = settings.UserName, CountryId = settings.CountryId, Scale = settings.Scale, ApiKey = settings.ApiKey };
 
     private async Task RequestPersistenceAsync()
     {
@@ -126,13 +145,67 @@
 
     private async Task SaveAsync()
     {
-        if (form is null) return;
+        if (await SaveFormAsync()) status = T["SettingsSaved"];
+    }
+
+    /// <summary>Saves the settings as shown; false if they couldn't be saved.</summary>
+    private async Task<bool> SaveFormAsync()
+    {
+        if (form is null) return false;
         try
         {
             await Settings.SaveAsync(new() { UserName = form.UserName, CountryId = form.CountryId, Scale = form.Scale, ApiKey = form.ApiKey });
-            saved = true;
             persisted = await Workbench.IsPersistedAsync();
             message = null;
+            return true;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+            return false;
+        }
+    }
+
+    /// <summary>Saves the settings as shown, then writes them with the UI language to a settings file.</summary>
+    private async Task ExportAsync()
+    {
+        status = null;
+        if (!await SaveFormAsync()) return;
+        try
+        {
+            var json = SettingsFile.Write(await Settings.GetAsync(), CultureInfo.CurrentUICulture.Name);
+            if (await Files.SaveAsync(json, $"{T["SettingsFileName"]}.json", handleId: null, saveAs: true) is not null) status = T["SettingsExported"];
+        }
+        catch (FileOperationException ex)
+        {
+            message = T.Format("FileError", ex.Message);
+        }
+    }
+
+    /// <summary>Reads a settings file and saves its settings; a different UI language in it is applied by reloading.</summary>
+    private async Task ImportAsync()
+    {
+        status = null;
+        try
+        {
+            var picked = await Files.OpenAsync([Model.Files.DrawingFileFormat.JsonExtension], multiple: false);
+            if (picked is not [var opened, ..]) return;
+            if (SettingsFile.Read(opened.Text) is not { } file)
+            {
+                message = T.Format("SettingsFileInvalid", opened.Name);
+                return;
+            }
+            await Settings.SaveAsync(file.Settings);
+            ShowInForm(await Settings.GetAsync());
+            persisted = await Workbench.IsPersistedAsync();
+            message = null;
+            status = T["SettingsImported"];
+            if (file.Culture is { } culture && culture != CultureInfo.CurrentUICulture.Name && AppLanguages.All.Select(AppLanguages.CultureOf).Contains(culture))
+                message = (await Reload.ReloadAsync(culture))?.Message;
+        }
+        catch (FileOperationException ex)
+        {
+            message = T.Format("FileError", ex.Message);
         }
         catch (StorageException ex)
         {

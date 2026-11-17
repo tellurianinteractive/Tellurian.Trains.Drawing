@@ -387,4 +387,15 @@
   <data name="StorageNotPersisted" xml:space="preserve"><value>Nettleseren kan fjerne innstillingene og utkastene dine, f.eks. når diskplassen tar slutt eller nettstedet ikke har vært brukt på en stund. Lagre tegningene dine i filer.</value></data>
   <data name="StorageAskToKeep" xml:space="preserve"><value>Be nettleseren om å beholde dem</value></data>
   <data name="StorageRefused" xml:space="preserve"><value>Nettleseren sa nei. Noen nettlesere sier ja først når nettstedet har vært brukt en stund, eller når det er installert som app.</value></data>
+  <data name="KeepDataTitle" xml:space="preserve"><value>Slik får du {0} til å beholde dataene dine</value></data>
+  <data name="YourBrowser" xml:space="preserve"><value>nettleseren din</value></data>
+  <data name="SiteAddress" xml:space="preserve"><value>Adressen til dette nettstedet</value></data>
+  <data name="SettingsFileTitle" xml:space="preserve"><value>Innstillingsfil</value></data>
+  <data name="SettingsFileHelp" xml:space="preserve"><value>Eksporter innstillingene og språket ditt til en fil, og importer dem igjen hvis nettleseren har glemt dem, eller i en annen nettleser. Filen inneholder API-nøkkelen din til modulregisteret: behold den for deg selv.</value></data>
+  <data name="ExportSettings" xml:space="preserve"><value>Eksporter innstillinger…</value></data>
+  <data name="ImportSettings" xml:space="preserve"><value>Importer innstillinger…</value></data>
+  <data name="SettingsExported" xml:space="preserve"><value>Innstillingene ble eksportert.</value></data>
+  <data name="SettingsImported" xml:space="preserve"><value>Innstillingene ble importert.</value></data>
+  <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} er ikke en innstillingsfil for Modultegneren.</value></data>
+  <data name="SettingsFileName" xml:space="preserve"><value>Modultegnerens innstillinger</value></data>
 </root>

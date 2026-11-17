@@ -37,6 +37,8 @@ internal sealed class AppTestContext : BunitContext
         Services.AddSingleton<global::Tellurian.Trains.Drawing.App.Settings.SettingsService>();
         Services.AddSingleton<CatalogueService>();
         Services.AddSingleton<SafeReload>();
+        // An instance, which the container doesn't dispose: the interop it uses can only be disposed asynchronously.
+        Services.AddSingleton(new BrowserEnvironment(new FilesInterop(JSInterop.JSRuntime)));
         Services.AddSingleton<BrowserDialogs>();
         Services.AddSingleton<CatalogueProblems>();
         JSInterop.Mode = JSRuntimeMode.Loose;

@@ -1,5 +1,11 @@
 # Versjonsmerknader
 
+## Versjon 0.7.2
+Utgitt 2026-11-17
+- *Innstillinger* forteller hvordan du får nettleseren du bruker til å beholde innstillingene og utkastene dine, f.eks. som et unntak i personverninnstillingene i Firefox, med adressen til dette nettstedet å kopiere.
+- Eksporter innstillingene og språket ditt til en fil, og importer dem igjen hvis nettleseren har glemt dem, eller i en annen nettleser.
+- Informasjonssiden forteller hvor innstillingene og utkastene dine lagres.
+
 ## Versjon 0.7.1
 Utgitt 2026-11-17
 - Appen ber nettleseren om å beholde innstillingene og utkastene dine så snart den starter. *Innstillinger* viser om nettleseren beholder dem, og kan be den igjen.

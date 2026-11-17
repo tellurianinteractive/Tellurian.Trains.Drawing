@@ -1,5 +1,11 @@
 # Udgivelsesnoter
 
+## Version 0.7.2
+Udgivet 2026-11-17
+- *Indstillinger* fortæller, hvordan du får den browser, du bruger, til at beholde dine indstillinger og udkast, f.eks. som en undtagelse i Firefox' privatlivsindstillinger, med dette websteds adresse til at kopiere.
+- Eksportér dine indstillinger og dit sprog til en fil, og importér dem igen, hvis browseren har glemt dem, eller i en anden browser.
+- Informationssiden fortæller, hvor dine indstillinger og udkast gemmes.
+
 ## Version 0.7.1
 Udgivet 2026-11-17
 - Appen beder browseren om at beholde dine indstillinger og udkast, så snart den starter. *Indstillinger* viser, om browseren beholder dem, og kan bede den igen.

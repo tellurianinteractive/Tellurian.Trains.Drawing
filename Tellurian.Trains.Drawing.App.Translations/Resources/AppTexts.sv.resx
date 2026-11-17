@@ -387,4 +387,15 @@
   <data name="StorageNotPersisted" xml:space="preserve"><value>Webbläsaren kan ta bort dina inställningar och utkast, t.ex. när diskutrymmet tar slut eller webbplatsen inte har använts på ett tag. Spara dina ritningar i filer.</value></data>
   <data name="StorageAskToKeep" xml:space="preserve"><value>Be webbläsaren att behålla dem</value></data>
   <data name="StorageRefused" xml:space="preserve"><value>Webbläsaren gick inte med på det. En del webbläsare går med på det först när webbplatsen har använts ett tag, eller när den är installerad som app.</value></data>
+  <data name="KeepDataTitle" xml:space="preserve"><value>Så får du {0} att behålla dina data</value></data>
+  <data name="YourBrowser" xml:space="preserve"><value>din webbläsare</value></data>
+  <data name="SiteAddress" xml:space="preserve"><value>Den här webbplatsens adress</value></data>
+  <data name="SettingsFileTitle" xml:space="preserve"><value>Inställningsfil</value></data>
+  <data name="SettingsFileHelp" xml:space="preserve"><value>Exportera dina inställningar och ditt språk till en fil, och importera dem igen om webbläsaren har glömt dem, eller i en annan webbläsare. Filen innehåller din API-nyckel till modulregistret: behåll den för dig själv.</value></data>
+  <data name="ExportSettings" xml:space="preserve"><value>Exportera inställningar…</value></data>
+  <data name="ImportSettings" xml:space="preserve"><value>Importera inställningar…</value></data>
+  <data name="SettingsExported" xml:space="preserve"><value>Inställningarna exporterades.</value></data>
+  <data name="SettingsImported" xml:space="preserve"><value>Inställningarna importerades.</value></data>
+  <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} är ingen inställningsfil för Modulritaren.</value></data>
+  <data name="SettingsFileName" xml:space="preserve"><value>Modulritarens inställningar</value></data>
 </root>

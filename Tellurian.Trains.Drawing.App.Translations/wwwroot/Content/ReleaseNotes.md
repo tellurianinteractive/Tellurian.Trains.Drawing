@@ -1,5 +1,11 @@
 # Release Notes
 
+## Release 0.7.2
+Released 2026-11-17
+- *Settings* tells how to make the browser you use keep your settings and drafts, e.g. as an exception in Firefox's privacy settings, with this site's address to copy.
+- Export your settings and language to a file, and import them again if the browser has forgotten them, or in another browser.
+- The information page tells where your settings and drafts are kept.
+
 ## Release 0.7.1
 Released 2026-11-17
 - The app asks the browser to keep your settings and drafts as soon as it starts. *Settings* shows whether the browser keeps them, and can ask it again.

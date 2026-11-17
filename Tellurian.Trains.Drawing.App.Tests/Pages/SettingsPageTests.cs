@@ -1,5 +1,6 @@
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
+using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.App.Settings;
 
@@ -18,10 +19,11 @@ public sealed class SettingsPageTests
         page.Find("#apiKey").Change("secret-key");
         page.Find("form").Submit();
 
+        // The advice below the form arrives on its own; on a busy machine the submit may be handled a moment later.
+        page.WaitForAssertion(() => Assert.AreEqual("Settings saved.", page.Find("#settings-saved").TextContent));
         var settings = context.Services.GetRequiredService<SettingsService>().GetAsync().Result;
         Assert.AreEqual(("Anna Andersson", "secret-key", (int?)null), (settings.UserName, settings.ApiKey, settings.CountryId));
         Assert.IsTrue(context.Workbench.Values.ContainsKey(SettingsService.StorageKey));
-        Assert.AreEqual("Settings saved.", page.Find("#settings-saved").TextContent);
     }
 
     [TestMethod]
@@ -123,5 +125,77 @@ public sealed class SettingsPageTests
 
         Assert.IsNotNull(page.Find("#storage-not-persisted"));
         Assert.IsNotNull(page.Find("#storage-refused"));
+    }
+
+    [TestMethod]
+    public void AdviceIsForTheBrowserInUseWithTheSitesAddress()
+    {
+        using var context = new AppTestContext();
+        context.Services.GetRequiredService<BrowserEnvironment>().Capabilities = new() { Browser = "Firefox" };
+        var page = context.Render<SettingsPage>();
+
+        page.WaitForAssertion(() => StringAssert.Contains(page.Find("#keep-data-help").InnerHtml, "Manage Exceptions"));
+        var help = page.Find("#keep-data-help");
+        Assert.IsTrue(help.HasAttribute("open"), "Open while the browser doesn't keep the data.");
+        StringAssert.Contains(help.QuerySelector("summary")!.TextContent, "Firefox");
+        StringAssert.Contains(help.InnerHtml, "Manage Exceptions");
+        Assert.AreEqual("http://localhost", page.Find("#site-address").TextContent);
+    }
+
+    [TestMethod]
+    public void AdviceIsAtHandAlsoWhenTheBrowserKeepsTheData()
+    {
+        using var context = new AppTestContext();
+        context.Workbench.IsPersisted = true;
+        var page = context.Render<SettingsPage>();
+
+        var help = page.Find("#keep-data-help");
+        Assert.IsFalse(help.HasAttribute("open"));
+        StringAssert.Contains(help.QuerySelector("summary")!.TextContent, "your browser", "An unknown browser gets the general advice.");
+    }
+
+    [TestMethod]
+    public void SettingsAreExportedWithTheLanguage()
+    {
+        using var context = new AppTestContext();
+        var page = context.Render<SettingsPage>();
+        page.Find("#userName").Change("Anna");
+
+        page.Find("#export-settings").Click();
+
+        var (text, name, _, saveAs) = context.Files.Saves.Single();
+        Assert.AreEqual("Module Draw settings.json", name);
+        Assert.IsTrue(saveAs);
+        var file = SettingsFile.Read(text)!;
+        Assert.AreEqual("Anna", file.Settings.UserName, "What is shown is saved and exported.");
+        Assert.AreEqual(System.Globalization.CultureInfo.CurrentUICulture.Name, file.Culture);
+        Assert.AreEqual("The settings were exported.", page.Find("#settings-saved").TextContent);
+    }
+
+    [TestMethod]
+    public void ImportedSettingsAreSavedAndShown()
+    {
+        using var context = new AppTestContext();
+        context.Files.FilesToOpen = [new("my settings.json", SettingsFile.Write(new() { UserName = "Bo", ApiKey = "k" }, System.Globalization.CultureInfo.CurrentUICulture.Name))];
+        var page = context.Render<SettingsPage>();
+
+        page.Find("#import-settings").Click();
+
+        Assert.AreEqual("Bo", page.Find("#userName").GetAttribute("value"));
+        Assert.AreEqual("Bo", context.Services.GetRequiredService<SettingsService>().GetAsync().Result.UserName);
+        Assert.AreEqual("The settings were imported.", page.Find("#settings-saved").TextContent);
+    }
+
+    [TestMethod]
+    public void ImportOfAnotherFileIsRefused()
+    {
+        using var context = new AppTestContext();
+        context.Files.FilesToOpen = [new("station.module.json", """{ "format": "tellurian-drawing", "kind": "module" }""")];
+        var page = context.Render<SettingsPage>();
+
+        page.Find("#import-settings").Click();
+
+        Assert.AreEqual("station.module.json isn't a Module Draw settings file.", page.Find("p.error").TextContent);
+        Assert.IsFalse(context.Workbench.Values.ContainsKey(SettingsService.StorageKey));
     }
 }

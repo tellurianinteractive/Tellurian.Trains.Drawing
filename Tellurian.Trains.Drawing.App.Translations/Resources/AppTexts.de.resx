@@ -387,4 +387,15 @@
   <data name="StorageNotPersisted" xml:space="preserve"><value>Der Browser kann deine Einstellungen und Entwürfe entfernen, z. B. wenn der Speicherplatz knapp wird oder die Website eine Weile nicht benutzt wurde. Speichere deine Zeichnungen in Dateien.</value></data>
   <data name="StorageAskToKeep" xml:space="preserve"><value>Den Browser bitten, sie zu behalten</value></data>
   <data name="StorageRefused" xml:space="preserve"><value>Der Browser hat nicht zugestimmt. Manche Browser stimmen erst zu, wenn die Website eine Weile benutzt wurde oder als App installiert ist.</value></data>
+  <data name="KeepDataTitle" xml:space="preserve"><value>So behält {0} deine Daten</value></data>
+  <data name="YourBrowser" xml:space="preserve"><value>dein Browser</value></data>
+  <data name="SiteAddress" xml:space="preserve"><value>Adresse dieser Website</value></data>
+  <data name="SettingsFileTitle" xml:space="preserve"><value>Einstellungsdatei</value></data>
+  <data name="SettingsFileHelp" xml:space="preserve"><value>Exportiere deine Einstellungen und deine Sprache in eine Datei und importiere sie wieder, wenn der Browser sie vergessen hat, oder in einem anderen Browser. Die Datei enthält deinen API-Schlüssel für das Modulregister: Behalte sie für dich.</value></data>
+  <data name="ExportSettings" xml:space="preserve"><value>Einstellungen exportieren…</value></data>
+  <data name="ImportSettings" xml:space="preserve"><value>Einstellungen importieren…</value></data>
+  <data name="SettingsExported" xml:space="preserve"><value>Die Einstellungen wurden exportiert.</value></data>
+  <data name="SettingsImported" xml:space="preserve"><value>Die Einstellungen wurden importiert.</value></data>
+  <data name="SettingsFileInvalid" xml:space="preserve"><value>{0} ist keine Einstellungsdatei des Modulzeichners.</value></data>
+  <data name="SettingsFileName" xml:space="preserve"><value>Modulzeichner-Einstellungen</value></data>
 </root>
