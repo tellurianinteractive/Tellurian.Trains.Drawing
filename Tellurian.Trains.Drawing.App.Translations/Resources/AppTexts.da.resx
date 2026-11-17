@@ -382,4 +382,9 @@
   <data name="SnapGrid" xml:space="preserve"><value>Fastgørelsesgitter</value></data>
   <data name="SnapGridOff" xml:space="preserve"><value>Fra (følger zoomen)</value></data>
   <data name="EffectiveFloorArea" xml:space="preserve"><value>Brugbart gulvareal</value></data>
+  <data name="StorageTitle" xml:space="preserve"><value>Lagring i denne browser</value></data>
+  <data name="StoragePersisted" xml:space="preserve"><value>Browseren beholder dine indstillinger og udkast. De fjernes kun, hvis du rydder browserens data for dette websted.</value></data>
+  <data name="StorageNotPersisted" xml:space="preserve"><value>Browseren kan fjerne dine indstillinger og udkast, f.eks. når diskpladsen slipper op, eller webstedet ikke har været brugt i et stykke tid. Gem dine tegninger i filer.</value></data>
+  <data name="StorageAskToKeep" xml:space="preserve"><value>Bed browseren om at beholde dem</value></data>
+  <data name="StorageRefused" xml:space="preserve"><value>Browseren sagde nej. Nogle browsere siger først ja, når webstedet har været brugt et stykke tid, eller når det er installeret som app.</value></data>
 </root>

@@ -26,4 +26,7 @@ public interface IWorkbench
 
     /// <summary>Asks the browser to keep the workbench when storage runs low; true if granted.</summary>
     Task<bool> RequestPersistenceAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>True if the browser has agreed to keep the workbench; otherwise it may clear it, e.g. when disk space runs low.</summary>
+    Task<bool> IsPersistedAsync(CancellationToken cancellationToken = default);
 }

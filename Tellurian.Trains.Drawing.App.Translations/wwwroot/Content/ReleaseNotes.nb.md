@@ -1,5 +1,9 @@
 # Versjonsmerknader
 
+## Versjon 0.7.1
+Utgitt 2026-11-17
+- Appen ber nettleseren om å beholde innstillingene og utkastene dine så snart den starter. *Innstillinger* viser om nettleseren beholder dem, og kan be den igjen.
+
 ## Versjon 0.7.0
 Utgitt 2026-11-17
 - Hallredigering: *Ny hall…* på startsiden starter med et rektangel. Tegn andre vegger, dra hjørner og vegger, eller skriv hjørnene, veggenes lengder og buer i panelet *Vegger*. Hallens mål er i meter; du kan også skrive f.eks. 450 mm.

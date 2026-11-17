@@ -36,6 +36,15 @@ public sealed class ReleaseNotesTests
     }
 
     [TestMethod]
+    public void TheLayoutAsksTheBrowserToKeepTheWorkbench()
+    {
+        using var context = new AppTestContext();
+        RenderLayout(context);
+        Assert.AreEqual(1, context.Workbench.PersistenceRequests);
+        Assert.IsTrue(context.Workbench.IsPersisted);
+    }
+
+    [TestMethod]
     public void ClickingOutsideClosesTheReleaseNotes()
     {
         using var context = new AppTestContext();

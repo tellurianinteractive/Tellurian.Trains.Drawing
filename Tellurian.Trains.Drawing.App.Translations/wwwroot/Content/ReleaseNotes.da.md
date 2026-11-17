@@ -1,5 +1,9 @@
 # Udgivelsesnoter
 
+## Version 0.7.1
+Udgivet 2026-11-17
+- Appen beder browseren om at beholde dine indstillinger og udkast, så snart den starter. *Indstillinger* viser, om browseren beholder dem, og kan bede den igen.
+
 ## Version 0.7.0
 Udgivet 2026-11-17
 - Haleditor: *Ny hal…* på startsiden starter med et rektangel. Tegn andre vægge, træk hjørner og vægge, eller skriv hjørnerne, væggenes længder og buer i panelet *Vægge*. Hallens mål er i meter; du kan også skrive f.eks. 450 mm.

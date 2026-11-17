@@ -1,5 +1,9 @@
 # Versionsinformation
 
+## Version 0.7.1
+Utgiven 2026-11-17
+- Appen ber webbläsaren att behålla dina inställningar och utkast så fort den startar. *Inställningar* visar om webbläsaren behåller dem, och kan be den igen.
+
 ## Version 0.7.0
 Utgiven 2026-11-17
 - Hallredigerare: *Ny hall…* på startsidan börjar med en rektangel. Rita andra väggar, dra hörn och väggar, eller skriv hörnen, väggarnas längder och bågar i panelen *Väggar*. Hallens mått anges i meter; du kan också skriva t.ex. 450 mm.

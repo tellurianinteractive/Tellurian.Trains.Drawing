@@ -1,5 +1,9 @@
 # Versionshinweise
 
+## Version 0.7.1
+Veröffentlicht am 2026-11-17
+- Die App bittet den Browser gleich beim Start, deine Einstellungen und Entwürfe zu behalten. *Einstellungen* zeigt, ob der Browser sie behält, und kann ihn erneut bitten.
+
 ## Version 0.7.0
 Veröffentlicht am 2026-11-17
 - Halleneditor: *Neue Halle…* auf der Startseite beginnt mit einem Rechteck. Zeichne andere Wände, ziehe Ecken und Wände oder gib die Ecken, Wandlängen und Bögen im Bereich *Wände* ein. Hallenmaße sind in Metern; du kannst auch z. B. 450 mm eingeben.

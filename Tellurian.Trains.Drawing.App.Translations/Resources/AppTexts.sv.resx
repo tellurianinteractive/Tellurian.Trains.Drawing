@@ -382,4 +382,9 @@
   <data name="SnapGrid" xml:space="preserve"><value>Fästrutnät</value></data>
   <data name="SnapGridOff" xml:space="preserve"><value>Av (följer zoomen)</value></data>
   <data name="EffectiveFloorArea" xml:space="preserve"><value>Användbar golvyta</value></data>
+  <data name="StorageTitle" xml:space="preserve"><value>Lagring i den här webbläsaren</value></data>
+  <data name="StoragePersisted" xml:space="preserve"><value>Webbläsaren behåller dina inställningar och utkast. De tas bort bara om du rensar webbläsarens data för den här webbplatsen.</value></data>
+  <data name="StorageNotPersisted" xml:space="preserve"><value>Webbläsaren kan ta bort dina inställningar och utkast, t.ex. när diskutrymmet tar slut eller webbplatsen inte har använts på ett tag. Spara dina ritningar i filer.</value></data>
+  <data name="StorageAskToKeep" xml:space="preserve"><value>Be webbläsaren att behålla dem</value></data>
+  <data name="StorageRefused" xml:space="preserve"><value>Webbläsaren gick inte med på det. En del webbläsare går med på det först när webbplatsen har använts ett tag, eller när den är installerad som app.</value></data>
 </root>

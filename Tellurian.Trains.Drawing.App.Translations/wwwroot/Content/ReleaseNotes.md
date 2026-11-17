@@ -1,5 +1,9 @@
 # Release Notes
 
+## Release 0.7.1
+Released 2026-11-17
+- The app asks the browser to keep your settings and drafts as soon as it starts. *Settings* shows whether the browser keeps them, and can ask it again.
+
 ## Release 0.7.0
 Released 2026-11-17
 - Hall editor: *New hall…* on the start page starts from a rectangle. Draw other walls, drag corners and walls, or type the corners, wall lengths and arcs in the *Walls* pane. Hall measures are in metres; you can also type e.g. 450 mm.

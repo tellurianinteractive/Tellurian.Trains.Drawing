@@ -738,6 +738,16 @@ label.stacked {
         }
 }
 
+/* Whether the browser keeps the settings and drafts (Settings page). */
+.storage-status {
+    margin-top: 2rem;
+    max-width: 40rem;
+}
+
+    .storage-status .warning {
+        color: #8a5a00;
+    }
+
 /* A wait message over the page while something slow runs, e.g. drawing a new module. */
 .busy-overlay {
     position: fixed;

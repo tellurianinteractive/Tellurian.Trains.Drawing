@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject ContentDocuments Content
+@inject IWorkbench Workbench
 
 <header class="app-header">
     <span class="app-title">
@@ -34,6 +35,23 @@
 <UpdatePrompt />
 
 @code {
+    /// <summary>
+    /// Asks the browser at once to keep the workbench (settings, drafts), so that it isn't cleared when disk space runs
+    /// low; nothing happens if it already does. Firefox asks the user the first time.
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            await Workbench.RequestPersistenceAsync();
+        }
+        catch (StorageException)
+        {
+            // The Settings page shows that the browser may clear the workbench.
+        }
+    }
+
     private bool showReleaseNotes;
     private string releaseNotesHtml = "";
 

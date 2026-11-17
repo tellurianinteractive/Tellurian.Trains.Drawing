@@ -2,6 +2,7 @@
 @using Tellurian.Trains.Drawing.App.Settings
 @inject SettingsService Settings
 @inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
+@inject IWorkbench Workbench
 
 @* The user's settings (AP-8): kept in this browser, never written to drawing or catalogue files. *@
 <PageTitle>@T["Settings"]</PageTitle>
@@ -60,6 +61,27 @@
         </div>
     </form>
 }
+@if (persisted is { } isPersisted)
+{
+    <section class="storage-status" aria-labelledby="storage-title">
+        <h2 id="storage-title">@T["StorageTitle"]</h2>
+        @if (isPersisted)
+        {
+            <p id="storage-persisted" class="note">@T["StoragePersisted"]</p>
+        }
+        else
+        {
+            <p id="storage-not-persisted" class="warning">@T["StorageNotPersisted"]</p>
+            <div class="toolbar">
+                <button type="button" id="request-persistence" @onclick="RequestPersistenceAsync">@T["StorageAskToKeep"]</button>
+            </div>
+            @if (persistenceRefused)
+            {
+                <p id="storage-refused" class="note" role="status">@T["StorageRefused"]</p>
+            }
+        }
+    </section>
+}
 
 @code {
     public const string Url = "settings";
@@ -70,6 +92,10 @@
     private bool saved;
     private string? message;
 
+    /// <summary>Whether the browser keeps the settings and drafts; null until known, or if it can't be told.</summary>
+    private bool? persisted;
+    private bool persistenceRefused;
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -77,6 +103,20 @@
             var settings = await Settings.GetAsync();
             scales = [.. (await Catalogues.GetAsync()).Scales.OrderBy(s => s.ShortName, StringComparer.OrdinalIgnoreCase)];
             form = new() { UserName = settings.UserName, CountryId = settings.CountryId, Scale = settings.Scale, ApiKey = settings.ApiKey };
+            persisted = await Workbench.IsPersistedAsync();
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    private async Task RequestPersistenceAsync()
+    {
+        try
+        {
+            persisted = await Workbench.RequestPersistenceAsync();
+            persistenceRefused = persisted == false;
         }
         catch (StorageException ex)
         {
@@ -91,6 +131,7 @@
         {
             await Settings.SaveAsync(new() { UserName = form.UserName, CountryId = form.CountryId, Scale = form.Scale, ApiKey = form.ApiKey });
             saved = true;
+            persisted = await Workbench.IsPersistedAsync();
             message = null;
         }
         catch (StorageException ex)

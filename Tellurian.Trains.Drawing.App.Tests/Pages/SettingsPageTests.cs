@@ -88,4 +88,40 @@ public sealed class SettingsPageTests
 
         Assert.AreEqual(UserSettings.Empty, service.GetAsync().Result);
     }
+
+    [TestMethod]
+    public void StorageKeptByTheBrowserIsShown()
+    {
+        using var context = new AppTestContext();
+        context.Workbench.IsPersisted = true;
+        var page = context.Render<SettingsPage>();
+
+        Assert.IsNotNull(page.Find("#storage-persisted"));
+        Assert.IsEmpty(page.FindAll("#request-persistence"));
+    }
+
+    [TestMethod]
+    public void StorageThatMayBeClearedCanBeKept()
+    {
+        using var context = new AppTestContext();
+        var page = context.Render<SettingsPage>();
+        Assert.IsNotNull(page.Find("#storage-not-persisted"));
+
+        page.Find("#request-persistence").Click();
+
+        Assert.IsNotNull(page.Find("#storage-persisted"));
+    }
+
+    [TestMethod]
+    public void BrowserThatRefusesToKeepTheStorageIsExplained()
+    {
+        using var context = new AppTestContext();
+        context.Workbench.GrantsPersistence = false;
+        var page = context.Render<SettingsPage>();
+
+        page.Find("#request-persistence").Click();
+
+        Assert.IsNotNull(page.Find("#storage-not-persisted"));
+        Assert.IsNotNull(page.Find("#storage-refused"));
+    }
 }

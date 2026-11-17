@@ -382,4 +382,9 @@
   <data name="SnapGrid" xml:space="preserve"><value>Fangraster</value></data>
   <data name="SnapGridOff" xml:space="preserve"><value>Aus (folgt dem Zoom)</value></data>
   <data name="EffectiveFloorArea" xml:space="preserve"><value>Nutzbare Bodenfläche</value></data>
+  <data name="StorageTitle" xml:space="preserve"><value>Speicher in diesem Browser</value></data>
+  <data name="StoragePersisted" xml:space="preserve"><value>Der Browser behält deine Einstellungen und Entwürfe. Sie werden nur entfernt, wenn du die Browserdaten für diese Website löschst.</value></data>
+  <data name="StorageNotPersisted" xml:space="preserve"><value>Der Browser kann deine Einstellungen und Entwürfe entfernen, z. B. wenn der Speicherplatz knapp wird oder die Website eine Weile nicht benutzt wurde. Speichere deine Zeichnungen in Dateien.</value></data>
+  <data name="StorageAskToKeep" xml:space="preserve"><value>Den Browser bitten, sie zu behalten</value></data>
+  <data name="StorageRefused" xml:space="preserve"><value>Der Browser hat nicht zugestimmt. Manche Browser stimmen erst zu, wenn die Website eine Weile benutzt wurde oder als App installiert ist.</value></data>
 </root>

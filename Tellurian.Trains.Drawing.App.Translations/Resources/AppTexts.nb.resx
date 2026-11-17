@@ -382,4 +382,9 @@
   <data name="SnapGrid" xml:space="preserve"><value>Festerutenett</value></data>
   <data name="SnapGridOff" xml:space="preserve"><value>Av (følger zoomen)</value></data>
   <data name="EffectiveFloorArea" xml:space="preserve"><value>Brukbart gulvareal</value></data>
+  <data name="StorageTitle" xml:space="preserve"><value>Lagring i denne nettleseren</value></data>
+  <data name="StoragePersisted" xml:space="preserve"><value>Nettleseren beholder innstillingene og utkastene dine. De fjernes bare hvis du sletter nettleserens data for dette nettstedet.</value></data>
+  <data name="StorageNotPersisted" xml:space="preserve"><value>Nettleseren kan fjerne innstillingene og utkastene dine, f.eks. når diskplassen tar slutt eller nettstedet ikke har vært brukt på en stund. Lagre tegningene dine i filer.</value></data>
+  <data name="StorageAskToKeep" xml:space="preserve"><value>Be nettleseren om å beholde dem</value></data>
+  <data name="StorageRefused" xml:space="preserve"><value>Nettleseren sa nei. Noen nettlesere sier ja først når nettstedet har vært brukt en stund, eller når det er installert som app.</value></data>
 </root>

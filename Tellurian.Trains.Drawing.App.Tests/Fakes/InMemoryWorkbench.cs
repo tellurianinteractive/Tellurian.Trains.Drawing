@@ -54,9 +54,18 @@ internal sealed class InMemoryWorkbench : IWorkbench
         return Task.CompletedTask;
     }
 
+    /// <summary>Whether the browser keeps the workbench; a request grants it when <see cref="GrantsPersistence"/>.</summary>
+    public bool IsPersisted { get; set; }
+
+    /// <summary>False to act like a browser that refuses to keep the workbench.</summary>
+    public bool GrantsPersistence { get; set; } = true;
+
     public Task<bool> RequestPersistenceAsync(CancellationToken cancellationToken = default)
     {
         PersistenceRequests++;
-        return Task.FromResult(true);
+        IsPersisted |= GrantsPersistence;
+        return Task.FromResult(IsPersisted);
     }
+
+    public Task<bool> IsPersistedAsync(CancellationToken cancellationToken = default) => Task.FromResult(IsPersisted);
 }

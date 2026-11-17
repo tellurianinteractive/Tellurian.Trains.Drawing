@@ -55,7 +55,10 @@ public sealed class IndexedDbWorkbench(IJSRuntime js) : IWorkbench, IAsyncDispos
         CallAsync("put", cancellationToken, Values, JsonSerializer.Serialize(new StoredValue(key, json), Context.StoredValue));
 
     public async Task<bool> RequestPersistenceAsync(CancellationToken cancellationToken = default) =>
-        await CallAsync<bool>("isPersisted", cancellationToken) || await CallAsync<bool>("requestPersistence", cancellationToken);
+        await IsPersistedAsync(cancellationToken) || await CallAsync<bool>("requestPersistence", cancellationToken);
+
+    public Task<bool> IsPersistedAsync(CancellationToken cancellationToken = default) =>
+        CallAsync<bool>("isPersisted", cancellationToken);
 
     public async ValueTask DisposeAsync()
     {
