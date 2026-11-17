@@ -17,6 +17,10 @@ namespace Tellurian.Trains.Drawing.App.Tests;
 /// <summary>A bUnit context with the app's services, an in-memory workbench and a fake file service.</summary>
 internal sealed class AppTestContext : BunitContext
 {
+    // Pages that load Markdown documents render again when the document is read; the first read in a test run
+    // can take more than bUnit's default second when all test projects run in parallel. A wait that passes returns at once.
+    static AppTestContext() => DefaultWaitTimeout = TimeSpan.FromSeconds(10);
+
     public AppTestContext(bool canSaveInPlace = true)
     {
         Files = new(canSaveInPlace);
