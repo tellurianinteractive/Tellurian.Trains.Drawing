@@ -3,7 +3,7 @@
 
 @* A numeric property (Phase 4): typed as the user's language writes numbers, with a unit, committed on Enter or
    when leaving the field. Invalid or out-of-range input is marked and not committed; Escape restores the value. *@
-<label class="property-label" for="@_id">@Label</label>
+<label class="property-label" for="@_id">@Label<FieldHelp Text="@Help" /></label>
 <span class="number-field @(_invalid ? "invalid" : null)">
     <input id="@_id" class="number-field-input" type="text" inputmode="decimal" autocomplete="off"
            value="@_text" placeholder="@(Value is null ? MixedText : null)" readonly="@ReadOnly"
@@ -23,6 +23,9 @@
     private bool _isEditing;
 
     [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    /// <summary>A short help text, shown as a tooltip on a "?" after the label; the host passes its translation.</summary>
+    [Parameter] public string? Help { get; set; }
 
     /// <summary>The value; null when several selected objects have different values.</summary>
     [Parameter] public double? Value { get; set; }

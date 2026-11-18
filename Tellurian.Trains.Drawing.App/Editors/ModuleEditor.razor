@@ -11,6 +11,7 @@
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Drawing.Model.AutoDraw
 @using Tellurian.Trains.Drawing.Model.Catalogue
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Modules
@@ -20,6 +21,7 @@
 @inject SafeReload Reload
 @inject TimeProvider Time
 @inject IJSRuntime JS
+@inject BrowserDialogs Dialogs
 
 @* The module editor (Phase 6): for now its sections (MD-4, MD-4a), defined by section joints, polylines across the
    module, and the module's identification. End profiles are only assigned here, never compared for fit. *@
@@ -67,12 +69,12 @@
         </div>
         <aside class="editor-side">
             <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
-                <h2>@T["ArchivePane"]</h2>
+                <h2>@T["ArchivePane"] <HelpButton For="Archive" Title="@T["ArchivePane"]" AlignEnd="true" /></h2>
                 @ArchiveContent
                 <p class="detail" id="autosave">@AutosaveText</p>
             </section>
             <section class="pane edit-pane" aria-label="@T["EditPane"]">
-                <h2>@T["EditPane"]</h2>
+                <h2>@T["EditPane"] <HelpButton For="ModuleEditor" Title="@T["EditPane"]" AlignEnd="true" /></h2>
                 <div class="pane-buttons" role="toolbar">
                     @foreach (var tool in Enum.GetValues<ModuleTool>())
                     {
@@ -80,6 +82,12 @@
                                 aria-pressed="@(tool == _activeTool)" disabled="@(tool == ModuleTool.Joint && _outline is null)" @onclick="() => Choose(tool)">@T[$"ModTool_{tool}"]</button>
                     }
                 </div>
+                @if (Catalogue is not null && ModuleRedraw.CanRedraw(_document.Current) && ModuleRedraw.HasCurve(_document.Current))
+                {
+                    <div class="pane-buttons">
+                        <button type="button" id="flip-curve" @onclick="FlipCurveAsync">@T["FlipCurve"]</button>
+                    </div>
+                }
                 <div class="pane-buttons">
                     <button type="button" id="undo" disabled="@(!_document.CanUndo)" title="Ctrl+Z" @onclick="Undo">@T["Undo"]</button>
                     <button type="button" id="redo" disabled="@(!_document.CanRedo)" title="Ctrl+Y" @onclick="Redo">@T["Redo"]</button>
@@ -88,8 +96,46 @@
                 </div>
                 <p class="pane-help" aria-live="polite">@Status</p>
             </section>
+            <section class="pane ends-pane" aria-label="@T["EndsPane"]">
+                <h2>@T["EndsPane"] <HelpButton For="ModuleEnds" Title="@T["EndsPane"]" AlignEnd="true" /></h2>
+                @{
+                    var current = _document.Current;
+                    var exits = current.Module.DefaultVariant.Exits;
+                    var canRedraw = Catalogue is not null && ModuleRedraw.CanRedraw(current);
+                }
+                <div class="property-grid">
+                    @foreach (var exit in exits)
+                    {
+                        var label = exit.Label;
+                        var profile = FindEndProfile(exit.EndProfile.Id);
+                        <label class="property-label" for="@($"end-profile-{label}")">@T.Format("ExitEnd", label)</label>
+                        <div class="end-choice">
+                            <select id="@($"end-profile-{label}")" value="@exit.EndProfile.Id" disabled="@(!canRedraw)" @onchange="e => ChangeEndProfileAsync(label, e)">
+                                @if (!EndProfileChoices.Any(p => p.Id == exit.EndProfile.Id))
+                                {
+                                    <option value="@exit.EndProfile.Id">@exit.EndProfile.Name</option>
+                                }
+                                @foreach (var choice in EndProfileChoices)
+                                {
+                                    <option value="@choice.Id">@ProfileText(choice)</option>
+                                }
+                            </select>
+                            <button type="button" id="@($"flip-end-{label}")" disabled="@(!ModuleRedraw.CanFlip(profile))" title="@T["FlipEndHelp"]" @onclick="() => FlipEnd(label)">@T["FlipEnd"]</button>
+                        </div>
+                    }
+                </div>
+                @if (exits is [_, var second])
+                {
+                    <label class="inline"><input type="checkbox" id="endewender" checked="@current.Module.IsEndProfileSwitcher"
+                           disabled="@(!exits.All(e => ModuleRedraw.CanFlip(FindEndProfile(e.EndProfile.Id))))" @onchange="() => FlipEnd(second.Label)" /> @T["IsEndewender"]</label>
+                }
+                @if (!canRedraw)
+                {
+                    <p class="pane-help" id="cannot-redraw">@T["CannotRedraw"]</p>
+                }
+            </section>
             <section class="pane sections-pane" aria-label="@T["SectionsPane"]">
-                <h2>@T["SectionsPane"]</h2>
+                <h2>@T["SectionsPane"] <HelpButton For="ModuleSections" Title="@T["SectionsPane"]" AlignEnd="true" /></h2>
                 @{
                     var variant = _document.Current.Module.DefaultVariant;
                     var main = variant.MainPath;
@@ -116,7 +162,7 @@
                     <h3 id="joint-title">@T.Format("JointBetween", joint.FirstSection, joint.SecondSection)</h3>
                     @if (main is not null)
                     {
-                        <NumberField Label="@T["JointDistance"]" Value="ModuleSections.DistanceAlongTrack(joint, main)" Min="0" InvalidText="@T["InvalidNumber"]"
+                        <NumberField Label="@T["JointDistance"]" Help="@T.Help("JointDistance")" Value="ModuleSections.DistanceAlongTrack(joint, main)" Min="0" InvalidText="@T["InvalidNumber"]"
                                      ValueChanged="v => Apply(ModuleJoints.SetDistance(j, v))" />
                     }
                     <table class="plate-points joint-points">
@@ -178,6 +224,9 @@
 
     /// <summary>End profiles as they are now in the catalogue; the module file's own copies are used for the others.</summary>
     [Parameter] public Func<Guid, EndProfile?>? EndProfiles { get; set; }
+
+    /// <summary>The catalogue, for choosing other end profiles and redrawing the module; without it, its ends can only be flipped.</summary>
+    [Parameter] public DrawingCatalogue? Catalogue { get; set; }
 
     /// <summary>The host's file actions and status, shown in the Archive pane.</summary>
     [Parameter] public RenderFragment? ArchiveContent { get; set; }
@@ -347,6 +396,36 @@
     }
 
     /// <summary>A change from the Properties pane, as an undoable command.</summary>
+    /// <summary>The end profiles an exit can have: those of the module's scale, of any standard (MD-5).</summary>
+    private IEnumerable<EndProfile> EndProfileChoices =>
+        Catalogue is null ? [] : Catalogue.EndProfiles.Where(p => p.Scale == _document!.Current.Module.Scale).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
+
+    private string ProfileText(EndProfile profile) =>
+        $"{profile.Designation} ({(profile.Tracks.Count == 1 ? T["OneTrack"] : T.Format("TrackCount", profile.Tracks.Count))})";
+
+    private async Task ChangeEndProfileAsync(string exitLabel, ChangeEventArgs e)
+    {
+        if (Catalogue is null || !Guid.TryParse(e.Value as string, out var id) || Catalogue.FindEndProfile(id) is not { } profile) return;
+        if (_document!.Current.Module.DefaultVariant.Exit(exitLabel)?.EndProfile.Id == id) return;
+        if (ModuleRedraw.BendsWillChange(_document.Current, profile) && !await Dialogs.ConfirmAsync(T["BendsWillChange"]))
+        {
+            StateHasChanged();
+            return;
+        }
+        _selection.Clear();
+        Apply(ModuleEnds.SetEndProfile(exitLabel, profile, Catalogue));
+    }
+
+    private async Task FlipCurveAsync()
+    {
+        if (Catalogue is null) return;
+        if (ModuleRedraw.BendsWillChange(_document!.Current) && !await Dialogs.ConfirmAsync(T["BendsWillChange"])) return;
+        _selection.Clear();
+        Apply(ModuleEnds.FlipCurve(Catalogue));
+    }
+
+    private void FlipEnd(string exitLabel) => Apply(ModuleEnds.FlipEnd(exitLabel));
+
     private void ChangeModule(Module module) =>
         Apply(new EditCommand<Model.Files.ModuleFileContent>("Change properties", content => content with { Module = module }));
 

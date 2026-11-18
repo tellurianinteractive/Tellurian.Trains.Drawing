@@ -57,7 +57,7 @@
   <data name="Radius" xml:space="preserve"><value>Radie (mm)</value></data>
   <data name="Angle" xml:space="preserve"><value>Vinkel (°)</value></data>
   <data name="Width" xml:space="preserve"><value>Bredd (mm)</value></data>
-  <data name="WidthHint" xml:space="preserve"><value>Tomt: ändplattans bredd</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Tomt: ändprofilens bredd</value></data>
   <data name="CurveDirection" xml:space="preserve"><value>Kurvriktning</value></data>
   <data name="CurveDirection_Left" xml:space="preserve"><value>Vänster</value></data>
   <data name="CurveDirection_Right" xml:space="preserve"><value>Höger</value></data>
@@ -106,7 +106,7 @@
   <data name="Change_Tracks" xml:space="preserve"><value>spår</value></data>
   <data name="Change_ScrewHoles" xml:space="preserve"><value>skruvhål</value></data>
   <data name="Change_Dowels" xml:space="preserve"><value>styrpinnar</value></data>
-  <data name="Change_Outline" xml:space="preserve"><value>plattans kontur</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>ändprofilens kontur</value></data>
   <data name="Change_GroundLine" xml:space="preserve"><value>marklinje</value></data>
   <data name="Change_Source" xml:space="preserve"><value>källa</value></data>
   <data name="EndProfiles" xml:space="preserve"><value>Ändprofiler</value></data>
@@ -211,10 +211,10 @@
   <data name="Depth" xml:space="preserve"><value>Djup (mm)</value></data>
   <data name="NewEndProfile" xml:space="preserve"><value>Ny ändprofil…</value></data>
   <data name="NewEndProfileTitle" xml:space="preserve"><value>Ny ändprofil</value></data>
-  <data name="NewEndProfileIntro" xml:space="preserve"><value>Börja från en rektangulär ändplatta med spår; rita sedan kontur, marklinje och skruvhål i redigeraren.</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Börja från en rektangulär ändprofil med spår; rita sedan kontur, marklinje och skruvhål i redigeraren.</value></data>
   <data name="Designation" xml:space="preserve"><value>Beteckning</value></data>
   <data name="EndProfileShortName" xml:space="preserve"><value>Kortnamn</value></data>
-  <data name="PlateWidth" xml:space="preserve"><value>Plattans bredd (mm)</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Ändprofilens bredd (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Överkant under RÖK (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Underkant under RÖK (mm)</value></data>
   <data name="NumberOfTracks" xml:space="preserve"><value>Antal spår</value></data>
@@ -231,7 +231,7 @@
   <data name="EpItem_Track" xml:space="preserve"><value>Spår</value></data>
   <data name="EpItem_ScrewHole" xml:space="preserve"><value>Skruvhål</value></data>
   <data name="EpItem_Dowel" xml:space="preserve"><value>Styrpinne</value></data>
-  <data name="EpItem_Outline" xml:space="preserve"><value>Ändplattans kontur</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>Ändprofilens kontur</value></data>
   <data name="EpItem_GroundLine" xml:space="preserve"><value>Marklinje</value></data>
   <data name="EndProfileProperties" xml:space="preserve"><value>Ändprofil</value></data>
   <data name="MirrorScrewHoles" xml:space="preserve"><value>Spegla skruvhål</value></data>
@@ -240,7 +240,7 @@
   <data name="Label" xml:space="preserve"><value>Etikett</value></data>
   <data name="ScrewHolePattern" xml:space="preserve"><value>Skruvhålsmönster</value></data>
   <data name="Derived" xml:space="preserve"><value>Härledda egenskaper</value></data>
-  <data name="PlateSize" xml:space="preserve"><value>Plattans storlek</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Ändprofilens storlek</value></data>
   <data name="Offsets" xml:space="preserve"><value>Spårens lägen</value></data>
   <data name="ScrewHoles" xml:space="preserve"><value>Skruvhål</value></data>
   <data name="Symmetry" xml:space="preserve"><value>Symmetri</value></data>
@@ -251,28 +251,29 @@
   <data name="Difference_GroundLine" xml:space="preserve"><value>marklinje</value></data>
   <data name="Difference_Outline" xml:space="preserve"><value>kontur</value></data>
   <data name="Difference_Dowels" xml:space="preserve"><value>styrpinnar</value></data>
-  <data name="OutlineHelp" xml:space="preserve"><value>Klicka på ändplattans hörn; klicka på första hörnet för att sluta konturen. Den nya konturen ersätter den gamla.</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Klicka på ändprofilens hörn; klicka på första hörnet för att sluta konturen. Den nya konturen ersätter den gamla.</value></data>
   <data name="GroundLineHelp" xml:space="preserve"><value>Klicka på markytans punkter från vänster till höger; tryck Enter för att avsluta. Den ersätter den gamla marklinjen.</value></data>
   <data name="ScrewHoleHelp" xml:space="preserve"><value>Klicka där ett skruvhål ska sitta; det fästs mot kanter, andra hål och rutnätet.</value></data>
   <data name="TrackHelp" xml:space="preserve"><value>Klicka där ett spår ska ligga; dess RÖK ligger alltid på RÖK-linjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klicka för att markera, dra för att flytta (Skift: rakt, Alt: utan fästning), Delete för att ta bort. Sett utifrån modulen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Spara i min katalog</value></data>
   <data name="SavedToCatalogue" xml:space="preserve"><value>{0} är sparad i din katalog.</value></data>
+  <data name="EndProfilesUpdated" xml:space="preserve"><value>Uppdaterad från din katalog: {0}. Spara modulen för att behålla ändringen i dess fil.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Redigera</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Redigera</value></data>
   <data name="EpTool_UpperEdge" xml:space="preserve"><value>Överkant</value></data>
-  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klicka på plattans överkant från vänster till höger; tryck Enter för att avsluta. Sidorna följer första och sista punkten.</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klicka på ändprofilens överkant från vänster till höger; tryck Enter för att avsluta. Sidorna följer första och sista punkten.</value></data>
   <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klicka för att lägga till punkter; Enter avslutar, Backsteg tar bort en punkt, Escape avbryter.</value></data>
-  <data name="PlatePane" xml:space="preserve"><value>Platta</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Kontur</value></data>
   <data name="PlateDepth" xml:space="preserve"><value>Underkant under RÖK (mm)</value></data>
   <data name="AddPoint" xml:space="preserve"><value>Lägg till punkt</value></data>
   <data name="DeletePoint" xml:space="preserve"><value>Ta bort punkt</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>Överkanten är också marklinjen som jämförs vid skarvar. Dra punkterna i ritningen eller skriv in dem i mm; Y är negativt under RÖK.</value></data>
-  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plattpunkt</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Konturpunkt</value></data>
   <data name="MeasureFrom" xml:space="preserve"><value>Mät från</value></data>
   <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>RÖK och mittlinjen</value></data>
-  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plattans nedre vänstra hörn</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Ändprofilens nedre vänstra hörn</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Måttsätt skruvhål och punkter</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Avstånd från vänsterkanten (mm)</value></data>
   <data name="SegmentType" xml:space="preserve"><value>Typ</value></data>
@@ -412,4 +413,18 @@
   <data name="JointPointsHelp" xml:space="preserve"><value>Skriv punkternas lägen, eller dra dem i ritningen. En ny punkt läggs till efter den markerade; flytta den för att få skarven att bryta. Ändarna stannar på modulens kant.</value></data>
   <data name="SectionsHelp" xml:space="preserve"><value>En modul med flera sektioner delas av sektionsskarvar. Välj Sektionsskarv och klicka där modulen delas, markera sedan skarven för att ange dess exakta läge. Skarvar mellan sektioner passar alltid.</value></data>
   <data name="NoOutlineForSections" xml:space="preserve"><value>Den här modulen har ingen kontur att dela i sektioner.</value></data>
+  <data name="AboutThisPage" xml:space="preserve"><value>Om den här sidan</value></data>
+  <data name="NoHelpYet" xml:space="preserve"><value>Det finns ingen hjälp för den här sidan ännu.</value></data>
+  <data name="KeepFreeDepthHelp" xml:space="preserve"><value>Hur långt in i hallen ytan framför dörren ska hållas fri.</value></data>
+  <data name="RotationHelp" xml:space="preserve"><value>Hur mycket pelaren är vriden moturs, i grader.</value></data>
+  <data name="WallLengthHelp" xml:space="preserve"><value>En ny längd flyttar hörnet där väggen slutar.</value></data>
+  <data name="JointDistanceHelp" xml:space="preserve"><value>Där skarven korsar spåret, mätt längs spåret från modulens första ände.</value></data>
+  <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Skrivs längs modulens ände i modulritningar, t.ex. B96. Utan det används beteckningen.</value></data>
+  <data name="EndsPane" xml:space="preserve"><value>Ändar</value></data>
+  <data name="ExitEnd" xml:space="preserve"><value>Ände {0}</value></data>
+  <data name="FlipEnd" xml:space="preserve"><value>Vänd</value></data>
+  <data name="FlipEndHelp" xml:space="preserve"><value>Vänd ändplattan andra sidan ut, så att den osymmetriska ändprofilens höga sida hamnar på andra sidan av spåret.</value></data>
+  <data name="FlipCurve" xml:space="preserve"><value>Vänd kurvan</value></data>
+  <data name="CannotRedraw" xml:space="preserve"><value>Den här modulen ritades inte från en mall, så dess ändprofiler och kurva kan inte ändras här; ändarna kan ändå vändas.</value></data>
+  <data name="BendsWillChange" xml:space="preserve"><value>Spåren i en ändprofil ligger inte mitt på ändplattan, så sektionsskarvarnas brytpunkter flyttas i förhållande till spåren. Kontrollera skarvarna efteråt. Fortsätta?</value></data>
 </root>

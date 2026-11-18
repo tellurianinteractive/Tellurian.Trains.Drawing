@@ -32,7 +32,7 @@ else if (draft is not null && draft.Kind == DrawingFileKind.Hall)
 }
 else if (draft is not null && draft.Kind == DrawingFileKind.Module)
 {
-    <ModuleEditor @ref="_moduleEditor" @key="draft.Id" Draft="draft" Standard="@_standard" EndProfiles="FindEndProfile" DraftChanged="d => draft = d">
+    <ModuleEditor @ref="_moduleEditor" @key="draft.Id" Draft="draft" Standard="@_standard" EndProfiles="FindEndProfile" Catalogue="_catalogue" DraftChanged="d => draft = d">
         <ArchiveContent>
             @ArchiveFragment(draft)
         </ArchiveContent>
@@ -77,6 +77,10 @@ else if (draft is not null)
             <span class="badge saved">@T["Saved"]</span>
         }
     </p>
+    @if (_updatedEndProfiles.Count > 0)
+    {
+        <p class="note" id="updated-end-profiles">@T.Format("EndProfilesUpdated", string.Join(", ", _updatedEndProfiles))</p>
+    }
     @if (!Documents.CanSaveInPlace)
     {
         <p class="note">@T["DownloadNote"]</p>
@@ -141,15 +145,40 @@ else if (draft is not null)
     {
         try
         {
-            draft = await Workbench.GetDraftAsync(Id);
+            // The draft is shown only when it is ready, so that an editor never starts from a module that is about to be updated.
+            var loaded = await Workbench.GetDraftAsync(Id);
+            _catalogue = loaded?.Kind == DrawingFileKind.Module ? await Catalogues.GetAsync() : null;
+            if (loaded is not null && _catalogue is not null) loaded = await WithCurrentEndProfilesAsync(loaded, _catalogue);
+            _standard = await StandardOfAsync(loaded);
+            _trackColor = await TrackColorOfAsync(loaded);
+            draft = loaded;
             notFound = draft is null;
-            _catalogue = draft?.Kind == DrawingFileKind.Module ? await Catalogues.GetAsync() : null;
-            _standard = await StandardOfAsync(draft);
-            _trackColor = await TrackColorOfAsync(draft);
         }
         catch (StorageException ex)
         {
             message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    /// <summary>The designations of the end profiles that were updated from the catalogue when the module was opened.</summary>
+    private IReadOnlyList<string> _updatedEndProfiles = [];
+
+    /// <summary>
+    /// The module draft with its embedded end profiles updated from <paramref name="catalogue"/> where they have
+    /// changed there, so that the module's file gets them when it is saved; the draft then has unsaved changes.
+    /// </summary>
+    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, Tellurian.Trains.Drawing.Model.Catalogue.DrawingCatalogue catalogue)
+    {
+        try
+        {
+            var (content, updated) = DrawingFileSerializer.DeserializeModule(module.Json).WithCurrentEndProfiles(catalogue.FindEndProfile);
+            if (updated.Count == 0) return module;
+            _updatedEndProfiles = [.. updated.Select(p => p.Designation)];
+            return await Documents.UpdateAsync(module.Id, DrawingFileSerializer.Serialize(content));
+        }
+        catch (DrawingFileException)
+        {
+            return module;
         }
     }
 

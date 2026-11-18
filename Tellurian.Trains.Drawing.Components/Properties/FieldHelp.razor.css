@@ -1,0 +1,40 @@
+.field-help {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-left: 0.3rem;
+    border-radius: 50%;
+    background: var(--property-help, #1b6ec2);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+    vertical-align: middle;
+}
+
+.field-help-tip {
+    display: none;
+    position: absolute;
+    z-index: 20;
+    left: 50%;
+    top: calc(100% + 0.35rem);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 18rem;
+    padding: 0.45rem 0.6rem;
+    background: #1d232b;
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1.35;
+    white-space: normal;
+    text-align: left;
+}
+
+.field-help:hover .field-help-tip, .field-help:focus .field-help-tip {
+    display: block;
+}

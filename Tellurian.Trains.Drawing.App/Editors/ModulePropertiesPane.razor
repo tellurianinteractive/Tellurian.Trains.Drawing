@@ -11,7 +11,7 @@
 {
     var module = content.Module;
     <section class="pane module-properties" aria-label="@T["Properties"]">
-        <h2>@T["Properties"]</h2>
+        <h2>@T["Properties"] <HelpButton For="ModuleProperties" Title="@T["Properties"]" AlignEnd="true" /></h2>
         <div class="property-grid">
             <TextField Label="@T["OwnerPrefix"]" Value="@module.Owners.FirstOrDefault()?.Prefix" ValueChanged="v => ApplyAsync(module.WithOwnerPrefix(v))" />
             <TextField Label="@T["FremoNumber"]" Value="@module.FremoNumber?.ToString(CultureInfo.CurrentCulture)" ValueChanged="SetFremoNumberAsync" />

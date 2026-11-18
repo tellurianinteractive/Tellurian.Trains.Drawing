@@ -1,5 +1,15 @@
 # Versionsinformation
 
+## Version 0.9.0
+Utgiven 2026-11-18
+- Modulredigerare: en ny panel *Ändar*. Ge ände A eller ände B en annan ändprofil i modulens skala, så ritas modulen om med den. *Vänd* vänder en osymmetrisk ändprofils platta andra sidan ut; *Ändevändare* följer med av sig själv.
+- *Vänd kurvan* i panelen *Redigera* får en kurvad modul att svänga åt andra hållet. Sektionsskarvarna behåller sitt läge längs spåret; har ändplattan spåren vid sidan av mitten får du frågan först, eftersom deras brytpunkter flyttas.
+- När du öppnar en modul uppdateras ändprofiler som har ändrats i din katalog. Panelen *Arkiv* visar vilka; spara modulen för att behålla dem i dess fil.
+- Rubriken på en ändprofilritning utelämnar ord som upprepas, t.ex. *FREMO/H0-RE B96L* i stället för *FREMO/H0-RE H0 FREMO H0 B96L*.
+- Hjälp: ett *?* på startsidan, i katalogen, i inställningarna och i varje panel i redigerarna öppnar hjälp om den, och många fält har en ledtråd under sig.
+- Texterna säger *ändprofil* överallt, inte *platta*; hjälpen förklarar hur ändprofilen hänger ihop med modulgaveln.
+- Informationssidan berättar vad den här förhandsversionen kan göra nu, och vad som inte är klart ännu.
+
 ## Version 0.8.0
 Utgiven 2026-11-17
 - Modulredigerare: dela en modul i sektioner. Välj *Sektionsskarv* och klicka där modulen delas; en rak skarv läggs till tvärs över spåret där. Sektionerna behöver inte vara lika långa, och deras längd längs spåret visas.
@@ -64,7 +74,7 @@ Utgiven 2026-11-15
 Utgiven 2026-11-15
 - Första publika förhandsversionen, att prova på. Appen heter nu **Modulritaren** (Module Draw på engelska).
 - En informationssida när appen startar, som också öppnas från "Modulritaren" i toppmenyn.
-- Redigerare för ändprofiler: rita ändplattans överkant efter en måttsatt ritning med linjer, bågar och avrundningar (med vilken sida avrundningens centrum ligger på), placera spår och skruvhål, med automatiska mått från RÖK eller från plattans nedre vänstra hörn.
+- Redigerare för ändprofiler: rita ändprofilens överkant efter en måttsatt ritning med linjer, bågar och avrundningar (med vilken sida avrundningens centrum ligger på), placera spår och skruvhål, med automatiska mått från RÖK eller från ändprofilens nedre vänstra hörn.
 - Skriv ut en ändprofil på en liggande A4-sida, med mått i pappersstorlek och titeln "Standard Skala Beteckning".
 - Skapa moduler från mallar, med ett vänta-meddelande medan modulen ritas, och visa ändprofiler, moduler och hallar.
 - Katalog med standarder och ändprofiler (FREMO, MMM), med egna standarder, tillägg och undantag för passning; importera ändprofiler från filer.

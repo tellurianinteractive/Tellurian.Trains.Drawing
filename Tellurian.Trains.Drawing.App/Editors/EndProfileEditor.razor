@@ -61,12 +61,12 @@
         </div>
         <aside class="editor-side">
             <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
-                <h2>@T["ArchivePane"]</h2>
+                <h2>@T["ArchivePane"] <HelpButton For="Archive" Title="@T["ArchivePane"]" AlignEnd="true" /></h2>
                 @ArchiveContent
                 <p class="detail" id="autosave">@AutosaveText</p>
             </section>
             <section class="pane edit-pane" aria-label="@T["EditPane"]">
-                <h2>@T["EditPane"]</h2>
+                <h2>@T["EditPane"] <HelpButton For="EndProfileEditor" Title="@T["EditPane"]" AlignEnd="true" /></h2>
                 <div class="pane-buttons" role="toolbar">
                     @foreach (var tool in Enum.GetValues<EndProfileTool>())
                     {
@@ -90,7 +90,7 @@
             @if (Plate is { } plate)
             {
                 <section class="pane plate-pane" aria-label="@T["PlatePane"]">
-                    <h2>@T["PlatePane"]</h2>
+                    <h2>@T["PlatePane"] <HelpButton For="EndProfileOutline" Title="@T["PlatePane"]" AlignEnd="true" /></h2>
                     <label class="stacked">
                         <span>@T["MeasureFrom"]</span>
                         <select id="measure-origin" value="@_origin" @onchange="ChooseOriginAsync">
@@ -180,6 +180,8 @@
                 </section>
             }
             <PropertyPanel Title="@SelectionTitle" Class="pane">
+                <TitleContent><HelpButton For="EndProfileProperties" Title="@T["EndProfileProperties"]" AlignEnd="true" /></TitleContent>
+                <ChildContent>
                 @switch (SingleSelected)
                 {
                     case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
@@ -203,7 +205,7 @@
                     case null when _selection.IsEmpty:
                         var profile = _document.Current;
                         <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p with { Designation = v })); }" />
-                        <TextField Label="@T["EndProfileShortName"]" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim() }))" />
+                        <TextField Label="@T["EndProfileShortName"]" Help="@T.Help("EndProfileShortName")" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim() }))" />
                         <TextField Label="@T["Scale"]" Value="@profile.Scale" ReadOnly="true" />
                         <TextField Label="@T["Standards"]" Value="@string.Join(", ", profile.Standards.Select(s => s.Name))" ReadOnly="true" />
                         <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ScrewHolePattern = v }))" />
@@ -215,10 +217,11 @@
                         <p class="property-note">@T.Format("SelectedCount", _selection.Count)</p>
                         break;
                 }
+                </ChildContent>
             </PropertyPanel>
 
             <section class="pane derived" aria-label="@T["Derived"]">
-                <h2>@T["Derived"]</h2>
+                <h2>@T["Derived"] <HelpButton For="EndProfileDerived" Title="@T["Derived"]" AlignEnd="true" /></h2>
                 <dl class="properties">
                     <dt>@T["PlateSize"]</dt>
                     <dd id="plate-size">@(_derived.PlateBounds.IsEmpty ? "–" : $"{Mm(_derived.PlateWidth)} × {Mm(_derived.PlateHeight)} mm")</dd>

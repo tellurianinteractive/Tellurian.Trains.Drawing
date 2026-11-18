@@ -31,6 +31,17 @@ public sealed class EndProfileLabelTests
     }
 
     [TestMethod]
+    public void WordsAlreadyInTheTextAreLeftOut()
+    {
+        var profile = Profile() with { Standards = [new(Guid.NewGuid(), "FREMO/H0-RE")] };
+        Assert.AreEqual("FREMO/H0-RE B96L", EndProfileLabel.Text(profile with { Designation = "FREMO H0 B96L" }));
+        Assert.AreEqual("FREMO/H0-RE B96", EndProfileLabel.Text(profile with { Designation = "FREMO-H0-B96" }), "Also within a hyphenated designation.");
+        Assert.AreEqual("FREMO/H0-RE B96", EndProfileLabel.Text(profile with { Designation = "fremo h0 B96" }), "Ignoring case.");
+        Assert.AreEqual("FREMO/H0-RE B96-L", EndProfileLabel.Text(profile with { Designation = "H0 B96-L" }), "Kept words keep their separator.");
+        Assert.AreEqual("H0 FREMO B96", EndProfileLabel.Text(Profile() with { Standards = [], Designation = "FREMO H0 B96" }), "Without a standard, the scale comes first.");
+    }
+
+    [TestMethod]
     public void LabelIsCentredBelowTheLowestDimension()
     {
         var profile = Profile();

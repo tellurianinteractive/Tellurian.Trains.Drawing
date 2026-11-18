@@ -1,5 +1,5 @@
 @* A text property, committed on Enter or when leaving the field; Escape restores the value. *@
-<label class="property-label" for="@_id">@Label</label>
+<label class="property-label" for="@_id">@Label<FieldHelp Text="@Help" /></label>
 <input id="@_id" class="text-field-input" type="text" value="@_text" placeholder="@Placeholder" readonly="@ReadOnly"
        @oninput="e => _text = e.Value as string ?? string.Empty" @onchange="OnChange" @onkeydown="OnKeyDown" />
 
@@ -9,6 +9,9 @@
     private string? _shown;
 
     [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    /// <summary>A short help text, shown as a tooltip on a "?" after the label; the host passes its translation.</summary>
+    [Parameter] public string? Help { get; set; }
     [Parameter] public string? Value { get; set; }
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
     [Parameter] public string? Placeholder { get; set; }

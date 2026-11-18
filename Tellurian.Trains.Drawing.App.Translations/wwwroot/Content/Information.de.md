@@ -4,7 +4,14 @@
 
 Der Modulzeichner dient zum Zeichnen von Endprofilen, Modulen und Hallenplänen für Modultreffen.
 
-Dies ist eine Vorabversion zum Ausprobieren. Du kannst Endprofile und Hallen zeichnen und Module aus Vorlagen erstellen. Das Bearbeiten von Modulen und Hallenplänen folgt später.
+Dies ist eine Vorabversion zum Ausprobieren. Das Dateiformat kann sich vor Version 1.0 noch ändern. Das kannst du jetzt tun:
+
+- **Endprofile**: nach einer bemaßten Zeichnung zeichnen, mit Gleisen und Schraubenlöchern, und ausdrucken.
+- **Module**: ein gerades oder gebogenes Modul erstellen, oder eines mit beidem, mit einem Endprofil an jedem Ende. Es mit FREMO-Bezeichnung oder Namen kennzeichnen, in Segmente teilen und ausdrucken.
+- **Hallen**: Wände, Säulen, Einbauten, Türen, Notausgänge und Sperrflächen zeichnen, die Bodenfläche sehen und die Halle ausdrucken.
+- **Katalog**: die Normen FREMO und MMM mit ihren Endprofilen, deine eigenen Normen und Zusätze, und aus Dateien importierte Endprofile.
+
+Noch nicht fertig: das Gleis auf einem Modul zeichnen, und Hallenpläne, in denen Module in einer Halle aufgestellt und auf Passung geprüft werden.
 
 Entwürfe werden während der Arbeit automatisch in diesem Browser gespeichert. Speichere deine Zeichnungen als Dateien, um sie zu behalten und weiterzugeben.
 

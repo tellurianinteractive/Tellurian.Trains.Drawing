@@ -1,0 +1,67 @@
+@using System.Globalization
+@inject ContentDocuments Content
+
+@* A "?" after a page's or pane's heading that opens its "About this page" help as a popover beside the button,
+   above the content; a click outside or Escape closes it. The help is the localised Markdown document
+   Content/Help{For}.md in the Translations project, loaded when first opened. *@
+<span class="help-anchor">
+    <button type="button" class="@(_open ? "help-toggle open" : "help-toggle")" id="@($"help-{For.ToLowerInvariant()}")"
+            title="@T["AboutThisPage"]" aria-label="@T["AboutThisPage"]" aria-expanded="@(_open ? "true" : "false")"
+            @onclick="ToggleAsync" @onclick:stopPropagation><i class="fa-solid fa-question"></i></button>
+    @if (_open)
+    {
+        <span class="help-backdrop" @onclick="Close"></span>
+        <span class="@(AlignEnd ? "help-popover end" : "help-popover")" role="dialog" aria-label="@(Title ?? T["AboutThisPage"])" @onclick:stopPropagation @onkeydown="OnKey">
+            <span class="help-popover-header">
+                <span class="help-popover-title">@(Title ?? T["AboutThisPage"])</span>
+                <button type="button" class="help-popover-close" title="@T["Close"]" aria-label="@T["Close"]" @onclick="Close"><i class="fa-solid fa-xmark"></i></button>
+            </span>
+            <span class="help-popover-body">
+                @if (_html is null)
+                {
+                    <span class="help-popover-status">…</span>
+                }
+                else if (_html.Length == 0)
+                {
+                    <span class="help-popover-status">@T["NoHelpYet"]</span>
+                }
+                else
+                {
+                    @((MarkupString)_html)
+                }
+            </span>
+        </span>
+    }
+</span>
+
+@code {
+    private bool _open;
+    private string? _html;
+
+    /// <summary>The page or pane the help is about, e.g. <c>HallEditor</c> for <c>Content/HelpHallEditor.md</c>.</summary>
+    [Parameter, EditorRequired] public string For { get; set; } = "";
+
+    /// <summary>Opens the popover towards the left, for a button near the right edge, e.g. in an editor's side panes.</summary>
+    [Parameter] public bool AlignEnd { get; set; }
+
+    /// <summary>The popover's title, e.g. the pane's name; without it, "About this page".</summary>
+    [Parameter] public string? Title { get; set; }
+
+    private async Task ToggleAsync()
+    {
+        if (_open)
+        {
+            Close();
+            return;
+        }
+        _open = true;
+        _html ??= await Content.HtmlAsync(ContentDocuments.Help(For), CultureInfo.CurrentUICulture);
+    }
+
+    private void Close() => _open = false;
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Close();
+    }
+}

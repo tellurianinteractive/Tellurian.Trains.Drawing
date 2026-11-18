@@ -213,4 +213,16 @@ public sealed class PropertyFieldTests
 
         Assert.AreEqual(1500, changed);
     });
+
+    [TestMethod]
+    public void FieldHelpShowsAQuestionMarkWithItsText() => InCulture("en", () =>
+    {
+        using var context = new BunitContext();
+        var field = context.Render<NumberField>(p => p.Add(f => f.Label, "Depth").Add(f => f.Value, 1000).Add(f => f.Help, "How far into the hall."));
+        Assert.AreEqual("How far into the hall.", field.Find(".field-help").GetAttribute("aria-label"));
+        Assert.AreEqual("How far into the hall.", field.Find(".field-help-tip").TextContent);
+
+        var plain = context.Render<TextField>(p => p.Add(f => f.Label, "Name"));
+        Assert.IsEmpty(plain.FindAll(".field-help"), "No help text, no question mark.");
+    });
 }

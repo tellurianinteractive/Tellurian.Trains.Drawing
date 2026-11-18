@@ -1,5 +1,15 @@
 # Versionshinweise
 
+## Version 0.9.0
+Veröffentlicht am 2026-11-18
+- Moduleditor: ein neuer Bereich *Enden*. Gib Ende A oder Ende B ein anderes Endprofil im Maßstab des Moduls, und das Modul wird damit neu gezeichnet. *Wenden* dreht das Kopfstück eines asymmetrischen Endprofils mit der anderen Seite nach außen; *Endewender* folgt von selbst.
+- *Kurve spiegeln* im Bereich *Bearbeiten* lässt ein gebogenes Modul in die andere Richtung drehen. Die Segmentstöße behalten ihre Lage entlang des Gleises; liegen die Gleise außerhalb der Mitte des Kopfstücks, wirst du vorher gefragt, da sich ihre Knicke verschieben.
+- Wenn du ein Modul öffnest, werden Endprofile aktualisiert, die sich in deinem Katalog geändert haben. Der Bereich *Archiv* zeigt, welche; speichere das Modul, damit sie in seiner Datei bleiben.
+- Der Titel einer Endprofilzeichnung lässt Wörter weg, die sich wiederholen, z. B. *FREMO/H0-RE B96L* statt *FREMO/H0-RE H0 FREMO H0 B96L*.
+- Hilfe: Ein *?* auf der Startseite, im Katalog, in den Einstellungen und in jedem Bereich der Editoren öffnet die Hilfe dazu, und viele Felder haben einen Hinweis darunter.
+- Die Texte sagen überall *Endprofil* statt *Kopfstück*; die Hilfe erklärt, wie das Endprofil mit dem Brett am Modulende zusammenhängt.
+- Die Informationsseite sagt, was diese Vorabversion jetzt kann und was noch nicht fertig ist.
+
 ## Version 0.8.0
 Veröffentlicht am 2026-11-17
 - Moduleditor: Teile ein Modul in Segmente. Wähle *Segmentstoß* und klicke dort, wo das Modul geteilt ist; dort wird ein gerader Stoß quer zum Gleis hinzugefügt. Die Segmente müssen nicht gleich lang sein, und ihre Länge entlang des Gleises wird angezeigt.
@@ -64,7 +74,7 @@ Veröffentlicht am 2026-11-15
 Veröffentlicht am 2026-11-15
 - Erste öffentliche Vorabversion zum Ausprobieren. Die App heißt jetzt **Modulzeichner** (englisch Module Draw).
 - Eine Informationsseite beim Start der App, die auch über „Modulzeichner“ im oberen Menü geöffnet wird.
-- Editor für Endprofile: Zeichne die Oberkante des Kopfstücks nach einer bemaßten Zeichnung mit Linien, Bögen und Rundungen (mit der Seite, auf der der Mittelpunkt der Rundung liegt), setze Gleise und Schraubenlöcher, mit automatischen Maßen ab SOK oder ab der unteren linken Ecke des Kopfstücks.
+- Editor für Endprofile: Zeichne die Oberkante des Endprofils nach einer bemaßten Zeichnung mit Linien, Bögen und Rundungen (mit der Seite, auf der der Mittelpunkt der Rundung liegt), setze Gleise und Schraubenlöcher, mit automatischen Maßen ab SOK oder ab der unteren linken Ecke des Endprofils.
 - Ein Endprofil auf einer A4-Seite im Querformat drucken, mit Maßen in Papiergröße und dem Titel „Norm Maßstab Bezeichnung“.
 - Module aus Vorlagen erstellen, mit einer Wartemeldung, während das Modul gezeichnet wird, und Endprofile, Module und Hallen ansehen.
 - Katalog der Normen und Endprofile (FREMO, MMM), mit eigenen Normen, Zusätzen und Passungsausnahmen; Endprofile aus Dateien importieren.

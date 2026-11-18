@@ -57,7 +57,7 @@
   <data name="Radius" xml:space="preserve"><value>Radius (mm)</value></data>
   <data name="Angle" xml:space="preserve"><value>Winkel (°)</value></data>
   <data name="Width" xml:space="preserve"><value>Breite (mm)</value></data>
-  <data name="WidthHint" xml:space="preserve"><value>Leer: Breite des Kopfstücks</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Leer: Breite des Endprofils</value></data>
   <data name="CurveDirection" xml:space="preserve"><value>Kurvenrichtung</value></data>
   <data name="CurveDirection_Left" xml:space="preserve"><value>Links</value></data>
   <data name="CurveDirection_Right" xml:space="preserve"><value>Rechts</value></data>
@@ -106,7 +106,7 @@
   <data name="Change_Tracks" xml:space="preserve"><value>Gleise</value></data>
   <data name="Change_ScrewHoles" xml:space="preserve"><value>Schraubenlöcher</value></data>
   <data name="Change_Dowels" xml:space="preserve"><value>Passstifte</value></data>
-  <data name="Change_Outline" xml:space="preserve"><value>Umriss des Kopfstücks</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>Umriss des Endprofils</value></data>
   <data name="Change_GroundLine" xml:space="preserve"><value>Geländelinie</value></data>
   <data name="Change_Source" xml:space="preserve"><value>Quelle</value></data>
   <data name="EndProfiles" xml:space="preserve"><value>Endprofile</value></data>
@@ -211,10 +211,10 @@
   <data name="Depth" xml:space="preserve"><value>Tiefe (mm)</value></data>
   <data name="NewEndProfile" xml:space="preserve"><value>Neues Endprofil…</value></data>
   <data name="NewEndProfileTitle" xml:space="preserve"><value>Neues Endprofil</value></data>
-  <data name="NewEndProfileIntro" xml:space="preserve"><value>Beginne mit einem rechteckigen Kopfstück mit Gleisen; zeichne dann Umriss, Geländelinie und Schraubenlöcher im Editor.</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Beginne mit einem rechteckigen Endprofil mit Gleisen; zeichne dann Umriss, Geländelinie und Schraubenlöcher im Editor.</value></data>
   <data name="Designation" xml:space="preserve"><value>Bezeichnung</value></data>
   <data name="EndProfileShortName" xml:space="preserve"><value>Kurzname</value></data>
-  <data name="PlateWidth" xml:space="preserve"><value>Breite des Kopfstücks (mm)</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Breite des Endprofils (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Oberkante unter SOK (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Unterkante unter SOK (mm)</value></data>
   <data name="NumberOfTracks" xml:space="preserve"><value>Anzahl Gleise</value></data>
@@ -231,7 +231,7 @@
   <data name="EpItem_Track" xml:space="preserve"><value>Gleis</value></data>
   <data name="EpItem_ScrewHole" xml:space="preserve"><value>Schraubenloch</value></data>
   <data name="EpItem_Dowel" xml:space="preserve"><value>Passstift</value></data>
-  <data name="EpItem_Outline" xml:space="preserve"><value>Umriss des Kopfstücks</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>Umriss des Endprofils</value></data>
   <data name="EpItem_GroundLine" xml:space="preserve"><value>Geländelinie</value></data>
   <data name="EndProfileProperties" xml:space="preserve"><value>Endprofil</value></data>
   <data name="MirrorScrewHoles" xml:space="preserve"><value>Schraubenlöcher spiegeln</value></data>
@@ -240,7 +240,7 @@
   <data name="Label" xml:space="preserve"><value>Beschriftung</value></data>
   <data name="ScrewHolePattern" xml:space="preserve"><value>Lochbild</value></data>
   <data name="Derived" xml:space="preserve"><value>Abgeleitete Eigenschaften</value></data>
-  <data name="PlateSize" xml:space="preserve"><value>Größe des Kopfstücks</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Größe des Endprofils</value></data>
   <data name="Offsets" xml:space="preserve"><value>Gleislagen</value></data>
   <data name="ScrewHoles" xml:space="preserve"><value>Schraubenlöcher</value></data>
   <data name="Symmetry" xml:space="preserve"><value>Symmetrie</value></data>
@@ -251,28 +251,29 @@
   <data name="Difference_GroundLine" xml:space="preserve"><value>Geländelinie</value></data>
   <data name="Difference_Outline" xml:space="preserve"><value>Umriss</value></data>
   <data name="Difference_Dowels" xml:space="preserve"><value>Passstifte</value></data>
-  <data name="OutlineHelp" xml:space="preserve"><value>Klicke die Ecken des Kopfstücks an; ein Klick auf die erste Ecke schließt den Umriss. Der neue Umriss ersetzt den alten.</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Klicke die Ecken des Endprofils an; ein Klick auf die erste Ecke schließt den Umriss. Der neue Umriss ersetzt den alten.</value></data>
   <data name="GroundLineHelp" xml:space="preserve"><value>Klicke die Punkte der Geländeoberfläche von links nach rechts an; Eingabe beendet. Sie ersetzt die alte Geländelinie.</value></data>
   <data name="ScrewHoleHelp" xml:space="preserve"><value>Klicke dorthin, wo ein Schraubenloch hinkommt; es rastet an Kanten, anderen Löchern und am Raster ein.</value></data>
   <data name="TrackHelp" xml:space="preserve"><value>Klicke dorthin, wo ein Gleis liegt; seine SOK liegt immer auf der SOK-Linie.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klicken wählt aus, Ziehen verschiebt (Umschalt: gerade, Alt: ohne Fangen), Entf löscht. Von außen auf das Modul gesehen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>In meinem Katalog speichern</value></data>
   <data name="SavedToCatalogue" xml:space="preserve"><value>{0} ist in deinem Katalog gespeichert.</value></data>
+  <data name="EndProfilesUpdated" xml:space="preserve"><value>Aus deinem Katalog aktualisiert: {0}. Speichere das Modul, damit die Änderung in seiner Datei bleibt.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Archiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="EpTool_UpperEdge" xml:space="preserve"><value>Oberkante</value></data>
-  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klicke die Punkte der Oberkante des Kopfstücks von links nach rechts an; Eingabe beendet. Die Seiten folgen dem ersten und letzten Punkt.</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klicke die Punkte der Oberkante des Endprofils von links nach rechts an; Eingabe beendet. Die Seiten folgen dem ersten und letzten Punkt.</value></data>
   <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klicken fügt Punkte hinzu; Eingabe beendet, Rücktaste entfernt einen Punkt, Escape bricht ab.</value></data>
-  <data name="PlatePane" xml:space="preserve"><value>Kopfstück</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Umriss</value></data>
   <data name="PlateDepth" xml:space="preserve"><value>Unterkante unter SOK (mm)</value></data>
   <data name="AddPoint" xml:space="preserve"><value>Punkt hinzufügen</value></data>
   <data name="DeletePoint" xml:space="preserve"><value>Punkt löschen</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>Die Oberkante ist auch die Geländelinie, die an Übergängen verglichen wird. Ziehe die Punkte in der Zeichnung oder gib sie in mm ein; Y ist unter SOK negativ.</value></data>
-  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Punkt des Kopfstücks</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Umrisspunkt</value></data>
   <data name="MeasureFrom" xml:space="preserve"><value>Messen von</value></data>
   <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>SOK und Mittellinie</value></data>
-  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Untere linke Ecke des Kopfstücks</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Untere linke Ecke des Endprofils</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Schraubenlöcher und Punkte bemaßen</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Abstand von der linken Kante (mm)</value></data>
   <data name="SegmentType" xml:space="preserve"><value>Art</value></data>
@@ -412,4 +413,18 @@
   <data name="JointPointsHelp" xml:space="preserve"><value>Gib die Lage der Punkte ein oder ziehe sie in der Zeichnung. Ein neuer Punkt kommt nach dem ausgewählten; verschiebe ihn, damit der Stoß abknickt. Die Enden bleiben am Modulrand.</value></data>
   <data name="SectionsHelp" xml:space="preserve"><value>Ein Modul aus mehreren Segmenten wird durch Segmentstöße geteilt. Wähle Segmentstoß und klicke dort, wo das Modul geteilt ist, und wähle dann den Stoß aus, um seine genaue Lage einzugeben. Stöße zwischen Segmenten passen immer.</value></data>
   <data name="NoOutlineForSections" xml:space="preserve"><value>Dieses Modul hat keinen Umriss, der in Segmente geteilt werden kann.</value></data>
+  <data name="AboutThisPage" xml:space="preserve"><value>Über diese Seite</value></data>
+  <data name="NoHelpYet" xml:space="preserve"><value>Für diese Seite gibt es noch keine Hilfe.</value></data>
+  <data name="KeepFreeDepthHelp" xml:space="preserve"><value>Wie weit in die Halle hinein die Fläche vor der Tür frei bleiben muss.</value></data>
+  <data name="RotationHelp" xml:space="preserve"><value>Wie weit die Säule gegen den Uhrzeigersinn gedreht ist, in Grad.</value></data>
+  <data name="WallLengthHelp" xml:space="preserve"><value>Eine neue Länge verschiebt die Ecke, an der die Wand endet.</value></data>
+  <data name="JointDistanceHelp" xml:space="preserve"><value>Wo der Stoß das Gleis kreuzt, entlang des Gleises vom ersten Ende des Moduls gemessen.</value></data>
+  <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Wird in Modulzeichnungen entlang des Modulendes geschrieben, z. B. B96. Ohne ihn wird die Bezeichnung verwendet.</value></data>
+  <data name="EndsPane" xml:space="preserve"><value>Enden</value></data>
+  <data name="ExitEnd" xml:space="preserve"><value>Ende {0}</value></data>
+  <data name="FlipEnd" xml:space="preserve"><value>Wenden</value></data>
+  <data name="FlipEndHelp" xml:space="preserve"><value>Das Kopfstück mit der anderen Seite nach außen drehen, sodass die hohe Seite des asymmetrischen Endprofils auf der anderen Seite des Gleises liegt.</value></data>
+  <data name="FlipCurve" xml:space="preserve"><value>Kurve spiegeln</value></data>
+  <data name="CannotRedraw" xml:space="preserve"><value>Dieses Modul wurde nicht aus einer Vorlage gezeichnet, daher können seine Endprofile und seine Kurve hier nicht geändert werden; seine Enden lassen sich trotzdem wenden.</value></data>
+  <data name="BendsWillChange" xml:space="preserve"><value>Die Gleise eines Endprofils liegen nicht in der Mitte des Kopfstücks, daher verschieben sich die Knicke der Segmentstöße gegenüber den Gleisen. Prüfe die Stöße danach. Fortfahren?</value></data>
 </root>

@@ -41,4 +41,34 @@ public sealed record ModuleFileContent
 
     /// <summary>Looks up the embedded end profiles.</summary>
     public EndProfile? FindEndProfile(Guid id) => EndProfiles.FirstOrDefault(p => p.Id == id);
+
+    /// <summary>
+    /// The content with each embedded end profile replaced by the one with the same id in <paramref name="current"/>
+    /// where they differ, e.g. after the end profile was changed in the catalogue, and the measures derived again.
+    /// Embedded end profiles that <paramref name="current"/> doesn't have are kept.
+    /// </summary>
+    /// <returns>The content, unchanged when nothing differs, and the end profiles that replaced embedded ones.</returns>
+    public (ModuleFileContent Content, IReadOnlyList<EndProfile> Updated) WithCurrentEndProfiles(Func<Guid, EndProfile?> current)
+    {
+        ArgumentNullException.ThrowIfNull(current);
+        var updated = EndProfiles
+            .Select(embedded => current(embedded.Id) is { } now && !Same(now, embedded) ? now : null)
+            .OfType<EndProfile>()
+            .ToList();
+        if (updated.Count == 0) return (this, []);
+        EndProfile? Lookup(Guid id) => updated.FirstOrDefault(p => p.Id == id) ?? FindEndProfile(id) ?? current(id);
+        try
+        {
+            return (Create(Module, Lookup), updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            // An end profile the module refers to was never embedded: replace the embedded ones only.
+            return (this with { EndProfiles = [.. EndProfiles.Select(p => updated.FirstOrDefault(u => u.Id == p.Id) ?? p)] }, updated);
+        }
+    }
+
+    /// <summary>Whether two end profiles have the same content, as written to a file.</summary>
+    private static bool Same(EndProfile a, EndProfile b) =>
+        ReferenceEquals(a, b) || DrawingFileSerializer.Serialize(a) == DrawingFileSerializer.Serialize(b);
 }

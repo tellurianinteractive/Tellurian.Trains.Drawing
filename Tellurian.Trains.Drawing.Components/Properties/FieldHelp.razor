@@ -1,0 +1,11 @@
+@* A "?" after a field's label that shows the field's help text as a tooltip on hover or focus; nothing without a text.
+   Drawn without an icon font, so it works wherever the components are used. *@
+@if (!string.IsNullOrWhiteSpace(Text))
+{
+    <span class="field-help" tabindex="0" role="note" aria-label="@Text">?<span class="field-help-tip" aria-hidden="true">@Text</span></span>
+}
+
+@code {
+    /// <summary>The help text; the host passes its translation, or null for no help.</summary>
+    [Parameter] public string? Text { get; set; }
+}

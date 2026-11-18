@@ -348,6 +348,7 @@ In priority order (to be confirmed):
 8. EP-6 dowels (if not done in Phase 5), AP-5 dark theme.
 
 ### Planned next (decided 2026-11-15)
+- **Help system (decided 2026-11-17)**, as in the Schedules (timetable planning) app: a "?" button on each page and editor pane opens an "About this …" popover with a localised Markdown document (`Content/Help/<Name>.md` and its translations in the Translations project, loaded on first open and cached), and field labels get a "?" with a tooltip from an optional `<Field>Help` resource (no icon when there is none). Every help document exists in all five languages. *Built 2026-11-17:* `HelpButton` (App) on Start, Settings, Catalogue and in the Edit pane of the end profile, module and hall editors, documents `Content/Help<Topic>.md`; `FieldHelp` (Components) on `NumberField` and `TextField` through their `Help` parameter, texts from `Texts.Help(key)`.
 - **Empty catalogue (CA-1)**: the built-in catalogue is interim, as hard-coded entries may be wrong. It stays until Registry import (CA-5) works; then the catalogue starts empty and is filled manually (CA-2) or by import.
 
 ### Later (separate plan)

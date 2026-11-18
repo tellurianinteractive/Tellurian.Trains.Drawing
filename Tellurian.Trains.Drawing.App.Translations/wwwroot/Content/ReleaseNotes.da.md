@@ -1,5 +1,15 @@
 # Udgivelsesnoter
 
+## Version 0.9.0
+Udgivet 2026-11-18
+- Moduleditor: et nyt panel *Ender*. Giv ende A eller ende B en anden endeprofil i modulets skala, så tegnes modulet igen med den. *Vend* vender en asymmetrisk endeprofils plade med den anden side udad; *Endevender* følger med af sig selv.
+- *Vend kurven* i panelet *Redigér* får et kurvet modul til at dreje den anden vej. Sektionssamlingerne beholder deres placering langs sporet; ligger sporene uden for endepladens midte, bliver du spurgt først, da deres knæk flyttes.
+- Når du åbner et modul, opdateres endeprofiler, der er ændret i dit katalog. Panelet *Arkiv* viser hvilke; gem modulet for at beholde dem i dets fil.
+- Titlen på en endeprofiltegning udelader ord, der gentages, f.eks. *FREMO/H0-RE B96L* i stedet for *FREMO/H0-RE H0 FREMO H0 B96L*.
+- Hjælp: et *?* på startsiden, i kataloget, i indstillingerne og i hvert panel i editorerne åbner hjælp om det, og mange felter har et tip under sig.
+- Teksterne siger *endeprofil* overalt, ikke *plade*; hjælpen forklarer, hvordan endeprofilen hænger sammen med endepladen.
+- Informationssiden fortæller, hvad denne forhåndsversion kan nu, og hvad der ikke er klar endnu.
+
 ## Version 0.8.0
 Udgivet 2026-11-17
 - Moduleditor: del et modul i sektioner. Vælg *Sektionssamling* og klik, hvor modulet er delt; der tilføjes en lige samling på tværs af sporet. Sektionerne behøver ikke være lige lange, og deres længde langs sporet vises.
@@ -64,7 +74,7 @@ Udgivet 2026-11-15
 Udgivet 2026-11-15
 - Første offentlige forhåndsversion, til afprøvning. Appen hedder nu **Modultegneren** (Module Draw på engelsk).
 - En informationsside, når appen starter, som også åbnes fra "Modultegneren" i topmenuen.
-- Editor til endeprofiler: tegn endepladens overkant efter en måltegning med linjer, buer og afrundinger (med den side, afrundingens centrum ligger på), placer spor og skruehuller, med automatiske mål fra skinneoverkant eller fra pladens nederste venstre hjørne.
+- Editor til endeprofiler: tegn endeprofilens overkant efter en måltegning med linjer, buer og afrundinger (med den side, afrundingens centrum ligger på), placer spor og skruehuller, med automatiske mål fra skinneoverkant eller fra endeprofilens nederste venstre hjørne.
 - Udskriv en endeprofil på en liggende A4-side, med mål i papirstørrelse og titlen "Standard Skala Betegnelse".
 - Opret moduler fra skabeloner, med en ventemeddelelse mens modulet tegnes, og vis endeprofiler, moduler og haller.
 - Katalog over standarder og endeprofiler (FREMO, MMM), med egne standarder, tilføjelser og undtagelser for pasning; importér endeprofiler fra filer.

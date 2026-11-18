@@ -175,6 +175,16 @@ public sealed class HallEditorTests
         Assert.IsTrue(page.FindComponent<HallEditor>().Instance.Current!.Doors[0].IsModuleEntrance);
     }
 
+    [TestMethod]
+    public void EveryHallEditorPaneHasItsOwnHelp()
+    {
+        using var context = new AppTestContext();
+        var page = RenderHall(context, Hall.Rectangle("Hall", 12000, 8000));
+        page.WaitForElement("#floor-area");
+
+        Layout.HelpTests.AssertPaneHelp(page, ("archive", "Archive"), ("halleditor", "Edit"), ("hallwalls", "Walls"), ("hallproperties", "Hall"), ("hallderived", "Derived properties"));
+    }
+
     private static IRenderedComponent<DrawingPage> RenderHall(AppTestContext context, Hall hall, string? selection = null)
     {
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(hall)).Result;

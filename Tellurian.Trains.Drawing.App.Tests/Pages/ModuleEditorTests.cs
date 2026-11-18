@@ -1,3 +1,4 @@
+using Tellurian.Trains.Drawing.App.Catalogue;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Tellurian.Trains.Drawing.App.Documents;
@@ -38,6 +39,68 @@ public sealed class ModuleEditorTests
         var canvas = page.FindComponent<DrawingCanvas>();
         canvas.InvokeAsync(() => canvas.Instance.PointerDown(at.X, at.Y, 0, 0, 0, 1, 0, "mouse")).Wait();
         canvas.InvokeAsync(() => canvas.Instance.PointerUp(at.X, at.Y, 0, 0, 0, 0, 0, "mouse")).Wait();
+    }
+
+    [TestMethod]
+    public void EndProfilesChangedInTheCatalogueAreUpdatedWhenTheModuleOpens()
+    {
+        using var context = new AppTestContext();
+        var catalogue = BuiltInCatalogue.Instance;
+        AutoDrawExit west = new() { Label = "W", Direction = ExitDirection.West, EndProfile = "FREMO-H0-B96" };
+        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitDirection.East }] }, catalogue).Module!;
+        var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile));
+        var documents = context.Services.GetRequiredService<DrawingDocuments>();
+        var draft = documents.CreateAsync(json).Result;
+        var profile = DrawingFileSerializer.DeserializeModule(json).EndProfiles.Single();
+        context.Services.GetRequiredService<CatalogueService>().SaveEndProfileAsync(profile with { ShortName = "CHANGED" }).Wait();
+
+        var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
+
+        page.WaitForElement("#updated-end-profiles");
+        StringAssert.Contains(page.Find("#updated-end-profiles").TextContent, profile.Designation);
+        var stored = context.Workbench.Drafts[draft.Id];
+        Assert.IsTrue(stored.HasUnsavedChanges, "Saving the module puts the new end profile in its file.");
+        Assert.AreEqual("CHANGED", DrawingFileSerializer.DeserializeModule(stored.Json).FindEndProfile(profile.Id)?.ShortName);
+    }
+
+    [TestMethod]
+    public void AnEndCanBeFlippedAndTheEndewenderFollows()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+        var editor = page.FindComponent<ModuleEditor>().Instance;
+        var before = editor.Current!.Module.IsEndProfileSwitcher;
+
+        page.Find("#flip-end-E").Click();
+
+        Assert.AreNotEqual(before, editor.Current!.Module.IsEndProfileSwitcher);
+        Assert.AreEqual(!before, page.Find("#endewender").HasAttribute("checked"));
+        page.Find("#undo").Click();
+        Assert.AreEqual(before, editor.Current!.Module.IsEndProfileSwitcher, "Flipping can be undone.");
+    }
+
+    [TestMethod]
+    public void AnotherEndProfileRedrawsTheModule()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+        var editor = page.FindComponent<ModuleEditor>().Instance;
+        var other = BuiltInCatalogue.Instance.EndProfiles.First(p => p.Scale == "H0" && p.Id != editor.Current!.Module.DefaultVariant.Exit("W")!.EndProfile.Id);
+
+        page.Find("#end-profile-W").Change(other.Id.ToString());
+
+        Assert.AreEqual(other.Id, editor.Current!.Module.DefaultVariant.Exit("W")!.EndProfile.Id);
+        Assert.AreEqual("Tellby", editor.Current.Module.Name);
+        Assert.IsEmpty(page.FindAll("#flip-curve"), "A straight module has no curve to flip.");
+    }
+
+    [TestMethod]
+    public void EveryModuleEditorPaneHasItsOwnHelp()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+
+        Layout.HelpTests.AssertPaneHelp(page, ("archive", "Archive"), ("moduleeditor", "Edit"), ("moduleends", "Ends"), ("modulesections", "Sections"), ("moduleproperties", "Properties"));
     }
 
     [TestMethod]

@@ -4,7 +4,14 @@
 
 Modulritaren är till för att rita ändprofiler, moduler och hallplaner för modulträffar.
 
-Detta är en förhandsversion att prova på. Du kan rita ändprofiler och hallar, och skapa moduler från mallar. Redigering av moduler och hallplaner kommer senare.
+Detta är en förhandsversion att prova på. Filformatet kan ännu ändras före version 1.0. Det här kan du göra nu:
+
+- **Ändprofiler**: rita dem efter en måttsatt ritning, med spår och skruvhål, och skriv ut dem.
+- **Moduler**: skapa en rak eller kurvad modul, eller en med båda, med en ändprofil i varje ände. Identifiera den med FREMO-beteckning eller namn, dela in den i sektioner och skriv ut den.
+- **Hallar**: rita väggar, pelare, inredning, dörrar, nödutgångar och spärrade ytor, se golvytan och skriv ut hallen.
+- **Katalog**: standarderna FREMO och MMM med deras ändprofiler, dina egna standarder och tillägg, och ändprofiler som importeras från filer.
+
+Inte klart ännu: att rita spåret på en modul, och hallplaner, där moduler placeras i en hall och kontrolleras så att de passar ihop.
 
 Utkast sparas automatiskt i den här webbläsaren medan du arbetar. Spara dina ritningar som filer för att behålla dem och dela dem.
 

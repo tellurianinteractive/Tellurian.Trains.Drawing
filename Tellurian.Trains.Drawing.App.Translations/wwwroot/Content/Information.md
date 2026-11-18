@@ -4,7 +4,14 @@
 
 Module Draw is for drawing model railway end profiles, modules and hall plans for module meetings.
 
-This is a pre-release for trying out. You can draw end profiles and halls, and create modules from templates. Editing modules and hall plans comes later.
+This is a pre-release for trying out. The file format may still change before version 1.0. This is what you can do now:
+
+- **End profiles**: draw them from a dimensioned drawing, with tracks and screw holes, and print them.
+- **Modules**: create a straight or curved module, or one with both, with an end profile at each end. Identify it by its FREMO designation or a name, divide it into sections, and print it.
+- **Halls**: draw the walls, pillars, furniture, doors, emergency exits and no-go zones, see the floor area, and print the hall.
+- **Catalogue**: the FREMO and MMM standards with their end profiles, your own standards and add-ons, and end profiles imported from files.
+
+Not ready yet: drawing the track on a module, and hall plans, where modules are placed in a hall and checked to fit.
 
 Drafts are saved automatically in this browser while you work. Save your drawings to files to keep them and to share them.
 

@@ -1,5 +1,15 @@
 # Release Notes
 
+## Release 0.9.0
+Released 2026-11-18
+- Module editor: a new *Ends* pane. Give end A or end B another end profile of the module's scale, and the module is drawn again with it. *Flip* turns an asymmetric end profile's plate the other side out; *Endewender* follows by itself.
+- *Flip curve* in the *Edit* pane makes a curved module turn the other way. Section joints keep their place along the track; with tracks off the centre of the end plate, you are asked first, since their bends move.
+- When you open a module, end profiles that have changed in your catalogue are updated in it. The *Archive* pane tells which; save the module to keep them in its file.
+- The title of an end profile drawing leaves out words that are repeated, e.g. *FREMO/H0-RE B96L* instead of *FREMO/H0-RE H0 FREMO H0 B96L*.
+- Help: a *?* on the start page, the catalogue, the settings and every pane of the editors opens help about it, and many fields have a hint below them.
+- The texts say *end profile* throughout, not *plate*; the help explains how the end profile relates to the board at the module's end.
+- The information page tells what this pre-release can do now, and what isn't ready yet.
+
 ## Release 0.8.0
 Released 2026-11-17
 - Module editor: divide a module into sections. Choose *Section joint* and click where the module is divided; a straight joint is added across the track there. Sections don't have to be equally long, and their lengths along the track are shown.
@@ -64,7 +74,7 @@ Released 2026-11-15
 Released 2026-11-15
 - First public pre-release, for trying out. The app is now called **Module Draw**.
 - An information page when the app starts, also opened from "Module Draw" in the top menu.
-- End profile editor: draw the end plate's upper edge from a dimensioned drawing with lines, arcs and fillets (with the side of the fillet's centre), place tracks and screw holes, with automatic dimensions measured from rail top or the plate's lower left corner.
+- End profile editor: draw the end profile's upper edge from a dimensioned drawing with lines, arcs and fillets (with the side of the fillet's centre), place tracks and screw holes, with automatic dimensions measured from rail top or the end profile's lower left corner.
 - Print an end profile on a landscape A4 page, with paper-sized dimensions and the title "Standard Scale Designation".
 - Create modules from templates, with a wait message while the module is drawn, and view end profiles, modules and halls.
 - Catalogue of standards and end profiles (FREMO, MMM), with your own standards, add-ons and overrides; import end profiles from files.

@@ -57,7 +57,7 @@
   <data name="Radius" xml:space="preserve"><value>Radius (mm)</value></data>
   <data name="Angle" xml:space="preserve"><value>Angle (°)</value></data>
   <data name="Width" xml:space="preserve"><value>Width (mm)</value></data>
-  <data name="WidthHint" xml:space="preserve"><value>Empty: the end plate's width</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Empty: the end profile's width</value></data>
   <data name="CurveDirection" xml:space="preserve"><value>Curve direction</value></data>
   <data name="CurveDirection_Left" xml:space="preserve"><value>Left</value></data>
   <data name="CurveDirection_Right" xml:space="preserve"><value>Right</value></data>
@@ -106,7 +106,7 @@
   <data name="Change_Tracks" xml:space="preserve"><value>tracks</value></data>
   <data name="Change_ScrewHoles" xml:space="preserve"><value>screw holes</value></data>
   <data name="Change_Dowels" xml:space="preserve"><value>dowels</value></data>
-  <data name="Change_Outline" xml:space="preserve"><value>plate outline</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>end profile outline</value></data>
   <data name="Change_GroundLine" xml:space="preserve"><value>ground line</value></data>
   <data name="Change_Source" xml:space="preserve"><value>source</value></data>
   <data name="EndProfiles" xml:space="preserve"><value>End profiles</value></data>
@@ -211,10 +211,10 @@
   <data name="Depth" xml:space="preserve"><value>Depth (mm)</value></data>
   <data name="NewEndProfile" xml:space="preserve"><value>New end profile…</value></data>
   <data name="NewEndProfileTitle" xml:space="preserve"><value>New end profile</value></data>
-  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start from a rectangular end plate with tracks; then draw the outline, ground line and screw holes in the editor.</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start from a rectangular end profile with tracks; then draw the outline, ground line and screw holes in the editor.</value></data>
   <data name="Designation" xml:space="preserve"><value>Designation</value></data>
   <data name="EndProfileShortName" xml:space="preserve"><value>Short name</value></data>
-  <data name="PlateWidth" xml:space="preserve"><value>Plate width (mm)</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>End profile width (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Top edge below rail top (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Bottom edge below rail top (mm)</value></data>
   <data name="NumberOfTracks" xml:space="preserve"><value>Number of tracks</value></data>
@@ -231,7 +231,7 @@
   <data name="EpItem_Track" xml:space="preserve"><value>Track</value></data>
   <data name="EpItem_ScrewHole" xml:space="preserve"><value>Screw hole</value></data>
   <data name="EpItem_Dowel" xml:space="preserve"><value>Dowel</value></data>
-  <data name="EpItem_Outline" xml:space="preserve"><value>End-plate outline</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>End profile outline</value></data>
   <data name="EpItem_GroundLine" xml:space="preserve"><value>Ground line</value></data>
   <data name="EndProfileProperties" xml:space="preserve"><value>End profile</value></data>
   <data name="MirrorScrewHoles" xml:space="preserve"><value>Mirror screw holes</value></data>
@@ -240,7 +240,7 @@
   <data name="Label" xml:space="preserve"><value>Label</value></data>
   <data name="ScrewHolePattern" xml:space="preserve"><value>Screw-hole pattern</value></data>
   <data name="Derived" xml:space="preserve"><value>Derived properties</value></data>
-  <data name="PlateSize" xml:space="preserve"><value>Plate size</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>End profile size</value></data>
   <data name="Offsets" xml:space="preserve"><value>Track offsets</value></data>
   <data name="ScrewHoles" xml:space="preserve"><value>Screw holes</value></data>
   <data name="Symmetry" xml:space="preserve"><value>Symmetry</value></data>
@@ -251,28 +251,29 @@
   <data name="Difference_GroundLine" xml:space="preserve"><value>ground line</value></data>
   <data name="Difference_Outline" xml:space="preserve"><value>outline</value></data>
   <data name="Difference_Dowels" xml:space="preserve"><value>dowels</value></data>
-  <data name="OutlineHelp" xml:space="preserve"><value>Click the corners of the end plate; click the first corner to close it. The new outline replaces the old one.</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Click the corners of the end profile; click the first corner to close it. The new outline replaces the old one.</value></data>
   <data name="GroundLineHelp" xml:space="preserve"><value>Click the points of the landscape surface from left to right; press Enter to finish. It replaces the old ground line.</value></data>
   <data name="ScrewHoleHelp" xml:space="preserve"><value>Click where a screw hole goes; it snaps to edges, other holes and the grid.</value></data>
   <data name="TrackHelp" xml:space="preserve"><value>Click where a track goes; its rail top is always at the rail-top line.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Click to select, drag to move (Shift: straight, Alt: no snapping), Delete to remove. Seen from outside the module.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Save to my catalogue</value></data>
   <data name="SavedToCatalogue" xml:space="preserve"><value>{0} is saved in your catalogue.</value></data>
+  <data name="EndProfilesUpdated" xml:space="preserve"><value>Updated from your catalogue: {0}. Save the module to keep the change in its file.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Edit</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Archive</value></data>
   <data name="EditPane" xml:space="preserve"><value>Edit</value></data>
   <data name="EpTool_UpperEdge" xml:space="preserve"><value>Upper edge</value></data>
-  <data name="UpperEdgeHelp" xml:space="preserve"><value>Click the points of the plate's upper edge from left to right; press Enter to finish. The sides follow the first and last points.</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Click the points of the end profile's upper edge from left to right; press Enter to finish. The sides follow the first and last points.</value></data>
   <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Click to add points; Enter finishes, Backspace removes a point, Escape cancels.</value></data>
-  <data name="PlatePane" xml:space="preserve"><value>Plate</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Outline</value></data>
   <data name="PlateDepth" xml:space="preserve"><value>Bottom below rail top (mm)</value></data>
   <data name="AddPoint" xml:space="preserve"><value>Add point</value></data>
   <data name="DeletePoint" xml:space="preserve"><value>Delete point</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>The upper edge is also the ground line compared at joints. Drag the points in the drawing or type them in mm; Y is negative below rail top.</value></data>
-  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Plate point</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Outline point</value></data>
   <data name="MeasureFrom" xml:space="preserve"><value>Measure from</value></data>
   <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>Rail top and centre line</value></data>
-  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Plate's lower left corner</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>End profile's lower left corner</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Dimension screw holes and points</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Distance from left edge (mm)</value></data>
   <data name="SegmentType" xml:space="preserve"><value>Type</value></data>
@@ -412,4 +413,18 @@
   <data name="JointPointsHelp" xml:space="preserve"><value>Type the points' positions, or drag them in the drawing. A new point is added after the selected one; move it to make the joint bend. The ends stay on the module's edge.</value></data>
   <data name="SectionsHelp" xml:space="preserve"><value>A module of several sections is divided by section joints. Choose Section joint and click where the module is divided, then select the joint to set its exact position. Joints between sections always fit.</value></data>
   <data name="NoOutlineForSections" xml:space="preserve"><value>This module has no outline to divide into sections.</value></data>
+  <data name="AboutThisPage" xml:space="preserve"><value>About this page</value></data>
+  <data name="NoHelpYet" xml:space="preserve"><value>There is no help for this page yet.</value></data>
+  <data name="KeepFreeDepthHelp" xml:space="preserve"><value>How far into the hall the area in front of the door must be kept free.</value></data>
+  <data name="RotationHelp" xml:space="preserve"><value>How far the pillar is turned counter-clockwise, in degrees.</value></data>
+  <data name="WallLengthHelp" xml:space="preserve"><value>A new length moves the corner where the wall ends.</value></data>
+  <data name="JointDistanceHelp" xml:space="preserve"><value>Where the joint crosses the track, measured along the track from the module's first end.</value></data>
+  <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Written along the module end in module drawings, e.g. B96. Without it, the designation is used.</value></data>
+  <data name="EndsPane" xml:space="preserve"><value>Ends</value></data>
+  <data name="ExitEnd" xml:space="preserve"><value>End {0}</value></data>
+  <data name="FlipEnd" xml:space="preserve"><value>Flip</value></data>
+  <data name="FlipEndHelp" xml:space="preserve"><value>Turn the end plate the other side out, so that the asymmetric end profile's high side is on the other side of the track.</value></data>
+  <data name="FlipCurve" xml:space="preserve"><value>Flip curve</value></data>
+  <data name="CannotRedraw" xml:space="preserve"><value>This module wasn't drawn from a template, so its end profiles and curve can't be changed here; its ends can still be flipped.</value></data>
+  <data name="BendsWillChange" xml:space="preserve"><value>The tracks of an end profile are off the centre of the end plate, so the bends of the section joints will move relative to the tracks. Check the joints afterwards. Continue?</value></data>
 </root>

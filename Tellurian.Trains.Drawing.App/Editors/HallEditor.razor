@@ -72,12 +72,12 @@
         </div>
         <aside class="editor-side">
             <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
-                <h2>@T["ArchivePane"]</h2>
+                <h2>@T["ArchivePane"] <HelpButton For="Archive" Title="@T["ArchivePane"]" AlignEnd="true" /></h2>
                 @ArchiveContent
                 <p class="detail" id="autosave">@AutosaveText</p>
             </section>
             <section class="pane edit-pane" aria-label="@T["EditPane"]">
-                <h2>@T["EditPane"]</h2>
+                <h2>@T["EditPane"] <HelpButton For="HallEditor" Title="@T["EditPane"]" AlignEnd="true" /></h2>
                 <div class="pane-buttons" role="toolbar">
                     @foreach (var tool in Enum.GetValues<HallTool>())
                     {
@@ -107,7 +107,7 @@
                 <p class="pane-help" aria-live="polite">@Status</p>
             </section>
             <section class="pane walls-pane" aria-label="@T["WallsPane"]">
-                <h2>@T["WallsPane"]</h2>
+                <h2>@T["WallsPane"] <HelpButton For="HallWalls" Title="@T["WallsPane"]" AlignEnd="true" /></h2>
                 @{
                     var walls = Corners;
                 }
@@ -143,6 +143,8 @@
                 <p class="pane-help">@T["WallsHelp"]</p>
             </section>
             <PropertyPanel Title="@SelectionTitle" Class="pane">
+                <TitleContent><HelpButton For="HallProperties" Title="@T["HallProperties"]" AlignEnd="true" /></TitleContent>
+                <ChildContent>
                 @{
                     var hall = _document.Current;
                 }
@@ -170,7 +172,7 @@
                             <NumberField Label="@T["CentreY"]" Value="center.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(new(center.X, v), width, depth, turn) }))" />
                             <NumberField Label="@T["HallWidth"]" Value="width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, v, depth, turn) }))" />
                             <NumberField Label="@T["HallDepth"]" Value="depth" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, v, turn) }))" />
-                            <NumberField Label="@T["Rotation"]" Value="turn.Signed.Degrees" Unit="°" Quantity="Quantity.Angle" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, depth, new(v)) }))" />
+                            <NumberField Label="@T["Rotation"]" Help="@T.Help("Rotation")" Value="turn.Signed.Degrees" Unit="°" Quantity="Quantity.Angle" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, depth, new(v)) }))" />
                         }
                         break;
                     case { Kind: HallItemKind.Door } item when item.Index < hall.Doors.Count:
@@ -202,7 +204,7 @@
                         <NumberField Label="@T.Format("DoorToCorner", endCorner + 1)" Value="wallLength - along - door.Width / 2" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
                                      ValueChanged="v => Apply(HallCommands.SetDoorPosition(item.Index, doorWall, wallLength - v - door.Width / 2))" />
                         <p class="pane-help">@T["DoorPositionHelp"]</p>
-                        <NumberField Label="@T["KeepFreeDepth"]" Value="door.KeepFreeDepth" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { KeepFreeDepth = v }))" />
+                        <NumberField Label="@T["KeepFreeDepth"]" Help="@T.Help("KeepFreeDepth")" Value="door.KeepFreeDepth" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { KeepFreeDepth = v }))" />
                         break;
                     case { Kind: HallItemKind.NoGoZone } item when item.Index < hall.NoGoZones.Count:
                         var zone = hall.NoGoZones[item.Index];
@@ -214,26 +216,26 @@
                         <NumberField Label="Y" Value="point.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetCorner(item.Index, new(point.X, v)))" />
                         break;
                     case { Kind: HallItemKind.Wall } item when item.Index < Corners.StepCount:
-                        <NumberField Label="@T["WallLength"]" Value="Corners.LengthOf(item.Index)" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" ReadOnly="@(Corners.Sweeps[item.Index] != 0)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallLength(item.Index, v))" />
+                        <NumberField Label="@T["WallLength"]" Help="@T.Help("WallLength")" Value="Corners.LengthOf(item.Index)" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" ReadOnly="@(Corners.Sweeps[item.Index] != 0)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallLength(item.Index, v))" />
                         <NumberField Label="@T["WallArc"]" Value="Corners.Sweeps[item.Index]" Unit="°" Quantity="Quantity.Angle" Min="-359" Max="359" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallSweep(item.Index, v))" />
                         break;
                     case null when _selection.IsEmpty:
                         <TextField Label="@T["Name"]" Value="@hall.Name" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetProperties(h => h with { Name = v.Trim() })); }" />
                         <TextField Label="@T["HallAddress"]" Value="@hall.Address" ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { Address = Trimmed(v) }))" />
                         <TextField Label="@T["Field_Note"]" Value="@hall.Note" ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { Note = Trimmed(v) }))" />
-                        <NumberField Label="@T["MinimumAisleWidth"]" Value="hall.MinimumAisleWidth ?? 0" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
+                        <NumberField Label="@T["MinimumAisleWidth"]" Help="@T.Help("MinimumAisleWidth")" Value="hall.MinimumAisleWidth ?? 0" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
                                      ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { MinimumAisleWidth = v > 0 ? v : null }))" />
-                        <p class="pane-help">@T["MinimumAisleWidthHelp"]</p>
                         <RevisionLogList Log="RevisionLog" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
                         break;
                     default:
                         <p class="property-note">@T.Format("SelectedCount", _selection.Count)</p>
                         break;
                 }
+                </ChildContent>
             </PropertyPanel>
 
             <section class="pane derived" aria-label="@T["Derived"]">
-                <h2>@T["Derived"]</h2>
+                <h2>@T["Derived"] <HelpButton For="HallDerived" Title="@T["Derived"]" AlignEnd="true" /></h2>
                 @{
                     var bounds = _document.Current.Outline.ToPath().Bounds;
                 }

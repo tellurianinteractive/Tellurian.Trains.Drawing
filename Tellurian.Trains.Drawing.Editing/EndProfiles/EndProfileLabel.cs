@@ -36,12 +36,51 @@ public static class EndProfileLabel
     /// <summary>The average width of a character relative to the text height, for a sans-serif font.</summary>
     public const double CharacterWidth = 0.6;
 
-    /// <summary>"Standard Scale Designation", e.g. "FREMO H0 B96"; standards are separated by commas.</summary>
+    /// <summary>
+    /// "Standard Scale Designation", e.g. "FREMO H0 B96"; standards are separated by commas. Words of the scale and
+    /// the designation that the text already has are left out, so that standard FREMO/H0-RE, scale H0 and designation
+    /// "FREMO H0 B96L" give "FREMO/H0-RE B96L". Words are split at anything but letters and digits, and compared
+    /// ignoring case.
+    /// </summary>
     public static string Text(EndProfile profile)
     {
         ArgumentNullException.ThrowIfNull(profile);
-        string[] parts = [string.Join(", ", profile.Standards.Select(s => s.Name).Where(n => !string.IsNullOrWhiteSpace(n))), profile.Scale, profile.Designation];
-        return string.Join(" ", parts.Where(p => !string.IsNullOrWhiteSpace(p)).Select(p => p.Trim()));
+        var standards = string.Join(", ", profile.Standards.Select(s => s.Name?.Trim()).Where(n => !string.IsNullOrEmpty(n)));
+        var seen = new HashSet<string>(Words(standards).Select(w => w.Word), StringComparer.OrdinalIgnoreCase);
+        string[] parts = [standards, WithoutSeen(profile.Scale, seen), WithoutSeen(profile.Designation, seen)];
+        return string.Join(" ", parts.Where(p => p.Length > 0));
+    }
+
+    /// <summary>
+    /// <paramref name="text"/> without the words in <paramref name="seen"/>, which then gets its other words. A kept
+    /// word keeps the separator before it, e.g. "-" in "X-Y"; the first kept word has none.
+    /// </summary>
+    private static string WithoutSeen(string? text, HashSet<string> seen)
+    {
+        var kept = new System.Text.StringBuilder();
+        foreach (var (separator, word) in Words(text ?? ""))
+        {
+            if (!seen.Add(word)) continue;
+            if (kept.Length > 0) kept.Append(separator.Length > 0 ? separator : " ");
+            kept.Append(word);
+        }
+        return kept.ToString();
+    }
+
+    /// <summary>The runs of letters and digits in <paramref name="text"/>, each with the separator before it, trimmed.</summary>
+    private static IEnumerable<(string Separator, string Word)> Words(string text)
+    {
+        var i = 0;
+        while (i < text.Length)
+        {
+            var start = i;
+            while (i < text.Length && !char.IsLetterOrDigit(text[i])) i++;
+            var separator = text[start..i].Trim();
+            if (separator.Length == 0 && i > start) separator = " ";
+            var wordStart = i;
+            while (i < text.Length && char.IsLetterOrDigit(text[i])) i++;
+            if (i > wordStart) yield return (separator, text[wordStart..i]);
+        }
     }
 
     /// <summary>

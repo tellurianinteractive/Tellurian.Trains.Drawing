@@ -57,7 +57,7 @@
   <data name="Radius" xml:space="preserve"><value>Radius (mm)</value></data>
   <data name="Angle" xml:space="preserve"><value>Vinkel (°)</value></data>
   <data name="Width" xml:space="preserve"><value>Bredde (mm)</value></data>
-  <data name="WidthHint" xml:space="preserve"><value>Tomt: endeplatens bredde</value></data>
+  <data name="WidthHint" xml:space="preserve"><value>Tomt: endeprofilens bredde</value></data>
   <data name="CurveDirection" xml:space="preserve"><value>Kurveretning</value></data>
   <data name="CurveDirection_Left" xml:space="preserve"><value>Venstre</value></data>
   <data name="CurveDirection_Right" xml:space="preserve"><value>Høyre</value></data>
@@ -106,7 +106,7 @@
   <data name="Change_Tracks" xml:space="preserve"><value>spor</value></data>
   <data name="Change_ScrewHoles" xml:space="preserve"><value>skruehull</value></data>
   <data name="Change_Dowels" xml:space="preserve"><value>styrepinner</value></data>
-  <data name="Change_Outline" xml:space="preserve"><value>platens omriss</value></data>
+  <data name="Change_Outline" xml:space="preserve"><value>endeprofilens omriss</value></data>
   <data name="Change_GroundLine" xml:space="preserve"><value>terrenglinje</value></data>
   <data name="Change_Source" xml:space="preserve"><value>kilde</value></data>
   <data name="EndProfiles" xml:space="preserve"><value>Endeprofiler</value></data>
@@ -211,10 +211,10 @@
   <data name="Depth" xml:space="preserve"><value>Dybde (mm)</value></data>
   <data name="NewEndProfile" xml:space="preserve"><value>Ny endeprofil…</value></data>
   <data name="NewEndProfileTitle" xml:space="preserve"><value>Ny endeprofil</value></data>
-  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start med en rektangulær endeplate med spor; tegn deretter omriss, terrenglinje og skruehull i redigeringen.</value></data>
+  <data name="NewEndProfileIntro" xml:space="preserve"><value>Start med en rektangulær endeprofil med spor; tegn deretter omriss, terrenglinje og skruehull i redigeringen.</value></data>
   <data name="Designation" xml:space="preserve"><value>Betegnelse</value></data>
   <data name="EndProfileShortName" xml:space="preserve"><value>Kortnavn</value></data>
-  <data name="PlateWidth" xml:space="preserve"><value>Platens bredde (mm)</value></data>
+  <data name="PlateWidth" xml:space="preserve"><value>Endeprofilens bredde (mm)</value></data>
   <data name="PlateTopBelowRailTop" xml:space="preserve"><value>Overkant under skinnetopp (mm)</value></data>
   <data name="PlateBottomBelowRailTop" xml:space="preserve"><value>Underkant under skinnetopp (mm)</value></data>
   <data name="NumberOfTracks" xml:space="preserve"><value>Antall spor</value></data>
@@ -231,7 +231,7 @@
   <data name="EpItem_Track" xml:space="preserve"><value>Spor</value></data>
   <data name="EpItem_ScrewHole" xml:space="preserve"><value>Skruehull</value></data>
   <data name="EpItem_Dowel" xml:space="preserve"><value>Styrepinne</value></data>
-  <data name="EpItem_Outline" xml:space="preserve"><value>Endeplatens omriss</value></data>
+  <data name="EpItem_Outline" xml:space="preserve"><value>Endeprofilens omriss</value></data>
   <data name="EpItem_GroundLine" xml:space="preserve"><value>Terrenglinje</value></data>
   <data name="EndProfileProperties" xml:space="preserve"><value>Endeprofil</value></data>
   <data name="MirrorScrewHoles" xml:space="preserve"><value>Speil skruehull</value></data>
@@ -240,7 +240,7 @@
   <data name="Label" xml:space="preserve"><value>Etikett</value></data>
   <data name="ScrewHolePattern" xml:space="preserve"><value>Skruehullsmønster</value></data>
   <data name="Derived" xml:space="preserve"><value>Avledede egenskaper</value></data>
-  <data name="PlateSize" xml:space="preserve"><value>Platens størrelse</value></data>
+  <data name="PlateSize" xml:space="preserve"><value>Endeprofilens størrelse</value></data>
   <data name="Offsets" xml:space="preserve"><value>Sporenes plassering</value></data>
   <data name="ScrewHoles" xml:space="preserve"><value>Skruehull</value></data>
   <data name="Symmetry" xml:space="preserve"><value>Symmetri</value></data>
@@ -251,28 +251,29 @@
   <data name="Difference_GroundLine" xml:space="preserve"><value>terrenglinje</value></data>
   <data name="Difference_Outline" xml:space="preserve"><value>omriss</value></data>
   <data name="Difference_Dowels" xml:space="preserve"><value>styrepinner</value></data>
-  <data name="OutlineHelp" xml:space="preserve"><value>Klikk på endeplatens hjørner; klikk på det første hjørnet for å lukke omrisset. Det nye omrisset erstatter det gamle.</value></data>
+  <data name="OutlineHelp" xml:space="preserve"><value>Klikk på endeprofilens hjørner; klikk på det første hjørnet for å lukke omrisset. Det nye omrisset erstatter det gamle.</value></data>
   <data name="GroundLineHelp" xml:space="preserve"><value>Klikk på terrengets punkter fra venstre mot høyre; trykk Enter for å avslutte. Den erstatter den gamle terrenglinjen.</value></data>
   <data name="ScrewHoleHelp" xml:space="preserve"><value>Klikk der et skruehull skal sitte; det festes til kanter, andre hull og rutenettet.</value></data>
   <data name="TrackHelp" xml:space="preserve"><value>Klikk der et spor skal ligge; skinnetoppen ligger alltid på referanselinjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klikk for å merke, dra for å flytte (Skift: rett, Alt: uten festing), Delete for å slette. Sett utenfra modulen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Lagre i min katalog</value></data>
   <data name="SavedToCatalogue" xml:space="preserve"><value>{0} er lagret i katalogen din.</value></data>
+  <data name="EndProfilesUpdated" xml:space="preserve"><value>Oppdatert fra katalogen din: {0}. Lagre modulen for å beholde endringen i filen.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Rediger</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Rediger</value></data>
   <data name="EpTool_UpperEdge" xml:space="preserve"><value>Overkant</value></data>
-  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klikk på platens overkant fra venstre mot høyre; trykk Enter for å avslutte. Sidene følger første og siste punkt.</value></data>
+  <data name="UpperEdgeHelp" xml:space="preserve"><value>Klikk på endeprofilens overkant fra venstre mot høyre; trykk Enter for å avslutte. Sidene følger første og siste punkt.</value></data>
   <data name="UpperEdgeHelpDrawing" xml:space="preserve"><value>Klikk for å legge til punkter; Enter avslutter, Tilbake fjerner et punkt, Escape avbryter.</value></data>
-  <data name="PlatePane" xml:space="preserve"><value>Plate</value></data>
+  <data name="PlatePane" xml:space="preserve"><value>Omriss</value></data>
   <data name="PlateDepth" xml:space="preserve"><value>Underkant under skinnetopp (mm)</value></data>
   <data name="AddPoint" xml:space="preserve"><value>Legg til punkt</value></data>
   <data name="DeletePoint" xml:space="preserve"><value>Slett punkt</value></data>
   <data name="PlateHelp" xml:space="preserve"><value>Overkanten er også terrenglinjen som sammenlignes ved skjøter. Dra punktene i tegningen eller skriv dem inn i mm; Y er negativ under skinnetopp.</value></data>
-  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Platepunkt</value></data>
+  <data name="EpItem_PlatePoint" xml:space="preserve"><value>Omrisspunkt</value></data>
   <data name="MeasureFrom" xml:space="preserve"><value>Mål fra</value></data>
   <data name="MeasureOrigin_RailTopCentre" xml:space="preserve"><value>Skinnetopp og midtlinje</value></data>
-  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Platens nedre venstre hjørne</value></data>
+  <data name="MeasureOrigin_PlateLowerLeft" xml:space="preserve"><value>Endeprofilens nedre venstre hjørne</value></data>
   <data name="DetailDimensions" xml:space="preserve"><value>Målsett skruehull og punkter</value></data>
   <data name="OffsetFromLeft" xml:space="preserve"><value>Avstand fra venstre kant (mm)</value></data>
   <data name="SegmentType" xml:space="preserve"><value>Type</value></data>
@@ -412,4 +413,18 @@
   <data name="JointPointsHelp" xml:space="preserve"><value>Skriv inn punktenes plassering, eller dra dem i tegningen. Et nytt punkt legges til etter det merkede; flytt det for å få skjøten til å knekke. Endene blir på modulens kant.</value></data>
   <data name="SectionsHelp" xml:space="preserve"><value>En modul med flere seksjoner deles av seksjonsskjøter. Velg Seksjonsskjøt og klikk der modulen er delt, og merk deretter skjøten for å angi nøyaktig plassering. Skjøter mellom seksjoner passer alltid.</value></data>
   <data name="NoOutlineForSections" xml:space="preserve"><value>Denne modulen har ingen kontur å dele i seksjoner.</value></data>
+  <data name="AboutThisPage" xml:space="preserve"><value>Om denne siden</value></data>
+  <data name="NoHelpYet" xml:space="preserve"><value>Det finnes ingen hjelp for denne siden ennå.</value></data>
+  <data name="KeepFreeDepthHelp" xml:space="preserve"><value>Hvor langt inn i hallen området foran døren skal holdes fritt.</value></data>
+  <data name="RotationHelp" xml:space="preserve"><value>Hvor mye søylen er dreid mot klokken, i grader.</value></data>
+  <data name="WallLengthHelp" xml:space="preserve"><value>En ny lengde flytter hjørnet der veggen slutter.</value></data>
+  <data name="JointDistanceHelp" xml:space="preserve"><value>Der skjøten krysser sporet, målt langs sporet fra modulens første ende.</value></data>
+  <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Skrives langs modulens ende i modultegninger, f.eks. B96. Uten det brukes betegnelsen.</value></data>
+  <data name="EndsPane" xml:space="preserve"><value>Ender</value></data>
+  <data name="ExitEnd" xml:space="preserve"><value>Ende {0}</value></data>
+  <data name="FlipEnd" xml:space="preserve"><value>Snu</value></data>
+  <data name="FlipEndHelp" xml:space="preserve"><value>Snu endeplaten med den andre siden ut, slik at den asymmetriske endeprofilens høye side kommer på den andre siden av sporet.</value></data>
+  <data name="FlipCurve" xml:space="preserve"><value>Snu kurven</value></data>
+  <data name="CannotRedraw" xml:space="preserve"><value>Denne modulen er ikke tegnet fra en mal, så endeprofilene og kurven kan ikke endres her; endene kan likevel snus.</value></data>
+  <data name="BendsWillChange" xml:space="preserve"><value>Sporene i en endeprofil ligger ikke midt på endeplaten, så knekkene i seksjonsskjøtene flyttes i forhold til sporene. Kontroller skjøtene etterpå. Fortsette?</value></data>
 </root>

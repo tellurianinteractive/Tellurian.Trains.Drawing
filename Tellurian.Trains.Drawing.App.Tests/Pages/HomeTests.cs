@@ -19,7 +19,7 @@ public sealed class HomeTests
 
         var home = context.Render<Home>();
 
-        Assert.AreEqual("Module Draw", home.Find("h1").TextContent);
+        Assert.AreEqual("Module Draw", home.Find("h1").TextContent.Trim());
         Assert.IsEmpty(home.FindAll(".version"), "The version is shown in the top bar.");
     }
 
