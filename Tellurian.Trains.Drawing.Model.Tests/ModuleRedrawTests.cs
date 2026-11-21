@@ -1,5 +1,5 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;

@@ -8,7 +8,7 @@
 @using Tellurian.Trains.Drawing.Editing.Snapping
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
-@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Schedules.Model.Geometry
 @using Tellurian.Trains.Drawing.Model
 @implements IAsyncDisposable
 @inject IWorkbench Workbench
@@ -126,7 +126,7 @@
     /// <summary>A change in the property panel is one undoable command, like a drag.</summary>
     private void MoveSelection(Vector offset)
     {
-        if (_selection.IsEmpty || offset.Length < Tellurian.Trains.Drawing.Geometry.Tolerance.Length) return;
+        if (_selection.IsEmpty || offset.Length < Tellurian.Trains.Schedules.Model.Geometry.Tolerance.Length) return;
         Active.Cancel();
         _document.Apply(_scene.Move([.. _selection.Items], offset));
     }

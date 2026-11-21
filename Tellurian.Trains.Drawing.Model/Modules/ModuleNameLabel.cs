@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions;
 
 namespace Tellurian.Trains.Drawing.Model.Modules;

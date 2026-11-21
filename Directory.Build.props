@@ -7,7 +7,7 @@
     <Copyright>© Stefan Fjällemark 2026</Copyright>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <!-- NuGet metadata for the packable libraries (Geometry, Model, Editing, Components), reused by the Module Registry. -->
+  <!-- NuGet metadata for the packable libraries (Model, Editing, Components), reused by the Module Registry. -->
   <PropertyGroup>
     <Authors>Stefan Fjällemark</Authors>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>

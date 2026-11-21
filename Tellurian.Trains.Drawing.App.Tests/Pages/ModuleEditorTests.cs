@@ -6,7 +6,7 @@ using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Editors;
 using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.Components.Canvas;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;

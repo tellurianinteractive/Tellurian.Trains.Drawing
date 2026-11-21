@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 
 namespace Tellurian.Trains.Drawing.Model.EndProfiles;

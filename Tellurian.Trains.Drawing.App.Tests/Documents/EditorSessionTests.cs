@@ -5,7 +5,7 @@ using Tellurian.Trains.Drawing.App.Sandbox;
 using Tellurian.Trains.Drawing.App.Storage;
 using Tellurian.Trains.Drawing.App.Tests.Fakes;
 using Tellurian.Trains.Drawing.Editing.Commands;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Documents;

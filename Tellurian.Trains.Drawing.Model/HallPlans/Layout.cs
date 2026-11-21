@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 
 namespace Tellurian.Trains.Drawing.Model.HallPlans;
 

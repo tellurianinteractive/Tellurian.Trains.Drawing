@@ -26,8 +26,6 @@
   <Project Path="Tellurian.Trains.Drawing.Components/Tellurian.Trains.Drawing.Components.csproj" />
   <Project Path="Tellurian.Trains.Drawing.Editing.Tests/Tellurian.Trains.Drawing.Editing.Tests.csproj" />
   <Project Path="Tellurian.Trains.Drawing.Editing/Tellurian.Trains.Drawing.Editing.csproj" />
-  <Project Path="Tellurian.Trains.Drawing.Geometry.Tests/Tellurian.Trains.Drawing.Geometry.Tests.csproj" />
-  <Project Path="Tellurian.Trains.Drawing.Geometry/Tellurian.Trains.Drawing.Geometry.csproj" />
   <Project Path="Tellurian.Trains.Drawing.Model.Tests/Tellurian.Trains.Drawing.Model.Tests.csproj" />
   <Project Path="Tellurian.Trains.Drawing.Model/Tellurian.Trains.Drawing.Model.csproj" />
 </Solution>

@@ -1,6 +1,6 @@
 using Tellurian.Trains.Drawing.Editing.EndProfiles;
 using Tellurian.Trains.Drawing.Editing.Viewing;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.Halls;
 
 namespace Tellurian.Trains.Drawing.Editing.Halls;

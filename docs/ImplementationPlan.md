@@ -17,13 +17,12 @@ Tellurian.Trains.Drawing/
 ├── global.json                           # sdk 11.0.100, test runner = Microsoft.Testing.Platform
 ├── .github/workflows/build-and-deploy.yml
 ├── docs/                                 # Specification, ImplementationPlan, ADRs, schema/
-├── Tellurian.Trains.Drawing.Geometry/    # Pure 2D math, no domain knowledge
+├── (Geometry: moved to the Schedules repository as the package Tellurian.Trains.Schedules.Model.Geometry, 2026-11-21)
 ├── Tellurian.Trains.Drawing.Model/       # Domain model, catalogue, fit evaluator, validation, layout graph, file format
 ├── Tellurian.Trains.Drawing.Editing/     # UI-independent editor state: documents, commands, undo/redo, snapping, tools
 ├── Tellurian.Trains.Drawing.Components/  # Razor class library: ALL view and editor components + their JS modules (reused by the Module Registry)
 ├── Tellurian.Trains.Drawing.App/         # Blazor WASM standalone PWA (AOT): shell, pages, storage, files, service worker
 ├── Tellurian.Trains.Drawing.App.Translations/ # All the app's texts: RESX for UI strings, Markdown for longer texts and release notes
-├── Tellurian.Trains.Drawing.Geometry.Tests/
 ├── Tellurian.Trains.Drawing.Model.Tests/
 ├── Tellurian.Trains.Drawing.Editing.Tests/
 ├── Tellurian.Trains.Drawing.Components.Tests/ # bUnit component tests (MSTest)

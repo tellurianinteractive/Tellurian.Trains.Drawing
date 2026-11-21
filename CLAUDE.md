@@ -14,8 +14,8 @@ The domain follows the sibling repository **Module Registry** (`../Modules Regis
 
 ## Solution layout
 
-`Tellurian.Trains.Drawing.slnx`. Shared settings in `Directory.Build.props` (target framework, version, NuGet metadata). Dependencies run one way: `App → Components → Editing → Model → Geometry`.
-- `Tellurian.Trains.Drawing.Geometry` – pure 2D math (poses, transforms, line/arc segments, distances). No domain knowledge.
+`Tellurian.Trains.Drawing.slnx`. Shared settings in `Directory.Build.props` (target framework, version, NuGet metadata). Dependencies run one way: `App → Components → Editing → Model`, and Model uses the packages `Tellurian.Trains.Schedules.Model.Layouts` and `Tellurian.Trains.Schedules.Model.Geometry`.
+- Geometry – pure 2D math (poses, transforms, line/arc segments, distances), no domain knowledge – is the package `Tellurian.Trains.Schedules.Model.Geometry` from the Schedules repository (`../Tellurian.Trains.Schedules/Model.Geometry`), moved there 2026-11-21 (survey step 4). Change it there, with its tests.
 - `Tellurian.Trains.Drawing.Model` – domain model, catalogue, joint fit evaluator, validation, file format. It uses the shared layout model, the package `Tellurian.Trains.Schedules.Model.Layouts` (operation location, station track, their rules), owned by the Schedules repository (`../Tellurian.Trains.Schedules/Model.Layouts`, design in its `Documentation/OperationLocations.md`). Names, units (metres) and meaning of those types are a contract between four systems: change them there, never here.
 - `Tellurian.Trains.Drawing.Editing` – UI-independent editor state: commands, undo/redo, snapping, tools.
 - `Tellurian.Trains.Drawing.Components` – Razor class library with **all** view and editor components and their collocated JS (`*.razor.js`). Reused by the Module Registry (Blazor Server), so it must work in any render mode: no WebAssembly-only APIs, JS interop only after first render, read-only display without JS.
@@ -23,7 +23,7 @@ The domain follows the sibling repository **Module Registry** (`../Modules Regis
 - `Tellurian.Trains.Drawing.App.Translations` – **all** the app's texts in one place: short UI strings in `Resources/AppTexts.<language>.resx`, longer texts (information page, release notes) as Markdown in `wwwroot/Content/<Name>.<language>.md`, read through `ContentDocuments` over HTTP (`_content/Tellurian.Trains.Drawing.App.Translations/Content`). Same principle as the Timetable Planning app's `Planning.App.Translations`.
 - `*.Tests` – MSTest.Sdk on Microsoft Testing Platform (version pinned in `global.json`); Components and App tests use bUnit.
 
-Geometry, Model, Editing and Components are packable NuGet libraries (spec NF-10). Module auto-draw (spec MD-20) is a public API in Model so the Registry can generate module JSON server-side.
+Model, Editing and Components are packable NuGet libraries (spec NF-10). Module Draw's model is moving into the Schedules repository step by step (its `Documentation/LayoutsLayerSurvey.md` §7 and `CrossAppReview.md` §0): build new model, geometry and validation code there, not here. Module auto-draw (spec MD-20) is a public API in Model so the Registry can generate module JSON server-side.
 
 ## Commands
 
