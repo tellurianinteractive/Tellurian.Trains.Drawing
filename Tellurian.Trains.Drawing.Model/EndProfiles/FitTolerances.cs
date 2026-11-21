@@ -1,7 +1,7 @@
 namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 
 /// <summary>Tolerances and limits for comparing end profiles (spec §3.2).</summary>
-public sealed record FitTolerances
+public sealed record FitTolerances : ExtensibleRecord
 {
     /// <summary>Three bolts hold two ends together with enough stability.</summary>
     public const int DefaultMinimumBoltedScrewHoles = 3;

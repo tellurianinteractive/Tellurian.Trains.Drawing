@@ -71,14 +71,16 @@
   <data name="DrawnWithNotes" xml:space="preserve"><value>Das Modul wurde gezeichnet. Prüfe diese Hinweise:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Zeichnung öffnen</value></data>
   <data name="ModuleIdentification" xml:space="preserve"><value>Identifikation</value></data>
-  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-Module werden durch das Kürzel des Besitzers und eine Nummer bezeichnet, z. B. SFjä 012. Andere Module haben einen Namen. Gib eine FREMO-Nummer mit Kürzel, einen Namen oder beides ein.</value></data>
-  <data name="OwnerPrefix" xml:space="preserve"><value>FREMO-Kürzel des Besitzers</value></data>
-  <data name="FremoNumber" xml:space="preserve"><value>FREMO-Modulnummer</value></data>
-  <data name="OwnerName" xml:space="preserve"><value>Vollständiger Name des Besitzers</value></data>
-  <data name="OwnerNameHelp" xml:space="preserve"><value>Optional; der Besitzer kann jemand anderes sein als du. Beim Hochladen in das Modulregister wird Fehlendes ergänzt.</value></data>
-  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Gib einen Namen oder eine FREMO-Nummer mit dem Kürzel des Besitzers ein.</value></data>
-  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Gib zur FREMO-Nummer das FREMO-Kürzel des Besitzers ein.</value></data>
-  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>Die FREMO-Nummer muss zwischen 1 und 9999 liegen.</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>Module werden durch das Kürzel des Besitzers und eine Nummer bezeichnet, z. B. SFjä 0012, wie im FREMO, oder durch einen Namen. Gib eine Nummer mit Kürzel, einen Namen oder beides ein.</value></data>
+  <data name="ModulePrefix" xml:space="preserve"><value>Kürzel</value></data>
+  <data name="ModuleNumber" xml:space="preserve"><value>Nummer</value></data>
+  <data name="PackageLabel" xml:space="preserve"><value>Paket</value></data>
+  <data name="PackageLabelHelp" xml:space="preserve"><value>Die Kiste, in der das Modul transportiert wird. Gib den Modulen einer Kiste dieselbe Bezeichnung.</value></data>
+  <data name="ModuleOwners" xml:space="preserve"><value>Besitzer</value></data>
+  <data name="ModuleOwnersHelp" xml:space="preserve"><value>Optional: die Namen der Besitzer, durch Kommas getrennt. Beim Hochladen in das Modulregister werden sie ergänzt oder ersetzt.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Gib einen Namen oder eine Nummer mit Kürzel ein.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Gib zur Nummer das Kürzel ein.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>Die Nummer muss zwischen 1 und 9999 liegen.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Wähle ein Endprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} muss größer als 0 sein.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} muss größer als 0 und höchstens 360 sein.</value></data>
@@ -427,4 +429,93 @@
   <data name="FlipCurve" xml:space="preserve"><value>Kurve spiegeln</value></data>
   <data name="CannotRedraw" xml:space="preserve"><value>Dieses Modul wurde nicht aus einer Vorlage gezeichnet, daher können seine Endprofile und seine Kurve hier nicht geändert werden; seine Enden lassen sich trotzdem wenden.</value></data>
   <data name="BendsWillChange" xml:space="preserve"><value>Die Gleise eines Endprofils liegen nicht in der Mitte des Kopfstücks, daher verschieben sich die Knicke der Segmentstöße gegenüber den Gleisen. Prüfe die Stöße danach. Fortfahren?</value></data>
+  <data name="Track" xml:space="preserve"><value>Gleis</value></data>
+  <data name="TrackLength" xml:space="preserve"><value>Länge</value></data>
+  <data name="TrackPlatform" xml:space="preserve"><value>Bahnsteig</value></data>
+  <data name="AddTrack" xml:space="preserve"><value>Gleis hinzufügen</value></data>
+  <data name="RemoveTrack" xml:space="preserve"><value>Gleis entfernen</value></data>
+  <data name="TrackTitle" xml:space="preserve"><value>Gleis {0}</value></data>
+  <data name="TrackDesignation" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="TrackLengthHelp" xml:space="preserve"><value>Die Länge, die ein Zug nutzen kann. An einer Weiche endet das Gleis dort, wo ein Zug auf dem anderen Gleis noch vorbeifahren kann, nicht an der Weichenspitze.</value></data>
+  <data name="TrackLengthFromDrawing" xml:space="preserve"><value>Länge aus der Zeichnung</value></data>
+  <data name="TrackPlatformLength" xml:space="preserve"><value>Bahnsteiglänge</value></data>
+  <data name="TrackDirectionLabel" xml:space="preserve"><value>Richtung</value></data>
+  <data name="TrackDirection_Both" xml:space="preserve"><value>Beide Richtungen</value></data>
+  <data name="TrackDirection_LeftToRight" xml:space="preserve"><value>Von links nach rechts</value></data>
+  <data name="TrackDirection_RightToLeft" xml:space="preserve"><value>Von rechts nach links</value></data>
+  <data name="TrackDirectionFromTo" xml:space="preserve"><value>Von {0} nach {1}</value></data>
+  <data name="TrackSpeedLimit" xml:space="preserve"><value>Höchstgeschwindigkeit (km/h)</value></data>
+  <data name="TrackUsage" xml:space="preserve"><value>Nutzung</value></data>
+  <data name="TrackIsMain" xml:space="preserve"><value>Hauptgleis</value></data>
+  <data name="TrackIsScheduled" xml:space="preserve"><value>Im Fahrplan</value></data>
+  <data name="TrackIsLockable" xml:space="preserve"><value>Abschließbar</value></data>
+  <data name="TrackIsStub" xml:space="preserve"><value>Stumpfgleis</value></data>
+  <data name="TrackStubFromDrawing" xml:space="preserve"><value>Stumpfgleis aus der Zeichnung</value></data>
+  <data name="TrackElements" xml:space="preserve"><value>Gleiselemente</value></data>
+  <data name="TrackElement" xml:space="preserve"><value>Gleiselement</value></data>
+  <data name="TrackElementOf" xml:space="preserve"><value>Teil von Gleis</value></data>
+  <data name="NoTrack" xml:space="preserve"><value>Kein Gleis</value></data>
+  <data name="TrackElementText" xml:space="preserve"><value>{0}. {1}, {2} mm</value></data>
+  <data name="TrackElement_StraightTrack" xml:space="preserve"><value>Gerade</value></data>
+  <data name="TrackElement_CurvedTrack" xml:space="preserve"><value>Bogen</value></data>
+  <data name="TrackElement_FlexTrack" xml:space="preserve"><value>Gleis</value></data>
+  <data name="TrackElement_Turnout" xml:space="preserve"><value>Weiche</value></data>
+  <data name="TrackElement_Crossing" xml:space="preserve"><value>Kreuzung</value></data>
+  <data name="TrackElement_DoubleSlip" xml:space="preserve"><value>Doppelkreuzungsweiche</value></data>
+  <data name="TracksHelp" xml:space="preserve"><value>Füge die Gleise hinzu, auf denen Züge geplant werden, und gib an, zu welchem Gleis jedes Gleiselement gehört. Jedes Modul hat mindestens ein Gleis: ein durchgehendes Gleis oder ein endendes Gleis.</value></data>
+  <data name="NoTrackElements" xml:space="preserve"><value>Dieses Modul hat keine Gleiselemente.</value></data>
+  <data name="OperationLocation" xml:space="preserve"><value>Betriebsstelle</value></data>
+  <data name="LocationNone" xml:space="preserve"><value>Dieses Modul ist freie Strecke: Es hat keinen Namen im Fahrplan, und die Züge fahren durch.</value></data>
+  <data name="LocationAdd" xml:space="preserve"><value>Zur Betriebsstelle machen</value></data>
+  <data name="LocationRemove" xml:space="preserve"><value>Betriebsstelle entfernen</value></data>
+  <data name="LocationRemoveConfirm" xml:space="preserve"><value>Die Betriebsstelle mit Namen, Signatur und Eigenschaften entfernen? Die Gleise bleiben.</value></data>
+  <data name="LocationHelp" xml:space="preserve"><value>Die Betriebsstelle ist das, was ein Fahrplaner vom Modul sieht: wo Züge halten, sich begegnen oder geleitet werden. Ihre Gleise stehen im Bereich Gleise.</value></data>
+  <data name="LocationSignature" xml:space="preserve"><value>Signatur</value></data>
+  <data name="LocationSignatureHelp" xml:space="preserve"><value>Der Kurzname, der in Fahrplänen verwendet wird, z. B. Tby. Sie ist innerhalb des Landes eindeutig.</value></data>
+  <data name="LocationCountry" xml:space="preserve"><value>Land</value></data>
+  <data name="LocationCountryHelp" xml:space="preserve"><value>Das Land, als dessen Teil die Betriebsstelle betrieben wird, als Code mit zwei Buchstaben, z. B. SE.</value></data>
+  <data name="LocationKind" xml:space="preserve"><value>Art</value></data>
+  <data name="LocationKind_Station" xml:space="preserve"><value>Bahnhof</value></data>
+  <data name="LocationKind_SignalControlled" xml:space="preserve"><value>Signalgesteuerte Stelle</value></data>
+  <data name="LocationKind_IndustrialArea" xml:space="preserve"><value>Industriegebiet</value></data>
+  <data name="LocationKind_Other" xml:space="preserve"><value>Sonstige Stelle, z. B. ein Haltepunkt</value></data>
+  <data name="LocationPassengers" xml:space="preserve"><value>Reisende steigen ein und aus</value></data>
+  <data name="LocationCargo" xml:space="preserve"><value>Fracht wird ver- und entladen</value></data>
+  <data name="LocationTrainsCanCross" xml:space="preserve"><value>Züge können kreuzen</value></data>
+  <data name="LocationDirectionChange" xml:space="preserve"><value>Züge können die Richtung wechseln</value></data>
+  <data name="LocationHasTurntable" xml:space="preserve"><value>Drehscheibe</value></data>
+  <data name="LocationIsShadow" xml:space="preserve"><value>Schattenbahnhof</value></data>
+  <data name="LocationIsTerminus" xml:space="preserve"><value>Die Strecke endet hier</value></data>
+  <data name="LocationIsHarbour" xml:space="preserve"><value>Hafen</value></data>
+  <data name="LocationKeyRequired" xml:space="preserve"><value>Für die Weichen wird ein Schlüssel gebraucht</value></data>
+  <data name="LocationCentreMiddle" xml:space="preserve"><value>Mitte in der Mitte des Moduls</value></data>
+  <data name="LocationCentre" xml:space="preserve"><value>Mitte vom linken Ende</value></data>
+  <data name="LocationCentreHelp" xml:space="preserve"><value>Entfernungen zu anderen Betriebsstellen werden von der Mitte aus gemessen, z. B. vom Empfangsgebäude, entlang des Hauptgleises.</value></data>
+  <data name="LocationKindChangeConfirm" xml:space="preserve"><value>{0} kann nicht haben: {1}. Art ändern und das entfernen?</value></data>
+  <data name="LocationProperty_IsShadow" xml:space="preserve"><value>Schattenbahnhof</value></data>
+  <data name="LocationProperty_HasTurntable" xml:space="preserve"><value>Drehscheibe</value></data>
+  <data name="LocationProperty_HasPassengerExchange" xml:space="preserve"><value>Reisende</value></data>
+  <data name="LocationProperty_HasCargoExchange" xml:space="preserve"><value>Fracht</value></data>
+  <data name="LocationProperty_IsChangingTrainDirectionPossible" xml:space="preserve"><value>Züge können die Richtung wechseln</value></data>
+  <data name="LocationProperty_TrainsCanCross" xml:space="preserve"><value>Züge können kreuzen</value></data>
+  <data name="LocationProblem_NameMissing" xml:space="preserve"><value>Die Betriebsstelle hat keinen Namen.</value></data>
+  <data name="LocationProblem_SignatureMissing" xml:space="preserve"><value>Die Betriebsstelle hat keine Signatur.</value></data>
+  <data name="LocationProblem_CountryCodeInvalid" xml:space="preserve"><value>Das Land ist ein Code mit zwei Großbuchstaben, z. B. SE.</value></data>
+  <data name="LocationProblem_CentreNegative" xml:space="preserve"><value>Die Mitte kann nicht vor dem linken Ende liegen.</value></data>
+  <data name="LocationProblem_ShadowNotAllowed" xml:space="preserve"><value>Nur ein Bahnhof kann ein Schattenbahnhof sein.</value></data>
+  <data name="LocationProblem_TurntableNotAllowed" xml:space="preserve"><value>Nur ein Bahnhof kann eine Drehscheibe haben.</value></data>
+  <data name="LocationProblem_PassengerExchangeNotAllowed" xml:space="preserve"><value>An dieser Art von Stelle gibt es keinen Reisendenwechsel.</value></data>
+  <data name="LocationProblem_CargoExchangeNotAllowed" xml:space="preserve"><value>An dieser Art von Stelle wird keine Fracht umgeschlagen.</value></data>
+  <data name="LocationProblem_CargoExchangeRequired" xml:space="preserve"><value>Hier wird immer Fracht umgeschlagen.</value></data>
+  <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>In einem Schattenbahnhof gibt es immer Reisendenwechsel.</value></data>
+  <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>An dieser Art von Stelle können Züge die Richtung nicht wechseln.</value></data>
+  <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>An dieser Art von Stelle können Züge nicht kreuzen.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Das Modul hat kein Gleis in der Liste. Jedes Modul hat mindestens eines: ein durchgehendes Gleis oder ein endendes Gleis.</value></data>
+  <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Ein Gleis hat keine Bezeichnung.</value></data>
+  <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mehr als ein Gleis heißt {0}.</value></data>
+  <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Gleiselement {0} gehört zu einem Gleis, das nicht in der Liste ist.</value></data>
+  <data name="TrackProblem_ElementWithoutTrack" xml:space="preserve"><value>Gleiselement {0} gehört zu keinem Gleis.</value></data>
+  <data name="TrackProblem_TrackWithoutElements" xml:space="preserve"><value>Gleis {0} hat keine Gleiselemente, daher ist seine Länge nicht bekannt.</value></data>
+  <data name="TrackProblem_ScheduledTrackReachesNoExit" xml:space="preserve"><value>Gleis {0} ist im Fahrplan, aber von ihm aus ist kein Modulende erreichbar.</value></data>
+  <data name="Field_FoulingDistance" xml:space="preserve"><value>Gleisabstand, bei dem Züge frei vorbeifahren (mm)</value></data>
 </root>

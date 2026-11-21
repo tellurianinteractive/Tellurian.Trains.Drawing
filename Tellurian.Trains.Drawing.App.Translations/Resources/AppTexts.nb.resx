@@ -71,14 +71,16 @@
   <data name="DrawnWithNotes" xml:space="preserve"><value>Modulen ble tegnet. Kontroller disse merknadene:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Åpne tegningen</value></data>
   <data name="ModuleIdentification" xml:space="preserve"><value>Identifikasjon</value></data>
-  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-moduler identifiseres med eierens prefiks og et nummer, f.eks. SFjä 012. Andre moduler har et navn. Oppgi et FREMO-nummer med prefiks, et navn eller begge deler.</value></data>
-  <data name="OwnerPrefix" xml:space="preserve"><value>Eierens FREMO-prefiks</value></data>
-  <data name="FremoNumber" xml:space="preserve"><value>FREMO-modulnummer</value></data>
-  <data name="OwnerName" xml:space="preserve"><value>Eierens fulle navn</value></data>
-  <data name="OwnerNameHelp" xml:space="preserve"><value>Valgfritt; eieren kan være en annen enn deg. Ved opplasting til Modulregisteret fylles det som mangler, inn.</value></data>
-  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Skriv inn et navn, eller et FREMO-nummer med eierens prefiks.</value></data>
-  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Skriv inn eierens FREMO-prefiks til FREMO-nummeret.</value></data>
-  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>FREMO-nummeret må være 1–9999.</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>Moduler identifiseres med eierens prefiks og et nummer, f.eks. SFjä 0012, som i FREMO, eller med et navn. Oppgi et nummer med prefiks, et navn eller begge deler.</value></data>
+  <data name="ModulePrefix" xml:space="preserve"><value>Prefiks</value></data>
+  <data name="ModuleNumber" xml:space="preserve"><value>Nummer</value></data>
+  <data name="PackageLabel" xml:space="preserve"><value>Pakke</value></data>
+  <data name="PackageLabelHelp" xml:space="preserve"><value>Kassen som modulen transporteres i. Gi modulene i samme kasse den samme betegnelsen.</value></data>
+  <data name="ModuleOwners" xml:space="preserve"><value>Eiere</value></data>
+  <data name="ModuleOwnersHelp" xml:space="preserve"><value>Valgfritt: eiernes navn, atskilt med komma. Ved opplasting til Modulregisteret fylles de inn eller erstattes.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Skriv inn et navn, eller et nummer med prefiks.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Skriv inn prefikset til nummeret.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>Nummeret må være 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Velg en endeprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} må være større enn 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} må være større enn 0 og høyst 360.</value></data>
@@ -427,4 +429,93 @@
   <data name="FlipCurve" xml:space="preserve"><value>Snu kurven</value></data>
   <data name="CannotRedraw" xml:space="preserve"><value>Denne modulen er ikke tegnet fra en mal, så endeprofilene og kurven kan ikke endres her; endene kan likevel snus.</value></data>
   <data name="BendsWillChange" xml:space="preserve"><value>Sporene i en endeprofil ligger ikke midt på endeplaten, så knekkene i seksjonsskjøtene flyttes i forhold til sporene. Kontroller skjøtene etterpå. Fortsette?</value></data>
+  <data name="Track" xml:space="preserve"><value>Spor</value></data>
+  <data name="TrackLength" xml:space="preserve"><value>Lengde</value></data>
+  <data name="TrackPlatform" xml:space="preserve"><value>Plattform</value></data>
+  <data name="AddTrack" xml:space="preserve"><value>Legg til spor</value></data>
+  <data name="RemoveTrack" xml:space="preserve"><value>Fjern spor</value></data>
+  <data name="TrackTitle" xml:space="preserve"><value>Spor {0}</value></data>
+  <data name="TrackDesignation" xml:space="preserve"><value>Betegnelse</value></data>
+  <data name="TrackLengthHelp" xml:space="preserve"><value>Lengden et tog kan bruke. Ved en sporveksel slutter sporet der et tog på det andre sporet fortsatt kan passere, ikke ved tungespissen.</value></data>
+  <data name="TrackLengthFromDrawing" xml:space="preserve"><value>Lengde fra tegningen</value></data>
+  <data name="TrackPlatformLength" xml:space="preserve"><value>Plattformlengde</value></data>
+  <data name="TrackDirectionLabel" xml:space="preserve"><value>Retning</value></data>
+  <data name="TrackDirection_Both" xml:space="preserve"><value>Begge retninger</value></data>
+  <data name="TrackDirection_LeftToRight" xml:space="preserve"><value>Venstre mot høyre</value></data>
+  <data name="TrackDirection_RightToLeft" xml:space="preserve"><value>Høyre mot venstre</value></data>
+  <data name="TrackDirectionFromTo" xml:space="preserve"><value>Fra {0} til {1}</value></data>
+  <data name="TrackSpeedLimit" xml:space="preserve"><value>Fartsgrense (km/t)</value></data>
+  <data name="TrackUsage" xml:space="preserve"><value>Bruk</value></data>
+  <data name="TrackIsMain" xml:space="preserve"><value>Hovedspor</value></data>
+  <data name="TrackIsScheduled" xml:space="preserve"><value>I ruteplanen</value></data>
+  <data name="TrackIsLockable" xml:space="preserve"><value>Kan låses</value></data>
+  <data name="TrackIsStub" xml:space="preserve"><value>Buttspor</value></data>
+  <data name="TrackStubFromDrawing" xml:space="preserve"><value>Buttspor fra tegningen</value></data>
+  <data name="TrackElements" xml:space="preserve"><value>Sporelementer</value></data>
+  <data name="TrackElement" xml:space="preserve"><value>Sporelement</value></data>
+  <data name="TrackElementOf" xml:space="preserve"><value>Del av spor</value></data>
+  <data name="NoTrack" xml:space="preserve"><value>Ingen spor</value></data>
+  <data name="TrackElementText" xml:space="preserve"><value>{0}. {1}, {2} mm</value></data>
+  <data name="TrackElement_StraightTrack" xml:space="preserve"><value>Rett spor</value></data>
+  <data name="TrackElement_CurvedTrack" xml:space="preserve"><value>Kurve</value></data>
+  <data name="TrackElement_FlexTrack" xml:space="preserve"><value>Spor</value></data>
+  <data name="TrackElement_Turnout" xml:space="preserve"><value>Sporveksel</value></data>
+  <data name="TrackElement_Crossing" xml:space="preserve"><value>Sporkryss</value></data>
+  <data name="TrackElement_DoubleSlip" xml:space="preserve"><value>Dobbel kryssveksel</value></data>
+  <data name="TracksHelp" xml:space="preserve"><value>Legg til sporene som tog planlegges på, og angi hvilket spor hvert sporelement er en del av. Hver modul har minst ett spor: et gjennomgående spor eller et spor som ender.</value></data>
+  <data name="NoTrackElements" xml:space="preserve"><value>Denne modulen har ingen sporelementer.</value></data>
+  <data name="OperationLocation" xml:space="preserve"><value>Driftssted</value></data>
+  <data name="LocationNone" xml:space="preserve"><value>Denne modulen er fri linje: den har ikke noe navn i ruteplanen, og togene passerer den.</value></data>
+  <data name="LocationAdd" xml:space="preserve"><value>Gjør til driftssted</value></data>
+  <data name="LocationRemove" xml:space="preserve"><value>Fjern driftsstedet</value></data>
+  <data name="LocationRemoveConfirm" xml:space="preserve"><value>Fjerne driftsstedet med navn, signatur og egenskaper? Sporene blir stående.</value></data>
+  <data name="LocationHelp" xml:space="preserve"><value>Driftsstedet er det en ruteplanlegger ser av modulen: der tog stopper, krysser eller ledes. Sporene står i ruten Spor.</value></data>
+  <data name="LocationSignature" xml:space="preserve"><value>Signatur</value></data>
+  <data name="LocationSignatureHelp" xml:space="preserve"><value>Det korte navnet som brukes i ruteplaner, f.eks. Tby. Den er unik innenfor landet.</value></data>
+  <data name="LocationCountry" xml:space="preserve"><value>Land</value></data>
+  <data name="LocationCountryHelp" xml:space="preserve"><value>Landet driftsstedet drives som en del av, som en kode på to bokstaver, f.eks. SE.</value></data>
+  <data name="LocationKind" xml:space="preserve"><value>Type</value></data>
+  <data name="LocationKind_Station" xml:space="preserve"><value>Stasjon</value></data>
+  <data name="LocationKind_SignalControlled" xml:space="preserve"><value>Signalstyrt sted</value></data>
+  <data name="LocationKind_IndustrialArea" xml:space="preserve"><value>Industriområde</value></data>
+  <data name="LocationKind_Other" xml:space="preserve"><value>Annet sted, f.eks. en holdeplass</value></data>
+  <data name="LocationPassengers" xml:space="preserve"><value>Passasjerer går på og av</value></data>
+  <data name="LocationCargo" xml:space="preserve"><value>Gods lastes og losses</value></data>
+  <data name="LocationTrainsCanCross" xml:space="preserve"><value>Tog kan krysse</value></data>
+  <data name="LocationDirectionChange" xml:space="preserve"><value>Tog kan skifte retning</value></data>
+  <data name="LocationHasTurntable" xml:space="preserve"><value>Svingskive</value></data>
+  <data name="LocationIsShadow" xml:space="preserve"><value>Skyggestasjon</value></data>
+  <data name="LocationIsTerminus" xml:space="preserve"><value>Linjen ender her</value></data>
+  <data name="LocationIsHarbour" xml:space="preserve"><value>Havn</value></data>
+  <data name="LocationKeyRequired" xml:space="preserve"><value>Det kreves nøkkel til sporvekslene</value></data>
+  <data name="LocationCentreMiddle" xml:space="preserve"><value>Midtpunkt midt på modulen</value></data>
+  <data name="LocationCentre" xml:space="preserve"><value>Midtpunkt fra venstre ende</value></data>
+  <data name="LocationCentreHelp" xml:space="preserve"><value>Avstander til andre driftssteder måles fra midtpunktet, f.eks. stasjonsbygningen, langs hovedsporet.</value></data>
+  <data name="LocationKindChangeConfirm" xml:space="preserve"><value>{0} kan ikke ha: {1}. Bytte type og fjerne det?</value></data>
+  <data name="LocationProperty_IsShadow" xml:space="preserve"><value>skyggestasjon</value></data>
+  <data name="LocationProperty_HasTurntable" xml:space="preserve"><value>svingskive</value></data>
+  <data name="LocationProperty_HasPassengerExchange" xml:space="preserve"><value>passasjerer</value></data>
+  <data name="LocationProperty_HasCargoExchange" xml:space="preserve"><value>gods</value></data>
+  <data name="LocationProperty_IsChangingTrainDirectionPossible" xml:space="preserve"><value>tog kan skifte retning</value></data>
+  <data name="LocationProperty_TrainsCanCross" xml:space="preserve"><value>tog kan krysse</value></data>
+  <data name="LocationProblem_NameMissing" xml:space="preserve"><value>Driftsstedet har ikke noe navn.</value></data>
+  <data name="LocationProblem_SignatureMissing" xml:space="preserve"><value>Driftsstedet har ingen signatur.</value></data>
+  <data name="LocationProblem_CountryCodeInvalid" xml:space="preserve"><value>Landet er en kode på to store bokstaver, f.eks. SE.</value></data>
+  <data name="LocationProblem_CentreNegative" xml:space="preserve"><value>Midtpunktet kan ikke ligge før venstre ende.</value></data>
+  <data name="LocationProblem_ShadowNotAllowed" xml:space="preserve"><value>Bare en stasjon kan være skyggestasjon.</value></data>
+  <data name="LocationProblem_TurntableNotAllowed" xml:space="preserve"><value>Bare en stasjon kan ha svingskive.</value></data>
+  <data name="LocationProblem_PassengerExchangeNotAllowed" xml:space="preserve"><value>Det kan ikke utveksles passasjerer på denne typen sted.</value></data>
+  <data name="LocationProblem_CargoExchangeNotAllowed" xml:space="preserve"><value>Det kan ikke utveksles gods på denne typen sted.</value></data>
+  <data name="LocationProblem_CargoExchangeRequired" xml:space="preserve"><value>Her utveksles det alltid gods.</value></data>
+  <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>På en skyggestasjon utveksles det alltid passasjerer.</value></data>
+  <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Tog kan ikke skifte retning på denne typen sted.</value></data>
+  <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Tog kan ikke krysse på denne typen sted.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Modulen har ingen spor i listen. Hver modul har minst ett: et gjennomgående spor eller et spor som ender.</value></data>
+  <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Et spor mangler betegnelse.</value></data>
+  <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mer enn ett spor heter {0}.</value></data>
+  <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Sporelement {0} er en del av et spor som ikke er i listen.</value></data>
+  <data name="TrackProblem_ElementWithoutTrack" xml:space="preserve"><value>Sporelement {0} er ikke en del av noe spor.</value></data>
+  <data name="TrackProblem_TrackWithoutElements" xml:space="preserve"><value>Spor {0} har ingen sporelementer, så lengden er ikke kjent.</value></data>
+  <data name="TrackProblem_ScheduledTrackReachesNoExit" xml:space="preserve"><value>Spor {0} er i ruteplanen, men ingen av modulens ender kan nås fra det.</value></data>
+  <data name="Field_FoulingDistance" xml:space="preserve"><value>Sporavstand der tog passerer fritt (mm)</value></data>
 </root>

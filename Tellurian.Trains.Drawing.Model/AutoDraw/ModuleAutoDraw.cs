@@ -8,8 +8,8 @@ namespace Tellurian.Trains.Drawing.Model.AutoDraw;
 /// </summary>
 public static class ModuleAutoDraw
 {
-    /// <summary>Recorded on every auto-drawn variant.</summary>
-    public const string GeneratorVersion = "1.1";
+    /// <summary>Recorded on every auto-drawn drawing.</summary>
+    public const string GeneratorVersion = "1.2";
 
     /// <summary>The Registry end profile designation for joints between sections.</summary>
     public const string InternalEndProfile = "Internal";

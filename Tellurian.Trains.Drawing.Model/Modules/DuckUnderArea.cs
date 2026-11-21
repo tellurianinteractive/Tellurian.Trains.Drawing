@@ -1,7 +1,7 @@
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>The part of a module that people can pass under (MD-19, Registry flag <c>IsDuckunder</c>).</summary>
-public sealed record DuckUnderArea
+public sealed record DuckUnderArea : ExtensibleRecord
 {
     /// <summary>A closed path in module coordinates; by default the whole outline.</summary>
     public required PathDrawing Area { get; init; }

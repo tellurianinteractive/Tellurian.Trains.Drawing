@@ -6,10 +6,11 @@
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Files
 @using Tellurian.Trains.Drawing.Model.Modules
+@using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions
 
-@* Plan view of a module variant (EX-8), in module coordinates; read-only and without JS, or the canvas of the module
-   editor, which passes the variant as edited, an overlay and pointer callbacks. *@
-@if (_variant is null)
+@* Plan view of a module (EX-8), in module coordinates; read-only and without JS, or the canvas of the module
+   editor, which passes the drawing as edited, an overlay and pointer callbacks. *@
+@if (_drawing is null)
 {
     <p class="drawing-view-error">@Error</p>
 }
@@ -19,25 +20,25 @@ else
         @<g class="md-content">
             @if (Show(ModuleLayers.OperatorSpaces))
             {
-                @foreach (var space in _variant.OperatorSpaces)
+                @foreach (var space in _drawing.OperatorSpaces)
                 {
                     <path class="md-operator-space" d="@SvgPath.From(space.Area)" />
                 }
             }
             @if (Show(ModuleLayers.Sections))
             {
-                @foreach (var section in _variant.Sections)
+                @foreach (var section in _drawing.Sections)
                 {
                     <path class="md-section" d="@SvgPath.From(section.Outline)" />
                 }
-                @foreach (var joint in _variant.InternalJoints)
+                @foreach (var joint in _drawing.InternalJoints)
                 {
                     <path class="md-internal-joint" d="@SvgPath.Polyline(joint.Points)" />
                 }
             }
             @if (Show(ModuleLayers.DuckUnderAreas))
             {
-                @foreach (var area in _variant.DuckUnderAreas)
+                @foreach (var area in _drawing.DuckUnderAreas)
                 {
                     <path class="md-duck-under" d="@SvgPath.From(area.Area)" />
                 }
@@ -66,7 +67,7 @@ else
             @if (Show(ModuleLayers.Tracks))
             {
                 <g class="md-tracks" style="@($"--track-color: {TrackColor}")">
-                    @foreach (var track in _variant.Tracks)
+                    @foreach (var track in _drawing.TrackElements)
                     {
                         @foreach (var route in track.Routes())
                         {
@@ -78,7 +79,7 @@ else
             @if (Show(ModuleLayers.Exits))
             {
                 @* The end profile's short name along the plate, inside the module beyond the shading. Exit labels aren't drawn: they aren't marked on real modules. *@
-                @foreach (var exit in _variant.Exits)
+                @foreach (var exit in _drawing.Exits)
                 {
                     var nameSize = MarkerSize * ProfileNameRelativeSize;
                     @if (_profileNames.TryGetValue(exit.Label, out var name))
@@ -97,13 +98,13 @@ else
             }
             @if (Show(ModuleLayers.Labels))
             {
-                @foreach (var label in _variant.Labels.Where(l => !string.IsNullOrWhiteSpace(l.Text)))
+                @foreach (var label in _drawing.Labels.Where(l => !string.IsNullOrWhiteSpace(l.Text)))
                 {
                     <WorldText At="label.Pose.Position" Text="@label.Text" Rotation="label.Pose.Heading" Size="MarkerSize" Class="md-label" />
                 }
             }
         </g>;
-    <DrawingCanvas FitText="@FitText" Viewport="_view" ViewportChanged="OnViewChanged" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
+    <DrawingCanvas @ref="_canvas" FitText="@FitText" Viewport="_view" ViewportChanged="OnViewChanged" AutoFit="_bounds" ShowGrid="ShowGrid" ShowScaleBar="ShowScaleBar"
                    PanWithPrimaryButton="!IsEditable" Label="@(Label ?? _module?.Title)" Class="module-view"
                    OnPointerDown="OnPointerDown" OnPointerMove="OnPointerMove" OnPointerUp="OnPointerUp" OnKeyDownCallback="OnKeyDown" Overlay="Overlay">
         @content
@@ -132,7 +133,7 @@ else
     private const double PrintTitleRelativeSize = 2;
 
     private Module? _module;
-    private ModuleVariant? _variant;
+    private ModuleDrawing? _drawing;
     private IReadOnlyList<EndPlate> _plates = [];
     private IReadOnlyList<ProfileShade> _shades = [];
     private IReadOnlyDictionary<string, (string Text, double Depth)> _profileNames = new Dictionary<string, (string, double)>();
@@ -148,11 +149,8 @@ else
     /// <summary>A module file (<c>.tdmodule</c>), as an alternative to <see cref="Module"/>; it brings its end profiles.</summary>
     [Parameter] public string? Json { get; set; }
 
-    /// <summary>The variant to show; the default variant if null.</summary>
-    [Parameter] public Guid? VariantId { get; set; }
-
-    /// <summary>The variant as edited, shown instead of the module's own; the view keeps its zoom when it changes.</summary>
-    [Parameter] public ModuleVariant? Variant { get; set; }
+    /// <summary>The drawing as edited, shown instead of the module's own; the view keeps its zoom when it changes.</summary>
+    [Parameter] public ModuleDrawing? Drawing { get; set; }
 
     /// <summary>True in an editor: the primary button goes to the pointer callbacks, and panning uses the middle button or Space.</summary>
     [Parameter] public bool IsEditable { get; set; }
@@ -204,6 +202,11 @@ else
 
     private double MarkerSize => Math.Max(Math.Max(_bounds.Width, _bounds.Height) * MarkerSizePerExtent, MinimumMarkerSize);
 
+    private DrawingCanvas? _canvas;
+
+    /// <summary>Fits the view to the whole module, e.g. after an editor has drawn it again in another shape.</summary>
+    public Task FitAsync() => _canvas?.ZoomToAsync(_bounds) ?? Task.CompletedTask;
+
     private async Task OnViewChanged(Viewport view)
     {
         _view = view;
@@ -215,10 +218,10 @@ else
     protected override void OnParametersSet()
     {
         object? source = Module ?? (object?)Json;
-        if (ReferenceEquals(source, _source) && _variant is not null && (VariantId is null || _variant.Id == VariantId))
+        if (ReferenceEquals(source, _source) && _drawing is not null)
         {
-            // An editor's changed variant is drawn again with the same view.
-            if (Variant is { } edited && !ReferenceEquals(edited, _variant)) Show(edited, fit: false);
+            // An editor's changed drawing is drawn again with the same view.
+            if (Drawing is { } edited && !ReferenceEquals(edited, _drawing)) Show(edited, fit: false);
             return;
         }
         _source = source;
@@ -239,77 +242,77 @@ else
             }
         }
         _lookup = lookup;
-        var variant = Variant ?? (_module is null ? null : VariantId is { } id ? _module.Variants.FirstOrDefault(v => v.Id == id) : _module.DefaultVariant);
-        if (variant is null)
+        var drawing = Drawing ?? _module?.Drawing;
+        if (drawing is null)
         {
-            _variant = null;
+            _drawing = null;
             return;
         }
-        Show(variant, fit: true);
+        Show(drawing, fit: true);
     }
 
-    /// <summary>Works out what is drawn for <paramref name="variant"/>; <paramref name="fit"/> fits the view to it.</summary>
-    private void Show(ModuleVariant variant, bool fit)
+    /// <summary>Works out what is drawn for <paramref name="drawing"/>; <paramref name="fit"/> fits the view to it.</summary>
+    private void Show(ModuleDrawing drawing, bool fit)
     {
-        _variant = variant;
-        _plates = Plates(variant, _lookup);
-        _shades = Shades(variant, _lookup);
-        _profileNames = ProfileNames(variant, _lookup);
-        _bounds = Bounds(variant, _plates);
+        _drawing = drawing;
+        _plates = Plates(drawing, _lookup);
+        _shades = Shades(drawing, _lookup);
+        _profileNames = ProfileNames(drawing, _lookup);
+        _bounds = Bounds(drawing, _plates);
         if (fit) _view = Viewport.Fit(_bounds, Width, Height);
         _name = ModuleNameLabel.Text(_module!);
-        _namePlacement = _name is null ? null : NamePlacement(variant, _name, _lookup);
+        _namePlacement = _name is null ? null : NamePlacement(drawing, _name, _lookup);
     }
 
     private bool Show(ModuleLayers layer) => Layers.HasFlag(layer);
 
     private IEnumerable<SegmentPath> PublicSidePaths()
     {
-        foreach (var side in _variant!.PublicSides)
+        foreach (var side in _drawing!.PublicSides)
         {
-            if (side.Attachment.SideIndex < 0 || side.Attachment.SideIndex >= _variant.Sides.Count) continue;
-            var path = _variant.Sides[side.Attachment.SideIndex].Path.ToPath();
+            if (side.Attachment.SideIndex < 0 || side.Attachment.SideIndex >= _drawing.Sides.Count) continue;
+            var path = _drawing.Sides[side.Attachment.SideIndex].Path.ToPath();
             var to = Math.Min(side.Attachment.To ?? path.Length, path.Length);
             if (to - side.Attachment.From > Tolerance.Length) yield return path.Between(side.Attachment.From, to);
         }
     }
 
     /// <summary>The name along the track, as the module is shown here: not turned (a hall plan passes its placement's rotation).</summary>
-    private ModuleNamePlacement NamePlacement(ModuleVariant variant, ModuleNameText name, Func<Guid, EndProfile?>? lookup)
+    private ModuleNamePlacement NamePlacement(ModuleDrawing drawing, ModuleNameText name, Func<Guid, EndProfile?>? lookup)
     {
-        var gauge = variant.Exits.Select(e => lookup?.Invoke(e.EndProfile.Id)?.Tracks.FirstOrDefault()?.Gauge).FirstOrDefault(g => g is not null) ?? Standard?.NormalGauge;
+        var gauge = drawing.Exits.Select(e => lookup?.Invoke(e.EndProfile.Id)?.Tracks.FirstOrDefault()?.Gauge).FirstOrDefault(g => g is not null) ?? Standard?.NormalGauge;
         var trackHalfWidth = gauge is { } g ? TrackCrossSection.SleeperLength(g) / 2 : MarkerSize / 2;
-        return ModuleNameLabel.Place(variant, name, Angle.Zero, trackHalfWidth);
+        return ModuleNameLabel.Place(drawing, name, Angle.Zero, trackHalfWidth);
     }
 
-    private static IReadOnlyList<EndPlate> Plates(ModuleVariant variant, Func<Guid, EndProfile?>? lookup) =>
+    private static IReadOnlyList<EndPlate> Plates(ModuleDrawing drawing, Func<Guid, EndProfile?>? lookup) =>
         lookup is null
             ? []
-            : [.. variant.Exits.Select(e => lookup(e.EndProfile.Id) is { } profile ? ModuleGeometry.EndPlate(e, profile) : null).OfType<EndPlate>()];
+            : [.. drawing.Exits.Select(e => lookup(e.EndProfile.Id) is { } profile ? ModuleGeometry.EndPlate(e, profile) : null).OfType<EndPlate>()];
 
-    private static IReadOnlyList<ProfileShade> Shades(ModuleVariant variant, Func<Guid, EndProfile?>? lookup) =>
+    private static IReadOnlyList<ProfileShade> Shades(ModuleDrawing drawing, Func<Guid, EndProfile?>? lookup) =>
         lookup is null
             ? []
-            : [.. variant.Exits.SelectMany(e => lookup(e.EndProfile.Id) is { } profile ? ProfileShading.Shades(e, profile) : [])];
+            : [.. drawing.Exits.SelectMany(e => lookup(e.EndProfile.Id) is { } profile ? ProfileShading.Shades(e, profile) : [])];
 
     /// <summary>
     /// The end profile's short name per exit label, or its designation (ModuleDrawing §9), with how far its
     /// shading reaches into the module, so the name goes just beyond it.
     /// </summary>
-    private static Dictionary<string, (string Text, double Depth)> ProfileNames(ModuleVariant variant, Func<Guid, EndProfile?>? lookup) =>
-        variant.Exits.DistinctBy(e => e.Label).ToDictionary(
+    private static Dictionary<string, (string Text, double Depth)> ProfileNames(ModuleDrawing drawing, Func<Guid, EndProfile?>? lookup) =>
+        drawing.Exits.DistinctBy(e => e.Label).ToDictionary(
             e => e.Label,
             e => lookup?.Invoke(e.EndProfile.Id) is { } profile
                 ? (profile.ShortNameOrDesignation, ProfileShading.Depth(profile))
                 : (e.EndProfile.Name, 0.0));
 
-    private static BoundingBox Bounds(ModuleVariant variant, IReadOnlyList<EndPlate> plates)
+    private static BoundingBox Bounds(ModuleDrawing drawing, IReadOnlyList<EndPlate> plates)
     {
         var box = BoundingBox.Empty;
-        foreach (var path in variant.Sections.Select(s => s.Outline).Concat(variant.Sides.Select(s => s.Path)).Concat(variant.OperatorSpaces.Select(o => o.Area)))
+        foreach (var path in drawing.Sections.Select(s => s.Outline).Concat(drawing.Sides.Select(s => s.Path)).Concat(drawing.OperatorSpaces.Select(o => o.Area)))
             box = box.Union(path.ToPath().Bounds);
-        foreach (var track in variant.Tracks) box = track.Routes().Aggregate(box, (b, r) => b.Union(r.Bounds));
-        foreach (var exit in variant.Exits) box = box.Including(exit.Pose.Position);
+        foreach (var track in drawing.TrackElements) box = track.Routes().Aggregate(box, (b, r) => b.Union(r.Bounds));
+        foreach (var exit in drawing.Exits) box = box.Including(exit.Pose.Position);
         foreach (var plate in plates) box = box.Including(plate.LeftCorner).Including(plate.RightCorner);
         if (box.IsEmpty) box = new(Point.Origin, Point.Origin);
         return box.Inflated(Math.Max(Math.Max(box.Width, box.Height) * MarginPerExtent, MinimumMarkerSize * 3));

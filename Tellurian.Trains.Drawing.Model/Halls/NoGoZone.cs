@@ -1,7 +1,7 @@
 namespace Tellurian.Trains.Drawing.Model.Halls;
 
 /// <summary>An area of a hall where nothing may be placed, e.g. in front of a fire hose cabinet (HA-2, VA-6).</summary>
-public sealed record NoGoZone
+public sealed record NoGoZone : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 

@@ -14,11 +14,11 @@ public static class DrawingFileFormat
     /// <summary>The schema version this library writes for <paramref name="kind"/>.</summary>
     public static int CurrentSchemaVersion(DrawingFileKind kind) => kind switch
     {
-        DrawingFileKind.EndProfile => 1,
-        DrawingFileKind.Module => 1,
-        DrawingFileKind.Catalogue => 1,
-        DrawingFileKind.Hall => 1,
-        DrawingFileKind.HallPlan => 1,
+        DrawingFileKind.EndProfile => 2,
+        DrawingFileKind.Module => 2,
+        DrawingFileKind.Catalogue => 2,
+        DrawingFileKind.Hall => 2,
+        DrawingFileKind.HallPlan => 2,
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown file kind."),
     };
 

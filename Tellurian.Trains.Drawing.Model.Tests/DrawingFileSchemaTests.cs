@@ -29,7 +29,7 @@ public sealed class DrawingFileSchemaTests
 
     [TestMethod]
     public void SchemaVersionIsInTheFileName() =>
-        Assert.AreEqual("module.v1.json", DrawingFileSchema.FileName(DrawingFileKind.Module));
+        Assert.AreEqual("module.v2.json", DrawingFileSchema.FileName(DrawingFileKind.Module));
 
     [TestMethod]
     public void EveryKindHasASchema() =>
@@ -78,15 +78,17 @@ public sealed class DrawingFileSchemaTests
         Assert.IsFalse(SchemaValidator.IsValid(DrawingFileKind.EndProfile, wrongKind.ToJsonString()));
 
         var wrongEnum = valid.DeepClone();
-        wrongEnum["content"]!["tracks"]![0]!["railSystem"] = "TwoRail";
+        Assert.AreEqual("TwoRail", (string)wrongEnum["content"]!["tracks"]![0]!["railSystem"]!);
+        // Enum values are written as in the code. The camelCase of earlier files is read, but isn't what version 2 writes.
+        wrongEnum["content"]!["tracks"]![0]!["railSystem"] = "twoRail";
         Assert.IsFalse(SchemaValidator.IsValid(DrawingFileKind.EndProfile, wrongEnum.ToJsonString()));
 
         var newerVersion = valid.DeepClone();
-        newerVersion["schemaVersion"] = 2;
+        newerVersion["schemaVersion"] = DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile) + 1;
         Assert.IsFalse(SchemaValidator.IsValid(DrawingFileKind.EndProfile, newerVersion.ToJsonString()));
 
         var badStep = JsonNode.Parse(ModuleJson(TestModules.Straight()))!;
-        badStep["content"]!["module"]!["variants"]![0]!["mainPath"]!["steps"]![0]!["type"] = "spline";
+        badStep["content"]!["module"]!["drawing"]!["mainPath"]!["steps"]![0]!["type"] = "spline";
         Assert.IsFalse(SchemaValidator.IsValid(DrawingFileKind.Module, badStep.ToJsonString()));
     }
 

@@ -1,5 +1,9 @@
 # Udgivelsesnoter
 
+## Version 0.9.1
+Udgivet 2026-11-18
+- Efter *Vend kurven* tilpasses visningen igen til hele modulet.
+
 ## Version 0.9.0
 Udgivet 2026-11-18
 - Moduleditor: et nyt panel *Ender*. Giv ende A eller ende B en anden endeprofil i modulets skala, så tegnes modulet igen med den. *Vend* vender en asymmetrisk endeprofils plade med den anden side udad; *Endevender* følger med af sig selv.

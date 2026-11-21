@@ -1,96 +1,94 @@
-using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Model.Catalogue;
+using Shared = Tellurian.Trains.Schedules.Model.Layouts;
+using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions;
 
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
-/// One physical module, drawn as one drawing with one or more variants (Registry <c>Module</c>).
-/// Properties are shared by all variants; geometry is per variant.
+/// One module as it is set up: the module of the shared layout model (<see cref="Shared.Module"/>: what it is called,
+/// who owns it, its standard, its operation location and its tracks as train planning sees them), with what Module
+/// Draw adds: its identity, its standard in the catalogue, its properties and its one <see cref="Drawing"/>.
+/// <para>
+/// From the shared model: <see cref="Shared.Module.Name"/> (may be empty when the module is identified by its
+/// designation, see <see cref="ModuleValidation"/>), <see cref="Shared.Module.Prefix"/> and
+/// <see cref="Shared.Module.Number"/> (1–9999), which together form the designation, e.g. <c>SFjä 0012</c>,
+/// <see cref="Shared.Module.ModuleOwners"/> (the names of the owners in one text),
+/// <see cref="Shared.Module.PackageLabel"/> (the box the module is transported in; the modules of a box have the same
+/// label and are submitted to a meeting together), <see cref="Shared.Module.Standard"/> (by short name, with the scale),
+/// <see cref="Shared.Module.OperationLocation"/> (null for a module that is plain line) and
+/// <see cref="Shared.Module.Tracks"/>, which every module has and the track elements of the drawing refer to.
+/// </para>
 /// </summary>
-public sealed record Module
+public sealed class Module : Shared.Module
 {
-    public required Guid Id { get; init; }
+    /// <summary>The identity of the module. Written first in a file, before the properties of the shared model.</summary>
+    [JsonPropertyOrder(FirstInFile)]
+    public required Guid Id { get; set; }
 
     /// <summary>
-    /// Registry <c>FullName</c>. May be empty when the module is identified by its FREMO designation
-    /// (<see cref="FremoNumber"/> with the first owner's <see cref="Owner.Prefix"/>); see <see cref="ModuleValidation"/>.
+    /// The id of the module's standard in Module Draw's catalogue (<see cref="ModuleStandard.Id"/>).
+    /// <see cref="Shared.Module.Standard"/> names the same standard for readers without the catalogue.
     /// </summary>
-    public string Name { get; init; } = string.Empty;
-
-    /// <summary>
-    /// The owner's FREMO module number, 1–9999 (Registry <c>FremoNumber</c>). Together with the first owner's
-    /// <see cref="Owner.Prefix"/> it forms the FREMO designation, e.g. <c>SFjä 012</c>.
-    /// </summary>
-    public int? FremoNumber { get; init; }
-
-    public required CatalogueReference Standard { get; init; }
-
-    /// <summary>The short name of the scale, from the standard.</summary>
-    public required string Scale { get; init; }
+    public required Guid StandardId { get; set; }
 
     /// <summary>The add-ons of the standard that the module meets.</summary>
-    public IReadOnlyList<CatalogueReference> AddOns { get; init; } = [];
+    public IReadOnlyList<CatalogueReference> AddOns { get; set; } = [];
 
-    public IReadOnlyList<Owner> Owners { get; init; } = [];
-    public string? Theme { get; init; }
-    public int? RepresentsFromYear { get; init; }
-    public int? RepresentsUptoYear { get; init; }
+    public string? Theme { get; set; }
+    public int? RepresentsFromYear { get; set; }
+    public int? RepresentsUptoYear { get; set; }
 
     /// <summary>As entered; compared with the drawing.</summary>
-    public int? NumberOfThroughTracks { get; init; }
+    public int? NumberOfThroughTracks { get; set; }
 
-    public bool HasNormalGauge { get; init; } = true;
-    public bool HasNarrowGauge { get; init; }
-    public bool IsDuckunder { get; init; }
-    public bool IsTurntable { get; init; }
-    public bool IsEndOfLine { get; init; }
+    public bool HasNormalGauge { get; set; } = true;
+    public bool HasNarrowGauge { get; set; }
+    public bool IsDuckunder { get; set; }
+    public bool IsTurntable { get; set; }
+    public bool IsEndOfLine { get; set; }
     /// <summary>
     /// The module turns an asymmetric end profile over (German <i>Endewender</i>, Registry flag): an asymmetric
     /// feature, such as the high side of FREMO-H0-B96, is on one side of the track at one end and on the other side at the other end.
     /// </summary>
-    public bool IsEndProfileSwitcher { get; init; }
-    public bool IsSignalModule { get; init; }
-    public bool IsStandAlone { get; init; }
+    public bool IsEndProfileSwitcher { get; set; }
+    public bool IsSignalModule { get; set; }
+    public bool IsStandAlone { get; set; }
 
     /// <summary>Registry functional state code.</summary>
-    public int? FunctionalState { get; init; }
+    public int? FunctionalState { get; set; }
 
     /// <summary>Registry landscape state code.</summary>
-    public int? LandscapeState { get; init; }
+    public int? LandscapeState { get; set; }
 
-    public string? Note { get; init; }
-    public string? PackageLabel { get; init; }
+    public string? Note { get; set; }
 
     /// <summary>Incremented on every save.</summary>
-    public int Revision { get; init; }
+    public int Revision { get; set; }
 
     /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
-    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; set; } = [];
 
-    public required IReadOnlyList<ModuleVariant> Variants { get; init; }
+    /// <summary>What other systems keep about the module, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
+    public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; set; }
 
-    /// <summary>The variant marked as default, otherwise the first.</summary>
-    [JsonIgnore]
-    public ModuleVariant DefaultVariant => Variants.FirstOrDefault(v => v.IsDefault) ?? Variants[0];
+    /// <summary>The geometry of the module, with its track elements. Written last in a file, being the largest part.</summary>
+    [JsonPropertyOrder(LastInFile)]
+    public required ModuleDrawing Drawing { get; set; }
 
-    /// <summary>The FREMO designation, e.g. <c>SFjä 012</c>, if both the number and the first owner's prefix are given.</summary>
-    [JsonIgnore]
-    public string? FremoDesignation => FremoDesignationOf(Owners.Count > 0 ? Owners[0].Prefix : null, FremoNumber);
+    /// <summary>
+    /// A copy that can be changed without changing this, for the editor's undo and drafts: the shared model copies the
+    /// operation location and the tracks; what Module Draw adds is immutable and is shared by the copy.
+    /// </summary>
+    public override Module Copy() => (Module)base.Copy();
 
-    /// <summary>The FREMO designation and the name, whichever are given, e.g. <c>SFjä 012 Tellby</c>.</summary>
-    [JsonIgnore]
-    public string Title => TitleOf(Name, Owners.Count > 0 ? Owners[0].Prefix : null, FremoNumber);
+    /// <summary>
+    /// The module's title from the shared model (<see cref="Shared.ModuleExtensions"/>): what it is called, without its
+    /// standard. The designation, scale and display name are the shared model's too.
+    /// </summary>
+    public override string ToString() => this.Title;
 
-    /// <summary>The FREMO designation : the prefix, a space and the number with at least three digits, as the Module Registry pads it.</summary>
-    public static string? FremoDesignationOf(string? prefix, int? fremoNumber) =>
-        string.IsNullOrWhiteSpace(prefix) || fremoNumber is not { } number
-            ? null
-            : string.Create(CultureInfo.InvariantCulture, $"{prefix.Trim()} {number:000}");
-
-    /// <inheritdoc cref="Title"/>
-    public static string TitleOf(string? name, string? prefix, int? fremoNumber) =>
-        string.Join(' ', new[] { FremoDesignationOf(prefix, fremoNumber), name?.Trim() }.Where(t => !string.IsNullOrEmpty(t)));
-
-    public override string ToString() => Title;
+    private const int FirstInFile = -1;
+    private const int LastInFile = 1;
 }

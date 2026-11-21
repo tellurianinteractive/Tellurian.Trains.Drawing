@@ -85,7 +85,7 @@ public sealed class BuiltInCatalogueTests
         Assert.AreEqual(JointFit.FitsWithMismatch, JointFitEvaluator.Evaluate(b96, ProfileOrientation.Normal, b96, ProfileOrientation.Normal).Fit);
     }
 
-    private static ModuleVariant Straight(string standard, string west, string east, bool isEndewender = false) =>
+    private static ModuleDrawing Straight(string standard, string west, string east, bool isEndewender = false) =>
         ModuleAutoDraw.Create(new()
         {
             Name = "Test",
@@ -94,10 +94,10 @@ public sealed class BuiltInCatalogueTests
             IsEndProfileSwitcher = isEndewender,
             Exits =
             [
-                new() { Label = "W", Direction = ExitDirection.West, EndProfile = west },
-                new() { Label = "E", Direction = ExitDirection.East, EndProfile = east },
+                new() { Label = "W", Direction = ExitDirection.Left, EndProfile = west },
+                new() { Label = "E", Direction = ExitDirection.Right, EndProfile = east },
             ],
-        }, Catalogue).Module!.DefaultVariant;
+        }, Catalogue).Module!.Drawing;
 
     private static JointFit Joint(ModuleExit a, ModuleExit b) =>
         JointFitEvaluator.Evaluate(Profile(a.EndProfile.Name), a.Orientation, Profile(b.EndProfile.Name), b.Orientation, Catalogue.Overrides).Fit;
@@ -139,7 +139,7 @@ public sealed class BuiltInCatalogueTests
             Straight = 1000,
         }.Create(Catalogue);
         Assert.IsTrue(result.IsDrawn, string.Join("; ", result.Notes));
-        CollectionAssert.AreEqual(new[] { "FREMO-H0-B96", "MMM480" }, result.Module!.DefaultVariant.Exits.Select(e => e.EndProfile.Name).ToArray());
+        CollectionAssert.AreEqual(new[] { "FREMO-H0-B96", "MMM480" }, result.Module!.Drawing.Exits.Select(e => e.EndProfile.Name).ToArray());
     }
 
     // Exit criterion of Phase 2: the built-in pairs are classified as expected.
@@ -182,8 +182,8 @@ public sealed class BuiltInCatalogueTests
     {
         var result = ModuleAutoDraw.Create(new() { Name = "Test", Standard = standard, Straight = 1000, NumberOfThroughTracks = tracks }, Catalogue);
         Assert.AreEqual(AutoDrawStatus.Complete, result.Status, string.Join(" ", result.Notes));
-        Assert.IsTrue(result.Module!.DefaultVariant.Exits.All(e => e.EndProfile.Name == expectedProfile));
-        Assert.HasCount(tracks, result.Module.DefaultVariant.Tracks);
+        Assert.IsTrue(result.Module!.Drawing.Exits.All(e => e.EndProfile.Name == expectedProfile));
+        Assert.HasCount(tracks, result.Module.Drawing.TrackElements);
     }
 
     [TestMethod]

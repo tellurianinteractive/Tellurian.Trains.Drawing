@@ -17,7 +17,7 @@ public sealed class ModuleScene : ISelectableScene<ModuleFileContent, ModuleItem
 
     public bool TryHitTest(ModuleFileContent document, Point point, double tolerance, out ModuleItem id)
     {
-        var joints = document.Module.DefaultVariant.InternalJoints;
+        var joints = document.Module.Drawing.InternalJoints;
         for (var j = joints.Count - 1; j >= 0; j--)
         {
             var points = joints[j].Points;
@@ -32,7 +32,7 @@ public sealed class ModuleScene : ISelectableScene<ModuleFileContent, ModuleItem
 
     public BoundingBox BoundsOf(ModuleFileContent document, ModuleItem id)
     {
-        var joints = document.Module.DefaultVariant.InternalJoints;
+        var joints = document.Module.Drawing.InternalJoints;
         if (id.Joint >= joints.Count) return BoundingBox.Empty;
         var points = joints[id.Joint].Points;
         return id.Kind == ModuleItemKind.Joint ? BoundingBox.FromPoints(points)
@@ -52,7 +52,7 @@ public sealed class ModuleScene : ISelectableScene<ModuleFileContent, ModuleItem
 
     public IEnumerable<SnapTarget> SnapTargetsOf(ModuleFileContent document, ModuleItem id)
     {
-        var joints = document.Module.DefaultVariant.InternalJoints;
+        var joints = document.Module.Drawing.InternalJoints;
         if (id.Joint >= joints.Count) yield break;
         var points = joints[id.Joint].Points;
         if (id.Kind == ModuleItemKind.JointPoint && id.Point < points.Count) yield return new PointTarget(points[id.Point], id);
@@ -81,7 +81,7 @@ public sealed class ModuleScene : ISelectableScene<ModuleFileContent, ModuleItem
 
     public static IEnumerable<ModuleItem> Items(ModuleFileContent document)
     {
-        var joints = document.Module.DefaultVariant.InternalJoints;
+        var joints = document.Module.Drawing.InternalJoints;
         for (var j = 0; j < joints.Count; j++)
         {
             yield return ModuleItem.OfJoint(j);

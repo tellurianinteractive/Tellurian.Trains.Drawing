@@ -8,7 +8,7 @@ namespace Tellurian.Trains.Drawing.Model.Modules;
 /// module with its ends on the outline. Never offered for joining in a hall plan, and it always fits: its end
 /// profiles are never compared.
 /// </summary>
-public sealed record InternalJoint
+public sealed record InternalJoint : ExtensibleRecord
 {
     public required string FirstSection { get; init; }
     public required string SecondSection { get; init; }

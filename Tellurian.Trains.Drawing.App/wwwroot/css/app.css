@@ -532,6 +532,20 @@ label.inline {
         min-width: 0;
     }
 
+/* The Tracks pane: the marks of a track, one per line, and a track chooser per track element. */
+.track-flags {
+    display: grid;
+    gap: 0.2rem;
+    margin: 0.4rem 0;
+}
+
+.track-elements select,
+.location-pane .property-grid select,
+.tracks-pane .property-grid select {
+    width: 100%;
+    min-width: 0;
+}
+
 /* The module properties pane lays out its fields itself, so that its problems stay inside the pane. */
 .module-properties .property-grid {
     display: grid;

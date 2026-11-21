@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Geometry;
 
@@ -7,7 +8,7 @@ namespace Tellurian.Trains.Drawing.Model.Halls;
 /// A room where a hall plan is built (HA-1..HA-5), in hall coordinates: millimetres, X to the right, Y up.
 /// Halls are stored in their own files and reused by hall plans, which keep an embedded copy.
 /// </summary>
-public sealed record Hall
+public sealed record Hall : ExtensibleRecord
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
@@ -29,6 +30,9 @@ public sealed record Hall
 
     /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
     public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+
+    /// <summary>What other systems keep about the hall, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
+    public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; init; }
 
     /// <summary>The number of walls.</summary>
     [JsonIgnore]

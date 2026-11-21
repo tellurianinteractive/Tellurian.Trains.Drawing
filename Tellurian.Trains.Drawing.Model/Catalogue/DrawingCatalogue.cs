@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Catalogue;
@@ -6,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Model.Catalogue;
 /// Scales, module standards, add-ons, end profiles and compatibility overrides, with lookups.
 /// Short names and designations are compared without regard to case.
 /// </summary>
-public sealed record DrawingCatalogue
+public sealed record DrawingCatalogue : ExtensibleRecord
 {
     public static DrawingCatalogue Empty { get; } = new();
 
@@ -18,6 +19,9 @@ public sealed record DrawingCatalogue
     public IReadOnlyList<StandardAddOn> AddOns { get; init; } = [];
     public IReadOnlyList<EndProfile> EndProfiles { get; init; } = [];
     public IReadOnlyList<EndProfileCompatibilityOverride> Overrides { get; init; } = [];
+
+    /// <summary>What other systems keep about the catalogue, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
+    public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; init; }
 
     public Scale? FindScale(string shortName) => Scales.FirstOrDefault(s => Same(s.ShortName, shortName));
 

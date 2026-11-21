@@ -8,7 +8,7 @@ namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 /// and segments (lines, arcs and fillets), and its bottom. The side edges follow the edge's first and last points,
 /// so the plate is as wide as the upper edge. The upper edge is also the profile's ground line, compared at joints.
 /// </summary>
-public sealed record PlateShape
+public sealed record PlateShape : ExtensibleRecord
 {
     /// <summary>Arcs are approximated by points this close to the arc where points are needed, mm.</summary>
     public const double ArcTolerance = 0.5;

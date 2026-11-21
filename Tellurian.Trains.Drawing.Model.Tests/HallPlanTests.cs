@@ -1,5 +1,6 @@
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.HallPlans;
+using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
@@ -34,21 +35,33 @@ public sealed class HallPlanTests
             Assert.ThrowsExactly<DrawingFileException>(() => DrawingFileSerializer.DeserializeHall(DrawingFileSerializer.Serialize(Plan()))).Error);
 
     [TestMethod]
-    public void FlipSwapsTheExits()
+    public void TheLeftExitJoinsThePreviousModuleUnlessTurned()
     {
-        var entry = new LineEntry { ModuleId = Guid.NewGuid(), EntryExit = "W", ExitExit = "E" };
+        var entry = new LineEntry { ModuleId = Guid.NewGuid() };
+        Assert.AreEqual((ExitPlace.Left, ExitPlace.Right), (entry.Entry, entry.Exit));
         var flipped = entry.Flipped();
-        Assert.AreEqual("E", flipped.EntryExit);
-        Assert.AreEqual("W", flipped.ExitExit);
+        Assert.AreEqual((ExitPlace.Right, ExitPlace.Left), (flipped.Entry, flipped.Exit));
         Assert.AreEqual(entry, flipped.Flipped());
     }
 
     [TestMethod]
-    public void EndOfLineEntryHasOneExit()
+    public void AJunctionSaysWhichExitTheLineContinuesFrom()
     {
-        var entry = new LineEntry { ModuleId = Guid.NewGuid(), EntryExit = "W" };
-        Assert.AreEqual(new ExitReference(entry.ModuleId, "W"), entry.Entry);
-        Assert.IsNull(entry.Exit);
+        var entry = new LineEntry { ModuleId = Guid.NewGuid(), ContinuesFrom = new(ExitDirection.Right, 2) };
+        Assert.AreEqual(new ExitPlace(ExitDirection.Right, 2), entry.Exit);
+        Assert.AreEqual(ExitPlace.Left, entry.Entry);
+    }
+
+    [TestMethod]
+    public void AnExitIsFoundBySideAndNumberWhateverItsLabel()
+    {
+        var junction = Plan().Modules[2].Drawing;
+        var second = new ExitPlace(ExitDirection.Right, 2).In(junction)!;
+        Assert.AreEqual("E2", second.Label);
+        Assert.AreEqual(new ExitPlace(ExitDirection.Right, 2), ExitPlace.Of(junction, second));
+        var relabelled = junction with { Exits = [.. junction.Exits.Select(e => e with { Label = $"x{e.Label}" })] };
+        Assert.AreEqual("xE2", new ExitPlace(ExitDirection.Right, 2).In(relabelled)!.Label);
+        Assert.IsNull(new ExitPlace(ExitDirection.Right, 3).In(junction));
     }
 
     [TestMethod]
@@ -57,7 +70,7 @@ public sealed class HallPlanTests
         var plan = Plan();
         var terminus = plan.Modules[3];
         Assert.AreEqual(4, plan.Entries().Count());
-        Assert.AreEqual("W", plan.FindEntry(terminus.Id)?.EntryExit);
+        Assert.IsNotNull(plan.FindEntry(terminus.Id));
         Assert.IsTrue(plan.Layouts[0].Lines[1].IsBranch);
         Assert.IsFalse(plan.Layouts[0].Lines[0].IsBranch);
         Assert.IsEmpty(plan.ModulesPlacedMoreThanOnce());

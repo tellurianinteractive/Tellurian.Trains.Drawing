@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.Catalogue;
 /// Overrides the rule result (spec §3.2) for a specific pair of end profiles, for known exceptions.
 /// The pair is unordered and applies to all orientations.
 /// </summary>
-public sealed record EndProfileCompatibilityOverride
+public sealed record EndProfileCompatibilityOverride : ExtensibleRecord
 {
     public required Guid FirstEndProfileId { get; init; }
     public required Guid SecondEndProfileId { get; init; }

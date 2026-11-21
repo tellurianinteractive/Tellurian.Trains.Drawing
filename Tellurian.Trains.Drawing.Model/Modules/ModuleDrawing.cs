@@ -5,21 +5,12 @@ using Tellurian.Trains.Drawing.Model.Tracks;
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
-/// One drawing of a module (Registry <c>ConfigurationLabel</c>), in the module's local coordinates:
-/// origin at the first exit's end-plate centre, X pointing into the module from it (ModuleDrawing §2).
+/// The drawing of a module, in the module's local coordinates: origin at the first exit's end-plate centre,
+/// X pointing into the module from it (ModuleDrawing §2). A module has one drawing: a module that can be set up
+/// in several ways is several modules, each with a file of its own. Only the Module Registry knows that they belong together.
 /// </summary>
-public sealed record ModuleVariant
+public sealed record ModuleDrawing : ExtensibleRecord
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
-
-    /// <summary>The configuration label; may be empty for a module with one variant.</summary>
-    public string Name { get; init; } = string.Empty;
-
-    public bool IsDefault { get; init; }
-
-    /// <summary>The Registry module row of this variant, if known (spec §10, variant mapping).</summary>
-    public int? RegistryModuleId { get; init; }
-
     public IReadOnlyList<ModuleExit> Exits { get; init; } = [];
 
     /// <summary>The centre line from the first exit to the second; null if there is none.</summary>
@@ -30,7 +21,24 @@ public sealed record ModuleVariant
 
     public IReadOnlyList<Section> Sections { get; init; } = [];
     public IReadOnlyList<InternalJoint> InternalJoints { get; init; } = [];
-    public IReadOnlyList<TrackElement> Tracks { get; init; } = [];
+    /// <summary>
+    /// The track elements of the drawing: the geometry of the track plan (spec MD-6). Each refers by
+    /// <see cref="TrackElement.StationTrackId"/> to a track of the module's list (the <c>Tracks</c> of the
+    /// <see cref="Module"/>, spec MD-8), which has the properties that aren't geometry.
+    /// </summary>
+    public IReadOnlyList<TrackElement> TrackElements { get; init; } = [];
+
+    /// <summary>
+    /// The ids of the module's tracks whose length the user has entered. The length of every other track follows the
+    /// drawing (<see cref="StationTrackMeasurement"/>).
+    /// </summary>
+    public IReadOnlyList<int> TracksWithEnteredLength { get; init; } = [];
+
+    /// <summary>
+    /// The ids of the module's tracks for which the user has chosen whether they are stubs. For every other track it
+    /// follows the drawing (<see cref="StationTrackMeasurement"/>).
+    /// </summary>
+    public IReadOnlyList<int> TracksWithEnteredStub { get; init; } = [];
     public IReadOnlyList<OperatorSpace> OperatorSpaces { get; init; } = [];
     public IReadOnlyList<PublicSide> PublicSides { get; init; } = [];
     public IReadOnlyList<DuckUnderArea> DuckUnderAreas { get; init; } = [];
@@ -39,7 +47,7 @@ public sealed record ModuleVariant
     /// <summary>Measures entered in or imported from the Registry, for comparison (MD-10).</summary>
     public RegistryMeasures? RegistryMeasures { get; init; }
 
-    /// <summary>Set while the variant is as auto-draw generated it (MD-20); null once edited by hand.</summary>
+    /// <summary>Set while the drawing is as auto-draw generated it (MD-20); null once edited by hand.</summary>
     public AutoDrawRecord? AutoDraw { get; init; }
 
     [JsonIgnore]
@@ -52,6 +60,4 @@ public sealed record ModuleVariant
     };
 
     public ModuleExit? Exit(string label) => Exits.FirstOrDefault(e => e.Label == label);
-
-    public override string ToString() => Name;
 }

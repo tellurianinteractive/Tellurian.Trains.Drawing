@@ -22,7 +22,7 @@ public sealed class ModuleGeometryTests
     };
 
     /// <summary>A 1000 mm straight module, 500 mm wide, drawn by hand.</summary>
-    private static ModuleVariant Straight()
+    private static ModuleDrawing Straight()
     {
         var west = Exit("W", new(Point.Origin, Angle.Half));
         var east = Exit("E", new(new(1000, 0), Angle.Zero));
@@ -69,13 +69,13 @@ public sealed class ModuleGeometryTests
         var east = Exit("E", main.EndPose);
         var right = main.Offset(-250);
         var left = main.Offset(250).Reversed();
-        var variant = new ModuleVariant
+        var drawing = new ModuleDrawing
         {
             Exits = [west, east],
             MainPath = PathDrawing.From(main),
             Sides = [new() { FromExit = "W", ToExit = "E", Path = PathDrawing.From(right) }, new() { FromExit = "E", ToExit = "W", Path = PathDrawing.From(left) }],
         };
-        var polygon = ModuleGeometry.Outline(variant, Lookup)!.Tessellate(0.01);
+        var polygon = ModuleGeometry.Outline(drawing, Lookup)!.Tessellate(0.01);
         var expectedArea = Math.PI / 12 * (2250 * 2250 - 1750 * 1750) / 2 * 2;
         Assert.AreEqual(expectedArea, polygon.SignedArea, expectedArea * RelativeArea);
     }
@@ -84,43 +84,43 @@ public sealed class ModuleGeometryTests
     public void EndOfLineModuleHasOneSide()
     {
         var exit = Exit("A", new(Point.Origin, Angle.Half));
-        var variant = new ModuleVariant
+        var drawing = new ModuleDrawing
         {
             Exits = [exit],
             Sides = [new() { FromExit = "A", ToExit = "A", Path = PathDrawing.Polyline([new(0, -250), new(1200, -250), new(1200, 250), new(0, 250)]) }],
         };
-        Assert.AreEqual(ModuleKind.EndOfLine, variant.Kind);
-        Assert.AreEqual(1200 * 500, ModuleGeometry.Outline(variant, Lookup)!.Tessellate().SignedArea, Tolerance.Length);
+        Assert.AreEqual(ModuleKind.EndOfLine, drawing.Kind);
+        Assert.AreEqual(1200 * 500, ModuleGeometry.Outline(drawing, Lookup)!.Tessellate().SignedArea, Tolerance.Length);
     }
 
     [TestMethod]
     public void SideOffTheCornerIsRejected()
     {
-        var variant = Straight();
-        variant = variant with { Sides = [variant.Sides[0] with { Path = PathDrawing.Polyline([new(0, -240), new(1000, -250)]) }, variant.Sides[1]] };
-        var exception = Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(variant, Lookup));
+        var drawing = Straight();
+        drawing = drawing with { Sides = [drawing.Sides[0] with { Path = PathDrawing.Polyline([new(0, -240), new(1000, -250)]) }, drawing.Sides[1]] };
+        var exception = Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing, Lookup));
         Assert.Contains("right corner of exit W", exception.Message);
     }
 
     [TestMethod]
     public void TinyCornerGapIsBridged()
     {
-        var variant = Straight();
-        variant = variant with { Sides = [variant.Sides[0] with { Path = PathDrawing.Polyline([new(0, -250.005), new(1000, -250)]) }, variant.Sides[1]] };
-        Assert.IsNotNull(ModuleGeometry.Outline(variant, Lookup));
+        var drawing = Straight();
+        drawing = drawing with { Sides = [drawing.Sides[0] with { Path = PathDrawing.Polyline([new(0, -250.005), new(1000, -250)]) }, drawing.Sides[1]] };
+        Assert.IsNotNull(ModuleGeometry.Outline(drawing, Lookup));
     }
 
     [TestMethod]
     public void UnknownExitAndMissingProfileAreReported()
     {
-        var variant = Straight();
-        Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(variant with { Sides = [variant.Sides[0] with { ToExit = "X" }, variant.Sides[1]] }, Lookup));
-        Assert.ThrowsExactly<KeyNotFoundException>(() => ModuleGeometry.Outline(variant, _ => null));
+        var drawing = Straight();
+        Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing with { Sides = [drawing.Sides[0] with { ToExit = "X" }, drawing.Sides[1]] }, Lookup));
+        Assert.ThrowsExactly<KeyNotFoundException>(() => ModuleGeometry.Outline(drawing, _ => null));
     }
 
     [TestMethod]
     public void VariantWithoutSidesHasNoOutline() =>
-        Assert.IsNull(ModuleGeometry.Outline(new ModuleVariant(), Lookup));
+        Assert.IsNull(ModuleGeometry.Outline(new ModuleDrawing(), Lookup));
 
     [TestMethod]
     public void TrackPositionsFollowTheEndView()
@@ -152,18 +152,14 @@ public sealed class ModuleGeometryTests
     [DataRow(4, ModuleKind.Junction)]
     public void KindFollowsNumberOfExits(int exits, ModuleKind expected)
     {
-        var variant = new ModuleVariant { Exits = [.. Enumerable.Range(0, exits).Select(i => Exit($"{i}", Pose.Origin))] };
-        Assert.AreEqual(expected, variant.Kind);
+        var drawing = new ModuleDrawing { Exits = [.. Enumerable.Range(0, exits).Select(i => Exit($"{i}", Pose.Origin))] };
+        Assert.AreEqual(expected, drawing.Kind);
     }
 
     [TestMethod]
-    public void DefaultVariantAndExitLookup()
+    public void ExitLookup()
     {
-        var first = Straight() with { Name = "Short" };
-        var second = Straight() with { Name = "Long", IsDefault = true };
-        var module = new Module { Id = Guid.NewGuid(), Name = "Test", Standard = new(Guid.NewGuid(), "FREMO/H0-RE"), Scale = "H0", Variants = [first, second] };
-        Assert.AreEqual("Long", module.DefaultVariant.Name);
-        Assert.AreEqual("Short", (module with { Variants = [first] }).DefaultVariant.Name);
+        var first = Straight();
         Assert.IsNotNull(first.Exit("E"));
         Assert.IsNull(first.Exit("X"));
     }

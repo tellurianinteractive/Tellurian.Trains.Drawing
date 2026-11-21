@@ -47,6 +47,11 @@ public sealed partial class AppTextsTests
             .Concat(Keys<RailSystem>("RailSystem"))
             .Concat(Keys<CatalogueProblemCode>("Problem"))
             .Concat(Keys<Editing.EndProfiles.MeasureOrigin>("MeasureOrigin"))
+            .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.TrackDirection>("TrackDirection"))
+            .Concat(Keys<Model.Tracks.StationTrackProblemCode>("TrackProblem"))
+            .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind>("LocationKind"))
+            .Concat(LocationProblemsShown.Select(code => $"LocationProblem_{code}"))
+            .Concat(new[] { "StraightTrack", "CurvedTrack", "FlexTrack", "Turnout", "Crossing", "DoubleSlip" }.Select(n => $"TrackElement_{n}"))
             .Concat(Keys<Model.EndProfiles.PlateSegmentKind>("SegmentKind"))
             .Concat(Keys<Model.EndProfiles.FilletSide>("FilletSide"));
         foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
@@ -55,13 +60,33 @@ public sealed partial class AppTextsTests
     [TestMethod]
     public void EveryCatalogueFieldHasALabel()
     {
-        string[] notShown = ["Id", "Source", "RegistryId"];
+        string[] notShown = ["Id", "Source", "ExternalReferences", "ExtensionData"];
         var properties = new[] { typeof(ModuleStandard), typeof(StandardAddOn), typeof(EndProfileCompatibilityOverride) }
             .SelectMany(t => t.GetProperties().Where(p => p.CanWrite).Select(p => p.Name))
             .Except(notShown);
         foreach (var property in properties)
             Assert.IsNotNull(Resources.GetString(string.Join("_", "Field", property), CultureInfo.InvariantCulture), property);
     }
+
+    /// <summary>
+    /// The rules of the shared layout model that the app checks: those of an operation location itself. The rules of
+    /// its tracks have the app's own texts (<c>TrackProblem</c>), and what is decided for a location in a layout
+    /// (manned, controlled by, instructions) isn't entered in the app.
+    /// </summary>
+    private static IEnumerable<Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode> LocationProblemsShown =>
+        Enum.GetValues<Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode>().Except(
+        [
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackDesignationMissing,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackDesignationNotUnique,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackLengthNegative,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.KeyNameWithoutLock,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackUnknown,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.MannedNotAllowed,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.ControlledByNotAllowed,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.ControlledByNotManned,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.InstructionsNotAllowed,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.OperationLocationMissing,
+        ]);
 
     private static IEnumerable<string> Keys<TEnum>(string prefix) where TEnum : struct, Enum =>
         Enum.GetNames<TEnum>().Select(n => string.Join("_", prefix, n));

@@ -1,0 +1,226 @@
+@using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying
+@using StationTrack = Tellurian.Trains.Schedules.Model.Layouts.StationTrack
+@using TrackDirection = Tellurian.Trains.Schedules.Model.Layouts.TrackDirection
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Components.Properties
+@using Tellurian.Trains.Drawing.Editing.Commands
+@using Tellurian.Trains.Drawing.Editing.Input
+@using Tellurian.Trains.Drawing.Editing.Modules
+@using Tellurian.Trains.Drawing.Model.EndProfiles
+@using Tellurian.Trains.Drawing.Model.Modules
+@using Tellurian.Trains.Drawing.Model.Tracks
+
+@* The tracks of a module as train planning sees them (MD-8): the list of tracks with the properties that aren't
+   geometry, and which track each track element of the drawing is part of. Lengths are in metres here, as in a
+   timetable. Each change goes to the editor as a command, so it can be undone. *@
+@{
+    var module = Content.Module;
+    var drawing = module.Drawing;
+    var tracks = module.Tracks.OrderBy(t => t.DisplayOrder).ToList();
+    var elements = drawing.TrackElements.Where(e => e is not BufferStop).ToList();
+    var selected = tracks.FirstOrDefault(t => t.Id == _selected);
+}
+<section class="pane tracks-pane" aria-label="@T["Tracks"]">
+    <h2>@T["Tracks"] <HelpButton For="ModuleTracks" Title="@T["Tracks"]" AlignEnd="true" /></h2>
+    @if (tracks.Count > 0)
+    {
+        <table class="plate-points module-tracks">
+            <thead><tr><th>@T["Track"]</th><th>@T["TrackLength"]</th><th>@T["TrackPlatform"]</th></tr></thead>
+            <tbody>
+                @foreach (var track in tracks)
+                {
+                    var id = track.Id;
+                    <tr class="@(id == _selected ? "selected" : null)">
+                        <td><button type="button" class="link track-link" @onclick="() => _selected = id">@(string.IsNullOrWhiteSpace(track.Designation) ? "–" : track.Designation)</button></td>
+                        <td class="number track-length">@Metres(track.Length) m</td>
+                        <td class="number">@(track.PlatformLength > 0 ? $"{Metres(track.PlatformLength)} m" : "–")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <div class="pane-buttons">
+        <button type="button" id="add-track" @onclick="AddAsync">@T["AddTrack"]</button>
+        <button type="button" id="remove-track" disabled="@(selected is null)" @onclick="RemoveAsync">@T["RemoveTrack"]</button>
+    </div>
+    @if (selected is { } current)
+    {
+        var trackId = current.Id;
+        var isLengthEntered = drawing.TracksWithEnteredLength.Contains(trackId);
+        var isStubEntered = drawing.TracksWithEnteredStub.Contains(trackId);
+        <h3 id="track-title">@T.Format("TrackTitle", current.Designation)</h3>
+        <div class="property-grid">
+            <TextField Label="@T["TrackDesignation"]" Value="@current.Designation" ValueChanged="v => SetAsync(trackId, t => t.With(c => c.Designation = v ?? string.Empty))" />
+            <NumberField Label="@T["TrackLength"]" Help="@T["TrackLengthHelp"]" Value="current.Length * MillimetresPerMetre" LengthUnit="LengthUnit.Metre" Decimals="3" Min="0"
+                         ReadOnly="@(!isLengthEntered)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => ApplyAsync(Commands.SetLength(trackId, v / MillimetresPerMetre))" />
+            <NumberField Label="@T["TrackPlatformLength"]" Value="current.PlatformLength * MillimetresPerMetre" LengthUnit="LengthUnit.Metre" Decimals="3" Min="0"
+                         InvalidText="@T["InvalidNumber"]" ValueChanged="v => SetAsync(trackId, t => t.With(c => c.PlatformLength = v / MillimetresPerMetre))" />
+            <label class="property-label" for="track-direction">@T["TrackDirectionLabel"]</label>
+            <select id="track-direction" value="@current.Direction" @onchange="e => SetDirectionAsync(trackId, e)">
+                @foreach (var direction in Enum.GetValues<TrackDirection>())
+                {
+                    <option value="@direction">@DirectionText(direction, drawing)</option>
+                }
+            </select>
+            <TextField Label="@T["TrackSpeedLimit"]" Value="@current.SpeedLimit?.ToString(CultureInfo.CurrentCulture)" ValueChanged="v => SetSpeedLimitAsync(trackId, v)" />
+            <TextField Label="@T["TrackUsage"]" Value="@current.Usage" ValueChanged="v => SetAsync(trackId, t => t.With(c => c.Usage = v))" />
+        </div>
+        <div class="track-flags">
+            <label class="inline"><input type="checkbox" id="track-length-drawn" checked="@(!isLengthEntered)"
+                   @onchange="e => ApplyAsync(Commands.SetLength(trackId, Checked(e) ? null : current.Length))" /> @T["TrackLengthFromDrawing"]</label>
+            <label class="inline"><input type="checkbox" id="track-main" checked="@current.IsMain" @onchange="e => SetAsync(trackId, t => t.With(c => c.IsMain = Checked(e)))" /> @T["TrackIsMain"]</label>
+            <label class="inline"><input type="checkbox" id="track-scheduled" checked="@current.IsScheduled" @onchange="e => SetAsync(trackId, t => t.With(c => c.IsScheduled = Checked(e)))" /> @T["TrackIsScheduled"]</label>
+            <label class="inline"><input type="checkbox" id="track-lockable" checked="@current.IsLockable" @onchange="e => SetAsync(trackId, t => t.With(c => c.IsLockable = Checked(e)))" /> @T["TrackIsLockable"]</label>
+            <label class="inline"><input type="checkbox" id="track-stub" checked="@current.IsStub" disabled="@(!isStubEntered)"
+                   @onchange="e => ApplyAsync(Commands.SetStub(trackId, Checked(e)))" /> @T["TrackIsStub"]</label>
+            <label class="inline"><input type="checkbox" id="track-stub-drawn" checked="@(!isStubEntered)"
+                   @onchange="e => ApplyAsync(Commands.SetStub(trackId, Checked(e) ? null : current.IsStub))" /> @T["TrackStubFromDrawing"]</label>
+        </div>
+        @if (_speedLimitInvalid)
+        {
+            <p class="error" role="alert">@T["InvalidNumber"]</p>
+        }
+    }
+    @{ var problems = Problems(module, tracks, elements).ToList(); }
+    @if (problems.Count > 0)
+    {
+        <ul class="error track-problems" role="alert">
+            @foreach (var problem in problems)
+            {
+                <li>@problem</li>
+            }
+        </ul>
+    }
+    @if (tracks.Count > 0)
+    {
+        <h3>@T["TrackElements"]</h3>
+        @if (elements.Count == 0)
+        {
+            <p class="pane-help" id="no-track-elements">@T["NoTrackElements"]</p>
+        }
+        else
+        {
+            <table class="plate-points track-elements">
+                <thead><tr><th>@T["TrackElement"]</th><th>@T["TrackElementOf"]</th></tr></thead>
+                <tbody>
+                    @for (var i = 0; i < elements.Count; i++)
+                    {
+                        var element = elements[i];
+                        var elementId = element.Id;
+                        <tr @onmouseenter="() => ElementHighlighted.InvokeAsync(elementId)" @onmouseleave="() => ElementHighlighted.InvokeAsync(null)">
+                            <td>@ElementText(element, i)</td>
+                            <td>
+                                <select class="element-track" aria-label="@ElementText(element, i)" value="@(element.StationTrackId?.ToString(CultureInfo.InvariantCulture) ?? string.Empty)"
+                                        @onfocus="() => ElementHighlighted.InvokeAsync(elementId)" @onblur="() => ElementHighlighted.InvokeAsync(null)"
+                                        @onchange="e => AssignAsync(elementId, e)">
+                                    <option value="">@T["NoTrack"]</option>
+                                    @if (element.StationTrackId is { } unknown && tracks.All(t => t.Id != unknown))
+                                    {
+                                        <option value="@unknown">?</option>
+                                    }
+                                    @foreach (var track in tracks)
+                                    {
+                                        <option value="@track.Id">@track.Designation</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+    <p class="pane-help">@T["TracksHelp"]</p>
+</section>
+
+@code {
+    private const double MillimetresPerMetre = 1000;
+
+    private int? _selected;
+    private bool _speedLimitInvalid;
+
+    /// <summary>The module as edited now.</summary>
+    [Parameter, EditorRequired] public ModuleFileContent Content { get; set; } = default!;
+
+    /// <summary>The commands that change the tracks, with the module's standard for the lengths.</summary>
+    [Parameter, EditorRequired] public ModuleTracks Commands { get; set; } = default!;
+
+    /// <summary>End profiles, to tell where tracks leave the module.</summary>
+    [Parameter, EditorRequired] public Func<Guid, EndProfile?> EndProfiles { get; set; } = default!;
+
+    /// <summary>Raised with each change, as a command the editor applies.</summary>
+    [Parameter] public EventCallback<IEditCommand<ModuleFileContent>> Changed { get; set; }
+
+    /// <summary>Raised with the track element to show in the drawing, or null for none.</summary>
+    [Parameter] public EventCallback<Guid?> ElementHighlighted { get; set; }
+
+    private static bool Checked(ChangeEventArgs e) => e.Value is true;
+
+    private static string Metres(double metres) => NumberInput.Format(metres, 3, CultureInfo.CurrentCulture);
+
+    private Task ApplyAsync(IEditCommand<ModuleFileContent> command) => Changed.InvokeAsync(command);
+
+    private Task SetAsync(int trackId, Func<StationTrack, StationTrack> change) => ApplyAsync(Commands.Set(trackId, change));
+
+    /// <summary>Adds a track called by the lowest number that no track has, and selects it.</summary>
+    private async Task AddAsync()
+    {
+        var id = StationTrackList.FreeId(Content.Module.Tracks);
+        await ApplyAsync(Commands.Add(StationTrackList.FreeDesignation(Content.Module.Tracks), id));
+        _selected = id;
+    }
+
+    private async Task RemoveAsync()
+    {
+        if (_selected is not { } id) return;
+        _selected = null;
+        await ApplyAsync(Commands.Remove(id));
+    }
+
+    private Task SetDirectionAsync(int trackId, ChangeEventArgs e) =>
+        Enum.TryParse<TrackDirection>(e.Value as string, out var direction) ? SetAsync(trackId, t => t.With(c => c.Direction = direction)) : Task.CompletedTask;
+
+    private async Task SetSpeedLimitAsync(int trackId, string? text)
+    {
+        int? limit = null;
+        if (text is not null)
+        {
+            _speedLimitInvalid = !int.TryParse(text, NumberStyles.Integer, CultureInfo.CurrentCulture, out var parsed) || parsed <= 0;
+            if (_speedLimitInvalid) return;
+            limit = parsed;
+        }
+        _speedLimitInvalid = false;
+        await SetAsync(trackId, t => t.With(c => c.SpeedLimit = limit));
+    }
+
+    private Task AssignAsync(Guid elementId, ChangeEventArgs e) =>
+        ApplyAsync(Commands.Assign(elementId, int.TryParse(e.Value as string, NumberStyles.Integer, CultureInfo.InvariantCulture, out var trackId) ? trackId : null));
+
+    /// <summary>A direction in terms of the module's ends, by their names, when it has a left and a right one.</summary>
+    private string DirectionText(TrackDirection direction, ModuleDrawing drawing)
+    {
+        var left = drawing.Exits.FirstOrDefault(e => e.Direction == ExitDirection.Left)?.Label;
+        var right = drawing.Exits.FirstOrDefault(e => e.Direction == ExitDirection.Right)?.Label;
+        return direction switch
+        {
+            TrackDirection.LeftToRight when left is not null && right is not null => T.Format("TrackDirectionFromTo", left, right),
+            TrackDirection.RightToLeft when left is not null && right is not null => T.Format("TrackDirectionFromTo", right, left),
+            _ => T[$"TrackDirection_{direction}"],
+        };
+    }
+
+    private string ElementText(TrackElement element, int index) =>
+        T.Format("TrackElementText", index + 1, T[$"TrackElement_{element.GetType().Name}"], NumberInput.Format(element.Routes().Max(r => r.Length), 0, CultureInfo.CurrentCulture));
+
+    private IEnumerable<string> Problems(Module module, IReadOnlyList<StationTrack> tracks, IReadOnlyList<TrackElement> elements)
+    {
+        var shown = new HashSet<string>();
+        foreach (var problem in StationTrackValidation.Validate(module, EndProfiles))
+        {
+            var track = tracks.FirstOrDefault(t => t.Id == problem.TrackId);
+            var element = elements.Select((e, i) => (e.Id, Number: i + 1)).FirstOrDefault(e => e.Id == problem.ElementId).Number;
+            var text = problem.ElementId is null ? T.Format($"TrackProblem_{problem.Code}", track?.Designation.Trim() ?? string.Empty) : T.Format($"TrackProblem_{problem.Code}", element);
+            if (shown.Add(text)) yield return text;
+        }
+    }
+}

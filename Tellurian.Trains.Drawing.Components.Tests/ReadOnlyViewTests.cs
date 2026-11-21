@@ -1,3 +1,4 @@
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using System.Text.RegularExpressions;
 using Tellurian.Trains.Drawing.Components.Views;
 using Tellurian.Trains.Drawing.Model;
@@ -28,9 +29,9 @@ public sealed partial class ReadOnlyViewTests
             Radius = 2000,
             Angle = 15,
         }.Create(Catalogue).Module!;
-        var variant = module.DefaultVariant;
+        var drawing = module.Drawing;
         var publicSide = new PublicSide { Attachment = new() { SideIndex = 0, From = 100, To = 600 } };
-        return module with { Variants = [variant with { PublicSides = [publicSide] }] };
+        return module.With(c => c.Drawing = drawing with { PublicSides = [publicSide] });
     }
 
     private static int Count(string html, string cssClass) => ClassPattern(cssClass).Matches(html).Count;
@@ -86,22 +87,22 @@ public sealed partial class ReadOnlyViewTests
     public async Task ModuleView()
     {
         var module = Station();
-        var variant = module.DefaultVariant;
+        var drawing = module.Drawing;
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
             [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
             [nameof(Views.ModuleView.Standard)] = Catalogue.FindStandard("FREMO/H0-RE"),
         });
-        Assert.AreEqual(variant.Sections.Count, Count(html, "md-section"));
+        Assert.AreEqual(drawing.Sections.Count, Count(html, "md-section"));
         // The end profile's short name is drawn at each exit; exit labels aren't.
-        Assert.AreEqual(variant.Exits.Count, Count(html, "md-profile-name"));
+        Assert.AreEqual(drawing.Exits.Count, Count(html, "md-profile-name"));
         StringAssert.Contains(html, ">B96</text>");
         Assert.AreEqual(0, Count(html, "md-exit-label"));
         // Every exit's end profile is shown by shading inside the module (ModuleDrawing §9.1).
-        Assert.IsGreaterThanOrEqualTo(variant.Exits.Count, Count(html, "md-profile"));
-        Assert.AreEqual(variant.Exits.Count, Count(html, "md-end-plate"));
-        Assert.AreEqual(variant.Tracks.Sum(t => t.Routes().Count), Count(html, "md-track"));
+        Assert.IsGreaterThanOrEqualTo(drawing.Exits.Count, Count(html, "md-profile"));
+        Assert.AreEqual(drawing.Exits.Count, Count(html, "md-end-plate"));
+        Assert.AreEqual(drawing.TrackElements.Sum(t => t.Routes().Count), Count(html, "md-track"));
         Assert.AreEqual(1, Count(html, "md-public-side"));
         StringAssert.Contains(html, "aria-label=\"Station\"");
     }
@@ -109,7 +110,7 @@ public sealed partial class ReadOnlyViewTests
     [TestMethod]
     public async Task ModuleViewWritesTheFremoDesignationAndTheOwnerOnTheModule()
     {
-        var module = Station() with { FremoNumber = 7900, Owners = [new() { Prefix = "SFjä", Name = "Stefan Fjällemark" }] };
+        var module = Station().With(c => { c.Number = 7900; c.Prefix = "SFjä"; c.ModuleOwners = "Stefan Fjällemark"; });
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
@@ -139,7 +140,7 @@ public sealed partial class ReadOnlyViewTests
             [nameof(Views.ModuleView.Json)] = json,
             [nameof(Views.ModuleView.Layers)] = ModuleLayers.Sections | ModuleLayers.EndPlates,
         });
-        Assert.AreEqual(module.DefaultVariant.Exits.Count, Count(html, "md-end-plate"));
+        Assert.AreEqual(module.Drawing.Exits.Count, Count(html, "md-end-plate"));
         Assert.AreEqual(0, Count(html, "md-track"));
     }
 
@@ -164,7 +165,7 @@ public sealed partial class ReadOnlyViewTests
         Assert.AreEqual(1, Count(printable, "md-print-title"));
         StringAssert.Contains(printable, ">Station Nord</text>");
         // The drawing is in both the canvas and the sheet.
-        Assert.AreEqual(2 * module.DefaultVariant.Sections.Count, Count(printable, "md-section"));
+        Assert.AreEqual(2 * module.Drawing.Sections.Count, Count(printable, "md-section"));
     }
 
     // The app passes the current catalogue: a short name set after the module was drawn shows, although the

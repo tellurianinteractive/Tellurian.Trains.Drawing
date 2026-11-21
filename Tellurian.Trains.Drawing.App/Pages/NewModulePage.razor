@@ -4,6 +4,7 @@
 @using Tellurian.Trains.Drawing.Model.Catalogue
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Modules
+@using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions
 @inject CatalogueService Catalogues
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
@@ -37,21 +38,21 @@ else
             <legend>@T["ModuleIdentification"]</legend>
             <small class="note">@T["ModuleIdentificationHelp"]</small>
             <label>
-                <span>@T["OwnerPrefix"]</span>
-                <input id="ownerPrefix" @bind="form.OwnerPrefix" maxlength="10" autocomplete="off" />
+                <span>@T["ModulePrefix"]</span>
+                <input id="prefix" @bind="form.Prefix" maxlength="10" autocomplete="off" />
             </label>
             <label>
-                <span>@T["FremoNumber"]</span>
-                <input id="fremoNumber" type="number" min="@ModuleValidation.MinFremoNumber" max="@ModuleValidation.MaxFremoNumber" step="1" @bind="form.FremoNumber" />
+                <span>@T["ModuleNumber"]</span>
+                <input id="number" type="number" min="@ModuleValidation.MinFremoNumber" max="@ModuleValidation.MaxFremoNumber" step="1" @bind="form.Number" />
             </label>
             <label>
                 <span>@T["Name"]</span>
                 <input id="name" @bind="form.Name" />
             </label>
             <label>
-                <span>@T["OwnerName"]</span>
-                <input id="ownerName" @bind="form.OwnerName" autocomplete="off" />
-                <small class="note">@T["OwnerNameHelp"]</small>
+                <span>@T["ModuleOwners"]</span>
+                <input id="owners" @bind="form.ModuleOwners" autocomplete="off" />
+                <small class="note">@T["ModuleOwnersHelp"]</small>
             </label>
         </fieldset>
 
@@ -235,7 +236,7 @@ else
         errors = Validate().ToList();
         if (errors.Count > 0 || catalogue is null) return;
 
-        creating = Model.Modules.Module.TitleOf(form.Name, form.OwnerPrefix, form.FremoNumber);
+        creating = new Tellurian.Trains.Schedules.Model.Layouts.Module { Name = form.Name, Prefix = form.Prefix, Number = form.Number }.Title;
         StateHasChanged();
         // Drawing a module takes a while in the browser; let it show the wait message first.
         await Task.Delay(ShowMessageDelay);
@@ -255,8 +256,9 @@ else
         {
             Kind = form.Kind,
             Name = form.Name.Trim(),
-            FremoNumber = form.FremoNumber,
-            Owner = Owner(),
+            Number = form.Number,
+            Prefix = form.Prefix,
+            ModuleOwners = form.ModuleOwners,
             Standard = catalogue.FindStandard(form.StandardId)!,
             EndProfile = catalogue.FindEndProfile(form.EndProfileId)!,
             SecondEndProfile = catalogue.FindEndProfile(form.SecondEndProfileId),
@@ -290,7 +292,7 @@ else
 
     private IEnumerable<string> Validate()
     {
-        foreach (var problem in ModuleValidation.Validate(form.Name, form.OwnerPrefix, form.FremoNumber)) yield return T[$"ModuleProblem_{problem.Code}"];
+        foreach (var problem in ModuleValidation.Validate(form.Name, form.Prefix, form.Number)) yield return T[$"ModuleProblem_{problem.Code}"];
         if (catalogue?.FindEndProfile(form.EndProfileId) is null) yield return T["EndProfileRequired"];
         if (form.Kind != ModuleTemplateKind.Curve && form.Straight is not > 0) yield return T.Format("MustBePositive", T["StraightLength"]);
         if (form.Kind != ModuleTemplateKind.Straight)
@@ -301,21 +303,15 @@ else
         if (form.Width is <= 0) yield return T.Format("MustBePositive", T["Width"]);
     }
 
-    /// <summary>The owner as entered; null when neither the prefix nor the name is given.</summary>
-    private Owner? Owner() =>
-        string.IsNullOrWhiteSpace(form.OwnerPrefix) && string.IsNullOrWhiteSpace(form.OwnerName)
-            ? null
-            : new() { Name = form.OwnerName?.Trim() ?? string.Empty, Prefix = string.IsNullOrWhiteSpace(form.OwnerPrefix) ? null : form.OwnerPrefix.Trim() };
-
     private sealed class Form
     {
         public const double FallbackRadius = 2000;
 
         public ModuleTemplateKind Kind { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string? OwnerPrefix { get; set; }
-        public int? FremoNumber { get; set; }
-        public string? OwnerName { get; set; }
+        public string? Prefix { get; set; }
+        public int? Number { get; set; }
+        public string? ModuleOwners { get; set; }
         public Guid StandardId { get; set; }
         public Guid EndProfileId { get; set; }
 

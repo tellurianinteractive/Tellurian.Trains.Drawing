@@ -1,0 +1,142 @@
+@using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying
+@using System.Globalization
+@using Tellurian.Trains.Drawing.Components.Properties
+@using Tellurian.Trains.Drawing.Editing.Input
+@using Tellurian.Trains.Drawing.Model.Modules
+@using OperationLocation = Tellurian.Trains.Schedules.Model.Layouts.OperationLocation
+@using OperationLocationKind = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind
+@using OperationLocationRules = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationRules
+@using Station = Tellurian.Trains.Schedules.Model.Layouts.Station
+@using SignalControlledLocation = Tellurian.Trains.Schedules.Model.Layouts.SignalControlledLocation
+@using static Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKindExtensions
+@inject BrowserDialogs Dialogs
+
+@* The operation location that a module is (MD-24): a station, a signal controlled location, an industrial area or
+   another place where trains stop. A module without one is plain line. The location is that of the shared layout
+   model, a closed hierarchy: what each kind can have is its type, so a mark that the kind can't have is switched off,
+   and one it always has is switched on. Each change goes to the editor, so it can be undone. *@
+@{
+    var module = Content.Module;
+    var location = module.OperationLocation;
+}
+<section class="pane location-pane" aria-label="@T["OperationLocation"]">
+    <h2>@T["OperationLocation"] <HelpButton For="ModuleLocation" Title="@T["OperationLocation"]" AlignEnd="true" /></h2>
+    @if (location is null)
+    {
+        <p class="pane-help" id="no-location">@T["LocationNone"]</p>
+        <div class="pane-buttons">
+            <button type="button" id="add-location" @onclick="AddAsync">@T["LocationAdd"]</button>
+        </div>
+    }
+    else
+    {
+        var kind = location.Kind;
+        var isShadow = location is Station { IsShadow: true };
+        <div class="property-grid">
+            <TextField Label="@T["Name"]" Value="@location.Name" ValueChanged="v => ChangeAsync(l => l.With(c => c.Name = v?.Trim() ?? string.Empty))" />
+            <TextField Label="@T["LocationSignature"]" Help="@T["LocationSignatureHelp"]" Value="@location.Signature" ValueChanged="v => ChangeAsync(l => l.With(c => c.Signature = v?.Trim() ?? string.Empty))" />
+            <TextField Label="@T["LocationCountry"]" Help="@T["LocationCountryHelp"]" Value="@location.CountryCode"
+                       ValueChanged="v => ChangeAsync(l => l.With(c => c.CountryCode = string.IsNullOrWhiteSpace(v) ? null : v.Trim().ToUpperInvariant()))" />
+            <label class="property-label" for="location-kind">@T["LocationKind"]</label>
+            <select id="location-kind" value="@kind" @onchange="ChangeKindAsync">
+                @foreach (var choice in Enum.GetValues<OperationLocationKind>())
+                {
+                    <option value="@choice">@T[$"LocationKind_{choice}"]</option>
+                }
+            </select>
+        </div>
+        <div class="track-flags">
+            <label class="inline"><input type="checkbox" id="location-passengers" checked="@location.HasPassengerExchange" disabled="@(isShadow || !OperationLocationRules.CanHavePassengerExchange(kind))"
+                   @onchange="e => ChangeAsync(l => l.With(c => c.HasPassengerExchange = Checked(e)))" /> @T["LocationPassengers"]</label>
+            <label class="inline"><input type="checkbox" id="location-cargo" checked="@location.HasCargoExchange" disabled="@(isShadow || OperationLocationRules.AlwaysHasCargoExchange(kind) || !OperationLocationRules.CanHaveCargoExchange(kind))"
+                   @onchange="e => ChangeAsync(l => l.With(c => c.HasCargoExchange = Checked(e)))" /> @T["LocationCargo"]</label>
+            @if (kind == OperationLocationKind.SignalControlled)
+            {
+                <label class="inline"><input type="checkbox" id="location-crossing" checked="@(location is SignalControlledLocation { TrainsCanCross: true })"
+                       @onchange="e => ChangeAsync(l => l.With(c => ((SignalControlledLocation)c).TrainsCanCross = Checked(e)))" /> @T["LocationTrainsCanCross"]</label>
+            }
+            else
+            {
+                <label class="inline"><input type="checkbox" id="location-crossing" checked="@OperationLocationRules.TrainsCanCrossAt(location, module.Tracks)" disabled /> @T["LocationTrainsCanCross"]</label>
+            }
+            <label class="inline"><input type="checkbox" id="location-direction-change" checked="@location.IsChangingTrainDirectionPossible" disabled="@(!OperationLocationRules.CanChangeTrainDirection(kind))"
+                   @onchange="e => ChangeAsync(l => l.With(c => c.IsChangingTrainDirectionPossible = Checked(e)))" /> @T["LocationDirectionChange"]</label>
+            <label class="inline"><input type="checkbox" id="location-turntable" checked="@(location is Station { HasTurntable: true })" disabled="@(location is not Station)"
+                   @onchange="e => ChangeAsync(l => l is Station station ? station.With(c => c.HasTurntable = Checked(e)) : l)" /> @T["LocationHasTurntable"]</label>
+            <label class="inline"><input type="checkbox" id="location-shadow" checked="@isShadow" disabled="@(location is not Station)"
+                   @onchange="e => ChangeAsync(l => l is Station station ? station.With(c => c.IsShadow = Checked(e)) : l)" /> @T["LocationIsShadow"]</label>
+            <label class="inline"><input type="checkbox" id="location-terminus" checked="@location.IsTerminus" @onchange="e => ChangeAsync(l => l.With(c => c.IsTerminus = Checked(e)))" /> @T["LocationIsTerminus"]</label>
+            <label class="inline"><input type="checkbox" id="location-harbour" checked="@location.IsHarbour" @onchange="e => ChangeAsync(l => l.With(c => c.IsHarbour = Checked(e)))" /> @T["LocationIsHarbour"]</label>
+            <label class="inline"><input type="checkbox" id="location-key" checked="@location.IsKeyRequired" @onchange="e => ChangeAsync(l => l.With(c => c.IsKeyRequired = Checked(e)))" /> @T["LocationKeyRequired"]</label>
+            <label class="inline"><input type="checkbox" id="location-centre-middle" checked="@(location.Centre is null)"
+                   @onchange="e => ChangeAsync(l => l.With(c => c.Centre = Checked(e) ? null : Middle))" /> @T["LocationCentreMiddle"]</label>
+        </div>
+        @if (location.Centre is { } centre)
+        {
+            <div class="property-grid">
+                <NumberField Label="@T["LocationCentre"]" Help="@T["LocationCentreHelp"]" Value="centre * MillimetresPerMetre" LengthUnit="LengthUnit.Metre" Decimals="3" Min="0"
+                             InvalidText="@T["InvalidNumber"]" ValueChanged="v => ChangeAsync(l => l.With(c => c.Centre = v / MillimetresPerMetre))" />
+            </div>
+        }
+        var problems = OperationLocationRules.Validate(location).Select(p => T[$"LocationProblem_{p.Code}"]).Distinct().ToList();
+        @if (problems.Count > 0)
+        {
+            <ul class="error location-problems" role="alert">
+                @foreach (var problem in problems)
+                {
+                    <li>@problem</li>
+                }
+            </ul>
+        }
+        <div class="pane-buttons">
+            <button type="button" id="remove-location" @onclick="RemoveAsync">@T["LocationRemove"]</button>
+        </div>
+        <p class="pane-help">@T["LocationHelp"]</p>
+    }
+</section>
+
+@code {
+    private const double MillimetresPerMetre = 1000;
+
+    /// <summary>The module as edited now.</summary>
+    [Parameter, EditorRequired] public ModuleFileContent Content { get; set; } = default!;
+
+    /// <summary>Raised with the module with its changed, added or removed operation location.</summary>
+    [Parameter] public EventCallback<Module> ModuleChanged { get; set; }
+
+    /// <summary>The middle of the main track, in metres, to the millimetre: where the centre is until the user moves it.</summary>
+    private double Middle => Math.Round((Content.Module.Drawing.MainPath?.ToPath().Length ?? 0) / 2) / MillimetresPerMetre;
+
+    private static bool Checked(ChangeEventArgs e) => e.Value is true;
+
+    private Task ApplyAsync(OperationLocation? location) => ModuleChanged.InvokeAsync(Content.Module.With(c => c.OperationLocation = location));
+
+    private Task ChangeAsync(Func<OperationLocation, OperationLocation> change) =>
+        Content.Module.OperationLocation is { } location ? ApplyAsync(change(location)) : Task.CompletedTask;
+
+    /// <summary>Makes the module a station called as the module, where passengers and cargo are exchanged; the user gives it a signature.</summary>
+    private Task AddAsync() =>
+        ApplyAsync(new Station { Name = Content.Module.Name.Trim(), Signature = string.Empty, HasPassengerExchange = true, HasCargoExchange = true });
+
+    private async Task RemoveAsync()
+    {
+        if (await Dialogs.ConfirmAsync(T["LocationRemoveConfirm"])) await ApplyAsync(null);
+    }
+
+    /// <summary>Changes the kind, after asking when the new kind can't have something the location has.</summary>
+    private async Task ChangeKindAsync(ChangeEventArgs e)
+    {
+        if (Content.Module.OperationLocation is not { } location || !Enum.TryParse<OperationLocationKind>(e.Value as string, out var kind) || kind == location.Kind) return;
+        var cleared = OperationLocationRules.ClearedBy(location, kind);
+        if (cleared.Count > 0)
+        {
+            var names = string.Join(", ", cleared.Select(property => T[$"LocationProperty_{property}"]));
+            if (!await Dialogs.ConfirmAsync(T.Format("LocationKindChangeConfirm", T[$"LocationKind_{kind}"], names)))
+            {
+                StateHasChanged();
+                return;
+            }
+        }
+        await ApplyAsync(OperationLocationRules.Conforming(location, kind));
+    }
+}

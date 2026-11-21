@@ -1,5 +1,9 @@
 # Release Notes
 
+## Release 0.9.1
+Released 2026-11-18
+- After *Flip curve*, the view is fitted to the whole module again.
+
 ## Release 0.9.0
 Released 2026-11-18
 - Module editor: a new *Ends* pane. Give end A or end B another end profile of the module's scale, and the module is drawn again with it. *Flip* turns an asymmetric end profile's plate the other side out; *Endewender* follows by itself.

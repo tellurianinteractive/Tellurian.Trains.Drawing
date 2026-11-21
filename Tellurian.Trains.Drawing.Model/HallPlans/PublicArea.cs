@@ -1,7 +1,7 @@
 namespace Tellurian.Trains.Drawing.Model.HallPlans;
 
 /// <summary>An area of the plan where visitors have access (HP-17).</summary>
-public sealed record PublicArea
+public sealed record PublicArea : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 

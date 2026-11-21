@@ -4,7 +4,7 @@ using Tellurian.Trains.Drawing.Model.EndProfiles;
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
-/// Plan-view geometry of a module variant that depends on the exits' end profiles:
+/// Plan-view geometry of a module drawing that depends on the exits' end profiles:
 /// end plates, track positions at exits and the assembled outline.
 /// </summary>
 public static class ModuleGeometry
@@ -34,20 +34,20 @@ public static class ModuleGeometry
             .Select(t => new Pose(ToPlan(exit, t.Offset), exit.Pose.Heading))];
 
     /// <summary>
-    /// The outline of the variant: the end plates and the sides between them, counter-clockwise.
-    /// Null when the variant has no sides.
+    /// The outline of the drawing: the end plates and the sides between them, counter-clockwise.
+    /// Null when the drawing has no sides.
     /// </summary>
     /// <exception cref="InvalidOperationException">A side refers to an unknown exit or doesn't meet its end-plate corners.</exception>
     /// <exception cref="KeyNotFoundException">An exit's end profile isn't available.</exception>
-    public static SegmentPath? Outline(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles)
+    public static SegmentPath? Outline(ModuleDrawing drawing, Func<Guid, EndProfile?> endProfiles)
     {
-        if (variant.Sides.Count == 0) return null;
-        var plates = EndPlates(variant, endProfiles);
-        var sides = variant.Sides.Select(s => s.Path.ToPath()).ToList();
+        if (drawing.Sides.Count == 0) return null;
+        var plates = EndPlates(drawing, endProfiles);
+        var sides = drawing.Sides.Select(s => s.Path.ToPath()).ToList();
         var segments = new List<Segment>();
-        for (var i = 0; i < variant.Sides.Count; i++)
+        for (var i = 0; i < drawing.Sides.Count; i++)
         {
-            var side = variant.Sides[i];
+            var side = drawing.Sides[i];
             var from = Plate(plates, side.FromExit);
             var to = Plate(plates, side.ToExit);
             CheckCorner(sides[i].Start, from.RightCorner, $"Side {i} doesn't start at the right corner of exit {side.FromExit}.");
@@ -60,8 +60,8 @@ public static class ModuleGeometry
         return new SegmentPath(segments, isClosed: true);
     }
 
-    public static IReadOnlyDictionary<string, EndPlate> EndPlates(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles) =>
-        variant.Exits.ToDictionary(
+    public static IReadOnlyDictionary<string, EndPlate> EndPlates(ModuleDrawing drawing, Func<Guid, EndProfile?> endProfiles) =>
+        drawing.Exits.ToDictionary(
             e => e.Label,
             e => EndPlate(e, endProfiles(e.EndProfile.Id) ?? throw new KeyNotFoundException($"End profile {e.EndProfile.Name} ({e.EndProfile.Id}) of exit {e.Label} isn't available.")));
 

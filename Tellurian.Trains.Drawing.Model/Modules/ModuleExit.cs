@@ -6,9 +6,10 @@ namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
 /// An outer module end that can connect to another module (Registry <c>ModuleExit</c>).
-/// Its label is unique within the variant and is how hall plans refer to it.
+/// Its label is unique within the drawing and is text for the reader: on the module it is seldom marked. A hall plan
+/// refers to an exit by its side and number (<see cref="ExitPlace"/>).
 /// </summary>
-public sealed record ModuleExit
+public sealed record ModuleExit : ExtensibleRecord
 {
     public required string Label { get; init; }
     public ExitDirection Direction { get; init; }

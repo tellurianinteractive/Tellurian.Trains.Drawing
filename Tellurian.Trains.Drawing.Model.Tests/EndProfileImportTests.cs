@@ -56,15 +56,15 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void ReplacingKeepsTheExistingId()
     {
-        var imported = TestCatalogue.FremoSingle with { Id = Guid.NewGuid(), RegistryId = 42 };
+        var imported = TestCatalogue.FremoSingle with { Id = Guid.NewGuid(), ExternalReferences = TestReferences.Registry("""{ "endProfileId": 42 }""") };
         var item = CompareOne(imported);
 
         var user = EndProfileImport.Apply(DrawingCatalogue.Empty, [item]);
 
         var stored = user.EndProfiles.Single();
         Assert.AreEqual(TestCatalogue.FremoSingle.Id, stored.Id);
-        Assert.AreEqual(42, stored.RegistryId);
-        Assert.AreEqual(42, DrawingCatalogue.Merge(Catalogue, user).FindEndProfile(TestCatalogue.FremoSingle.Id)!.RegistryId);
+        Assert.AreSame(imported.ExternalReferences, stored.ExternalReferences);
+        Assert.AreSame(imported.ExternalReferences, DrawingCatalogue.Merge(Catalogue, user).FindEndProfile(TestCatalogue.FremoSingle.Id)!.ExternalReferences);
     }
 
     [TestMethod]
@@ -102,10 +102,11 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void CopyIsANewUserProfile()
     {
-        var original = TestCatalogue.FremoSingle with { RegistryId = 7, Revision = 3, Source = new() { Title = "FREMO" } };
+        var original = TestCatalogue.FremoSingle with { ExternalReferences = TestReferences.Registry("""{ "endProfileId": 7 }"""), Revision = 3, Source = new() { Title = "FREMO" } };
         var copy = original.Copy("MY-B96");
         Assert.AreNotEqual(original.Id, copy.Id);
-        Assert.AreEqual(("MY-B96", (int?)null, 0, "FREMO"), (copy.Designation, copy.RegistryId, copy.Revision, copy.Source?.Title));
+        Assert.AreEqual(("MY-B96", 0, "FREMO"), (copy.Designation, copy.Revision, copy.Source?.Title));
+        Assert.IsNull(copy.ExternalReferences, "A copy must not point to what the original is registered as.");
         Assert.AreEqual(EndProfileChanges.Designation | EndProfileChanges.Source, EndProfileImport.Changes(original, copy));
     }
 }

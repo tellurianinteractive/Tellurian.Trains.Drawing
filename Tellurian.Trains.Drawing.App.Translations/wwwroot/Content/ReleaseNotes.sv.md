@@ -1,5 +1,9 @@
 # Versionsinformation
 
+## Version 0.9.1
+Utgiven 2026-11-18
+- Efter *Vänd kurvan* anpassas vyn till hela modulen igen.
+
 ## Version 0.9.0
 Utgiven 2026-11-18
 - Modulredigerare: en ny panel *Ändar*. Ge ände A eller ände B en annan ändprofil i modulens skala, så ritas modulen om med den. *Vänd* vänder en osymmetrisk ändprofils platta andra sidan ut; *Ändevändare* följer med av sig själv.

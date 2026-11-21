@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Drawing.Model.AutoDraw;
 /// The data a module is auto-drawn from (ModuleDrawing §8.1). The properties map one-to-one to
 /// Module Registry data, except the ones marked as new. Lengths in mm, angles in degrees.
 /// </summary>
-public sealed record AutoDrawParameters
+public sealed record AutoDrawParameters : ExtensibleRecord
 {
     /// <summary>The module id to use; a new one is created if null.</summary>
     public Guid? ModuleId { get; init; }
@@ -12,19 +12,20 @@ public sealed record AutoDrawParameters
     /// <summary>Registry <c>FullName</c>; may be empty for a module identified by its FREMO designation.</summary>
     public string Name { get; init; } = string.Empty;
 
-    /// <summary>Registry <c>FremoNumber</c>.</summary>
-    public int? FremoNumber { get; init; }
+    /// <summary>The owner's number of the module (Registry <c>FremoNumber</c>).</summary>
+    public int? Number { get; init; }
 
-    /// <summary>Registry <c>ModuleOwnership</c>; the first owner's prefix forms the FREMO designation.</summary>
-    public IReadOnlyList<Modules.Owner> Owners { get; init; } = [];
+    /// <summary>The letters the owner marks modules with, e.g. <c>SFjä</c>; with the number it forms the designation.</summary>
+    public string? Prefix { get; init; }
+
+    /// <summary>The names of all owners in one text, separated by commas.</summary>
+    public string? ModuleOwners { get; init; }
+
+    /// <summary>Tells apart the ways one module can be set up, e.g. "Short" (Registry <c>ConfigurationLabel</c>).</summary>
+    public string? ConfigurationLabel { get; init; }
 
     /// <summary>The standard's short name, e.g. "FREMO/H0-RE" or "MMM-2R".</summary>
     public required string Standard { get; init; }
-
-    /// <summary>Registry <c>ConfigurationLabel</c>; the variant name.</summary>
-    public string? ConfigurationLabel { get; init; }
-
-    public int? RegistryModuleId { get; init; }
 
     public double? Straight { get; init; }
     public double? Radius { get; init; }

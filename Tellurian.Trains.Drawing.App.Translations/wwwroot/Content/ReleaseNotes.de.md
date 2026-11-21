@@ -1,5 +1,9 @@
 # Versionshinweise
 
+## Version 0.9.1
+Veröffentlicht am 2026-11-18
+- Nach *Kurve spiegeln* wird die Ansicht wieder an das ganze Modul angepasst.
+
 ## Version 0.9.0
 Veröffentlicht am 2026-11-18
 - Moduleditor: ein neuer Bereich *Enden*. Gib Ende A oder Ende B ein anderes Endprofil im Maßstab des Moduls, und das Modul wird damit neu gezeichnet. *Wenden* dreht das Kopfstück eines asymmetrischen Endprofils mit der anderen Seite nach außen; *Endewender* folgt von selbst.

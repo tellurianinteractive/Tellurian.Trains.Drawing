@@ -19,6 +19,8 @@ public static class DrawingFileSchema
     private const string Null = "null";
     private const string Definitions = "$defs";
     private const string ModelNamespace = "Tellurian.Trains.Drawing";
+    private const string SharedNamespace = "Tellurian.Trains.Schedules.Model";
+    private static readonly HashSet<string> SharedNamesInUse = new(StringComparer.Ordinal) { "Module", "ModuleStandard", "Scale" };
 
     /// <summary>The kinds that have a schema: all of them.</summary>
     public static IReadOnlyList<DrawingFileKind> Kinds { get; } = Enum.GetValues<DrawingFileKind>();
@@ -50,7 +52,7 @@ public static class DrawingFileSchema
 
         var properties = generated["properties"]!.AsObject();
         properties["format"] = new JsonObject { ["const"] = DrawingFileFormat.Format };
-        properties["kind"] = new JsonObject { ["const"] = JsonNamingPolicy.CamelCase.ConvertName(kind.ToString()) };
+        properties["kind"] = new JsonObject { ["const"] = kind.ToString() };
         properties["schemaVersion"] = new JsonObject { ["const"] = DrawingFileFormat.CurrentSchemaVersion(kind) };
         properties["content"] = NonNullable(properties["content"]!);
 
@@ -80,17 +82,21 @@ public static class DrawingFileSchema
 
     /// <summary>
     /// Moves the schema of a named model type to <c>$defs</c> and refers to it, so that shared types
-    /// are described once. The envelope and derived types of polymorphic hierarchies stay inline.
+    /// are described once. The envelope and derived types of polymorphic hierarchies stay inline. The types of the
+    /// shared layout model are moved too, since they occur in several places (a track on the module and on each kind of
+    /// location); those whose names Module Draw also uses are prefixed <c>Shared</c>.
     /// </summary>
     private static JsonNode Reference(JsonSchemaExporterContext context, JsonNode schema, IDictionary<string, JsonNode> definitions)
     {
         var type = context.TypeInfo.Type;
-        var isModelType = type.Namespace?.StartsWith(ModelNamespace, StringComparison.Ordinal) == true && !type.IsGenericType && !type.IsEnum;
+        var isShared = type.Namespace?.StartsWith(SharedNamespace, StringComparison.Ordinal) == true;
+        var isModelType = (isShared || type.Namespace?.StartsWith(ModelNamespace, StringComparison.Ordinal) == true) && !type.IsGenericType && !type.IsEnum;
         if (!isModelType || context.BaseTypeInfo is not null || schema is not JsonObject body) return schema;
 
+        var name = isShared && SharedNamesInUse.Contains(type.Name) ? $"Shared{type.Name}" : type.Name;
         var isNullable = IsNullable(body);
-        definitions.TryAdd(type.Name, NonNullable(body));
-        var reference = new JsonObject { ["$ref"] = $"#/{Definitions}/{type.Name}" };
+        definitions.TryAdd(name, NonNullable(body));
+        var reference = new JsonObject { ["$ref"] = $"#/{Definitions}/{name}" };
         return isNullable ? new JsonObject { ["anyOf"] = new JsonArray(reference, new JsonObject { ["type"] = Null }) } : reference;
     }
 

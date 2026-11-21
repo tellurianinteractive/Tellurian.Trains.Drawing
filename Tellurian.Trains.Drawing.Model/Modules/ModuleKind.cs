@@ -1,6 +1,6 @@
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
-/// <summary>The kind of a module variant, derived from its number of exits (ModuleDrawing §3).</summary>
+/// <summary>The kind of a module drawing, derived from its number of exits (ModuleDrawing §3).</summary>
 public enum ModuleKind
 {
     /// <summary>No exits; a warning.</summary>

@@ -1,3 +1,4 @@
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using Tellurian.Trains.Drawing.Geometry;
 using Tellurian.Trains.Drawing.Model.Modules;
 
@@ -11,21 +12,30 @@ public sealed class ModuleNameLabelTests
     private static readonly ModuleNameText TitleOnly = new("SFjä 7900", null);
 
     private static ModuleNamePlacement Place(Module module, double screenDegrees, bool withOwner = true) =>
-        ModuleNameLabel.Place(module.DefaultVariant, withOwner ? WithOwner : TitleOnly, new(screenDegrees), TrackHalfWidth);
+        ModuleNameLabel.Place(module.Drawing, withOwner ? WithOwner : TitleOnly, new(screenDegrees), TrackHalfWidth);
 
     [TestMethod]
     public void FremoDesignationIsWrittenInsteadOfTheName()
     {
-        var module = TestModules.Straight() with { Name = "Tellby", FremoNumber = 7900, Owners = [new() { Prefix = "SFjä", Name = "Stefan Fjällemark" }] };
+        var module = TestModules.Straight().With(c => { c.Name = "Tellby"; c.Number = 7900; c.Prefix = "SFjä"; c.ModuleOwners = "Stefan Fjällemark"; });
         Assert.AreEqual(new ModuleNameText("SFjä 7900", "Stefan Fjällemark"), ModuleNameLabel.Text(module));
     }
 
     [TestMethod]
-    public void WithoutFremoDesignationTheNameIsWritten()
+    public void AllOwnersAreWrittenUnderTheTitle()
     {
-        var module = TestModules.Straight() with { Name = "Tellby", FremoNumber = 7900, Owners = [] };
-        Assert.AreEqual(new ModuleNameText("Tellby", null), ModuleNameLabel.Text(module));
-        Assert.IsNull(ModuleNameLabel.Text(module with { Name = " ", FremoNumber = null }));
+        var module = TestModules.Straight().With(c => { c.Name = "Tellby"; c.ModuleOwners = " Stefan Fjällemark, Module Club "; });
+        Assert.AreEqual(new ModuleNameText("Tellby", "Stefan Fjällemark, Module Club"), ModuleNameLabel.Text(module));
+        Assert.IsNull(ModuleNameLabel.Text(module.With(c => c.ModuleOwners = " "))!.Owner);
+    }
+
+    [TestMethod]
+    public void WithoutPrefixTheNameAndNumberAreWritten()
+    {
+        var module = TestModules.Straight().With(c => { c.Name = "Tellby"; c.Number = 7900; c.Prefix = null; });
+        Assert.AreEqual(new ModuleNameText("Tellby 7900", null), ModuleNameLabel.Text(module));
+        Assert.AreEqual(new ModuleNameText("Tellby", null), ModuleNameLabel.Text(module.With(c => c.Number = null)));
+        Assert.IsNull(ModuleNameLabel.Text(module.With(c => { c.Name = " "; c.Number = null; })));
     }
 
     [TestMethod]
@@ -76,7 +86,7 @@ public sealed class ModuleNameLabelTests
     public void CurveIsLabelledAtTheMiddleOfTheTrack()
     {
         var module = TestModules.Curve();
-        var main = module.DefaultVariant.MainPath!.ToPath();
+        var main = module.Drawing.MainPath!.ToPath();
         var middle = main.PoseAt(main.Length / 2);
         var placement = Place(module, 0, withOwner: false);
         var projection = main.Project(placement.Title);
@@ -90,7 +100,7 @@ public sealed class ModuleNameLabelTests
         var module = TestModules.Straight();
         var placement = Place(module, 0);
         var outerEdge = placement.Title.Y + placement.TitleSize / 2;
-        var side = module.DefaultVariant.Sides.SelectMany(s => s.Path.ToPath().Tessellate().Points).Max(p => p.Y);
+        var side = module.Drawing.Sides.SelectMany(s => s.Path.ToPath().Tessellate().Points).Max(p => p.Y);
         Assert.IsTrue(outerEdge <= side, "Inside the module.");
         Assert.IsTrue(outerEdge >= side - placement.TitleSize, "Fills the space up to the side.");
         Assert.AreEqual(placement.TitleSize * ModuleNameLabel.OwnerPerTitleSize, placement.SubtitleSize!.Value, TestTolerance.Precision);
@@ -99,7 +109,7 @@ public sealed class ModuleNameLabelTests
     [TestMethod]
     public void IsNotBiggerThanTheMaximum()
     {
-        var placement = ModuleNameLabel.Place(TestModules.Station().DefaultVariant, new("A", null), Angle.Zero, TrackHalfWidth, maxTitleSize: 50);
+        var placement = ModuleNameLabel.Place(TestModules.Station().Drawing, new("A", null), Angle.Zero, TrackHalfWidth, maxTitleSize: 50);
         Assert.AreEqual(50, placement.TitleSize, TestTolerance.Precision);
     }
 
@@ -108,7 +118,7 @@ public sealed class ModuleNameLabelTests
     {
         var module = TestModules.Straight();
         var text = new ModuleNameText(new string('M', 40), null);
-        var placement = ModuleNameLabel.Place(module.DefaultVariant, text, Angle.Zero, TrackHalfWidth);
+        var placement = ModuleNameLabel.Place(module.Drawing, text, Angle.Zero, TrackHalfWidth);
         Assert.IsTrue(text.Title.Length * placement.TitleSize * ModuleNameLabel.CharacterWidthPerSize <= 1200 * ModuleNameLabel.LengthShare + Tolerance.Length);
     }
 }

@@ -4,31 +4,31 @@ using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.Measures;
 
-/// <summary>Derives the measures of a module variant from its drawing (MD-10, ModuleDrawing §5.4).</summary>
+/// <summary>Derives the measures of a module drawing from its drawing (MD-10, ModuleDrawing §5.4).</summary>
 public static class ModuleMeasurement
 {
     private const double PerMille = 1000;
 
     /// <exception cref="KeyNotFoundException">An exit's end profile isn't available.</exception>
     /// <exception cref="InvalidOperationException">The sides don't meet the end plates.</exception>
-    public static ModuleMeasures Derive(ModuleVariant variant, Func<Guid, EndProfile?> endProfiles)
+    public static ModuleMeasures Derive(ModuleDrawing drawing, Func<Guid, EndProfile?> endProfiles)
     {
-        ArgumentNullException.ThrowIfNull(variant);
+        ArgumentNullException.ThrowIfNull(drawing);
         ArgumentNullException.ThrowIfNull(endProfiles);
 
-        var main = variant.MainPath?.ToPath();
+        var main = drawing.MainPath?.ToPath();
         var lines = main?.Segments.OfType<LineSegment>().ToList() ?? [];
         var arcs = main?.Segments.OfType<ArcSegment>().ToList() ?? [];
-        var (heightDifference, gradient) = Ramp(variant.Exits, main);
+        var (heightDifference, gradient) = Ramp(drawing.Exits, main);
         return new()
         {
             Length = main?.Length,
             Straight = main is null ? null : lines.Sum(l => l.Length),
             Angle = main is null ? null : arcs.Sum(a => Math.Abs(a.SweepDegrees)),
             Radius = arcs.Count > 0 && arcs.All(a => Math.Abs(a.Radius - arcs[0].Radius) < Tolerance.Length) ? arcs[0].Radius : null,
-            Width = main is null ? null : Width(main, ModuleGeometry.Outline(variant, endProfiles)),
-            TrackLength = variant.Tracks.Sum(t => t.TrackLength),
-            NumberOfSections = variant.Sections.Count,
+            Width = main is null ? null : Width(main, ModuleGeometry.Outline(drawing, endProfiles)),
+            TrackLength = drawing.TrackElements.Sum(t => t.TrackLength),
+            NumberOfSections = drawing.Sections.Count,
             RampHeightDifference = heightDifference,
             RampGradient = gradient,
         };

@@ -3,7 +3,7 @@ using Tellurian.Trains.Drawing.Geometry;
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
-/// The sections of a module variant (MD-4, MD-4a), derived from its whole outline and its internal joints: each joint
+/// The sections of a module drawing (MD-4, MD-4a), derived from its whole outline and its internal joints: each joint
 /// is a polyline across the module with its ends on the outline, and cuts one part of the module in two. Sections
 /// are numbered 1, 2, 3… along the track (the main path), and each joint names the sections on either side.
 /// </summary>
@@ -13,13 +13,13 @@ public static class ModuleSections
     public const double EdgeTolerance = ModuleGeometry.CornerTolerance;
 
     /// <summary>
-    /// The variant with sections cut from <paramref name="outline"/> by <paramref name="joints"/>, and the joints naming
+    /// The drawing with sections cut from <paramref name="outline"/> by <paramref name="joints"/>, and the joints naming
     /// the sections they join; null if a joint doesn't cut one part of the module in two, e.g. when it crosses another
     /// joint or leaves the module.
     /// </summary>
-    public static ModuleVariant? WithJoints(ModuleVariant variant, SegmentPath outline, IReadOnlyList<InternalJoint> joints)
+    public static ModuleDrawing? WithJoints(ModuleDrawing drawing, SegmentPath outline, IReadOnlyList<InternalJoint> joints)
     {
-        ArgumentNullException.ThrowIfNull(variant);
+        ArgumentNullException.ThrowIfNull(drawing);
         ArgumentNullException.ThrowIfNull(outline);
         ArgumentNullException.ThrowIfNull(joints);
         var regions = new List<SegmentPath> { outline };
@@ -31,7 +31,7 @@ public static class ModuleSections
             regions[index] = parts.First;
             regions.Insert(index + 1, parts.Second);
         }
-        var main = variant.MainPath?.ToPath();
+        var main = drawing.MainPath?.ToPath();
         var ordered = regions.Select(r => (Region: r, Key: OrderAlongTrack(r, main))).OrderBy(x => x.Key.Along).ThenBy(x => x.Key.Across).Select(x => x.Region).ToList();
         var sections = ordered.Select((r, i) => new Section { Label = $"{i + 1}", Outline = PathDrawing.From(r) }).ToList();
         var named = new List<InternalJoint>(joints.Count);
@@ -43,7 +43,7 @@ public static class ModuleSections
             if (labels.Count != 2) return null;
             named.Add(joint with { FirstSection = $"{labels[0]}", SecondSection = $"{labels[1]}" });
         }
-        return variant with { Sections = sections, InternalJoints = named };
+        return drawing with { Sections = sections, InternalJoints = named };
     }
 
     /// <summary>

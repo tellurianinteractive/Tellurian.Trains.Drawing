@@ -88,18 +88,24 @@ public static class DrawingFileSerializer
                 $"The file has {kind} schema version {header.SchemaVersion}, but this version of the app reads up to version {current}. Update the app to open it.");
 
         var content = root[ContentProperty] ?? throw new DrawingFileException(DrawingFileError.NotADrawingFile, "The file has no content.");
-        if (header.SchemaVersion < current)
-        {
-            root[ContentProperty] = DrawingFileMigrations.Upgrade(kind, content.DeepClone(), header.SchemaVersion, current, migrations ?? DrawingFileMigrations.All);
-            root[SchemaVersionProperty] = current;
-        }
-
         try
         {
+            if (header.SchemaVersion < current)
+            {
+                root[ContentProperty] = DrawingFileMigrations.Upgrade(kind, content.DeepClone(), header.SchemaVersion, current, migrations ?? DrawingFileMigrations.All);
+                root[SchemaVersionProperty] = current;
+            }
+            else if (migrations is null)
+            {
+                root[ContentProperty] = DrawingFileMigrations.UpgradeDraft(kind, content.DeepClone(), header.SchemaVersion);
+            }
+
+            // Operation locations of earlier files: the kind first and named as in the code, as the shared model reads it.
+            Tellurian.Trains.Schedules.Model.Layouts.OperationLocationJson.Normalise(root[ContentProperty]);
             var file = root.Deserialize(typeInfo) ?? throw new DrawingFileException(DrawingFileError.InvalidContent, "The file is empty.");
             return file.Content;
         }
-        catch (JsonException ex)
+        catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException)
         {
             throw new DrawingFileException(DrawingFileError.InvalidContent, $"The {kind} file content is invalid: {ex.Message}", ex);
         }

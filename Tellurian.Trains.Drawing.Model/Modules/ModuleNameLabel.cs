@@ -1,10 +1,11 @@
 using Tellurian.Trains.Drawing.Geometry;
+using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions;
 
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
-/// The module's name written on its surface (MD-23): the FREMO designation, e.g. <c>SFjä 7900</c>, or else the name,
-/// with the first owner's full name in smaller text under it. It runs along the track, centred between the track ends,
+/// The module's name written on its surface (MD-23): its title in the shared model, e.g. <c>SFjä 7900 Tellby</c>,
+/// with the names of its owners in smaller text under it. It runs along the track, centred between the track ends,
 /// and is placed on the side of the track that is above it as the text is read on screen. So when a module is turned
 /// on screen, e.g. placed in a hall plan, the text still reads upright and stays above the track.
 /// The text is as big as fits between the tracks and the module's side and within the module's length, up to a
@@ -18,7 +19,7 @@ public static class ModuleNameLabel
     /// <summary>The smallest title height, mm; used also when even that doesn't fit.</summary>
     public const double MinTitleSize = 15;
 
-    /// <summary>The height of the owner's name relative to the title.</summary>
+    /// <summary>The height of the owners' names relative to the title.</summary>
     public const double OwnerPerTitleSize = 0.6;
 
     /// <summary>The space between the tracks, the text and the module's side, and between the lines, relative to the title size.</summary>
@@ -32,38 +33,38 @@ public static class ModuleNameLabel
 
     private const int FitIterations = 4;
 
-    /// <summary>The lines to write, or null when the module has neither a FREMO designation nor a name.</summary>
+    /// <summary>The lines to write, or null when the module has neither a designation nor a name.</summary>
     public static ModuleNameText? Text(Module module)
     {
         ArgumentNullException.ThrowIfNull(module);
-        var title = module.FremoDesignation ?? (string.IsNullOrWhiteSpace(module.Name) ? null : module.Name.Trim());
-        if (title is null) return null;
-        var owner = module.Owners.Count > 0 && !string.IsNullOrWhiteSpace(module.Owners[0].Name) ? module.Owners[0].Name.Trim() : null;
+        var title = module.Title;
+        if (title.Length == 0) return null;
+        var owner = string.IsNullOrWhiteSpace(module.ModuleOwners) ? null : module.ModuleOwners.Trim();
         return new(title, owner);
     }
 
-    /// <summary>Where and how big to write <paramref name="text"/> on <paramref name="variant"/>, in module coordinates.</summary>
+    /// <summary>Where and how big to write <paramref name="text"/> on <paramref name="drawing"/>, in module coordinates.</summary>
     /// <param name="screenRotation">How much the module is turned on screen, counter-clockwise; zero in a module view.</param>
     /// <param name="trackHalfWidth">Half the width of a track, e.g. half the sleeper length, mm.</param>
     /// <param name="maxTitleSize">The largest title height, mm.</param>
-    public static ModuleNamePlacement Place(ModuleVariant variant, ModuleNameText text, Angle screenRotation, double trackHalfWidth, double maxTitleSize = MaxTitleSize)
+    public static ModuleNamePlacement Place(ModuleDrawing drawing, ModuleNameText text, Angle screenRotation, double trackHalfWidth, double maxTitleSize = MaxTitleSize)
     {
-        ArgumentNullException.ThrowIfNull(variant);
+        ArgumentNullException.ThrowIfNull(drawing);
         ArgumentNullException.ThrowIfNull(text);
-        var (middle, length) = Middle(variant);
+        var (middle, length) = Middle(drawing);
         var rotation = UprightOnScreen(middle.Heading + screenRotation) - screenRotation;
         var up = Vector.FromAngle(rotation).LeftNormal;
         var side = up.Dot(middle.Left) >= 0 ? 1.0 : -1.0;
         var hasOwner = text.Owner is not null;
         var lines = 1 + (hasOwner ? MarginPerTitleSize + OwnerPerTitleSize : 0);
         var charactersPerSize = Math.Max(text.Title.Length, hasOwner ? text.Owner!.Length * OwnerPerTitleSize : 0) * CharacterWidthPerSize;
-        var room = SideDistance(variant, middle, side);
+        var room = SideDistance(drawing, middle, side);
 
         var size = Math.Max(maxTitleSize, MinTitleSize);
         var edge = 0.0;
         for (var i = 0; i < FitIterations; i++)
         {
-            edge = FreeDistance(variant, middle, side, size * charactersPerSize / 2, trackHalfWidth, size * (lines + 2 * MarginPerTitleSize));
+            edge = FreeDistance(drawing, middle, side, size * charactersPerSize / 2, trackHalfWidth, size * (lines + 2 * MarginPerTitleSize));
             var fitsAcross = (room - edge) / (lines + 2 * MarginPerTitleSize);
             var fitsAlong = length > 0 && charactersPerSize > 0 ? LengthShare * length / charactersPerSize : double.PositiveInfinity;
             var fitted = Math.Clamp(Math.Min(fitsAcross, fitsAlong), MinTitleSize, Math.Max(maxTitleSize, MinTitleSize));
@@ -80,12 +81,12 @@ public static class ModuleNameLabel
     }
 
     /// <summary>The middle of the main path, or of the longest track when there is none, and the length of that path.</summary>
-    private static (Pose Middle, double Length) Middle(ModuleVariant variant)
+    private static (Pose Middle, double Length) Middle(ModuleDrawing drawing)
     {
-        var path = variant.MainPath?.ToPath()
-            ?? variant.Tracks.SelectMany(t => t.Routes()).OrderByDescending(r => r.Length).FirstOrDefault();
+        var path = drawing.MainPath?.ToPath()
+            ?? drawing.TrackElements.SelectMany(t => t.Routes()).OrderByDescending(r => r.Length).FirstOrDefault();
         if (path is not null) return (path.PoseAt(path.Length / 2), path.Length);
-        var exit = variant.Exits.Count > 0 ? variant.Exits[0].Pose : Pose.Origin;
+        var exit = drawing.Exits.Count > 0 ? drawing.Exits[0].Pose : Pose.Origin;
         return (exit.Reversed(), 0);
     }
 
@@ -97,10 +98,10 @@ public static class ModuleNameLabel
     }
 
     /// <summary>The distance from the middle, on <paramref name="side"/> of the track, to the nearest side of the module; infinite without sides.</summary>
-    private static double SideDistance(ModuleVariant variant, Pose middle, double side)
+    private static double SideDistance(ModuleDrawing drawing, Pose middle, double side)
     {
         var nearest = double.PositiveInfinity;
-        foreach (var path in variant.Sides.Select(s => s.Path.ToPath()))
+        foreach (var path in drawing.Sides.Select(s => s.Path.ToPath()))
         {
             var points = path.Tessellate().Points;
             for (var i = 1; i < points.Count; i++)
@@ -115,10 +116,10 @@ public static class ModuleNameLabel
     /// The distance from the middle, on <paramref name="side"/> of the track, to the first gap between tracks that is
     /// <paramref name="needed"/> wide, looking only at the tracks within <paramref name="halfWidth"/> along the track.
     /// </summary>
-    private static double FreeDistance(ModuleVariant variant, Pose middle, double side, double halfWidth, double trackHalfWidth, double needed)
+    private static double FreeDistance(ModuleDrawing drawing, Pose middle, double side, double halfWidth, double trackHalfWidth, double needed)
     {
         var occupied = new List<(double From, double To)>();
-        foreach (var route in variant.Tracks.SelectMany(t => t.Routes()))
+        foreach (var route in drawing.TrackElements.SelectMany(t => t.Routes()))
         {
             var points = route.Tessellate().Points;
             for (var i = 1; i < points.Count; i++)
@@ -151,11 +152,11 @@ public static class ModuleNameLabel
     }
 }
 
-/// <summary>The lines of a module's name label: the FREMO designation or the name, and the owner's full name.</summary>
+/// <summary>The lines of a module's name label: the FREMO designation or the name, and the names of the owners.</summary>
 public sealed record ModuleNameText(string Title, string? Owner);
 
 /// <summary>
-/// Where and how big a module's name label is, in module coordinates: the centres of the title and of the owner's
-/// name under it, the direction the text reads in, and the text heights in mm.
+/// Where and how big a module's name label is, in module coordinates: the centres of the title and of the owners'
+/// names under it, the direction the text reads in, and the text heights in mm.
 /// </summary>
 public readonly record struct ModuleNamePlacement(Point Title, Point? Subtitle, Angle Rotation, double TitleSize, double? SubtitleSize);

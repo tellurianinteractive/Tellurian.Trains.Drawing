@@ -19,11 +19,14 @@ public sealed record ModuleTemplate
     /// <summary>The module's name; may be empty when it has a FREMO number (<see cref="Modules.ModuleValidation"/>).</summary>
     public string Name { get; init; } = string.Empty;
 
-    /// <summary>The owner's FREMO module number, 1–9999.</summary>
-    public int? FremoNumber { get; init; }
+    /// <summary>The owner's number of the module, 1–9999.</summary>
+    public int? Number { get; init; }
 
-    /// <summary>The owner, with the full name and the FREMO prefix as far as they are known.</summary>
-    public Owner? Owner { get; init; }
+    /// <summary>The letters the owner marks modules with, e.g. <c>SFjä</c>; null when not known.</summary>
+    public string? Prefix { get; init; }
+
+    /// <summary>The names of the owners in one text, separated by commas; null when not known.</summary>
+    public string? ModuleOwners { get; init; }
 
     /// <summary>The standard the module follows.</summary>
     public required ModuleStandard Standard { get; init; }
@@ -55,21 +58,22 @@ public sealed record ModuleTemplate
     public AutoDrawParameters ToParameters()
     {
         var second = SecondEndProfile ?? EndProfile;
-        var exit = new AutoDrawExit { Label = FirstExit, Direction = ExitDirection.West, EndProfile = EndProfile.Designation, EndProfileId = EndProfile.Id };
+        var exit = new AutoDrawExit { Label = FirstExit, Direction = ExitDirection.Left, EndProfile = EndProfile.Designation, EndProfileId = EndProfile.Id };
         var hasStraight = Kind is ModuleTemplateKind.Straight or ModuleTemplateKind.StraightAndCurve;
         var hasCurve = Kind is ModuleTemplateKind.Curve or ModuleTemplateKind.StraightAndCurve;
         return new()
         {
             Name = Name,
-            FremoNumber = FremoNumber,
-            Owners = Owner is null ? [] : [Owner],
+            Number = Number,
+            Prefix = string.IsNullOrWhiteSpace(Prefix) ? null : Prefix.Trim(),
+            ModuleOwners = string.IsNullOrWhiteSpace(ModuleOwners) ? null : ModuleOwners.Trim(),
             Standard = Standard.ShortName,
             Straight = hasStraight ? Straight : null,
             Radius = hasCurve ? Radius : null,
             Angle = hasCurve ? Angle : null,
             Width = Width,
             NumberOfThroughTracks = Math.Max(EndProfile.Tracks.Count, second.Tracks.Count),
-            Exits = [exit, exit with { Label = SecondExit, Direction = ExitDirection.East, EndProfile = second.Designation, EndProfileId = second.Id }],
+            Exits = [exit, exit with { Label = SecondExit, Direction = ExitDirection.Right, EndProfile = second.Designation, EndProfileId = second.Id }],
             IsEndProfileSwitcher = IsEndProfileSwitcher,
             CurveDirection = CurveDirection,
             StraightPosition = StraightPosition,

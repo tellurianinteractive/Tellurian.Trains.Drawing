@@ -5,7 +5,7 @@ namespace Tellurian.Trains.Drawing.Model.Halls;
 /// <summary>
 /// A door or emergency exit in a wall, with a zone in front of it that must be kept free (HA-2, VA-6).
 /// </summary>
-public sealed record Door
+public sealed record Door : ExtensibleRecord
 {
     public const double DefaultKeepFreeDepth = 1000;
 
@@ -36,5 +36,5 @@ public sealed record Door
         return PathDrawing.Rectangle(Width, KeepFreeDepth, Transform.FromPose(corner));
     }
 
-    public override string? ToString() => Label ?? Kind.ToString();
+    public override string ToString() => Label ?? Kind.ToString();
 }

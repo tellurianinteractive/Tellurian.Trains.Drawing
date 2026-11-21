@@ -10,17 +10,17 @@ public sealed class ModuleMeasurementTests
     private const string Fremo = "FREMO/H0-RE";
     private const double PlateWidth = 500;
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.West, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.East, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
 
-    private static ModuleVariant Draw(AutoDrawParameters parameters)
+    private static ModuleDrawing Draw(AutoDrawParameters parameters)
     {
         var result = ModuleAutoDraw.Create(parameters, TestCatalogue.Instance);
         Assert.IsNotNull(result.Module, string.Join(" ", result.Notes));
-        return result.Module.DefaultVariant;
+        return result.Module.Drawing;
     }
 
-    private static ModuleMeasures Measure(ModuleVariant variant) => ModuleMeasurement.Derive(variant, TestCatalogue.Lookup);
+    private static ModuleMeasures Measure(ModuleDrawing drawing) => ModuleMeasurement.Derive(drawing, TestCatalogue.Lookup);
 
     private static AutoDrawParameters Parameters(double? straight = null, double? radius = null, double? angle = null) =>
         new() { Name = "Test", Standard = Fremo, Straight = straight, Radius = radius, Angle = angle, Exits = [West, East] };
@@ -74,8 +74,8 @@ public sealed class ModuleMeasurementTests
     [TestMethod]
     public void WidenedStationWithSections()
     {
-        var variant = Draw(Parameters(straight: 3000) with { Width = 600, NumberOfSections = 3, IsOperationPlace = true });
-        var measures = Measure(variant);
+        var drawing = Draw(Parameters(straight: 3000) with { Width = 600, NumberOfSections = 3, IsOperationPlace = true });
+        var measures = Measure(drawing);
         Assert.AreEqual(600, measures.Width!.Value, Precision);
         Assert.AreEqual(3, measures.NumberOfSections);
     }
@@ -91,8 +91,8 @@ public sealed class ModuleMeasurementTests
     [TestMethod]
     public void EndOfLineModule()
     {
-        var variant = Draw(new() { Name = "Terminus", Standard = Fremo, Straight = 1200, Exits = [West], NumberOfThroughTracks = 1, IsEndOfLine = true });
-        var measures = Measure(variant);
+        var drawing = Draw(new() { Name = "Terminus", Standard = Fremo, Straight = 1200, Exits = [West], NumberOfThroughTracks = 1, IsEndOfLine = true });
+        var measures = Measure(drawing);
         Assert.AreEqual(1200, measures.Length!.Value, Precision);
         Assert.AreEqual(PlateWidth, measures.Width!.Value, Precision);
         Assert.AreEqual(1200 - ModuleAutoDraw.BufferStopMargin, measures.TrackLength, Precision);
@@ -102,7 +102,7 @@ public sealed class ModuleMeasurementTests
     [TestMethod]
     public void DoubleTrackCurveSumsBothTracks()
     {
-        var variant = Draw(new()
+        var drawing = Draw(new()
         {
             Name = "Double",
             Standard = Fremo,
@@ -112,15 +112,15 @@ public sealed class ModuleMeasurementTests
             Exits = [West with { EndProfile = "FREMO-H0-2E96" }, East with { EndProfile = "FREMO-H0-2E96" }],
         });
         // Concentric tracks at R ± c/c/2 sum to twice the main path length.
-        Assert.AreEqual(2 * 2000 * Math.PI / 6, Measure(variant).TrackLength, Precision);
+        Assert.AreEqual(2 * 2000 * Math.PI / 6, Measure(drawing).TrackLength, Precision);
     }
 
     [TestMethod]
     public void RampHasHeightDifferenceAndGradient()
     {
-        var variant = Draw(Parameters(straight: 1000));
-        variant = variant with { Exits = [variant.Exits[0], variant.Exits[1] with { RailTopOffset = 20 }] };
-        var measures = Measure(variant);
+        var drawing = Draw(Parameters(straight: 1000));
+        drawing = drawing with { Exits = [drawing.Exits[0], drawing.Exits[1] with { RailTopOffset = 20 }] };
+        var measures = Measure(drawing);
         Assert.IsTrue(measures.IsRamp);
         Assert.AreEqual(20, measures.RampHeightDifference!.Value, Precision);
         Assert.AreEqual(20, measures.RampGradient!.Value, Precision);
@@ -129,9 +129,9 @@ public sealed class ModuleMeasurementTests
     [TestMethod]
     public void DescendingRampHasNegativeGradient()
     {
-        var variant = Draw(Parameters(straight: 2000));
-        variant = variant with { Exits = [variant.Exits[0] with { RailTopOffset = 10 }, variant.Exits[1] with { RailTopOffset = -10 }] };
-        var measures = Measure(variant);
+        var drawing = Draw(Parameters(straight: 2000));
+        drawing = drawing with { Exits = [drawing.Exits[0] with { RailTopOffset = 10 }, drawing.Exits[1] with { RailTopOffset = -10 }] };
+        var measures = Measure(drawing);
         Assert.AreEqual(20, measures.RampHeightDifference!.Value, Precision);
         Assert.AreEqual(-10, measures.RampGradient!.Value, Precision);
     }
@@ -154,8 +154,8 @@ public sealed class ModuleMeasurementTests
     [DataRow(2000.0, null, null, 650.0, 2000.0)]
     public void AutoDrawnModuleMatchesItsRegistryValues(double? straight, double? radius, double? angle, double? width, double length)
     {
-        var variant = Draw(Parameters(straight, radius, angle) with { Width = width, Length = length, NumberOfSections = 1 });
-        var differences = MeasureComparison.Compare(Measure(variant), variant.RegistryMeasures);
+        var drawing = Draw(Parameters(straight, radius, angle) with { Width = width, Length = length, NumberOfSections = 1 });
+        var differences = MeasureComparison.Compare(Measure(drawing), drawing.RegistryMeasures);
         Assert.IsNotEmpty(differences);
         Assert.IsFalse(differences.Any(d => d.IsFlagged), string.Join(", ", differences.Where(d => d.IsFlagged)));
     }

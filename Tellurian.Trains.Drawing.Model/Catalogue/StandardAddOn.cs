@@ -3,7 +3,7 @@ namespace Tellurian.Trains.Drawing.Model.Catalogue;
 /// <summary>
 /// Extra requirements on top of a base standard, e.g. MMM-Summer and MMM-Modern on MMM-2R.
 /// </summary>
-public sealed record StandardAddOn
+public sealed record StandardAddOn : ExtensibleRecord
 {
     public required Guid Id { get; init; }
     public required string ShortName { get; init; }

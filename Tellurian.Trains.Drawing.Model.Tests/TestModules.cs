@@ -1,3 +1,6 @@
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
+using OperationLocationKind = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind;
+using TrackDirection = Tellurian.Trains.Schedules.Model.Layouts.TrackDirection;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
@@ -9,8 +12,8 @@ internal static class TestModules
 {
     private const string Fremo = "FREMO/H0-RE";
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.West, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.East, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
 
     public static Module Straight() => Draw(new() { Name = "Straight", Standard = Fremo, Straight = 1200, Exits = [West, East] });
 
@@ -31,16 +34,16 @@ internal static class TestModules
         Exits = [West with { EndProfile = "FREMO-H0-2E96" }, East with { EndProfile = "TEST-2-55" }],
     });
 
-    /// <summary>A module with one track element of every kind, owners, labels and a second variant.</summary>
+    /// <summary>A module with one track element of every kind, owners, labels and an operation location.</summary>
     public static Module WithEverything()
     {
         var module = Straight();
-        var variant = module.DefaultVariant;
+        var drawing = module.Drawing;
         var start = new Pose(new(100, 0), Angle.Zero);
         Pose At(double x, double heading = 0) => new(new(x, 0), new(heading));
         var tracks = new TrackElement[]
         {
-            new StraightTrack { Start = start, Length = 100, Designation = "1", IsMainTrack = true },
+            new StraightTrack { Start = start, Length = 100, StationTrackId = TestStation.Track1 },
             new CurvedTrack { Start = At(200), Radius = 1000, Angle = -10 },
             new Turnout { Start = At(300), Kind = TurnoutKind.Left, Length = 230, Radius = 900, Angle = 12 },
             new Turnout { Start = At(600), Kind = TurnoutKind.CurvedRight, Length = 230, Radius = 1200, Angle = 15, InnerRadius = 800, InnerAngle = 20 },
@@ -48,24 +51,40 @@ internal static class TestModules
             new DoubleSlip { Center = At(1000), Length = 200, Angle = 15 },
             new BufferStop { Pose = At(1100, 180) },
         };
-        var withEverything = variant with
+        var withEverything = drawing with
         {
-            Tracks = [.. variant.Tracks, .. tracks],
+            TrackElements = [.. drawing.TrackElements, .. tracks],
+            TracksWithEnteredLength = [TestStation.Track1],
             Labels = [new() { Kind = LabelKind.StationName, Text = "Tellby", Pose = new(new(600, 100), Angle.Zero) }, new() { Kind = LabelKind.PlatformEdge, Pose = At(400), Length = 300 }],
             PublicSides = [new() { Attachment = new() { SideIndex = 1, From = 100, To = 500 } }],
             AutoDraw = null,
         };
-        return module with
+        return module.With(c =>
         {
-            FremoNumber = 12,
-            Owners = [new() { Name = "A. Owner", Prefix = "AOw", Share = 0.5, RegistryPersonId = 17 }, new() { Name = "Club", RegistryGroupId = 3 }],
-            Theme = "Sweden 1970s",
-            RepresentsFromYear = 1965,
-            RepresentsUptoYear = 1980,
-            Note = "Note with \"quotes\", åäö and ‰.",
-            Revision = 4,
-            Variants = [withEverything, variant with { Id = Guid.NewGuid(), Name = "Alternative", IsDefault = false }],
-        };
+            c.Number = 12;
+            c.Prefix = "AOw";
+            c.ModuleOwners = "A. Owner, Club";
+            c.PackageLabel = "Box 1";
+            c.Tracks = [new() { Id = TestStation.Track1, Designation = "1", DisplayOrder = 1, IsMain = true, IsScheduled = true, Length = 0.1, PlatformLength = 0.3, Direction = TrackDirection.LeftToRight, SpeedLimit = 40, Usage = "Passenger trains" }];
+            c.ExternalReferences = TestReferences.Registry("""{ "stationId": 1234, "moduleId": 5678 }""");
+            c.Theme = "Sweden 1970s";
+            c.RepresentsFromYear = 1965;
+            c.RepresentsUptoYear = 1980;
+            c.Note = "Note with \"quotes\", åäö and ‰.";
+            c.Revision = 4;
+            c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station
+            {
+                Name = "Tellby",
+                Signature = "Tby",
+                CountryCode = "SE",
+                HasPassengerExchange = true,
+                HasCargoExchange = true,
+                IsChangingTrainDirectionPossible = true,
+                IsKeyRequired = true,
+                Centre = 0.6,
+            };
+            c.Drawing = withEverything;
+        });
     }
 
     private static Module Draw(AutoDrawParameters parameters) =>

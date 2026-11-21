@@ -71,14 +71,16 @@
   <data name="DrawnWithNotes" xml:space="preserve"><value>The module was drawn. Check these notes:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Open the drawing</value></data>
   <data name="ModuleIdentification" xml:space="preserve"><value>Identification</value></data>
-  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO modules are identified by the owner's prefix and a number, e.g. SFjä 012. Other modules have a name. Give a FREMO number with the prefix, a name, or both.</value></data>
-  <data name="OwnerPrefix" xml:space="preserve"><value>Owner's FREMO prefix</value></data>
-  <data name="FremoNumber" xml:space="preserve"><value>FREMO module number</value></data>
-  <data name="OwnerName" xml:space="preserve"><value>Owner's full name</value></data>
-  <data name="OwnerNameHelp" xml:space="preserve"><value>Optional; the owner may be someone other than you. Uploading to the Module Registry fills in what is missing.</value></data>
-  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Enter a name, or a FREMO number with the owner's prefix.</value></data>
-  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Enter the owner's FREMO prefix with the FREMO number.</value></data>
-  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>The FREMO number must be 1–9999.</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>Modules are identified by the owner's prefix and a number, e.g. SFjä 0012, as in FREMO, or by a name. Give a number with the prefix, a name, or both.</value></data>
+  <data name="ModulePrefix" xml:space="preserve"><value>Prefix</value></data>
+  <data name="ModuleNumber" xml:space="preserve"><value>Number</value></data>
+  <data name="PackageLabel" xml:space="preserve"><value>Package</value></data>
+  <data name="PackageLabelHelp" xml:space="preserve"><value>The box the module is transported in. Give the modules of one box the same label.</value></data>
+  <data name="ModuleOwners" xml:space="preserve"><value>Owners</value></data>
+  <data name="ModuleOwnersHelp" xml:space="preserve"><value>Optional: the names of the owners, separated by commas. Uploading to the Module Registry fills them in or replaces them.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Enter a name, or a number with the prefix.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Enter the prefix with the number.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>The number must be 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Choose an end profile.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
@@ -427,4 +429,93 @@
   <data name="FlipCurve" xml:space="preserve"><value>Flip curve</value></data>
   <data name="CannotRedraw" xml:space="preserve"><value>This module wasn't drawn from a template, so its end profiles and curve can't be changed here; its ends can still be flipped.</value></data>
   <data name="BendsWillChange" xml:space="preserve"><value>The tracks of an end profile are off the centre of the end plate, so the bends of the section joints will move relative to the tracks. Check the joints afterwards. Continue?</value></data>
+  <data name="Track" xml:space="preserve"><value>Track</value></data>
+  <data name="TrackLength" xml:space="preserve"><value>Length</value></data>
+  <data name="TrackPlatform" xml:space="preserve"><value>Platform</value></data>
+  <data name="AddTrack" xml:space="preserve"><value>Add track</value></data>
+  <data name="RemoveTrack" xml:space="preserve"><value>Remove track</value></data>
+  <data name="TrackTitle" xml:space="preserve"><value>Track {0}</value></data>
+  <data name="TrackDesignation" xml:space="preserve"><value>Designation</value></data>
+  <data name="TrackLengthHelp" xml:space="preserve"><value>The length a train can use. At a turnout the track ends where a train on the other track can still pass, not at the points.</value></data>
+  <data name="TrackLengthFromDrawing" xml:space="preserve"><value>Length from the drawing</value></data>
+  <data name="TrackPlatformLength" xml:space="preserve"><value>Platform length</value></data>
+  <data name="TrackDirectionLabel" xml:space="preserve"><value>Direction</value></data>
+  <data name="TrackDirection_Both" xml:space="preserve"><value>Both directions</value></data>
+  <data name="TrackDirection_LeftToRight" xml:space="preserve"><value>Left to right</value></data>
+  <data name="TrackDirection_RightToLeft" xml:space="preserve"><value>Right to left</value></data>
+  <data name="TrackDirectionFromTo" xml:space="preserve"><value>From {0} to {1}</value></data>
+  <data name="TrackSpeedLimit" xml:space="preserve"><value>Speed limit (km/h)</value></data>
+  <data name="TrackUsage" xml:space="preserve"><value>Usage</value></data>
+  <data name="TrackIsMain" xml:space="preserve"><value>Main track</value></data>
+  <data name="TrackIsScheduled" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="TrackIsLockable" xml:space="preserve"><value>Lockable</value></data>
+  <data name="TrackIsStub" xml:space="preserve"><value>Stub track</value></data>
+  <data name="TrackStubFromDrawing" xml:space="preserve"><value>Stub track from the drawing</value></data>
+  <data name="TrackElements" xml:space="preserve"><value>Track elements</value></data>
+  <data name="TrackElement" xml:space="preserve"><value>Track element</value></data>
+  <data name="TrackElementOf" xml:space="preserve"><value>Part of track</value></data>
+  <data name="NoTrack" xml:space="preserve"><value>No track</value></data>
+  <data name="TrackElementText" xml:space="preserve"><value>{0}. {1}, {2} mm</value></data>
+  <data name="TrackElement_StraightTrack" xml:space="preserve"><value>Straight</value></data>
+  <data name="TrackElement_CurvedTrack" xml:space="preserve"><value>Curve</value></data>
+  <data name="TrackElement_FlexTrack" xml:space="preserve"><value>Track</value></data>
+  <data name="TrackElement_Turnout" xml:space="preserve"><value>Turnout</value></data>
+  <data name="TrackElement_Crossing" xml:space="preserve"><value>Crossing</value></data>
+  <data name="TrackElement_DoubleSlip" xml:space="preserve"><value>Double slip</value></data>
+  <data name="TracksHelp" xml:space="preserve"><value>Add the tracks that trains are planned on, and say which track each track element is part of. Every module has at least one track: a through track or a track ending.</value></data>
+  <data name="NoTrackElements" xml:space="preserve"><value>This module has no track elements.</value></data>
+  <data name="OperationLocation" xml:space="preserve"><value>Operation location</value></data>
+  <data name="LocationNone" xml:space="preserve"><value>This module is plain line: it has no name in the timetable, and trains pass it.</value></data>
+  <data name="LocationAdd" xml:space="preserve"><value>Make operation location</value></data>
+  <data name="LocationRemove" xml:space="preserve"><value>Remove operation location</value></data>
+  <data name="LocationRemoveConfirm" xml:space="preserve"><value>Remove the operation location, with its name, signature and properties? The tracks stay.</value></data>
+  <data name="LocationHelp" xml:space="preserve"><value>The operation location is what a timetable planner sees of the module: where trains stop, meet or are routed. Its tracks are in the Tracks pane.</value></data>
+  <data name="LocationSignature" xml:space="preserve"><value>Signature</value></data>
+  <data name="LocationSignatureHelp" xml:space="preserve"><value>The short name used in timetables, e.g. Tby. It is unique within the country.</value></data>
+  <data name="LocationCountry" xml:space="preserve"><value>Country</value></data>
+  <data name="LocationCountryHelp" xml:space="preserve"><value>The country the location is operated as part of, as a code of two letters, e.g. SE.</value></data>
+  <data name="LocationKind" xml:space="preserve"><value>Kind</value></data>
+  <data name="LocationKind_Station" xml:space="preserve"><value>Station</value></data>
+  <data name="LocationKind_SignalControlled" xml:space="preserve"><value>Signal controlled location</value></data>
+  <data name="LocationKind_IndustrialArea" xml:space="preserve"><value>Industrial area</value></data>
+  <data name="LocationKind_Other" xml:space="preserve"><value>Other place, e.g. a halt</value></data>
+  <data name="LocationPassengers" xml:space="preserve"><value>Passengers board and alight</value></data>
+  <data name="LocationCargo" xml:space="preserve"><value>Cargo is loaded and unloaded</value></data>
+  <data name="LocationTrainsCanCross" xml:space="preserve"><value>Trains can cross</value></data>
+  <data name="LocationDirectionChange" xml:space="preserve"><value>Trains can change direction</value></data>
+  <data name="LocationHasTurntable" xml:space="preserve"><value>Turntable</value></data>
+  <data name="LocationIsShadow" xml:space="preserve"><value>Shadow station</value></data>
+  <data name="LocationIsTerminus" xml:space="preserve"><value>The line ends here</value></data>
+  <data name="LocationIsHarbour" xml:space="preserve"><value>Harbour</value></data>
+  <data name="LocationKeyRequired" xml:space="preserve"><value>A key is needed for the turnouts</value></data>
+  <data name="LocationCentreMiddle" xml:space="preserve"><value>Centre in the middle of the module</value></data>
+  <data name="LocationCentre" xml:space="preserve"><value>Centre from the left end</value></data>
+  <data name="LocationCentreHelp" xml:space="preserve"><value>Distances to other locations are measured from the centre, e.g. the station building, along the main track.</value></data>
+  <data name="LocationKindChangeConfirm" xml:space="preserve"><value>A {0} can't have: {1}. Change the kind and clear it?</value></data>
+  <data name="LocationProperty_IsShadow" xml:space="preserve"><value>shadow station</value></data>
+  <data name="LocationProperty_HasTurntable" xml:space="preserve"><value>turntable</value></data>
+  <data name="LocationProperty_HasPassengerExchange" xml:space="preserve"><value>passengers</value></data>
+  <data name="LocationProperty_HasCargoExchange" xml:space="preserve"><value>cargo</value></data>
+  <data name="LocationProperty_IsChangingTrainDirectionPossible" xml:space="preserve"><value>trains can change direction</value></data>
+  <data name="LocationProperty_TrainsCanCross" xml:space="preserve"><value>trains can cross</value></data>
+  <data name="LocationProblem_NameMissing" xml:space="preserve"><value>The operation location has no name.</value></data>
+  <data name="LocationProblem_SignatureMissing" xml:space="preserve"><value>The operation location has no signature.</value></data>
+  <data name="LocationProblem_CountryCodeInvalid" xml:space="preserve"><value>The country is a code of two capital letters, e.g. SE.</value></data>
+  <data name="LocationProblem_CentreNegative" xml:space="preserve"><value>The centre can't be before the left end.</value></data>
+  <data name="LocationProblem_ShadowNotAllowed" xml:space="preserve"><value>Only a station can be a shadow station.</value></data>
+  <data name="LocationProblem_TurntableNotAllowed" xml:space="preserve"><value>Only a station can have a turntable.</value></data>
+  <data name="LocationProblem_PassengerExchangeNotAllowed" xml:space="preserve"><value>Passengers can't be exchanged at this kind of location.</value></data>
+  <data name="LocationProblem_CargoExchangeNotAllowed" xml:space="preserve"><value>Cargo can't be exchanged at this kind of location.</value></data>
+  <data name="LocationProblem_CargoExchangeRequired" xml:space="preserve"><value>Cargo is always exchanged here.</value></data>
+  <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>Passengers are always exchanged at a shadow station.</value></data>
+  <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Trains can't change direction at this kind of location.</value></data>
+  <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Trains can't cross at this kind of location.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>The module has no track in the list. Every module has at least one: a through track or a track ending.</value></data>
+  <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>A track has no designation.</value></data>
+  <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>More than one track is called {0}.</value></data>
+  <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Track element {0} is part of a track that isn't in the list.</value></data>
+  <data name="TrackProblem_ElementWithoutTrack" xml:space="preserve"><value>Track element {0} is part of no track.</value></data>
+  <data name="TrackProblem_TrackWithoutElements" xml:space="preserve"><value>Track {0} has no track elements, so its length isn't known.</value></data>
+  <data name="TrackProblem_ScheduledTrackReachesNoExit" xml:space="preserve"><value>Track {0} is scheduled, but no end of the module can be reached from it.</value></data>
+  <data name="Field_FoulingDistance" xml:space="preserve"><value>Track distance where trains pass freely (mm)</value></data>
 </root>

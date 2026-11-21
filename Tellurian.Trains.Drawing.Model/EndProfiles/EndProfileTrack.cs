@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 /// A track crossing an end profile. Its rail top is at Y = 0 by definition (RÖK);
 /// <see cref="Offset"/> is the lateral position of the track centre, positive to the right.
 /// </summary>
-public sealed record EndProfileTrack
+public sealed record EndProfileTrack : ExtensibleRecord
 {
     public required double Offset { get; init; }
     public required double Gauge { get; init; }

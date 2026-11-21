@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 
@@ -8,7 +9,7 @@ namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 /// X lateral (positive right), Y up, origin on the centre line at rail top (RÖK).
 /// Whether two ends fit is worked out from the drawings (<see cref="JointFitEvaluator"/>).
 /// </summary>
-public sealed record EndProfile
+public sealed record EndProfile : ExtensibleRecord
 {
     public required Guid Id { get; init; }
 
@@ -53,8 +54,8 @@ public sealed record EndProfile
 
     public DocumentReference? Source { get; init; }
 
-    /// <summary>The Module Registry end profile id, if known.</summary>
-    public int? RegistryId { get; init; }
+    /// <summary>What other systems keep about the end profile, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
+    public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; init; }
 
     /// <summary>Incremented on every save.</summary>
     public int Revision { get; init; }
@@ -81,10 +82,10 @@ public sealed record EndProfile
         orientation == ProfileOrientation.Mirrored ? MirroredX() : this;
 
     /// <summary>
-    /// A copy to edit as a user profile (CA-2): a new id, no Registry id and revision 0; the source is kept
-    /// so the copy still says where it came from.
+    /// A copy to edit as a user profile (CA-2): a new id, no external references and revision 0, so the copy doesn't
+    /// point to what the original is registered as. The source is kept, so the copy still says where it came from.
     /// </summary>
-    public EndProfile Copy(string designation) => this with { Id = Guid.NewGuid(), Designation = designation, RegistryId = null, Revision = 0, RevisionLog = [] };
+    public EndProfile Copy(string designation) => this with { Id = Guid.NewGuid(), Designation = designation, ExternalReferences = null, Revision = 0, RevisionLog = [] };
 
     public override string ToString() => Designation;
 }

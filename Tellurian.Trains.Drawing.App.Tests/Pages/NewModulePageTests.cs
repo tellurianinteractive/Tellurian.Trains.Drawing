@@ -25,7 +25,7 @@ public sealed class NewModulePageTests
         Assert.AreEqual("Straight 1000", draft.Name);
         Assert.IsTrue(draft.HasUnsavedChanges);
         Assert.IsNull(draft.FileName);
-        Assert.AreEqual(2, DrawingFileSerializer.DeserializeModule(draft.Json).Module.DefaultVariant.Exits.Count);
+        Assert.AreEqual(2, DrawingFileSerializer.DeserializeModule(draft.Json).Module.Drawing.Exits.Count);
         Assert.EndsWith($"drawing/{draft.Id}", context.Services.GetRequiredService<NavigationManager>().Uri);
     }
 
@@ -36,29 +36,28 @@ public sealed class NewModulePageTests
         var page = context.Render<NewModulePage>();
 
         page.Find("#name").Change("");
-        page.Find("#ownerPrefix").Change("SFjä");
-        page.Find("#fremoNumber").Change("12");
-        page.Find("#ownerName").Change("Stefan Fjällemark");
+        page.Find("#prefix").Change("SFjä");
+        page.Find("#number").Change("12");
+        page.Find("#owners").Change("Stefan Fjällemark, Module Club");
         page.Find("form").Submit();
         page.WaitForAssertion(() => Assert.HasCount(1, context.Workbench.Drafts));
 
         var draft = context.Workbench.Drafts.Values.Single();
-        Assert.AreEqual("SFjä 012", draft.Name);
+        Assert.AreEqual("SFjä 0012", draft.Name);
         var module = DrawingFileSerializer.DeserializeModule(draft.Json).Module;
-        Assert.AreEqual(12, module.FremoNumber);
-        Assert.AreEqual(new Model.Modules.Owner { Name = "Stefan Fjällemark", Prefix = "SFjä" }, module.Owners.Single());
+        Assert.AreEqual(("SFjä", 12, "Stefan Fjällemark, Module Club"), (module.Prefix, module.Number, module.ModuleOwners));
     }
 
     [TestMethod]
-    public void FremoNumberWithoutPrefixIsReported()
+    public void ANumberWithoutPrefixIsReported()
     {
         using var context = new AppTestContext();
         var page = context.Render<NewModulePage>();
 
-        page.Find("#fremoNumber").Change("12");
+        page.Find("#number").Change("12");
         page.Find("form").Submit();
 
-        CollectionAssert.Contains(page.FindAll(".error li").Select(e => e.TextContent).ToList(), "Enter the owner's FREMO prefix with the FREMO number.");
+        CollectionAssert.Contains(page.FindAll(".error li").Select(e => e.TextContent).ToList(), "Enter the prefix with the number.");
         Assert.IsEmpty(context.Workbench.Drafts);
     }
 
@@ -99,7 +98,7 @@ public sealed class NewModulePageTests
         page.Find("form").Submit();
 
         var errors = page.FindAll(".error li").Select(e => e.TextContent).ToList();
-        CollectionAssert.Contains(errors, "Enter a name, or a FREMO number with the owner's prefix.");
+        CollectionAssert.Contains(errors, "Enter a name, or a number with the prefix.");
         CollectionAssert.Contains(errors, "Straight length (mm) must be greater than 0.");
         Assert.IsEmpty(context.Workbench.Drafts);
     }
@@ -134,7 +133,7 @@ public sealed class NewModulePageTests
 
         var module = DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts.Values.Single().Json).Module;
         Assert.IsTrue(module.IsEndProfileSwitcher);
-        CollectionAssert.AreEqual(new[] { first, second }, module.DefaultVariant.Exits.Select(e => e.EndProfile.Id.ToString()).ToArray());
+        CollectionAssert.AreEqual(new[] { first, second }, module.Drawing.Exits.Select(e => e.EndProfile.Id.ToString()).ToArray());
     }
 
     // The module drawing fills the window beside the file actions, and can be printed with its name as title.

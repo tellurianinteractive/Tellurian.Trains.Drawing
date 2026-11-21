@@ -5,9 +5,9 @@ namespace Tellurian.Trains.Drawing.Model.Modules;
 /// <see cref="From"/> to <see cref="To"/> mm along the side, measured from its start.
 /// A null <see cref="To"/> means the end of the side.
 /// </summary>
-public sealed record SideAttachment
+public sealed record SideAttachment : ExtensibleRecord
 {
-    /// <summary>Index into <see cref="ModuleVariant.Sides"/>.</summary>
+    /// <summary>Index into <see cref="ModuleDrawing.Sides"/>.</summary>
     public required int SideIndex { get; init; }
 
     public double From { get; init; }

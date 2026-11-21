@@ -1,7 +1,7 @@
 namespace Tellurian.Trains.Drawing.Model.HallPlans;
 
 /// <summary>A wall (by index) or an obstacle (by id) of the plan's hall, as a reference for dimensions (HP-21).</summary>
-public sealed record HallElementReference
+public sealed record HallElementReference : ExtensibleRecord
 {
     public required HallElementKind Kind { get; init; }
 

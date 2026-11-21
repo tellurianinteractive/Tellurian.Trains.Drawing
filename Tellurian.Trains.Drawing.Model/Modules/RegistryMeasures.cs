@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Drawing.Model.Modules;
 /// Measures as entered in, or imported from, the Module Registry. They are compared with the
 /// measures derived from the drawing (MD-10). All are optional; lengths in mm, angle in degrees.
 /// </summary>
-public sealed record RegistryMeasures
+public sealed record RegistryMeasures : ExtensibleRecord
 {
     public double? Straight { get; init; }
     public double? Radius { get; init; }

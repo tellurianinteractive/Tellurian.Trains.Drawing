@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Model;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(LineStep), "line")]
 [JsonDerivedType(typeof(ArcStep), "arc")]
-public abstract record PathStep
+public abstract record PathStep : ExtensibleRecord
 {
     public abstract Segment ToSegment(Point start);
 

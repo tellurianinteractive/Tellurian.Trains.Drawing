@@ -78,7 +78,7 @@ public static class EndProfileImport
         if (CirclesDiffer(existing.Dowels, imported.Dowels)) changes |= EndProfileChanges.Dowels;
         if (PathsDiffer(existing.Outline, imported.Outline)) changes |= EndProfileChanges.Outline;
         if (PathsDiffer(existing.GroundLine, imported.GroundLine)) changes |= EndProfileChanges.GroundLine;
-        if (existing.Source != imported.Source || existing.RegistryId != imported.RegistryId) changes |= EndProfileChanges.Source;
+        if (existing.Source != imported.Source || !ExternalReferences.Same(existing.ExternalReferences, imported.ExternalReferences)) changes |= EndProfileChanges.Source;
         return changes;
     }
 

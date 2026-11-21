@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// The properties the planner has set for the joint between two placed exits (HP-11). The fit and the
 /// rule-based join method are evaluated from the end profiles, not stored; only the planner's choices are.
 /// </summary>
-public sealed record Joint
+public sealed record Joint : ExtensibleRecord
 {
     public const int DefaultNumberOfClamps = 2;
 

@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Model;
 /// Each step starts where the previous one ends, so the path is connected by construction.
 /// A closed path's last step ends at <see cref="Start"/>.
 /// </summary>
-public sealed record PathDrawing
+public sealed record PathDrawing : ExtensibleRecord
 {
     public required Point Start { get; init; }
     public required IReadOnlyList<PathStep> Steps { get; init; }

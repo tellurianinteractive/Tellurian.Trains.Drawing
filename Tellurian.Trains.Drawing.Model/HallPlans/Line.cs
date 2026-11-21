@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// A sequence of modules joined end to end (HP-3). A branch line starts at a free exit of a module in another
 /// line (HP-19); a line can end by joining a free exit elsewhere, a rejoining branch or a closed loop (HP-20).
 /// </summary>
-public sealed record Line
+public sealed record Line : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public string? Name { get; init; }
@@ -23,5 +23,5 @@ public sealed record Line
     [JsonIgnore]
     public bool IsBranch => StartAt is not null;
 
-    public override string? ToString() => Name;
+    public override string ToString() => Name ?? string.Empty;
 }

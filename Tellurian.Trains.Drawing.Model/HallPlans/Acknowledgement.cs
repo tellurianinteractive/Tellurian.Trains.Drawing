@@ -2,10 +2,10 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 
 /// <summary>
 /// A planner's decision that a specific warning is OK (HP-15). It is valid only while the involved
-/// placements are unchanged, which the fingerprint of their state (pose, variant, leg adjustment and
+/// placements are unchanged, which the fingerprint of their state (pose, drawing, leg adjustment and
 /// module revision) records.
 /// </summary>
-public sealed record Acknowledgement
+public sealed record Acknowledgement : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 

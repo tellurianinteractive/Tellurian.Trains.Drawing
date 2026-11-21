@@ -35,10 +35,10 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
 
         try
         {
-            var variant = exits.Count == 1
+            var drawing = exits.Count == 1
                 ? EndOfLine(standard, main, exits[0], internalJoints)
                 : PassThroughOrJunction(standard, main, exits, internalJoints);
-            return Result(Module(standard, addOns, variant));
+            return Result(Module(standard, addOns, drawing));
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -87,7 +87,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
             if (profile is null) return (null, 0);
             exits.AddRange(_p.IsEndOfLine
                 ? [new("A", ExitDirection.Undefined, profile)]
-                : [new("W", ExitDirection.West, profile), new("E", ExitDirection.East, profile)]);
+                : [new("W", ExitDirection.Left, profile), new("E", ExitDirection.Right, profile)]);
             Note(AutoDrawNoteCode.ExitsInferred, $"Exits inferred: {exits.Count} × {profile.Designation}.");
         }
         else if (exits.Count >= 2 && exits.All(e => e.Direction == ExitDirection.Undefined))
@@ -155,11 +155,11 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         }).Build();
     }
 
-    private ModuleVariant PassThroughOrJunction(ModuleStandard standard, SegmentPath main, IReadOnlyList<ResolvedExit> exits, int internalJoints)
+    private ModuleDrawing PassThroughOrJunction(ModuleStandard standard, SegmentPath main, IReadOnlyList<ResolvedExit> exits, int internalJoints)
     {
-        var first = exits.FirstOrDefault(e => e.Direction == ExitDirection.West) ?? exits[0];
+        var first = exits.FirstOrDefault(e => e.Direction == ExitDirection.Left) ?? exits[0];
         var rest = exits.Where(e => e != first).ToList();
-        var second = rest.FirstOrDefault(e => e.Direction == ExitDirection.East) ?? rest[0];
+        var second = rest.FirstOrDefault(e => e.Direction == ExitDirection.Right) ?? rest[0];
         var extras = rest.Where(e => e != second).ToList();
 
         var firstExit = Exit(first, main.StartPose.Reversed());
@@ -169,7 +169,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         if (extras.Count > 0) return Junction(standard, main, firstExit, secondExit, first, second, extras, internalJoints);
 
         var (right, left) = SideProfiles(main, first.PlateWidth / 2, second.PlateWidth / 2, Math.Max(first.PlateWidth, second.PlateWidth), isEndOfLine: false);
-        var variant = new ModuleVariant
+        var drawing = new ModuleDrawing
         {
             Exits = [firstExit, secondExit],
             MainPath = PathDrawing.From(main),
@@ -178,12 +178,12 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
                 new() { FromExit = first.Label, ToExit = second.Label, Path = PathDrawing.From(SideBuilder.Build(main, right, 0, length)) },
                 new() { FromExit = second.Label, ToExit = first.Label, Path = PathDrawing.From(SideBuilder.Build(main, left, 0, length).Reversed()) },
             ],
-            Tracks = ThroughTracks(standard, main, firstExit, first.Profile, secondExit, second.Profile),
+            TrackElements = ThroughTracks(standard, main, firstExit, first.Profile, secondExit, second.Profile),
         };
-        return Finish(standard, main, variant, right, left, internalJoints);
+        return Finish(standard, main, drawing, right, left, internalJoints);
     }
 
-    private ModuleVariant EndOfLine(ModuleStandard standard, SegmentPath main, ResolvedExit only, int internalJoints)
+    private ModuleDrawing EndOfLine(ModuleStandard standard, SegmentPath main, ResolvedExit only, int internalJoints)
     {
         var exit = Exit(only, main.StartPose.Reversed());
         var length = main.Length;
@@ -196,26 +196,26 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         if (isLoop)
             Note(AutoDrawNoteCode.LoopModule, "One exit and a curve of 180° or more: probably a loop module. The return-loop track is drawn by hand.", AutoDrawStatus.Check);
 
-        var variant = new ModuleVariant
+        var drawing = new ModuleDrawing
         {
             Exits = [exit],
             MainPath = PathDrawing.From(main),
             Sides = [new() { FromExit = only.Label, ToExit = only.Label, Path = PathDrawing.From(side) }],
-            Tracks = isLoop ? [] : TerminusTracks(standard, main, exit, only.Profile),
+            TrackElements = isLoop ? [] : TerminusTracks(standard, main, exit, only.Profile),
         };
-        return Finish(standard, main, variant, right, left, internalJoints, rightSide.Length);
+        return Finish(standard, main, drawing, right, left, internalJoints, rightSide.Length);
     }
 
-    private ModuleVariant Junction(ModuleStandard standard, SegmentPath main, ModuleExit firstExit, ModuleExit secondExit,
+    private ModuleDrawing Junction(ModuleStandard standard, SegmentPath main, ModuleExit firstExit, ModuleExit secondExit,
         ResolvedExit first, ResolvedExit second, IReadOnlyList<ResolvedExit> extras, int internalJoints)
     {
         var spacing = Math.Max(first.PlateWidth, second.PlateWidth) + ModuleAutoDraw.ProvisionalExitGap;
-        var east = extras.Where(e => e.Direction != ExitDirection.West).ToList();
-        var west = extras.Where(e => e.Direction == ExitDirection.West).ToList();
+        var onRight = extras.Where(e => e.Direction != ExitDirection.Left).ToList();
+        var onLeft = extras.Where(e => e.Direction == ExitDirection.Left).ToList();
         var endPose = main.EndPose;
-        var eastExits = east.Select((e, i) => Exit(e, endPose with { Position = endPose.Position + endPose.Left * (spacing * (i + 1)) }, FarEndOrientation(e), provisional: true));
-        var westExits = west.Select((e, i) => Exit(e, firstExit.Pose with { Position = main.StartPose.Position + main.StartPose.Left * (spacing * (i + 1)) }, provisional: true)).Reverse();
-        IReadOnlyList<ModuleExit> ordered = [firstExit, secondExit, .. eastExits, .. westExits];
+        var rightExits = onRight.Select((e, i) => Exit(e, endPose with { Position = endPose.Position + endPose.Left * (spacing * (i + 1)) }, FarEndOrientation(e), provisional: true));
+        var leftExits = onLeft.Select((e, i) => Exit(e, firstExit.Pose with { Position = main.StartPose.Position + main.StartPose.Left * (spacing * (i + 1)) }, provisional: true)).Reverse();
+        IReadOnlyList<ModuleExit> ordered = [firstExit, secondExit, .. rightExits, .. leftExits];
 
         var plates = ordered.ToDictionary(e => e.Label, e => ModuleGeometry.EndPlate(e, _profiles[e.EndProfile.Id]));
         var sides = ordered.Select((exit, i) =>
@@ -226,32 +226,32 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
 
         Note(AutoDrawNoteCode.JunctionNeedsCompletion, $"Junction: the exits {string.Join(", ", extras.Select(e => e.Label))} are placed provisionally; place them and draw the track work by hand.", AutoDrawStatus.NeedsManualCompletion);
 
-        var variant = new ModuleVariant
+        var drawing = new ModuleDrawing
         {
             Exits = ordered,
             MainPath = PathDrawing.From(main),
             Sides = sides,
-            Tracks = ThroughTracks(standard, main, firstExit, first.Profile, secondExit, second.Profile),
+            TrackElements = ThroughTracks(standard, main, firstExit, first.Profile, secondExit, second.Profile),
         };
-        var outline = ModuleGeometry.Outline(variant, Lookup)!;
+        var outline = ModuleGeometry.Outline(drawing, Lookup)!;
         if (Math.Max(_p.NumberOfSections ?? 1, internalJoints + 1) > 1)
             Note(AutoDrawNoteCode.SectionsNotGenerated, "Sections of junction modules are drawn by hand; the module is drawn as one section.");
 
-        variant = variant with { Sections = [new() { Label = "1", Outline = PathDrawing.From(outline) }] };
+        drawing = drawing with { Sections = [new() { Label = "1", Outline = PathDrawing.From(outline) }] };
         if (_p.IsOperationPlace)
         {
             var side = sides[0].Path.ToPath();
             var outward = -(side.End - side.Start).Normalized.LeftNormal * standard.OperatorSpaceDepth;
-            variant = variant with
+            drawing = drawing with
             {
                 OperatorSpaces = [new() { Attachment = new() { SideIndex = 0 }, Depth = standard.OperatorSpaceDepth, Area = PathDrawing.Polyline([side.Start + outward, side.End + outward, side.End, side.Start], isClosed: true) }],
             };
         }
-        return WithDuckUnder(variant, outline);
+        return WithDuckUnder(drawing, outline);
     }
 
     /// <summary>Sections, internal joints, operator space and duck-under area for pass-through and end-of-line modules.</summary>
-    private ModuleVariant Finish(ModuleStandard standard, SegmentPath main, ModuleVariant variant, OffsetProfile right, OffsetProfile left, int internalJoints, double? operatorSideLength = null)
+    private ModuleDrawing Finish(ModuleStandard standard, SegmentPath main, ModuleDrawing drawing, OffsetProfile right, OffsetProfile left, int internalJoints, double? operatorSideLength = null)
     {
         var length = main.Length;
         var count = Math.Max(1, Math.Max(_p.NumberOfSections ?? 1, internalJoints + 1));
@@ -275,7 +275,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
                 });
             }
         }
-        variant = variant with { Sections = sections, InternalJoints = joints };
+        drawing = drawing with { Sections = sections, InternalJoints = joints };
 
         if (_p.IsOperationPlace)
         {
@@ -284,16 +284,16 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
             var outer = SideBuilder.Build(main, right.Shifted(-depth), 0, length);
             var inner = SideBuilder.Build(main, right, 0, length).Reversed();
             var area = new SegmentPath([.. outer.Segments, new LineSegment(outer.End, inner.Start), .. inner.Segments, new LineSegment(inner.End, outer.Start)], isClosed: true);
-            variant = variant with
+            drawing = drawing with
             {
                 OperatorSpaces = [new() { Attachment = new() { SideIndex = 0, To = operatorSideLength }, Depth = depth, Area = PathDrawing.From(area) }],
             };
         }
-        return WithDuckUnder(variant, ModuleGeometry.Outline(variant, Lookup)!);
+        return WithDuckUnder(drawing, ModuleGeometry.Outline(drawing, Lookup)!);
     }
 
-    private ModuleVariant WithDuckUnder(ModuleVariant variant, SegmentPath outline) =>
-        _p.IsDuckunder ? variant with { DuckUnderAreas = [new() { Area = PathDrawing.From(outline) }] } : variant;
+    private ModuleDrawing WithDuckUnder(ModuleDrawing drawing, SegmentPath outline) =>
+        _p.IsDuckunder ? drawing with { DuckUnderAreas = [new() { Area = PathDrawing.From(outline) }] } : drawing;
 
     /// <summary>The right and left side offsets, including a widened body (ModuleDrawing §5.3).</summary>
     private (OffsetProfile Right, OffsetProfile Left) SideProfiles(SegmentPath main, double startHalfWidth, double endHalfWidth, double plateWidth, bool isEndOfLine)
@@ -430,7 +430,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         return new PathBuilder(start).Straight(straight).Curve(radius, degrees).Curve(radius, -degrees).Straight(straight).Build();
     }
 
-    private static FlexTrack Generated(SegmentPath path) => new() { Path = PathDrawing.From(path), IsMainTrack = true, IsGenerated = true };
+    private static FlexTrack Generated(SegmentPath path) => new() { Path = PathDrawing.From(path), IsGenerated = true };
 
     private static ModuleExit Exit(ResolvedExit exit, Pose pose, ProfileOrientation orientation = ProfileOrientation.Normal, bool provisional = false) => new()
     {
@@ -450,40 +450,43 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
     private ProfileOrientation FarEndOrientation(ResolvedExit exit) =>
         _p.IsEndProfileSwitcher || EndProfileAnalysis.Analyze(exit.Profile).IsSymmetric ? ProfileOrientation.Normal : ProfileOrientation.Mirrored;
 
-    private Module Module(ModuleStandard standard, IReadOnlyList<CatalogueReference> addOns, ModuleVariant variant) => new()
+    private Module Module(ModuleStandard standard, IReadOnlyList<CatalogueReference> addOns, ModuleDrawing drawing) => WithTrackList(standard, new()
     {
         Id = _p.ModuleId ?? Guid.NewGuid(),
         Name = _p.Name,
-        FremoNumber = _p.FremoNumber,
-        Owners = _p.Owners,
-        Standard = new(standard.Id, standard.ShortName),
-        Scale = standard.Scale,
+        Number = _p.Number,
+        Prefix = _p.Prefix,
+        ModuleOwners = _p.ModuleOwners,
+        ConfigurationLabel = _p.ConfigurationLabel,
+        StandardId = standard.Id,
+        Standard = standard.ToShared(),
         AddOns = addOns,
         NumberOfThroughTracks = _p.NumberOfThroughTracks,
         IsDuckunder = _p.IsDuckunder,
         IsTurntable = _p.IsTurntable,
         IsEndProfileSwitcher = _p.IsEndProfileSwitcher,
-        IsEndOfLine = _p.IsEndOfLine || variant.Exits.Count == 1,
-        Variants =
-        [
-            variant with
+        IsEndOfLine = _p.IsEndOfLine || drawing.Exits.Count == 1,
+        Drawing = drawing.WithInferredExitDirections() with
+        {
+            RegistryMeasures = new()
             {
-                Name = _p.ConfigurationLabel ?? string.Empty,
-                IsDefault = true,
-                RegistryModuleId = _p.RegistryModuleId,
-                RegistryMeasures = new()
-                {
-                    Straight = _p.Straight,
-                    Radius = _p.Radius,
-                    Angle = _p.Angle,
-                    Length = _p.Length,
-                    Width = _p.Width,
-                    NumberOfSections = _p.NumberOfSections,
-                },
-                AutoDraw = new() { GeneratorVersion = ModuleAutoDraw.GeneratorVersion, Parameters = _p },
+                Straight = _p.Straight,
+                Radius = _p.Radius,
+                Angle = _p.Angle,
+                Length = _p.Length,
+                Width = _p.Width,
+                NumberOfSections = _p.NumberOfSections,
             },
-        ],
-    };
+            AutoDraw = new() { GeneratorVersion = ModuleAutoDraw.GeneratorVersion, Parameters = _p },
+        },
+    });
+
+    /// <summary>The list of tracks of the generated tracks, with their lengths (spec MD-8).</summary>
+    private Module WithTrackList(ModuleStandard standard, Module module)
+    {
+        EndProfile? Find(Guid id) => Lookup(id) ?? catalogue.FindEndProfile(id);
+        return module.WithGeneratedTrackList().WithMeasuredTracks(StationTrackMeasurement.FoulingDistance(standard, Find), Find);
+    }
 
     private EndProfile? Lookup(Guid id) => _profiles.GetValueOrDefault(id);
 

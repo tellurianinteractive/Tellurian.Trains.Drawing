@@ -1,11 +1,12 @@
 # Egenskaper
 
-Identifiera modulen med ägarens FREMO-prefix och ett FREMO-nummer, med ett namn, eller med båda.
+Identifiera modulen med prefix och nummer, med ett namn, eller med båda.
 
-- **Ägarens FREMO-prefix** och **FREMO-modulnummer**, t.ex. *SFjä 012*. Ett FREMO-nummer kräver prefixet.
-- **Namn**: behövs när modulen saknar FREMO-nummer.
-- **Ägarens fullständiga namn**: ägaren kan vara någon annan än du.
+- **Prefix** och **Nummer**, t.ex. *SFjä 0012*: bokstäverna som ägaren märker sina moduler med, och ägarens nummer på modulen. För en FREMO-modul är de ägarens FREMO-prefix och FREMO-modulnumret. Ett nummer kräver prefixet.
+- **Namn**: behövs när modulen saknar nummer.
+- **Ägare**: ägarnas namn, åtskilda med kommatecken. En ägare kan vara någon annan än du. För en modul i Modulregistret gäller registrets ägare.
+- **Paket**: lådan som modulen transporteras i. Moduler i samma låda har samma beteckning; de anmäls till en träff tillsammans som ett paket. För en modul i Modulregistret gäller registrets paket.
 
-FREMO-beteckningen, eller annars namnet, skrivs på modulen längs spåret, med ägarens namn i mindre text under. Problem visas i rött men hindrar dig inte, så fälten kan fyllas i i valfri ordning. Ändringar kan ångras.
+Prefix och nummer, eller annars namnet, skrivs på modulen längs spåret, med ägarnas namn i mindre text under. Problem visas i rött men hindrar dig inte, så fälten kan fyllas i i valfri ordning. Ändringar kan ångras.
 
 **Ändringsloggen** visar vem som har sparat modulen, och när.

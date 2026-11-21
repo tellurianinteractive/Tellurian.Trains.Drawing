@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// All modules of a hall plan that are joined to each other: a main line with its branches and rejoining
 /// lines (HP-5). The poses of all modules are computed from the anchor module's pose.
 /// </summary>
-public sealed record Layout
+public sealed record Layout : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public string? Name { get; init; }
@@ -28,5 +28,5 @@ public sealed record Layout
 
     public IEnumerable<LineEntry> Entries() => Lines.SelectMany(l => l.Entries);
 
-    public override string? ToString() => Name;
+    public override string ToString() => Name ?? string.Empty;
 }

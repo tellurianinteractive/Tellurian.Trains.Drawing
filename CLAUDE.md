@@ -16,7 +16,7 @@ The domain follows the sibling repository **Module Registry** (`../Modules Regis
 
 `Tellurian.Trains.Drawing.slnx`. Shared settings in `Directory.Build.props` (target framework, version, NuGet metadata). Dependencies run one way: `App → Components → Editing → Model → Geometry`.
 - `Tellurian.Trains.Drawing.Geometry` – pure 2D math (poses, transforms, line/arc segments, distances). No domain knowledge.
-- `Tellurian.Trains.Drawing.Model` – domain model, catalogue, joint fit evaluator, validation, file format.
+- `Tellurian.Trains.Drawing.Model` – domain model, catalogue, joint fit evaluator, validation, file format. It uses the shared layout model, the package `Tellurian.Trains.Schedules.Model.Layouts` (operation location, station track, their rules), owned by the Schedules repository (`../Tellurian.Trains.Schedules/Model.Layouts`, design in its `Documentation/OperationLocations.md`). Names, units (metres) and meaning of those types are a contract between four systems: change them there, never here.
 - `Tellurian.Trains.Drawing.Editing` – UI-independent editor state: commands, undo/redo, snapping, tools.
 - `Tellurian.Trains.Drawing.Components` – Razor class library with **all** view and editor components and their collocated JS (`*.razor.js`). Reused by the Module Registry (Blazor Server), so it must work in any render mode: no WebAssembly-only APIs, JS interop only after first render, read-only display without JS.
 - `Tellurian.Trains.Drawing.App` – Blazor WASM PWA: shell, pages, IndexedDB storage, file access, service worker. No drawing components here.
@@ -45,6 +45,15 @@ dotnet pack Tellurian.Trains.Drawing.Components               # pack libraries o
 - UI strings in English resources first; languages en, de, da, sv, nb (Tellurian.Localization). German addresses the user with "du", not "Sie": the users are hobbyists.
 - Texts longer than a sentence or two, or with several paragraphs or headings, go in a Markdown document in the Translations project, not in RESX. Every document exists in all five languages (`Name.md` in English, `Name.sv.md` and so on); a test fails when one is missing.
 - UI changes must be checked in a browser; the AOT Release build before releases.
+
+- A module file is **one complete module with one drawing** (`Module.Drawing`). There are no variants here: a module that can be set up in several ways is several modules, and only the Module Registry knows that they belong together. Every module has a list of tracks; the operation location is optional.
+- A hall plan refers to a module's exit by side and number (`ExitPlace`: Left 1, Right 2), never by its label.
+
+## Local NuGet Development
+
+This repo consumes `Tellurian.Trains.Schedules.Model.Layouts`, which may come from the local feed `C:\NuGets` during development. When iterating on it locally, bump the `<PackageReference Version="…" />` in `Tellurian.Trains.Drawing.Model.csproj` to the library's local patch version. CI will reject any local-only version with NU1101: the library must be published to nuget.org before this app can ship with its changes.
+
+Full workflow: user-level `local-nuget-development` skill.
 
 ## Release
 

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Halls;
@@ -11,7 +12,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// every module it uses, their end profiles and the catalogue entries needed to evaluate them.
 /// Embedded modules are read-only in the plan (HP-16).
 /// </summary>
-public sealed record HallPlan
+public sealed record HallPlan : ExtensibleRecord
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
@@ -59,6 +60,9 @@ public sealed record HallPlan
 
     /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
     public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+
+    /// <summary>What other systems keep about the hall plan, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
+    public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; init; }
 
     /// <summary>The primary standard and the further accepted standards.</summary>
     public IEnumerable<CatalogueReference> AllAcceptedStandards() => AcceptedStandards.Prepend(PrimaryStandard).DistinctBy(s => s.Id);

@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.AutoDraw;
 /// An exit as registered in the Module Registry (<c>ModuleExit</c>). An exit with the end profile
 /// <see cref="ModuleAutoDraw.InternalEndProfile"/> is an internal joint between sections, not an exit.
 /// </summary>
-public sealed record AutoDrawExit
+public sealed record AutoDrawExit : ExtensibleRecord
 {
     public required string Label { get; init; }
     public ExitDirection Direction { get; init; }

@@ -22,16 +22,16 @@ public sealed class ModuleTemplateTests
     };
 
     private static ModuleMeasures Measures(AutoDrawResult result) =>
-        ModuleMeasurement.Derive(result.Module!.DefaultVariant, Catalogue.FindEndProfile);
+        ModuleMeasurement.Derive(result.Module!.Drawing, Catalogue.FindEndProfile);
 
     [TestMethod]
-    public void TemplateKeepsTheFremoNumberAndTheOwner()
+    public void TemplateKeepsTheNumberThePrefixAndTheOwners()
     {
-        var owner = new Modules.Owner { Name = "Stefan Fjällemark", Prefix = "SFjä" };
-        var module = (Template(ModuleTemplateKind.Straight) with { Name = "", FremoNumber = 12, Owner = owner }).Create(Catalogue).Module!;
-        Assert.AreEqual(12, module.FremoNumber);
-        Assert.AreEqual(owner, module.Owners.Single());
-        Assert.AreEqual("SFjä 012", module.Title);
+        var module = (Template(ModuleTemplateKind.Straight) with { Name = "", Number = 12, Prefix = " SFjä ", ModuleOwners = "Stefan Fjällemark, Module Club" }).Create(Catalogue).Module!;
+        Assert.AreEqual(12, module.Number);
+        Assert.AreEqual("SFjä", module.Prefix);
+        Assert.AreEqual("Stefan Fjällemark, Module Club", module.ModuleOwners);
+        Assert.AreEqual("SFjä 0012", module.Title);
     }
 
     [TestMethod]
@@ -39,9 +39,9 @@ public sealed class ModuleTemplateTests
     {
         var result = Template(ModuleTemplateKind.Straight).Create(Catalogue);
         Assert.AreEqual(AutoDrawStatus.Complete, result.Status, string.Join("; ", result.Notes));
-        var variant = result.Module!.DefaultVariant;
-        CollectionAssert.AreEqual(new[] { ModuleTemplate.FirstExit, ModuleTemplate.SecondExit }, variant.Exits.Select(e => e.Label).ToArray());
-        Assert.IsTrue(variant.Exits.All(e => e.EndProfile.Id == TestCatalogue.FremoSingle.Id));
+        var drawing = result.Module!.Drawing;
+        CollectionAssert.AreEqual(new[] { ModuleTemplate.FirstExit, ModuleTemplate.SecondExit }, drawing.Exits.Select(e => e.Label).ToArray());
+        Assert.IsTrue(drawing.Exits.All(e => e.EndProfile.Id == TestCatalogue.FremoSingle.Id));
         Assert.AreEqual(1000, Measures(result).Length!.Value, Precision);
     }
 

@@ -3,7 +3,7 @@ using Tellurian.Trains.Drawing.Geometry;
 namespace Tellurian.Trains.Drawing.Model.Halls;
 
 /// <summary>A pillar or fixed furniture in a hall (HA-2). Modules may not overlap it (VA-6).</summary>
-public sealed record Obstacle
+public sealed record Obstacle : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public ObstacleKind Kind { get; init; }
@@ -44,5 +44,5 @@ public sealed record Obstacle
         return false;
     }
 
-    public override string? ToString() => Label ?? Kind.ToString();
+    public override string ToString() => Label ?? Kind.ToString();
 }

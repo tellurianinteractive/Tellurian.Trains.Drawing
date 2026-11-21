@@ -6,12 +6,13 @@ using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
+using Shared = Tellurian.Trains.Schedules.Model.Layouts;
 
 namespace Tellurian.Trains.Drawing.Model.Files;
 
 /// <summary>
 /// Source-generated JSON metadata for the drawing files; trim and AOT safe.
-/// Every enum that occurs in a file needs a <see cref="CamelCaseEnumConverter{TEnum}"/> here.
+/// Enum values are written as in the code, e.g. <c>Left</c>; values in another case, as earlier versions wrote them, are read.
 /// </summary>
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
@@ -25,31 +26,14 @@ namespace Tellurian.Trains.Drawing.Model.Files;
         typeof(PointJsonConverter),
         typeof(AngleJsonConverter),
         typeof(PoseJsonConverter),
-        typeof(CamelCaseEnumConverter<DrawingFileKind>),
-        typeof(CamelCaseEnumConverter<RailSystem>),
-        typeof(CamelCaseEnumConverter<JointFit>),
-        typeof(CamelCaseEnumConverter<ProfileOrientation>),
-        typeof(CamelCaseEnumConverter<ExitDirection>),
-        typeof(CamelCaseEnumConverter<SideMode>),
-        typeof(CamelCaseEnumConverter<LabelKind>),
-        typeof(CamelCaseEnumConverter<TurnoutKind>),
-        typeof(CamelCaseEnumConverter<CurveDirection>),
-        typeof(CamelCaseEnumConverter<StraightPosition>),
-        typeof(CamelCaseEnumConverter<WideningSide>),
-        typeof(CamelCaseEnumConverter<ObstacleKind>),
-        typeof(CamelCaseEnumConverter<DoorKind>),
-        typeof(CamelCaseEnumConverter<JoinMethod>),
-        typeof(CamelCaseEnumConverter<ReferencePointKind>),
-        typeof(CamelCaseEnumConverter<PlateSide>),
-        typeof(CamelCaseEnumConverter<HallElementKind>),
-        typeof(CamelCaseEnumConverter<PlateSegmentKind>),
-        typeof(CamelCaseEnumConverter<FilletSide>),
     ])]
 [JsonSerializable(typeof(DrawingFile<EndProfile>))]
 [JsonSerializable(typeof(DrawingFile<ModuleFileContent>))]
 [JsonSerializable(typeof(DrawingFile<DrawingCatalogue>))]
 [JsonSerializable(typeof(DrawingFile<Hall>))]
 [JsonSerializable(typeof(DrawingFile<HallPlan>))]
+[JsonSerializable(typeof(Shared.ModuleStandard), TypeInfoPropertyName = "SharedModuleStandard")]
+[JsonSerializable(typeof(Shared.Scale), TypeInfoPropertyName = "SharedScale")]
 [JsonSerializable(typeof(DrawingFileKind))]
 [JsonSerializable(typeof(IReadOnlyList<DrawingRevision>))]
 public sealed partial class DrawingJsonContext : JsonSerializerContext;

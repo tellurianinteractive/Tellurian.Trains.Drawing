@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 namespace Tellurian.Trains.Drawing.Model.Measures;
 
 /// <summary>
-/// Measures derived from a module variant's drawing (MD-10), comparable with the Registry values.
+/// Measures derived from a module drawing's drawing (MD-10), comparable with the Registry values.
 /// Lengths in mm, angles in degrees. Measures that depend on the main path are null without one.
 /// </summary>
-public sealed record ModuleMeasures
+public sealed record ModuleMeasures : ExtensibleRecord
 {
     /// <summary>The length of the main path: arc length + straight length (Registry <c>TotalLength</c>).</summary>
     public double? Length { get; init; }

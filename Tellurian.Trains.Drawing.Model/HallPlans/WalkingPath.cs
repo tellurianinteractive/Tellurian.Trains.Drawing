@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// A path for train drivers to walk along while following their trains (HP-18). It may pass under
 /// duck-under areas, but not through other modules (VA-13).
 /// </summary>
-public sealed record WalkingPath
+public sealed record WalkingPath : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 

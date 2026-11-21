@@ -189,7 +189,7 @@ public sealed class HallScene : ISelectableScene<Hall, HallItem>
     /// Where the emergency exit sign of <paramref name="door"/> is drawn: a square in its place in front of the exit
     /// (<see cref="SymbolCells"/>), turned so that the running figure runs towards the exit. Where that would turn the
     /// sign upside down, it is <c>Mirrored</c> instead, running the other way in its own frame, as the left-hand
-    /// variant of the sign does.
+    /// drawing of the sign does.
     /// </summary>
     public static (Point Center, double Size, Angle Rotation, bool Mirrored) EmergencySign(Door door)
     {

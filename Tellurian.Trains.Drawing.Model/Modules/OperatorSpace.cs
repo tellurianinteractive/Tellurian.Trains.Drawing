@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Drawing.Model.Modules;
 /// An area next to the module where operators stand (MD-17). Either attached to a side with a depth
 /// (auto), or a polygon drawn by hand (custom, <see cref="Attachment"/> null). The area is always stored.
 /// </summary>
-public sealed record OperatorSpace
+public sealed record OperatorSpace : ExtensibleRecord
 {
     public SideAttachment? Attachment { get; init; }
 

@@ -16,14 +16,15 @@ namespace Tellurian.Trains.Drawing.Model.Tracks;
 [JsonDerivedType(typeof(Crossing), "crossing")]
 [JsonDerivedType(typeof(DoubleSlip), "doubleSlip")]
 [JsonDerivedType(typeof(BufferStop), "bufferStop")]
-public abstract record TrackElement
+public abstract record TrackElement : ExtensibleRecord
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 
-    /// <summary>Track designation, e.g. "1" or "Main" (spec MD-8).</summary>
-    public string? Designation { get; init; }
-
-    public bool IsMainTrack { get; init; }
+    /// <summary>
+    /// The id of the track of the module's list that the element is part of (spec MD-8); null for an element that is
+    /// given to no track. A turnout, crossing or double slip is shared by the tracks that meet in it and refers to one of them.
+    /// </summary>
+    public int? StationTrackId { get; init; }
 
     /// <summary>Narrow-gauge track, drawn in a lighter tint (spec MD-21).</summary>
     public bool IsNarrowGauge { get; init; }

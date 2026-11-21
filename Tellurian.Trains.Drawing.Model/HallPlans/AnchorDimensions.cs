@@ -5,7 +5,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// from a reference point on the anchor to two walls or obstacles, and the angle to a wall. The distances
 /// and the angle are computed from the anchor pose; typing them moves the anchor instead.
 /// </summary>
-public sealed record AnchorDimensions
+public sealed record AnchorDimensions : ExtensibleRecord
 {
     public required AnchorReferencePoint ReferencePoint { get; init; }
     public required HallElementReference First { get; init; }

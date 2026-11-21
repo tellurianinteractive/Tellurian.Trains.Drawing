@@ -3,7 +3,7 @@ using Tellurian.Trains.Drawing.Geometry;
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>A text label or simple marker in a module drawing. The pose's heading is the text direction.</summary>
-public sealed record ModuleLabel
+public sealed record ModuleLabel : ExtensibleRecord
 {
     public LabelKind Kind { get; init; }
     public string? Text { get; init; }

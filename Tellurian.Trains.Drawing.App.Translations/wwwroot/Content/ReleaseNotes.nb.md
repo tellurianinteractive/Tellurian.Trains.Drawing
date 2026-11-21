@@ -1,5 +1,9 @@
 # Versjonsmerknader
 
+## Versjon 0.9.1
+Utgitt 2026-11-18
+- Etter *Snu kurven* tilpasses visningen til hele modulen igjen.
+
 ## Versjon 0.9.0
 Utgitt 2026-11-18
 - Modulredigering: et nytt panel *Ender*. Gi ende A eller ende B en annen endeprofil i modulens skala, så tegnes modulen på nytt med den. *Snu* snur platen til en asymmetrisk endeprofil med den andre siden ut; *Endevender* følger med av seg selv.

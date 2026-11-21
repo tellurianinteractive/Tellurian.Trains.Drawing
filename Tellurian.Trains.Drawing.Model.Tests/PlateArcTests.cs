@@ -87,7 +87,7 @@ public sealed class PlateArcTests
         var plate = LowB96FromTheDrawing().WithSegment(11, PlateSegment.Fillet(10, FilletSide.Above))!;
         var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
         var json = Files.DrawingFileSerializer.Serialize(profile);
-        StringAssert.Contains(json, "\"side\": \"above\"");
+        StringAssert.Contains(json, "\"side\": \"Above\"");
         Assert.AreEqual(FilletSide.Above, Files.DrawingFileSerializer.DeserializeEndProfile(json).Plate!.Segments[11].Side);
         SchemaValidator.AssertValid(Files.DrawingFileKind.EndProfile, json);
     }

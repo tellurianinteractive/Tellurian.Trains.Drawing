@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Model.EndProfiles;
 /// A segment of a plate's upper edge, as an end profile drawing gives it: a line to a point, an arc around a
 /// centre to a point, or a fillet with only its radius (EP-3). Stored in end profile files as entered.
 /// </summary>
-public sealed record PlateSegment
+public sealed record PlateSegment : ExtensibleRecord
 {
     public required PlateSegmentKind Kind { get; init; }
 

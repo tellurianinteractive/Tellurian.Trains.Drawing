@@ -47,6 +47,7 @@
         <label><span>@T["Field_OperatorSpaceDepth"]</span><DecimalInput @bind-Value="form.OperatorSpaceDepth" InvalidText="@T["InvalidNumber"]" /></label>
         <label><span>@T["Field_DefaultCurveRadius"]</span><DecimalInput @bind-Value="form.DefaultCurveRadius" InvalidText="@T["InvalidNumber"]" /></label>
         <label><span>@T["Field_MinimumReverseCurveRadius"]</span><DecimalInput @bind-Value="form.MinimumReverseCurveRadius" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_FoulingDistance"]</span><DecimalInput @bind-Value="form.FoulingDistance" InvalidText="@T["InvalidNumber"]" /></label>
         <label>
             <span>@T["Field_DefaultSingleTrackEndProfileId"]</span>
             <select @bind="form.DefaultSingleTrackEndProfileId">
@@ -152,6 +153,7 @@
         public double? OperatorSpaceDepth { get; set; } = 800;
         public double? DefaultCurveRadius { get; set; }
         public double? MinimumReverseCurveRadius { get; set; }
+        public double? FoulingDistance { get; set; }
         public Guid? DefaultSingleTrackEndProfileId { get; set; }
         public Guid? DefaultDoubleTrackEndProfileId { get; set; }
         public string TrackColor { get; set; } = ModuleStandard.DefaultTrackColor;
@@ -178,6 +180,7 @@
             OperatorSpaceDepth = s.OperatorSpaceDepth,
             DefaultCurveRadius = s.DefaultCurveRadius,
             MinimumReverseCurveRadius = s.MinimumReverseCurveRadius,
+            FoulingDistance = s.FoulingDistance,
             DefaultSingleTrackEndProfileId = s.DefaultSingleTrackEndProfileId,
             DefaultDoubleTrackEndProfileId = s.DefaultDoubleTrackEndProfileId,
             TrackColor = s.TrackColor,
@@ -213,6 +216,7 @@
                 OperatorSpaceDepth = OperatorSpaceDepth ?? 0,
                 DefaultCurveRadius = DefaultCurveRadius,
                 MinimumReverseCurveRadius = MinimumReverseCurveRadius,
+                FoulingDistance = FoulingDistance is > 0 ? FoulingDistance : null,
                 DefaultSingleTrackEndProfileId = DefaultSingleTrackEndProfileId,
                 DefaultDoubleTrackEndProfileId = DefaultDoubleTrackEndProfileId,
                 TrackColor = TrackColor,

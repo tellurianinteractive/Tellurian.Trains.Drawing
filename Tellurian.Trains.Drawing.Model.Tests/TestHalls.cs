@@ -17,8 +17,8 @@ internal static class TestHalls
     private const string SingleTrack = "FREMO-H0-B96";
     private const string DoubleTrack = "FREMO-H0-2E96";
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.West, EndProfile = SingleTrack };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.East, EndProfile = SingleTrack };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = SingleTrack };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = SingleTrack };
 
     /// <summary>A 12 × 8 m hall with two pillars, a door, an emergency exit and a no-go zone.</summary>
     public static Hall Club() => Hall.Rectangle("Club hall", Width, Depth) with
@@ -70,7 +70,7 @@ internal static class TestHalls
                     IsAnchorLocked = true,
                     AnchorDimensions = new()
                     {
-                        ReferencePoint = AnchorReferencePoint.PlateCorner("W", PlateSide.Right),
+                        ReferencePoint = AnchorReferencePoint.PlateCorner(ExitPlace.Left, PlateSide.Right),
                         First = HallElementReference.Wall(0),
                         Second = HallElementReference.Obstacle(hall.Obstacles[0].Id),
                         AngleWall = 0,
@@ -84,30 +84,30 @@ internal static class TestHalls
                             [
                                 Entry(straight),
                                 Entry(curve).Flipped() with { LegAdjustment = 5, Note = "Bends the other way" },
-                                Entry(junction, variantId: junction.DefaultVariant.Id),
+                                Entry(junction),
                             ],
                         },
                         new()
                         {
                             Name = "Branch",
-                            StartAt = new(junction.Id, "E2"),
-                            Entries = [new() { ModuleId = terminus.Id, EntryExit = "W" }],
+                            StartAt = new(junction.Id, ExitDirection.Right, 2),
+                            Entries = [new() { ModuleId = terminus.Id }],
                         },
                     ],
                 },
             ],
-            Joints = [new() { First = new(straight.Id, "E"), Second = new(curve.Id, "E"), JoinMethodOverride = JoinMethod.Clamped, NumberOfClamps = 3, Note = "No screw-hole data" }],
+            Joints = [new() { First = new(straight.Id, ExitDirection.Right), Second = new(curve.Id, ExitDirection.Right), JoinMethodOverride = JoinMethod.Clamped, NumberOfClamps = 3, Note = "No screw-hole data" }],
             PublicAreas = [new() { Area = PathDrawing.Rectangle(new(6000, 6500), 4000, 1500, Angle.Zero), Label = "Visitors" }],
             WalkingPaths = [new() { CentreLine = PathDrawing.Polyline([new(1000, 1000), new(1000, 3500), new(5000, 3500)]), Width = 700, Label = "Drivers" }],
             Acknowledgements = [new() { FindingCode = "VA-11", ModuleIds = [junction.Id], Fingerprint = "sample", Note = "Operator space overlaps the stage edge", Time = new(2026, 11, 14, 10, 0, 0, TimeSpan.Zero) }],
             Modules = modules,
-            EndProfiles = [.. modules.SelectMany(m => m.Variants).SelectMany(v => v.Exits).Select(e => e.EndProfile.Id).Distinct().Select(id => catalogue.FindEndProfile(id)!)],
+            EndProfiles = [.. modules.SelectMany(m => m.Drawing.Exits).Select(e => e.EndProfile.Id).Distinct().Select(id => catalogue.FindEndProfile(id)!)],
             Standards = [standard],
         };
     }
 
-    private static LineEntry Entry(Module module, Guid? variantId = null) =>
-        new() { ModuleId = module.Id, VariantId = variantId, EntryExit = "W", ExitExit = "E" };
+    private static LineEntry Entry(Module module) =>
+        new() { ModuleId = module.Id };
 
     private static Module Draw(DrawingCatalogue catalogue, AutoDrawParameters parameters) =>
         ModuleAutoDraw.Create(parameters, catalogue).Module ?? throw new InvalidOperationException($"{parameters.Name} couldn't be drawn.");

@@ -3,7 +3,7 @@ using Tellurian.Trains.Drawing.Model.EndProfiles;
 namespace Tellurian.Trains.Drawing.Model.HallPlans;
 
 /// <summary>Tolerances and defaults of a hall plan (HP-1, HP-5, HP-18, VA-3, VA-7, VA-10).</summary>
-public sealed record HallPlanSettings
+public sealed record HallPlanSettings : ExtensibleRecord
 {
     public const double DefaultWalkingPathWidth = 600;
 
