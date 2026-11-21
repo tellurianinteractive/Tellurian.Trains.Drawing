@@ -52,8 +52,8 @@ public sealed partial class AppTextsTests
             .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind>("LocationKind"))
             .Concat(LocationProblemsShown.Select(code => $"LocationProblem_{code}"))
             .Concat(new[] { "StraightTrack", "CurvedTrack", "FlexTrack", "Turnout", "Crossing", "DoubleSlip" }.Select(n => $"TrackElement_{n}"))
-            .Concat(Keys<Model.EndProfiles.PlateSegmentKind>("SegmentKind"))
-            .Concat(Keys<Model.EndProfiles.FilletSide>("FilletSide"));
+            .Concat(Keys<PlateSegmentKind>("SegmentKind"))
+            .Concat(Keys<FilletSide>("FilletSide"));
         foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
     }
 

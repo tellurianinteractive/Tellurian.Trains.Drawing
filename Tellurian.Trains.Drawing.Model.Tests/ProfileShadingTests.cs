@@ -13,10 +13,10 @@ public sealed class ProfileShadingTests
     [TestMethod]
     public void ShortNameFallsBackToTheDesignation()
     {
-        var profile = TestProfiles.FremoSingle() with { Designation = "FREMO-H0-B96" };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Designation = "FREMO-H0-B96"; });
         Assert.AreEqual("FREMO-H0-B96", profile.ShortNameOrDesignation);
-        Assert.AreEqual("FREMO-H0-B96", (profile with { ShortName = " " }).ShortNameOrDesignation);
-        Assert.AreEqual("B96", (profile with { ShortName = "B96" }).ShortNameOrDesignation);
+        Assert.AreEqual("FREMO-H0-B96", (profile.With(edited => { edited.ShortName = " "; })).ShortNameOrDesignation);
+        Assert.AreEqual("B96", (profile.With(edited => { edited.ShortName = "B96"; })).ShortNameOrDesignation);
     }
 
     // A plate whose top is 40 mm below rail top is light over its whole width.
@@ -33,7 +33,7 @@ public sealed class ProfileShadingTests
     [TestMethod]
     public void GroundLineCrossingRailTopSplitsAtTheCrossing()
     {
-        var profile = TestProfiles.FremoSingle() with { GroundLine = PathDrawing.Polyline([new(-250, 100), new(-100, 100), new(-50, -50), new(250, -50)]) };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.GroundLine = PathDrawing.Polyline([new(-250, 100), new(-100, 100), new(-50, -50), new(250, -50)]); });
         var intervals = ProfileShading.Intervals(profile);
         Assert.HasCount(2, intervals);
         Assert.IsTrue(intervals[0].IsAboveRailTop);
@@ -46,7 +46,7 @@ public sealed class ProfileShadingTests
 
     [TestMethod]
     public void ProfileWithoutEdgeHasNoShading() =>
-        Assert.IsEmpty(ProfileShading.Intervals(TestProfiles.FremoSingle() with { GroundLine = null, Outline = null, Plate = null }));
+        Assert.IsEmpty(ProfileShading.Intervals(TestProfiles.FremoSingle().With(edited => { edited.GroundLine = null; edited.Outline = null; edited.Plate = null; })));
 
     // B96 has a mountain on one side: dark there, light at the track.
     [TestMethod]
@@ -74,7 +74,7 @@ public sealed class ProfileShadingTests
     [TestMethod]
     public void ShadingFollowsTheFormOfTheProfile()
     {
-        var profile = TestProfiles.FremoSingle() with { GroundLine = PathDrawing.Polyline([new(-250, 100), new(-150, 60), new(-100, 60), new(-50, -30), new(250, -30)]) };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.GroundLine = PathDrawing.Polyline([new(-250, 100), new(-150, 60), new(-100, 60), new(-50, -30), new(250, -30)]); });
         var shades = ProfileShading.Shades(Exit(), profile);
         var dark = shades.Single(s => s.IsAboveRailTop);
         // End view X maps to plan −Y at this exit (heading 180°, left = −Y).
@@ -90,7 +90,7 @@ public sealed class ProfileShadingTests
     [TestMethod]
     public void VerticalStepThroughRailTopIsKept()
     {
-        var profile = TestProfiles.FremoSingle() with { GroundLine = PathDrawing.Polyline([new(-250, 50), new(0, 50), new(0, -20), new(250, -20)]) };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.GroundLine = PathDrawing.Polyline([new(-250, 50), new(0, 50), new(0, -20), new(250, -20)]); });
         var intervals = ProfileShading.Intervals(profile);
         Assert.HasCount(2, intervals);
         Assert.AreEqual(0, intervals[0].To, Precision);
@@ -102,7 +102,7 @@ public sealed class ProfileShadingTests
     [TestMethod]
     public void MirroredExitMirrorsTheShades()
     {
-        var profile = TestProfiles.FremoSingle() with { GroundLine = PathDrawing.Polyline([new(-250, 100), new(0, 100), new(0, -50), new(250, -50)]) };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.GroundLine = PathDrawing.Polyline([new(-250, 100), new(0, 100), new(0, -50), new(250, -50)]); });
         var normal = ProfileShading.Shades(Exit(), profile).Single(s => s.IsAboveRailTop);
         var mirrored = ProfileShading.Shades(Exit(ProfileOrientation.Mirrored), profile).Single(s => s.IsAboveRailTop);
         Assert.AreEqual(-normal.Corners.Average(c => c.Y), mirrored.Corners.Average(c => c.Y), Precision);

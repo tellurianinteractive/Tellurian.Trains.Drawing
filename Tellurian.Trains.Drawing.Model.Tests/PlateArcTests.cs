@@ -85,11 +85,11 @@ public sealed class PlateArcTests
     public void FilletSideIsKeptThroughAFile()
     {
         var plate = LowB96FromTheDrawing().WithSegment(11, PlateSegment.Fillet(10, FilletSide.Above))!;
-        var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
         var json = Files.DrawingFileSerializer.Serialize(profile);
         StringAssert.Contains(json, "\"side\": \"Above\"");
         Assert.AreEqual(FilletSide.Above, Files.DrawingFileSerializer.DeserializeEndProfile(json).Plate!.Segments[11].Side);
-        SchemaValidator.AssertValid(Files.DrawingFileKind.EndProfile, json);
+        SchemaValidator.AssertValid(DrawingFileKind.EndProfile, json);
     }
 
     [TestMethod]
@@ -132,7 +132,7 @@ public sealed class PlateArcTests
     public void StoredPlateKeepsItsFilletThroughAFile()
     {
         var plate = LowB96FromTheDrawing();
-        var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
 
         var read = Files.DrawingFileSerializer.DeserializeEndProfile(Files.DrawingFileSerializer.Serialize(profile));
 
@@ -140,14 +140,14 @@ public sealed class PlateArcTests
         Assert.AreEqual(PlateSegmentKind.Fillet, segments[^2].Kind, "The fillet is stored as a fillet, not as the arc it resolves to.");
         Assert.AreEqual(10, segments[^2].Radius);
         Assert.AreEqual(Low(577, -391), segments[^1].Center);
-        Assert.AreEqual(read.Outline!.ToPath().Length, profile.Outline.ToPath().Length, Precision, "The outline is still written for other readers.");
+        Assert.AreEqual(read.Outline!.ToPath().Length, profile.Outline!.ToPath().Length, Precision, "The outline is still written for other readers.");
     }
 
     [TestMethod]
     public void MirroredProfileDropsItsPlateAndKeepsTheMirroredOutline()
     {
         var plate = LowB96FromTheDrawing();
-        var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
         var mirrored = profile.MirroredX();
         Assert.IsNull(mirrored.Plate);
         Assert.AreEqual(-profile.Outline!.ToPath().Bounds.Min.X, mirrored.Outline!.ToPath().Bounds.Max.X, Precision);

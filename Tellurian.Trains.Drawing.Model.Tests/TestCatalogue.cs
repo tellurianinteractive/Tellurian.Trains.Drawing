@@ -10,10 +10,10 @@ internal static class TestCatalogue
     public static readonly Guid MmmId = Guid.Parse("10000000-0000-0000-0000-000000000002");
     public static readonly Guid SummerId = Guid.Parse("10000000-0000-0000-0000-000000000003");
 
-    public static readonly EndProfile FremoSingle = TestProfiles.FremoSingle(Guid.Parse("20000000-0000-0000-0000-000000000001")) with { Designation = "FREMO-H0-B96" };
-    public static readonly EndProfile FremoDouble = TestProfiles.Double(45) with { Id = Guid.Parse("20000000-0000-0000-0000-000000000002"), Designation = "FREMO-H0-2E96" };
-    public static readonly EndProfile FremoDoubleWide = TestProfiles.Double(55) with { Id = Guid.Parse("20000000-0000-0000-0000-000000000003"), Designation = "TEST-2-55" };
-    public static readonly EndProfile Mmm480 = TestProfiles.MmmSingle() with { Id = Guid.Parse("20000000-0000-0000-0000-000000000004"), Designation = "MMM480" };
+    public static readonly EndProfile FremoSingle = TestProfiles.FremoSingle(Guid.Parse("20000000-0000-0000-0000-000000000001")).With(edited => { edited.Designation = "FREMO-H0-B96"; });
+    public static readonly EndProfile FremoDouble = TestProfiles.Double(45).With(edited => { edited.Id = Guid.Parse("20000000-0000-0000-0000-000000000002"); edited.Designation = "FREMO-H0-2E96"; });
+    public static readonly EndProfile FremoDoubleWide = TestProfiles.Double(55).With(edited => { edited.Id = Guid.Parse("20000000-0000-0000-0000-000000000003"); edited.Designation = "TEST-2-55"; });
+    public static readonly EndProfile Mmm480 = TestProfiles.MmmSingle().With(edited => { edited.Id = Guid.Parse("20000000-0000-0000-0000-000000000004"); edited.Designation = "MMM480"; });
 
     public static readonly DrawingCatalogue Instance = new()
     {

@@ -20,25 +20,25 @@ public sealed class EndProfileLabelTests
         TrackOffsets = EndProfileTemplate.CentredOffsets(2, 45),
         Gauge = 16.5,
         ScrewHoles = [new(-150, -100), new(150, -100)],
-    }) with { Standards = [new(Guid.NewGuid(), "FREMO")] };
+    }).With(edited => { edited.Standards = [new(Guid.NewGuid(), "FREMO")]; });
 
     [TestMethod]
     public void TextIsStandardScaleAndDesignation()
     {
         Assert.AreEqual("FREMO H0 B96", EndProfileLabel.Text(Profile()));
-        Assert.AreEqual("H0 B96", EndProfileLabel.Text(Profile() with { Standards = [] }));
-        Assert.AreEqual("FREMO, MMM H0 B96", EndProfileLabel.Text(Profile() with { Standards = [new(Guid.NewGuid(), "FREMO"), new(Guid.NewGuid(), "MMM")] }));
+        Assert.AreEqual("H0 B96", EndProfileLabel.Text(Profile().With(edited => { edited.Standards = []; })));
+        Assert.AreEqual("FREMO, MMM H0 B96", EndProfileLabel.Text(Profile().With(edited => { edited.Standards = [new(Guid.NewGuid(), "FREMO"), new(Guid.NewGuid(), "MMM")]; })));
     }
 
     [TestMethod]
     public void WordsAlreadyInTheTextAreLeftOut()
     {
-        var profile = Profile() with { Standards = [new(Guid.NewGuid(), "FREMO/H0-RE")] };
-        Assert.AreEqual("FREMO/H0-RE B96L", EndProfileLabel.Text(profile with { Designation = "FREMO H0 B96L" }));
-        Assert.AreEqual("FREMO/H0-RE B96", EndProfileLabel.Text(profile with { Designation = "FREMO-H0-B96" }), "Also within a hyphenated designation.");
-        Assert.AreEqual("FREMO/H0-RE B96", EndProfileLabel.Text(profile with { Designation = "fremo h0 B96" }), "Ignoring case.");
-        Assert.AreEqual("FREMO/H0-RE B96-L", EndProfileLabel.Text(profile with { Designation = "H0 B96-L" }), "Kept words keep their separator.");
-        Assert.AreEqual("H0 FREMO B96", EndProfileLabel.Text(Profile() with { Standards = [], Designation = "FREMO H0 B96" }), "Without a standard, the scale comes first.");
+        var profile = Profile().With(edited => { edited.Standards = [new(Guid.NewGuid(), "FREMO/H0-RE")]; });
+        Assert.AreEqual("FREMO/H0-RE B96L", EndProfileLabel.Text(profile.With(edited => { edited.Designation = "FREMO H0 B96L"; })));
+        Assert.AreEqual("FREMO/H0-RE B96", EndProfileLabel.Text(profile.With(edited => { edited.Designation = "FREMO-H0-B96"; })), "Also within a hyphenated designation.");
+        Assert.AreEqual("FREMO/H0-RE B96", EndProfileLabel.Text(profile.With(edited => { edited.Designation = "fremo h0 B96"; })), "Ignoring case.");
+        Assert.AreEqual("FREMO/H0-RE B96-L", EndProfileLabel.Text(profile.With(edited => { edited.Designation = "H0 B96-L"; })), "Kept words keep their separator.");
+        Assert.AreEqual("H0 FREMO B96", EndProfileLabel.Text(Profile().With(edited => { edited.Standards = []; edited.Designation = "FREMO H0 B96"; })), "Without a standard, the scale comes first.");
     }
 
     [TestMethod]
@@ -67,5 +67,5 @@ public sealed class EndProfileLabelTests
 
     [TestMethod]
     public void NoLabelWithoutAnOutline() =>
-        Assert.IsNull(EndProfileLabel.Place(Profile() with { Outline = null, Plate = null }, [], DimensionText));
+        Assert.IsNull(EndProfileLabel.Place(Profile().With(edited => { edited.Outline = null; edited.Plate = null; }), [], DimensionText));
 }

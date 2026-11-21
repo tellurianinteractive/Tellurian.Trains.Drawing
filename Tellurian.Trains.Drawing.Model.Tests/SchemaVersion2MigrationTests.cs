@@ -382,7 +382,7 @@ public sealed class SchemaVersion2MigrationTests
         CollectionAssert.Contains(hall.Obstacles.Select(o => o.Kind).ToArray(), Halls.ObstacleKind.Pillar);
         CollectionAssert.Contains(hall.Doors.Select(d => d.Kind).ToArray(), Halls.DoorKind.EmergencyExit);
         var written = DrawingFileSerializer.Serialize(hall);
-        Assert.AreEqual(new DrawingFileHeader(DrawingFileKind.Hall, 2, DrawingFileFormat.LibraryVersion), DrawingFileSerializer.ReadHeader(written));
+        Assert.AreEqual(new DrawingFileHeader(DrawingFileKind.Hall, 2, ModuleDrawVersion.Current), DrawingFileSerializer.ReadHeader(written));
         StringAssert.Contains(written, "\"kind\": \"Hall\"");
         StringAssert.Contains(written, "\"kind\": \"Pillar\"");
         StringAssert.Contains(written, "\"kind\": \"EmergencyExit\"");

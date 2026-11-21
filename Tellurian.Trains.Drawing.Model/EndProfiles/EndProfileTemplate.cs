@@ -28,7 +28,7 @@ public static class EndProfileTemplate
             Id = parameters.Id ?? Guid.NewGuid(),
             Designation = parameters.Designation,
             Scale = parameters.Scale,
-            Standards = parameters.Standards,
+            Standards = [.. parameters.Standards],
             Outline = PathDrawing.Polyline([new(-half, bottom), new(half, bottom), new(half, top), new(-half, top)], isClosed: true),
             GroundLine = PathDrawing.Polyline([new(-half, top), new(half, top)]),
             Tracks = [.. parameters.TrackOffsets.Select(offset => new EndProfileTrack { Offset = offset, Gauge = parameters.Gauge, RailSystem = parameters.RailSystem })],

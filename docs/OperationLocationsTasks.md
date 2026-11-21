@@ -16,6 +16,8 @@ Read first: `Tellurian.Trains.Schedules/Documentation/CrossAppReview.md` (sectio
 
 Done 2026-11-21: the survey's step 3 on Module Draw's side. Module Draw builds against `Model.Layouts` 4.0.4. A module's tracks and its location's tracks are one list, whichever property is set (4.0.4 fixed a loss of tracks when the editor set them separately). The tracks of a location module are written with the location. `isSignal` is gone from schemas and examples, and the change is logged in `schemas/CHANGELOG.md`. Done the same day: step 4. The geometry is the package `Tellurian.Trains.Schedules.Model.Geometry` (4.0.7), namespace `Tellurian.Trains.Schedules.Model.Geometry`; Module Draw's `Geometry` projects are gone. Next is step 5: the drawing files are read and written in Schedules.
 
+Done 2026-11-21, step 5 sub-steps 1 and 2 (`CrossAppReview.md` decisions 18 to 20): reading and writing are separate packages, `Importers.Drawing` and `Exporters.Drawing` (4.0.11). The end profile with its parts and the drawing values moved to `Model.Layouts`; the end profile is a mutable class (values stay records). Module Draw's `DrawingFileSerializer` hands end profiles to the shared importer and exporter, so its callers didn't change; the end profile file is unchanged byte for byte. Next: the catalogue, then the hall.
+
 ## Before starting: one new schema version
 
 Several tasks change the file formats in ways that are not additions (renamed enum values, moved ids, removed owner properties, another shape of a hall plan line). The file formats are public and only additions are allowed within a major version.

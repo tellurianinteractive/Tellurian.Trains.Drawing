@@ -198,7 +198,7 @@ public sealed class BuiltInCatalogueTests
     [TestMethod]
     public void UserEntriesAreAddedToTheBuiltInOnes()
     {
-        var copy = Profile("FREMO-H0-B96") with { Id = Guid.NewGuid(), Designation = "MY-B96" };
+        var copy = Profile("FREMO-H0-B96").With(edited => { edited.Id = Guid.NewGuid(); edited.Designation = "MY-B96"; });
         var user = new DrawingCatalogue { EndProfiles = [copy], Scales = [new() { ShortName = "0", Denominator = 45 }] };
         var merged = DrawingCatalogue.Merge(Catalogue, user);
         Assert.HasCount(Catalogue.EndProfiles.Count + 1, merged.EndProfiles);

@@ -70,13 +70,13 @@ public sealed class EndProfileEditingTests
     [TestMethod]
     public void AddedItemsTakeTheExistingSizes()
     {
-        var profile = Profile() with { ScrewHoles = [new(new(0, -50), 10)] };
+        var profile = Profile().With(edited => { edited.ScrewHoles = [new(new(0, -50), 10)]; });
         var withHole = EndProfileCommands.AddScrewHole(new(100, -50)).Apply(profile);
         Assert.AreEqual(10, withHole.ScrewHoles[^1].Diameter);
         var withTrack = EndProfileCommands.AddTrack(90, new() { Offset = 0, Gauge = 9 }).Apply(profile);
         Assert.AreEqual(16.5, withTrack.Tracks[^1].Gauge, "The gauge of the existing tracks, not the default.");
         Assert.AreEqual(90, withTrack.Tracks[^1].Offset);
-        var first = EndProfileCommands.AddTrack(0, new() { Offset = 0, Gauge = 9 }).Apply(profile with { Tracks = [] });
+        var first = EndProfileCommands.AddTrack(0, new() { Offset = 0, Gauge = 9 }).Apply(profile.With(edited => { edited.Tracks = []; }));
         Assert.AreEqual(9, first.Tracks.Single().Gauge);
     }
 
@@ -93,16 +93,28 @@ public sealed class EndProfileEditingTests
     [TestMethod]
     public void MirrorScrewHolesMakesThemSymmetric()
     {
-        var profile = Profile() with { ScrewHoles = [new(new(-150, -100), 8), new(new(150, -100), 8), new(new(-80, -50), 8), new(new(0, -180), 8)] };
+        var profile = Profile().With(edited => { edited.ScrewHoles = [new(new(-150, -100), 8), new(new(150, -100), 8), new(new(-80, -50), 8), new(new(0, -180), 8)]; });
         var mirrored = EndProfileCommands.MirrorScrewHoles().Apply(profile);
         Assert.HasCount(5, mirrored.ScrewHoles);
         Assert.IsTrue(EndProfileAnalysis.Analyze(mirrored).IsSymmetric);
     }
 
     [TestMethod]
+    public void ACommandThatChangesNothingIsNotRecorded()
+    {
+        var document = new EditorDocument<EndProfile>(Profile(), comparer: EndProfileContentComparer.Comparer);
+        var unchanged = new EditCommand<EndProfile>("Copy", profile => profile.Copy());
+
+        Assert.IsFalse(document.Apply(unchanged), "A copy with the same content is no change.");
+        Assert.IsFalse(document.CanUndo);
+        Assert.IsTrue(document.Apply(EndProfileCommands.SetTrack(0, document.Current.Tracks[0].With(edited => { edited.Offset += 5; }))));
+        Assert.IsTrue(document.CanUndo);
+    }
+
+    [TestMethod]
     public void DraggedScrewHoleSnapsToThePlateEdge()
     {
-        var document = new EditorDocument<EndProfile>(Profile());
+        var document = new EditorDocument<EndProfile>(Profile(), comparer: EndProfileContentComparer.Comparer);
         var snap = new SnapEngine();
         snap.AddRange(Scene.AllSnapTargets(document.Current));
         var tool = new SelectMoveTool<EndProfile, EndProfileItem>(document, new SelectionSet<EndProfileItem>(), Scene, snap);
@@ -118,7 +130,7 @@ public sealed class EndProfileEditingTests
     [TestMethod]
     public void PlaceToolPutsTracksOnRailTop()
     {
-        var document = new EditorDocument<EndProfile>(Profile());
+        var document = new EditorDocument<EndProfile>(Profile(), comparer: EndProfileContentComparer.Comparer);
         var tool = new PlaceTool<EndProfile>(document, new SnapEngine(), p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauge = 16.5 }))
         {
             Constrain = p => new(p.X, 0),
@@ -152,7 +164,7 @@ public sealed class EndProfileEditingTests
     [TestMethod]
     public void DraggingAPlatePointReshapesTheUpperEdgeAndTheSides()
     {
-        var document = new EditorDocument<EndProfile>(Profile());
+        var document = new EditorDocument<EndProfile>(Profile(), comparer: EndProfileContentComparer.Comparer);
         var snap = new SnapEngine();
         snap.AddRange(Scene.AllSnapTargets(document.Current));
         var tool = new SelectMoveTool<EndProfile, EndProfileItem>(document, new SelectionSet<EndProfileItem>(), Scene, snap);

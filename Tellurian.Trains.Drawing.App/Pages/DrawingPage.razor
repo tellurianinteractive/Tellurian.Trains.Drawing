@@ -108,7 +108,7 @@ else if (draft is not null)
     /// The end profile as it is now in the catalogue, so that changes such as a new short name show; the module
     /// view falls back to the copy embedded in the module file.
     /// </summary>
-    private Tellurian.Trains.Drawing.Model.EndProfiles.EndProfile? FindEndProfile(Guid id) => _catalogue?.FindEndProfile(id);
+    private Tellurian.Trains.Schedules.Model.Layouts.EndProfiles.EndProfile? FindEndProfile(Guid id) => _catalogue?.FindEndProfile(id);
 
     /// <summary>The track colour of an end profile's first standard.</summary>
     private async Task<string?> TrackColorOfAsync(Draft? draft)

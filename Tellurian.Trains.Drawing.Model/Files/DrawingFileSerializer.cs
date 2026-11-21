@@ -5,6 +5,10 @@ using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Halls;
+using Tellurian.Trains.Schedules.Exporters.Drawing;
+using Tellurian.Trains.Schedules.Exporters.Interfaces;
+using Tellurian.Trains.Schedules.Importers.Drawing;
+using Tellurian.Trains.Schedules.Importers.Interfaces;
 
 namespace Tellurian.Trains.Drawing.Model.Files;
 
@@ -22,8 +26,9 @@ public static class DrawingFileSerializer
 
     private static DrawingJsonContext Context => DrawingJsonContext.Default;
 
+    /// <summary>The end profile file of <paramref name="endProfile"/>, written by the shared <see cref="EndProfileExporter"/>.</summary>
     public static string Serialize(EndProfile endProfile, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.EndProfile, endProfile, appVersion), Context.DrawingFileEndProfile);
+        EndProfiles.Write(endProfile, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     public static string Serialize(ModuleFileContent module, string? appVersion = null) =>
         JsonSerializer.Serialize(Envelope(DrawingFileKind.Module, module, appVersion), Context.DrawingFileModuleFileContent);
@@ -44,10 +49,15 @@ public static class DrawingFileSerializer
     public static DrawingFileHeader ReadHeader(Stream stream) => Header(Parse(stream));
 
     /// <exception cref="DrawingFileException">The file can't be read as an end profile file.</exception>
-    public static EndProfile DeserializeEndProfile(string json) => Read(Parse(json), DrawingFileKind.EndProfile, Context.DrawingFileEndProfile);
+    public static EndProfile DeserializeEndProfile(string json) => Imported(new EndProfileImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as an end profile file.</exception>
-    public static EndProfile DeserializeEndProfile(Stream stream) => Read(Parse(stream), DrawingFileKind.EndProfile, Context.DrawingFileEndProfile);
+    public static EndProfile DeserializeEndProfile(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeEndProfile(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a module file.</exception>
     public static ModuleFileContent DeserializeModule(string json) => Read(Parse(json), DrawingFileKind.Module, Context.DrawingFileModuleFileContent);
@@ -111,6 +121,23 @@ public static class DrawingFileSerializer
         }
     }
 
+    private static readonly EndProfileExporter EndProfiles = new();
+
+    /// <summary>The item of a successful import, or the failure as a <see cref="DrawingFileException"/>, as callers here expect.</summary>
+    private static T Imported<T>(ImportResult<T> result)
+    {
+        if (result.IsSuccess) return result.Item;
+        var message = result.Messages.FirstOrDefault();
+        throw new DrawingFileException(message?.Code switch
+        {
+            FileErrorCode.InvalidJson => DrawingFileError.InvalidJson,
+            FileErrorCode.WrongKind => DrawingFileError.WrongKind,
+            FileErrorCode.NewerVersion => DrawingFileError.NewerSchemaVersion,
+            FileErrorCode.InvalidContent or FileErrorCode.MigrationMissing => DrawingFileError.InvalidContent,
+            _ => DrawingFileError.NotADrawingFile,
+        }, message?.Text ?? "The file can't be read.");
+    }
+
     private static DrawingFile<T> Envelope<T>(DrawingFileKind kind, T content, string? appVersion)
     {
         ArgumentNullException.ThrowIfNull(content);
@@ -119,7 +146,7 @@ public static class DrawingFileSerializer
             Format = DrawingFileFormat.Format,
             Kind = kind,
             SchemaVersion = DrawingFileFormat.CurrentSchemaVersion(kind),
-            AppVersion = appVersion ?? DrawingFileFormat.LibraryVersion,
+            AppVersion = appVersion ?? ModuleDrawVersion.Current,
             Content = content,
         };
     }

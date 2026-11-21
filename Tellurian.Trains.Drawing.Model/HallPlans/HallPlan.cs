@@ -59,7 +59,7 @@ public sealed record HallPlan : ExtensibleRecord
     public int Revision { get; init; }
 
     /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
-    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; init; } = [];
+    public IReadOnlyList<DrawingRevision> RevisionLog { get; init; } = [];
 
     /// <summary>What other systems keep about the hall plan, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
     public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; init; }

@@ -68,7 +68,7 @@ public sealed class Module : Shared.Module
     public int Revision { get; set; }
 
     /// <summary>Who saved the drawing, and the last date each of them did, newest first (<see cref="Files.DrawingRevisionLog"/>).</summary>
-    public IReadOnlyList<Files.DrawingRevision> RevisionLog { get; set; } = [];
+    public IReadOnlyList<DrawingRevision> RevisionLog { get; set; } = [];
 
     /// <summary>What other systems keep about the module, with one entry per system; read and written back unchanged (<see cref="Files.ExternalReferences"/>).</summary>
     public IReadOnlyDictionary<string, JsonElement>? ExternalReferences { get; set; }

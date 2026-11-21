@@ -61,7 +61,7 @@ public static class EndProfileImport
     {
         ArgumentNullException.ThrowIfNull(user);
         ArgumentNullException.ThrowIfNull(chosen);
-        var added = chosen.Where(i => i.Status != EndProfileImportStatus.Unchanged).Select(i => i.Imported with { Id = i.Existing?.Id ?? i.Imported.Id }).ToList();
+        var added = chosen.Where(i => i.Status != EndProfileImportStatus.Unchanged).Select(i => i.Imported.With(p => p.Id = i.Existing?.Id ?? i.Imported.Id)).ToList();
         var ids = added.Select(p => p.Id).ToHashSet();
         return user with { EndProfiles = [.. user.EndProfiles.Where(p => !ids.Contains(p.Id)), .. added] };
     }

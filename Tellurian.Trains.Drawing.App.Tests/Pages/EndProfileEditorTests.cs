@@ -62,7 +62,7 @@ public sealed class EndProfileEditorTests
     {
         using var context = new AppTestContext();
         var source = BuiltInCatalogue.Instance.EndProfiles[0];
-        var profile = source.Copy("ONE-SIDED") with { ScrewHoles = [.. source.ScrewHoles.Where(h => h.Center.X < -1)] };
+        var profile = source.Copy("ONE-SIDED").With(edited => { edited.ScrewHoles = [.. source.ScrewHoles.Where(h => h.Center.X < -1)]; });
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
         page.WaitForElement("#mirror-holes");
@@ -127,7 +127,7 @@ public sealed class EndProfileEditorTests
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
         page.WaitForElement("#measure-origin");
-        var plate = Model.EndProfiles.PlateShape.From(profile)!;
+        var plate = PlateShape.From(profile)!;
         string FirstPointX() => page.FindAll(".plate-points tbody tr")[0].QuerySelectorAll("input")[0].GetAttribute("value")!;
         Assert.AreEqual(Editing.Input.NumberInput.Format(plate.Left, 1, System.Globalization.CultureInfo.CurrentCulture), FirstPointX());
 

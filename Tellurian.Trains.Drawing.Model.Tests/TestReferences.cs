@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 internal static class TestReferences
 {
     /// <summary>A section with the Module Registry's entry <paramref name="entryJson"/>.</summary>
-    public static IReadOnlyDictionary<string, JsonElement> Registry(string entryJson) =>
+    public static Dictionary<string, JsonElement> Registry(string entryJson) =>
         new Dictionary<string, JsonElement> { [ExternalReferences.ModuleRegistry] = Element(entryJson) };
 
     public static JsonElement Element(string json)

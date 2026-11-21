@@ -91,7 +91,7 @@ public sealed partial class ReadOnlyViewTests
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
             [nameof(Views.ModuleView.Standard)] = Catalogue.FindStandard("FREMO/H0-RE"),
         });
         Assert.AreEqual(drawing.Sections.Count, Count(html, "md-section"));
@@ -114,7 +114,7 @@ public sealed partial class ReadOnlyViewTests
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
         });
         StringAssert.Contains(html, ">SFjä 7900</text>");
         StringAssert.Contains(html, ">Stefan Fjällemark</text>");
@@ -151,14 +151,14 @@ public sealed partial class ReadOnlyViewTests
         var plain = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
         });
         Assert.AreEqual(0, Count(plain, "print-sheet"));
 
         var printable = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
             [nameof(Views.ModuleView.PrintTitle)] = "Station Nord",
         });
         Assert.AreEqual(1, Count(printable, "print-sheet"));
@@ -178,7 +178,7 @@ public sealed partial class ReadOnlyViewTests
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Json)] = json,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)(id => Catalogue.FindEndProfile(id) is { } p ? p with { ShortName = "NEW" } : null),
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)(id => Catalogue.FindEndProfile(id) is { } p ? p.With(edited => { edited.ShortName = "NEW"; }) : null),
         });
         StringAssert.Contains(html, ">NEW</text>");
     }

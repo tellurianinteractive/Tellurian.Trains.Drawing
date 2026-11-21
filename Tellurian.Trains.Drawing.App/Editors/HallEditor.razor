@@ -319,7 +319,7 @@
     private Viewport _view = default!;
     private string? _storageError;
     private string? _revisionLogJson;
-    private IReadOnlyList<Model.Files.DrawingRevision> _revisionLog = [];
+    private IReadOnlyList<DrawingRevision> _revisionLog = [];
     private PathCorners? _corners;
     private Hall? _cornersOf;
 
@@ -339,7 +339,7 @@
     public async Task<bool> FlushAsync() => _session is null || await _session.FlushAsync();
 
     /// <summary>The revision log from the draft, which saving to a file updates (EX-10); read again only when the draft changes.</summary>
-    private IReadOnlyList<Model.Files.DrawingRevision> RevisionLog
+    private IReadOnlyList<DrawingRevision> RevisionLog
     {
         get
         {

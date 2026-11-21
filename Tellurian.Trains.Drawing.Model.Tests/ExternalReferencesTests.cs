@@ -48,7 +48,7 @@ public sealed class ExternalReferencesTests
         string[] files =
         [
             ModuleJson(TestModules.Straight().With(c => c.ExternalReferences = references)),
-            DrawingFileSerializer.Serialize(TestProfiles.FremoSingle() with { ExternalReferences = references }),
+            DrawingFileSerializer.Serialize(TestProfiles.FremoSingle().With(edited => { edited.ExternalReferences = references; })),
             DrawingFileSerializer.Serialize(TestCatalogue.Instance with { ExternalReferences = references }),
             DrawingFileSerializer.Serialize(TestHalls.Club() with { ExternalReferences = references }),
             DrawingFileSerializer.Serialize(TestHalls.Plan(TestCatalogue.Instance) with { ExternalReferences = references }),
@@ -79,7 +79,7 @@ public sealed class ExternalReferencesTests
         plan = plan with
         {
             Modules = [.. plan.Modules.Select(m => m.With(c => c.ExternalReferences = TestReferences.Registry("""{"stationId":1}""")))],
-            EndProfiles = [.. plan.EndProfiles.Select(p => p with { ExternalReferences = TestReferences.Registry("""{"endProfileId":2}""") })],
+            EndProfiles = [.. plan.EndProfiles.Select(p => p.With(edited => { edited.ExternalReferences = TestReferences.Registry("""{"endProfileId":2}"""); }))],
             Standards = [.. plan.Standards.Select(s => s with { ExternalReferences = TestReferences.Registry("""{"standardId":3}""") })],
         };
         var read = DrawingFileSerializer.DeserializeHallPlan(DrawingFileSerializer.Serialize(plan));
@@ -92,7 +92,7 @@ public sealed class ExternalReferencesTests
     [TestMethod]
     public void AModuleFileEmbedsEndProfilesWithTheirSections()
     {
-        var profile = TestCatalogue.FremoSingle with { ExternalReferences = TestReferences.Registry("""{"endProfileId":2}""") };
+        var profile = TestCatalogue.FremoSingle.With(edited => { edited.ExternalReferences = TestReferences.Registry("""{"endProfileId":2}"""); });
         var content = ModuleFileContent.Create(TestModules.Straight(), id => id == profile.Id ? profile : TestCatalogue.Lookup(id));
         var read = DrawingFileSerializer.DeserializeModule(DrawingFileSerializer.Serialize(content));
         Assert.AreEqual("""{"endProfileId":2}""", TestReferences.RegistryEntry(read.EndProfiles.Single().ExternalReferences));
@@ -102,7 +102,7 @@ public sealed class ExternalReferencesTests
     [TestMethod]
     public void ACopyOfAnEndProfileLosesTheSection()
     {
-        var original = TestCatalogue.FremoSingle with { ExternalReferences = TestReferences.Registry("""{"endProfileId":2}""") };
+        var original = TestCatalogue.FremoSingle.With(edited => { edited.ExternalReferences = TestReferences.Registry("""{"endProfileId":2}"""); });
         var copy = original.Copy("MY-B96");
         Assert.AreNotEqual(original.Id, copy.Id);
         Assert.IsNull(copy.ExternalReferences);
@@ -127,7 +127,7 @@ public sealed class ExternalReferencesTests
         [
             ModuleJson(TestModules.WithEverything()),
             ModuleJson(TestModules.Station()),
-            DrawingFileSerializer.Serialize(TestProfiles.Asymmetric() with { Source = new() { Title = "T" } }),
+            DrawingFileSerializer.Serialize(TestProfiles.Asymmetric().With(edited => { edited.Source = new() { Title = "T" }; })),
             DrawingFileSerializer.Serialize(Catalogue.BuiltInCatalogue.Instance),
             DrawingFileSerializer.Serialize(TestHalls.Club()),
             DrawingFileSerializer.Serialize(TestHalls.Plan(TestCatalogue.Instance)),
@@ -149,7 +149,7 @@ public sealed class ExternalReferencesTests
     [TestMethod]
     public void UnknownPropertiesDoNotMakeRecordsDiffer()
     {
-        var file = Parse(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle() with { Source = new() { Title = "T" } }));
+        var file = Parse(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle().With(edited => { edited.Source = new() { Title = "T" }; })));
         var plain = DrawingFileSerializer.DeserializeEndProfile(file.ToJsonString());
         file["content"]!["source"]![Unknown] = 1;
         var extended = DrawingFileSerializer.DeserializeEndProfile(file.ToJsonString());

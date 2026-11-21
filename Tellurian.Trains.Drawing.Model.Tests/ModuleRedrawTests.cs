@@ -11,7 +11,7 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 [TestClass]
 public sealed class ModuleRedrawTests
 {
-    private static readonly EndProfile Asymmetric = TestProfiles.Asymmetric() with { Id = Guid.Parse("30000000-0000-0000-0000-000000000001"), Designation = "TEST-ASYM" };
+    private static readonly EndProfile Asymmetric = TestProfiles.Asymmetric().With(edited => { edited.Id = Guid.Parse("30000000-0000-0000-0000-000000000001"); edited.Designation = "TEST-ASYM"; });
 
     /// <summary>A single track 40 mm left of the plate's centre.</summary>
     private static readonly EndProfile OffCentre = EndProfileTemplate.Create(new()

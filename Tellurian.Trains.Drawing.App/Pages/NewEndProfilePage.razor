@@ -122,7 +122,7 @@
     /// Where the plate's top edge is at the centre line: the highest point where the outline crosses X = 0. The
     /// bounding box would include embankments beside the track, which don't belong in a rectangular template.
     /// </summary>
-    private static double? TopAtCentre(Model.PathDrawing outline)
+    private static double? TopAtCentre(PathDrawing outline)
     {
         double? top = null;
         foreach (var (a, b) in outline.Tessellate().Edges())

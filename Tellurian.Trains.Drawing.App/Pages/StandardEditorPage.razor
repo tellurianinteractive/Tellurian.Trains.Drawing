@@ -103,7 +103,7 @@
 
     private string Title => Id is null ? T["NewStandard"] : T.Format("EditEntry", original?.ShortName ?? string.Empty);
 
-    private IEnumerable<Model.EndProfiles.EndProfile> ProfilesOfStandard =>
+    private IEnumerable<EndProfile> ProfilesOfStandard =>
         catalogue is null || Id is null ? [] : catalogue.EndProfilesOf(Id.Value).OrderBy(p => p.Designation);
 
     protected override async Task OnParametersSetAsync()

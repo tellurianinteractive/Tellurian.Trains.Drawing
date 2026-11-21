@@ -186,9 +186,9 @@
                 {
                     case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
                         var track = _document.Current.Tracks[item.Index];
-                        <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Offset = Frame.FromDisplayX(v) }))" />
-                        <NumberField Label="@T["Gauge"]" Value="track.Gauge" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Gauge = v }))" />
-                        <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Label = v }))" />
+                        <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Offset = Frame.FromDisplayX(v); })))" />
+                        <NumberField Label="@T["Gauge"]" Value="track.Gauge" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Gauge = v; })))" />
+                        <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Label = v; })))" />
                         break;
                     case { Kind: EndProfileItemKind.ScrewHole } item when item.Index < _document.Current.ScrewHoles.Count:
                         var hole = _document.Current.ScrewHoles[item.Index];
@@ -204,13 +204,13 @@
                         break;
                     case null when _selection.IsEmpty:
                         var profile = _document.Current;
-                        <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p with { Designation = v })); }" />
-                        <TextField Label="@T["EndProfileShortName"]" Help="@T.Help("EndProfileShortName")" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim() }))" />
+                        <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.Designation = v; }))); }" />
+                        <TextField Label="@T["EndProfileShortName"]" Help="@T.Help("EndProfileShortName")" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim(); })))" />
                         <TextField Label="@T["Scale"]" Value="@profile.Scale" ReadOnly="true" />
                         <TextField Label="@T["Standards"]" Value="@string.Join(", ", profile.Standards.Select(s => s.Name))" ReadOnly="true" />
-                        <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ScrewHolePattern = v }))" />
-                        <TextField Label="@T["Field_SourceTitle"]" Value="@profile.Source?.Title" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithTitle(p.Source, v) }))" />
-                        <TextField Label="@T["Field_SourceUrl"]" Value="@profile.Source?.Url" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithUrl(p.Source, v) }))" />
+                        <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.ScrewHolePattern = v; })))" />
+                        <TextField Label="@T["Field_SourceTitle"]" Value="@profile.Source?.Title" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.Source = WithTitle(p.Source, v); })))" />
+                        <TextField Label="@T["Field_SourceUrl"]" Value="@profile.Source?.Url" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.Source = WithUrl(p.Source, v); })))" />
                         <RevisionLogList Log="RevisionLog" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
                         break;
                     default:
@@ -282,10 +282,10 @@
     private Viewport _view = default!;
     private EndProfileProperties _derived = default!;
     private string? _revisionLogJson;
-    private IReadOnlyList<Model.Files.DrawingRevision> _revisionLog = [];
+    private IReadOnlyList<DrawingRevision> _revisionLog = [];
 
     /// <summary>The revision log from the draft, which saving to a file updates (EX-10); read again only when the draft changes.</summary>
-    private IReadOnlyList<Model.Files.DrawingRevision> RevisionLog
+    private IReadOnlyList<DrawingRevision> RevisionLog
     {
         get
         {
@@ -451,8 +451,8 @@
     {
         var profile = Model.Files.DrawingFileSerializer.DeserializeEndProfile(Draft.Json);
         // The stored plate is the source; its outline and ground line are generated, so they always match it.
-        if (profile.Plate is { } storedPlate) profile = profile with { Outline = storedPlate.Outline(), GroundLine = storedPlate.GroundLine() };
-        _document = new(profile);
+        if (profile.Plate is { } storedPlate) profile = profile.With(edited => { edited.Outline = storedPlate.Outline(); edited.GroundLine = storedPlate.GroundLine(); });
+        _document = new(profile, comparer: EndProfileContentComparer.Comparer);
         _view = Viewport.Fit(EndProfileSheet.Create(profile, MeasureFrame.For(profile, _origin), _detailDimensions).Bounds, 800, 400);
         _select = new(_document, _selection, _scene, _snap);
         _upperEdge = new(_document, _snap, path => EndProfileCommands.SetUpperEdge(path.Tessellate(PlateShape.ArcTolerance).Points, DefaultPlateDepth))

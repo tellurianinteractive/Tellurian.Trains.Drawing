@@ -14,7 +14,7 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void UnknownProfileIsNew()
     {
-        var item = CompareOne(TestProfiles.FremoSingle() with { Designation = "NEW-1" });
+        var item = CompareOne(TestProfiles.FremoSingle().With(edited => { edited.Designation = "NEW-1"; }));
         Assert.AreEqual(EndProfileImportStatus.New, item.Status);
         Assert.IsNull(item.Existing);
     }
@@ -34,12 +34,7 @@ public sealed class EndProfileImportTests
     public void ChangedDrawingIsListed()
     {
         var existing = TestCatalogue.FremoSingle;
-        var changed = existing with
-        {
-            ScrewHoles = [.. existing.ScrewHoles.Skip(1)],
-            Tracks = [existing.Tracks[0] with { Offset = 5 }],
-            Source = new() { Title = "Registry" },
-        };
+        var changed = existing.With(edited => { edited.ScrewHoles = [.. existing.ScrewHoles.Skip(1)]; edited.Tracks = [existing.Tracks[0].With(edited => { edited.Offset = 5; })]; edited.Source = new() { Title = "Registry" }; });
         var item = CompareOne(changed);
         Assert.AreEqual(EndProfileImportStatus.Changed, item.Status);
         Assert.AreEqual(EndProfileChanges.ScrewHoles | EndProfileChanges.Tracks | EndProfileChanges.Source, item.Changes);
@@ -48,7 +43,7 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void ProfileIsMatchedByDesignationWhenTheIdDiffers()
     {
-        var item = CompareOne(TestCatalogue.FremoSingle with { Id = Guid.NewGuid(), Designation = "fremo-h0-b96 " });
+        var item = CompareOne(TestCatalogue.FremoSingle.With(edited => { edited.Id = Guid.NewGuid(); edited.Designation = "fremo-h0-b96 "; }));
         Assert.AreSame(TestCatalogue.FremoSingle, item.Existing);
         Assert.AreEqual(EndProfileImportStatus.Unchanged, item.Status);
     }
@@ -56,15 +51,15 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void ReplacingKeepsTheExistingId()
     {
-        var imported = TestCatalogue.FremoSingle with { Id = Guid.NewGuid(), ExternalReferences = TestReferences.Registry("""{ "endProfileId": 42 }""") };
+        var imported = TestCatalogue.FremoSingle.With(edited => { edited.Id = Guid.NewGuid(); edited.ExternalReferences = TestReferences.Registry("""{ "endProfileId": 42 }"""); });
         var item = CompareOne(imported);
 
         var user = EndProfileImport.Apply(DrawingCatalogue.Empty, [item]);
 
         var stored = user.EndProfiles.Single();
         Assert.AreEqual(TestCatalogue.FremoSingle.Id, stored.Id);
-        Assert.AreSame(imported.ExternalReferences, stored.ExternalReferences);
-        Assert.AreSame(imported.ExternalReferences, DrawingCatalogue.Merge(Catalogue, user).FindEndProfile(TestCatalogue.FremoSingle.Id)!.ExternalReferences);
+        Assert.IsTrue(Files.ExternalReferences.Same(imported.ExternalReferences, stored.ExternalReferences));
+        Assert.IsTrue(Files.ExternalReferences.Same(imported.ExternalReferences, DrawingCatalogue.Merge(Catalogue, user).FindEndProfile(TestCatalogue.FremoSingle.Id)!.ExternalReferences));
     }
 
     [TestMethod]
@@ -77,9 +72,9 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void NewProfileIsAddedAndReplacesAnEarlierUserCopy()
     {
-        var profile = TestProfiles.FremoSingle() with { Designation = "NEW-1" };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Designation = "NEW-1"; });
         var user = EndProfileImport.Apply(DrawingCatalogue.Empty, [CompareOne(profile)]);
-        var again = EndProfileImport.Apply(user, [CompareOne(profile with { Revision = 2 })]);
+        var again = EndProfileImport.Apply(user, [CompareOne(profile.With(edited => { edited.Revision = 2; }))]);
         Assert.AreEqual(2, again.EndProfiles.Single().Revision);
     }
 
@@ -102,7 +97,7 @@ public sealed class EndProfileImportTests
     [TestMethod]
     public void CopyIsANewUserProfile()
     {
-        var original = TestCatalogue.FremoSingle with { ExternalReferences = TestReferences.Registry("""{ "endProfileId": 7 }"""), Revision = 3, Source = new() { Title = "FREMO" } };
+        var original = TestCatalogue.FremoSingle.With(edited => { edited.ExternalReferences = TestReferences.Registry("""{ "endProfileId": 7 }"""); edited.Revision = 3; edited.Source = new() { Title = "FREMO" }; });
         var copy = original.Copy("MY-B96");
         Assert.AreNotEqual(original.Id, copy.Id);
         Assert.AreEqual(("MY-B96", 0, "FREMO"), (copy.Designation, copy.Revision, copy.Source?.Title));

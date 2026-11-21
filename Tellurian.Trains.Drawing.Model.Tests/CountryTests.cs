@@ -49,7 +49,7 @@ public sealed class CountryTests
     [TestMethod]
     public void EndProfilesWithoutStandardAreAlwaysOffered()
     {
-        var loose = TestCatalogue.Mmm480 with { Id = Guid.NewGuid(), Standards = [] };
+        var loose = TestCatalogue.Mmm480.With(edited => { edited.Id = Guid.NewGuid(); edited.Standards = []; });
         Assert.IsNotNull(BuiltIn.With(loose).ForCountry(null).FindEndProfile(loose.Id));
     }
 

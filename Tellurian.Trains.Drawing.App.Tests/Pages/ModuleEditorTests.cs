@@ -53,7 +53,7 @@ public sealed class ModuleEditorTests
         var documents = context.Services.GetRequiredService<DrawingDocuments>();
         var draft = documents.CreateAsync(json).Result;
         var profile = DrawingFileSerializer.DeserializeModule(json).EndProfiles.Single();
-        context.Services.GetRequiredService<CatalogueService>().SaveEndProfileAsync(profile with { ShortName = "CHANGED" }).Wait();
+        context.Services.GetRequiredService<CatalogueService>().SaveEndProfileAsync(profile.With(edited => { edited.ShortName = "CHANGED"; })).Wait();
 
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
 

@@ -188,7 +188,7 @@
         status = null;
         try
         {
-            var picked = await Files.OpenAsync([Model.Files.DrawingFileFormat.JsonExtension], multiple: false);
+            var picked = await Files.OpenAsync([DrawingFileFormat.JsonExtension], multiple: false);
             if (picked is not [var opened, ..]) return;
             if (SettingsFile.Read(opened.Text) is not { } file)
             {

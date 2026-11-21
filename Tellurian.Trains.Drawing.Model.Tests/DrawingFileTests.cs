@@ -21,14 +21,7 @@ public sealed class DrawingFileTests
     [TestMethod]
     public void EndProfileRoundTripsIdentically()
     {
-        var profile = TestProfiles.Asymmetric() with
-        {
-            Standards = [new(TestCatalogue.FremoId, "FREMO/H0-RE")],
-            Dowels = [new(new(-200, -90), 10)],
-            Source = new() { Title = "FREMO H0-RE", Url = "https://example.org/b96.pdf", Revision = "2009" },
-            ExternalReferences = TestReferences.Registry("""{ "endProfileId": 12 }"""),
-            Revision = 3,
-        };
+        var profile = TestProfiles.Asymmetric().With(edited => { edited.Standards = [new(TestCatalogue.FremoId, "FREMO/H0-RE")]; edited.Dowels = [new(new(-200, -90), 10)]; edited.Source = new() { Title = "FREMO H0-RE", Url = "https://example.org/b96.pdf", Revision = "2009" }; edited.ExternalReferences = TestReferences.Registry("""{ "endProfileId": 12 }"""); edited.Revision = 3; });
         var json = DrawingFileSerializer.Serialize(profile);
         var read = DrawingFileSerializer.DeserializeEndProfile(json);
         Assert.AreEqual(json, DrawingFileSerializer.Serialize(read));
@@ -123,8 +116,8 @@ public sealed class DrawingFileTests
     public void AppVersionDefaultsToTheLibraryVersion()
     {
         var json = Envelope(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle()));
-        Assert.AreEqual(DrawingFileFormat.LibraryVersion, (string?)json["appVersion"]);
-        Assert.DoesNotContain("+", DrawingFileFormat.LibraryVersion);
+        Assert.AreEqual(ModuleDrawVersion.Current, (string?)json["appVersion"]);
+        Assert.DoesNotContain("+", ModuleDrawVersion.Current);
     }
 
     [TestMethod]
@@ -155,7 +148,7 @@ public sealed class DrawingFileTests
         var checkedCount = 0;
         foreach (var type in enums)
         {
-            var typeInfo = DrawingJsonContext.Default.GetTypeInfo(type);
+            var typeInfo = Files.DrawingJsonContext.Default.GetTypeInfo(type);
             if (typeInfo is null) continue;
             foreach (var value in Enum.GetValues(type))
             {
@@ -247,7 +240,7 @@ public sealed class DrawingFileTests
             new(DrawingFileKind.EndProfile, 2, content => { applied.Add(2); return Rename(content, "title", "designation"); }),
             new(DrawingFileKind.Module, 1, _ => throw new InvalidOperationException("Wrong kind.")),
         ];
-        var profile = DrawingFileSerializer.Read(json, DrawingFileKind.EndProfile, DrawingJsonContext.Default.DrawingFileEndProfile, migrations, currentVersion: 3);
+        var profile = DrawingFileSerializer.Read(json, DrawingFileKind.EndProfile, Files.DrawingJsonContext.Default.DrawingFileEndProfile, migrations, currentVersion: 3);
         Assert.AreEqual("TEST-FREMO-1", profile.Designation);
         CollectionAssert.AreEqual(new[] { 1, 2 }, applied);
     }
@@ -256,7 +249,7 @@ public sealed class DrawingFileTests
     public void MissingMigrationIsReported() =>
         AssertRefused(DrawingFileError.InvalidContent, () => DrawingFileSerializer.Read(
             Envelope(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle())), DrawingFileKind.EndProfile,
-            DrawingJsonContext.Default.DrawingFileEndProfile, [], currentVersion: DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile) + 1));
+            Files.DrawingJsonContext.Default.DrawingFileEndProfile, [], currentVersion: DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile) + 1));
 
     [TestMethod]
     public void EveryOlderVersionHasAMigration()

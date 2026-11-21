@@ -39,7 +39,7 @@ public sealed class DrawingFileSchemaTests
     public void EndProfileFilesMatchTheSchema()
     {
         SchemaValidator.AssertValid(DrawingFileKind.EndProfile, DrawingFileSerializer.Serialize(TestProfiles.FremoSingle()));
-        SchemaValidator.AssertValid(DrawingFileKind.EndProfile, DrawingFileSerializer.Serialize(TestProfiles.Asymmetric() with { Source = new() { Title = "T" } }));
+        SchemaValidator.AssertValid(DrawingFileKind.EndProfile, DrawingFileSerializer.Serialize(TestProfiles.Asymmetric().With(edited => { edited.Source = new() { Title = "T" }; })));
     }
 
     [TestMethod]

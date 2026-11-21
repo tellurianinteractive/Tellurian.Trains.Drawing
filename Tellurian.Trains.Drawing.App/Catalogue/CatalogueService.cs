@@ -88,7 +88,7 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
         await SaveUserAsync(EndProfileImport.Apply(await GetUserAsync(cancellationToken), chosen), cancellationToken);
 
     /// <summary>Copies an end profile as a new user profile (CA-2) and returns the copy.</summary>
-    public async Task<Model.EndProfiles.EndProfile> CopyEndProfileAsync(Guid id, string designation, CancellationToken cancellationToken = default)
+    public async Task<EndProfile> CopyEndProfileAsync(Guid id, string designation, CancellationToken cancellationToken = default)
     {
         var original = (await GetAsync(cancellationToken)).FindEndProfile(id) ?? throw new KeyNotFoundException($"There is no end profile {id}.");
         var copy = original.Copy(designation);
@@ -98,7 +98,7 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
     }
 
     /// <summary>Saves an end profile in the user's catalogue, replacing one with the same id (EP-1, CA-2).</summary>
-    public async Task SaveEndProfileAsync(Model.EndProfiles.EndProfile profile, CancellationToken cancellationToken = default) =>
+    public async Task SaveEndProfileAsync(EndProfile profile, CancellationToken cancellationToken = default) =>
         await SaveUserAsync((await GetUserAsync(cancellationToken)).With(profile), cancellationToken);
 
     /// <summary>Removes a user end profile; a replaced built-in profile becomes visible again.</summary>

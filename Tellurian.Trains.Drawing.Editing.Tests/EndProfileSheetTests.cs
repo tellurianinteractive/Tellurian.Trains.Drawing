@@ -42,7 +42,7 @@ public sealed class EndProfileSheetTests
     [TestMethod]
     public void ProfileWithoutADrawingStillGetsAnArea()
     {
-        var empty = B96() with { Outline = null, Plate = null, GroundLine = null, Tracks = [], ScrewHoles = [], Dowels = [] };
+        var empty = B96().With(edited => { edited.Outline = null; edited.Plate = null; edited.GroundLine = null; edited.Tracks = []; edited.ScrewHoles = []; edited.Dowels = []; });
         var sheet = Sheet(empty);
         Assert.IsGreaterThan(0, sheet.Bounds.Width);
         Assert.IsGreaterThan(0, sheet.Bounds.Height);

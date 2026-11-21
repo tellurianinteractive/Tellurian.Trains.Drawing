@@ -137,7 +137,7 @@ public sealed class ModuleGeometryTests
     [TestMethod]
     public void MirroredOrientationMirrorsTrackPositions()
     {
-        var offCentre = Single with { Tracks = [new() { Offset = 20, Gauge = 16.5 }] };
+        var offCentre = Single.With(edited => { edited.Tracks = [new() { Offset = 20, Gauge = 16.5 }]; });
         var normal = ModuleGeometry.TrackPositions(Exit("E", Pose.Origin, offCentre), offCentre);
         var mirrored = ModuleGeometry.TrackPositions(Exit("E", Pose.Origin, offCentre, ProfileOrientation.Mirrored), offCentre);
         Assert.AreEqual(20, normal[0].Position.Y, Precision);

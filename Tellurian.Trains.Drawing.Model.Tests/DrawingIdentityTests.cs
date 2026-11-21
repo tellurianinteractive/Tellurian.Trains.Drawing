@@ -9,7 +9,7 @@ public sealed class DrawingIdentityTests
     [TestMethod]
     public void ReadsEndProfileDesignation()
     {
-        var profile = TestProfiles.FremoSingle() with { Revision = 4 };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Revision = 4; });
         var identity = DrawingIdentity.Read(DrawingFileSerializer.Serialize(profile));
         Assert.AreEqual(new DrawingIdentity(DrawingFileKind.EndProfile, profile.Id, profile.Designation, 4), identity);
     }
