@@ -53,7 +53,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
 
         var standard = catalogue.FindStandard(SummerBaseStandard);
         if (standard is null) return (null, []);
-        var addOn = catalogue.FindAddOn(standard.Id, SummerAddOn);
+        var addOn = catalogue.FindAddOn(standard.Id ?? Guid.Empty, SummerAddOn);
         Note(AutoDrawNoteCode.StandardMapped, $"{name} is drawn as {SummerBaseStandard} with the add-on {SummerAddOn}.");
         return (standard, addOn is null ? [] : [new(addOn.Id, addOn.ShortName)]);
     }
@@ -69,7 +69,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
                 internalJoints++;
                 continue;
             }
-            var profile = (exit.EndProfileId is { } id ? catalogue.FindEndProfile(id) : null) ?? catalogue.FindEndProfile(exit.EndProfile, standard.Scale);
+            var profile = (exit.EndProfileId is { } id ? catalogue.FindEndProfile(id) : null) ?? catalogue.FindEndProfile(exit.EndProfile, standard.ScaleName);
             if (profile is null)
             {
                 profile = DefaultEndProfile(standard);
@@ -241,10 +241,10 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         if (_p.IsOperationPlace)
         {
             var side = sides[0].Path.ToPath();
-            var outward = -(side.End - side.Start).Normalized.LeftNormal * standard.OperatorSpaceDepth;
+            var outward = -(side.End - side.Start).Normalized.LeftNormal * standard.OperatorSpaceDepthOrDefault;
             drawing = drawing with
             {
-                OperatorSpaces = [new() { Attachment = new() { SideIndex = 0 }, Depth = standard.OperatorSpaceDepth, Area = PathDrawing.Polyline([side.Start + outward, side.End + outward, side.End, side.Start], isClosed: true) }],
+                OperatorSpaces = [new() { Attachment = new() { SideIndex = 0 }, Depth = standard.OperatorSpaceDepthOrDefault, Area = PathDrawing.Polyline([side.Start + outward, side.End + outward, side.End, side.Start], isClosed: true) }],
             };
         }
         return WithDuckUnder(drawing, outline);
@@ -279,7 +279,7 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
 
         if (_p.IsOperationPlace)
         {
-            var depth = standard.OperatorSpaceDepth;
+            var depth = standard.OperatorSpaceDepthOrDefault;
             // Counter-clockwise, like all areas: along the outer edge, then back along the side.
             var outer = SideBuilder.Build(main, right.Shifted(-depth), 0, length);
             var inner = SideBuilder.Build(main, right, 0, length).Reversed();
@@ -458,8 +458,8 @@ internal sealed class AutoDrawGenerator(AutoDrawParameters parameters, DrawingCa
         Prefix = _p.Prefix,
         ModuleOwners = _p.ModuleOwners,
         ConfigurationLabel = _p.ConfigurationLabel,
-        StandardId = standard.Id,
-        Standard = standard.ToShared(),
+        StandardId = standard.Id ?? Guid.Empty,
+        Standard = standard.NameOnly,
         AddOns = addOns,
         NumberOfThroughTracks = _p.NumberOfThroughTracks,
         IsDuckunder = _p.IsDuckunder,

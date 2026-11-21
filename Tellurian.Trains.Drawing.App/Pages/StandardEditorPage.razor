@@ -171,10 +171,10 @@
         public static Form From(ModuleStandard s) => new()
         {
             ShortName = s.ShortName,
-            Scale = s.Scale,
-            RailSystem = s.RailSystem,
+            Scale = s.ScaleName,
+            RailSystem = s.RailSystem ?? default,
             NormalGauge = s.NormalGauge,
-            NarrowGauge = s.NarrowGauge,
+            NarrowGauge = s.Gauges?.Skip(1).FirstOrDefault()?.Width,
             RailTopHeight = s.RailTopHeight,
             MinimumClearance = s.MinimumClearance,
             OperatorSpaceDepth = s.OperatorSpaceDepth,
@@ -183,7 +183,7 @@
             FoulingDistance = s.FoulingDistance,
             DefaultSingleTrackEndProfileId = s.DefaultSingleTrackEndProfileId,
             DefaultDoubleTrackEndProfileId = s.DefaultDoubleTrackEndProfileId,
-            TrackColor = s.TrackColor,
+            TrackColor = s.TrackColorOrDefault,
             TrackSystem = s.TrackSystem,
             Couplings = s.Couplings,
             Electricity = s.Electricity,
@@ -191,7 +191,7 @@
             SourceTitle = s.Source?.Title,
             SourceUrl = s.Source?.Url,
             SourceRevision = s.Source?.Revision,
-            Countries = string.Join(", ", s.Countries),
+            Countries = string.Join(", ", s.Countries ?? []),
         };
 
         /// <summary>The standard with the form's values; properties the form doesn't show are kept from <paramref name="original"/>.</summary>
@@ -201,35 +201,17 @@
             {
                 Id = original?.Id ?? Guid.NewGuid(),
                 ShortName = ShortName.Trim(),
-                Scale = Scale,
-                NormalGauge = NormalGauge ?? 0,
+                Scale = new() { ShortName = Scale },
+                Gauges = GaugesOf(original),
             };
-            return (original ?? values) with
-            {
-                ShortName = values.ShortName,
-                Scale = Scale,
-                RailSystem = RailSystem,
-                NormalGauge = values.NormalGauge,
-                NarrowGauge = NarrowGauge,
-                RailTopHeight = RailTopHeight ?? 0,
-                MinimumClearance = MinimumClearance ?? 0,
-                OperatorSpaceDepth = OperatorSpaceDepth ?? 0,
-                DefaultCurveRadius = DefaultCurveRadius,
-                MinimumReverseCurveRadius = MinimumReverseCurveRadius,
-                FoulingDistance = FoulingDistance is > 0 ? FoulingDistance : null,
-                DefaultSingleTrackEndProfileId = DefaultSingleTrackEndProfileId,
-                DefaultDoubleTrackEndProfileId = DefaultDoubleTrackEndProfileId,
-                TrackColor = TrackColor,
-                TrackSystem = Text(TrackSystem),
-                Couplings = Text(Couplings),
-                Electricity = Text(Electricity),
-                Wheelset = Text(Wheelset),
-                Countries = [.. (Countries ?? string.Empty).Split([',', ' ', ';'], StringSplitOptions.RemoveEmptyEntries).Select(c => c.ToUpperInvariant()).Distinct()],
-                Source = Text(SourceTitle) is null && Text(SourceUrl) is null && Text(SourceRevision) is null
+            return (original ?? values).With(edited => { edited.ShortName = values.ShortName; edited.Scale = values.Scale; edited.RailSystem = RailSystem; edited.Gauges = values.Gauges; edited.RailTopHeight = RailTopHeight; edited.MinimumClearance = MinimumClearance; edited.OperatorSpaceDepth = OperatorSpaceDepth; edited.DefaultCurveRadius = DefaultCurveRadius; edited.MinimumReverseCurveRadius = MinimumReverseCurveRadius; edited.FoulingDistance = FoulingDistance is > 0 ? FoulingDistance : null; edited.DefaultSingleTrackEndProfileId = DefaultSingleTrackEndProfileId; edited.DefaultDoubleTrackEndProfileId = DefaultDoubleTrackEndProfileId; edited.TrackColor = TrackColor; edited.TrackSystem = Text(TrackSystem); edited.Couplings = Text(Couplings); edited.Electricity = Text(Electricity); edited.Wheelset = Text(Wheelset); edited.Countries = [.. (Countries ?? string.Empty).Split([',', ' ', ';'], StringSplitOptions.RemoveEmptyEntries).Select(c => c.ToUpperInvariant()).Distinct()]; edited.Source = Text(SourceTitle) is null && Text(SourceUrl) is null && Text(SourceRevision) is null
                     ? null
-                    : new DocumentReference { Title = Text(SourceTitle), Url = Text(SourceUrl), Revision = Text(SourceRevision) },
-            };
+                    : new DocumentReference { Title = Text(SourceTitle), Url = Text(SourceUrl), Revision = Text(SourceRevision) }; });
         }
+
+        /// <summary>The normal gauge, then the narrow one if given; a gauge the standard already names keeps its name and prototype.</summary>
+        private List<TrackGauge> GaugesOf(ModuleStandard? original) =>
+            [.. new[] { NormalGauge, NarrowGauge }.OfType<double>().Where(w => w > 0).Select(w => original?.GaugeOf(w) ?? new TrackGauge(w))];
 
         private static string? Text(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }

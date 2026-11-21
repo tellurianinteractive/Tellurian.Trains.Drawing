@@ -60,7 +60,8 @@ public sealed partial class AppTextsTests
     [TestMethod]
     public void EveryCatalogueFieldHasALabel()
     {
-        string[] notShown = ["Id", "Source", "ExternalReferences", "ExtensionData"];
+        // The gauges are edited as the normal and the narrow gauge, which have labels of their own.
+        string[] notShown = ["Id", "Source", "ExternalReferences", "ExtensionData", "Gauges"];
         var properties = new[] { typeof(ModuleStandard), typeof(StandardAddOn), typeof(EndProfileCompatibilityOverride) }
             .SelectMany(t => t.GetProperties().Where(p => p.CanWrite).Select(p => p.Name))
             .Except(notShown);

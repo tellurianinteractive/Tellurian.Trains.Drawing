@@ -333,7 +333,7 @@ internal static class SchemaVersion2
 
     private static void EndProfile(JsonNode node) => Tellurian.Trains.Schedules.Importers.Drawing.DrawingMigrations.EndProfileToVersion2(node);
 
-    private static void Standard(JsonNode node) => MoveRegistryId(node, ExternalReferences.StandardId);
+    private static void Standard(JsonNode node) => Tellurian.Trains.Schedules.Importers.Drawing.DrawingMigrations.StandardToVersion2(node);
 
     private static void MoveRegistryId(JsonNode node, string name)
     {

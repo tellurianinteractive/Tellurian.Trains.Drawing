@@ -312,6 +312,8 @@
   <data name="Field_Countries" xml:space="preserve"><value>Länder</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Landskoder med två bokstäver, till exempel SE, åtskilda med kommatecken. Tomt: standarden gäller i alla länder.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: använd landskoder med två bokstäver, till exempel SE.</value></data>
+  <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: en standard behöver minst en spårvidd.</value></data>
+  <data name="Problem_GaugeRepeated" xml:space="preserve"><value>{0}: smalspårvidden måste skilja sig från normalspårvidden.</value></data>
   <data name="RevisionLog" xml:space="preserve"><value>Ändringslogg</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Inte sparad av någon med användarnamn än.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Inget användarnamn i inställningarna: när du sparar en ritning registreras det inte i ändringsloggen.</value></data>

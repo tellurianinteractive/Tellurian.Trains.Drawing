@@ -82,7 +82,7 @@ public sealed class ModuleTemplateTests
         var catalogue = BuiltInCatalogue.Instance;
         foreach (var standard in catalogue.Standards)
         {
-            var profile = catalogue.EndProfilesOf(standard.Id).FirstOrDefault(p => p.Tracks.Count == 1);
+            var profile = catalogue.EndProfilesOf(standard.Id!.Value).FirstOrDefault(p => p.Tracks.Count == 1);
             if (profile is null) continue;
             var result = (Template(ModuleTemplateKind.Straight) with { Standard = standard, EndProfile = profile }).Create(catalogue);
             Assert.IsTrue(result.IsDrawn, $"{standard.ShortName}: {string.Join("; ", result.Notes)}");

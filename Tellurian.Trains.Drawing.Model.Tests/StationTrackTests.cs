@@ -104,8 +104,8 @@ public sealed class StationTrackTests
     {
         var standard = TestCatalogue.Instance.FindStandard(TestCatalogue.FremoId)!;
         Assert.AreEqual(45, StationTrackMeasurement.FoulingDistance(standard, TestCatalogue.Lookup)!.Value, Precision);
-        Assert.AreEqual(Clearance, StationTrackMeasurement.FoulingDistance(standard with { FoulingDistance = Clearance }, TestCatalogue.Lookup));
-        Assert.IsNull(StationTrackMeasurement.FoulingDistance(standard with { DefaultDoubleTrackEndProfileId = null }, TestCatalogue.Lookup));
+        Assert.AreEqual(Clearance, StationTrackMeasurement.FoulingDistance(standard.With(edited => { edited.FoulingDistance = Clearance; }), TestCatalogue.Lookup));
+        Assert.IsNull(StationTrackMeasurement.FoulingDistance(standard.With(edited => { edited.DefaultDoubleTrackEndProfileId = null; }), TestCatalogue.Lookup));
     }
 
     [TestMethod]

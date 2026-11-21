@@ -87,15 +87,9 @@
 
     private async Task SaveAsync()
     {
-        var addOn = (original ?? new StandardAddOn { Id = Guid.NewGuid(), ShortName = string.Empty, BaseStandardId = baseStandardId }) with
-        {
-            ShortName = shortName.Trim(),
-            BaseStandardId = baseStandardId,
-            Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim(),
-            Source = string.IsNullOrWhiteSpace(sourceTitle) && string.IsNullOrWhiteSpace(sourceUrl)
+        var addOn = (original ?? new StandardAddOn { Id = Guid.NewGuid(), ShortName = string.Empty, BaseStandardId = baseStandardId }).With(edited => { edited.ShortName = shortName.Trim(); edited.BaseStandardId = baseStandardId; edited.Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim(); edited.Source = string.IsNullOrWhiteSpace(sourceTitle) && string.IsNullOrWhiteSpace(sourceUrl)
                 ? null
-                : (original?.Source ?? new DocumentReference()) with { Title = sourceTitle?.Trim(), Url = sourceUrl?.Trim() },
-        };
+                : (original?.Source ?? new DocumentReference()) with { Title = sourceTitle?.Trim(), Url = sourceUrl?.Trim() }; });
         try
         {
             problems = await Catalogues.SaveAddOnAsync(addOn);

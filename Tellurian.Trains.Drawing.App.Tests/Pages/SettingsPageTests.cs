@@ -75,7 +75,7 @@ public sealed class SettingsPageTests
         var choices = context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().GetForChoicesAsync().Result;
 
         Assert.IsNotEmpty(choices.Standards);
-        Assert.IsTrue(choices.Standards.All(s => s.Scale == "N"));
+        Assert.IsTrue(choices.Standards.All(s => s.ScaleName == "N"));
         Assert.IsTrue(choices.EndProfiles.All(p => p.Scale == "N"));
     }
 

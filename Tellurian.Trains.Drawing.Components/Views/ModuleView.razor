@@ -280,7 +280,7 @@ else
     /// <summary>The name along the track, as the module is shown here: not turned (a hall plan passes its placement's rotation).</summary>
     private ModuleNamePlacement NamePlacement(ModuleDrawing drawing, ModuleNameText name, Func<Guid, EndProfile?>? lookup)
     {
-        var gauge = drawing.Exits.Select(e => lookup?.Invoke(e.EndProfile.Id)?.Tracks.FirstOrDefault()?.Gauge).FirstOrDefault(g => g is not null) ?? Standard?.NormalGauge;
+        var gauge = drawing.Exits.Select(e => lookup?.Invoke(e.EndProfile.Id)?.Tracks.FirstOrDefault()?.WidestGauge).FirstOrDefault(g => g is not null) ?? Standard?.NormalGauge;
         var trackHalfWidth = gauge is { } g ? TrackCrossSection.SleeperLength(g) / 2 : MarkerSize / 2;
         return ModuleNameLabel.Place(drawing, name, Angle.Zero, trackHalfWidth);
     }

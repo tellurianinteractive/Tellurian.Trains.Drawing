@@ -33,11 +33,11 @@ public sealed class CatalogueServiceTests
     public async Task UserEntriesAreStoredAndReplaceBuiltInOnes()
     {
         var builtIn = BuiltInCatalogue.Instance.Standards[0];
-        await Service().SaveUserAsync(DrawingCatalogue.Empty with { Standards = [builtIn with { MinimumClearance = 999 }] });
+        await Service().SaveUserAsync(DrawingCatalogue.Empty with { Standards = [builtIn.With(edited => { edited.MinimumClearance = 999; })] });
 
         var catalogue = await Service().GetAsync();
 
-        Assert.AreEqual(999, catalogue.FindStandard(builtIn.Id)!.MinimumClearance);
+        Assert.AreEqual(999, catalogue.FindStandard(builtIn.Id!.Value)!.MinimumClearance);
         Assert.HasCount(BuiltInCatalogue.Instance.Standards.Count, catalogue.Standards);
     }
 

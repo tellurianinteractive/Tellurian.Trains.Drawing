@@ -144,7 +144,7 @@ public sealed class JointFitEvaluatorTests
     [TestMethod]
     public void DifferentGaugeIsIncompatible()
     {
-        var narrow = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 0, Gauge = 12 }]; });
+        var narrow = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 0, Gauges = [12] }]; });
         var result = Evaluate(TestProfiles.FremoSingle(), narrow);
         Assert.AreEqual(JointFit.Incompatible, result.Fit);
         Assert.IsTrue(result.Differences.HasFlag(FitDifferences.Gauge));
@@ -154,8 +154,8 @@ public sealed class JointFitEvaluatorTests
     public void OffCentreTrackMustMeetMirroredPosition()
     {
         // A track 20 mm right of centre on A meets a track 20 mm left of centre on B.
-        var right = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 20, Gauge = TestProfiles.H0Gauge }]; });
-        var left = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = -20, Gauge = TestProfiles.H0Gauge }]; });
+        var right = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 20, Gauges = [TestProfiles.H0Gauge] }]; });
+        var left = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = -20, Gauges = [TestProfiles.H0Gauge] }]; });
         Assert.AreEqual(JointFit.Fits, Evaluate(right, left).Fit);
         Assert.AreEqual(JointFit.Incompatible, Evaluate(right, right).Fit);
         Assert.AreEqual(JointFit.Fits, Evaluate(right, right, Normal, Mirrored).Fit);

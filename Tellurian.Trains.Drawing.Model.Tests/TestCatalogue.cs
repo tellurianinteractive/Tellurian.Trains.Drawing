@@ -24,8 +24,8 @@ internal static class TestCatalogue
             {
                 Id = FremoId,
                 ShortName = "FREMO/H0-RE",
-                Scale = "H0",
-                NormalGauge = TestProfiles.H0Gauge,
+                Scale = new() { ShortName = "H0" },
+                Gauges = [new(TestProfiles.H0Gauge)],
                 DefaultCurveRadius = 2000,
                 MinimumReverseCurveRadius = 1000,
                 DefaultSingleTrackEndProfileId = FremoSingle.Id,
@@ -35,8 +35,8 @@ internal static class TestCatalogue
             {
                 Id = MmmId,
                 ShortName = "MMM-2R",
-                Scale = "H0",
-                NormalGauge = TestProfiles.H0Gauge,
+                Scale = new() { ShortName = "H0" },
+                Gauges = [new(TestProfiles.H0Gauge)],
                 DefaultSingleTrackEndProfileId = Mmm480.Id,
             },
         ],

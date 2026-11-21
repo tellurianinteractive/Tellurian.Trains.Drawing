@@ -14,8 +14,8 @@ public sealed class CountryTests
     {
         foreach (var standard in BuiltIn.Standards)
         {
-            if (IsMmm(standard.ShortName)) CollectionAssert.AreEqual(new[] { "SE" }, standard.Countries.ToArray(), standard.ShortName);
-            else Assert.IsEmpty(standard.Countries, standard.ShortName);
+            if (IsMmm(standard.ShortName)) CollectionAssert.AreEqual(new[] { "SE" }, (standard.Countries ?? []).ToArray(), standard.ShortName);
+            else Assert.IsEmpty(standard.Countries ?? [], standard.ShortName);
         }
     }
 
@@ -60,7 +60,7 @@ public sealed class CountryTests
     [TestMethod]
     public void StandardWithAnInvalidCountryIsReported()
     {
-        var standard = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "MY-H0", Scale = "H0", NormalGauge = 16.5, Countries = ["SE", "Sweden"] };
+        var standard = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "MY-H0", Scale = new() { ShortName = "H0" }, Gauges = [new(16.5)], Countries = ["SE", "Sweden"] };
         var problem = Assert.ContainsSingle(CatalogueValidation.Validate(standard, TestCatalogue.Instance));
         Assert.AreEqual(new CatalogueProblem(CatalogueProblemCode.CountryInvalid, nameof(ModuleStandard.Countries)), problem);
     }

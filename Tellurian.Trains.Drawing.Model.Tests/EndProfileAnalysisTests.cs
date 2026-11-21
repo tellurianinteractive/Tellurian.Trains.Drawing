@@ -36,7 +36,7 @@ public sealed class EndProfileAnalysisTests
     [TestMethod]
     public void OffCentreTrackIsAsymmetric()
     {
-        var profile = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 20, Gauge = TestProfiles.H0Gauge }]; });
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 20, Gauges = [TestProfiles.H0Gauge] }]; });
         Assert.AreEqual(FitDifferences.TrackPositions, EndProfileAnalysis.AsymmetricElements(profile));
     }
 

@@ -25,7 +25,7 @@ public sealed class FremoB96Tests
     {
         var track = High.Tracks.Single();
         Assert.AreEqual(0, track.Offset, Precision);
-        Assert.AreEqual(16.5, track.Gauge, Precision);
+        Assert.AreEqual(16.5, track.Gauges.Single(), Precision);
     }
 
     [TestMethod]

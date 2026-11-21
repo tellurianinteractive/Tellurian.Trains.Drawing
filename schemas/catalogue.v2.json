@@ -96,13 +96,13 @@
         "scales": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/Scale"
+            "$ref": "#/$defs/SharedScale"
           }
         },
         "standards": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/ModuleStandard"
+            "$ref": "#/$defs/SharedModuleStandard"
           }
         },
         "addOns": {
@@ -296,8 +296,11 @@
         "offset": {
           "type": "number"
         },
-        "gauge": {
-          "type": "number"
+        "gauges": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
         },
         "railSystem": {
           "enum": [
@@ -314,133 +317,7 @@
       },
       "required": [
         "offset",
-        "gauge"
-      ]
-    },
-    "ModuleStandard": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "shortName": {
-          "type": "string"
-        },
-        "scale": {
-          "type": "string"
-        },
-        "trackSystem": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "railSystem": {
-          "enum": [
-            "TwoRail",
-            "ThreeRail"
-          ]
-        },
-        "normalGauge": {
-          "type": "number"
-        },
-        "narrowGauge": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "couplings": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "electricity": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "wheelset": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "railTopHeight": {
-          "type": "number"
-        },
-        "minimumClearance": {
-          "type": "number"
-        },
-        "operatorSpaceDepth": {
-          "type": "number"
-        },
-        "trackColor": {
-          "type": "string"
-        },
-        "foulingDistance": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "minimumReverseCurveRadius": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "defaultCurveRadius": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "defaultSingleTrackEndProfileId": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "format": "uuid"
-        },
-        "defaultDoubleTrackEndProfileId": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "format": "uuid"
-        },
-        "source": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DocumentReference"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "externalReferences": {
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "countries": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "shortName",
-        "scale",
-        "normalGauge"
+        "gauges"
       ]
     },
     "PathDrawing": {
@@ -569,19 +446,182 @@
         "y"
       ]
     },
-    "Scale": {
+    "SharedModuleStandard": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SharedScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trackSystem": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "railSystem": {
+          "enum": [
+            "TwoRail",
+            "ThreeRail",
+            null
+          ]
+        },
+        "gauges": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/TrackGauge"
+          }
+        },
+        "couplings": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "electricity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wheelset": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "railTopHeight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "minimumClearance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "operatorSpaceDepth": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "trackColor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "foulingDistance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "minimumReverseCurveRadius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "defaultCurveRadius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "defaultSingleTrackEndProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "defaultDoubleTrackEndProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "countries": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "shortName"
+      ]
+    },
+    "SharedScale": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "shortName": {
           "type": "string"
         },
         "denominator": {
-          "type": "integer"
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "remark": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
-        "shortName",
-        "denominator"
+        "shortName"
       ]
     },
     "StandardAddOn": {
@@ -619,6 +659,31 @@
         "id",
         "shortName",
         "baseStandardId"
+      ]
+    },
+    "TrackGauge": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "prototypeWidth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "width"
       ]
     }
   }

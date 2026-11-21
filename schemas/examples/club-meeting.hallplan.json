@@ -1733,7 +1733,9 @@
         "tracks": [
           {
             "offset": 0,
-            "gauge": 16.5,
+            "gauges": [
+              16.5
+            ],
             "railSystem": "TwoRail"
           }
         ],
@@ -1851,12 +1853,16 @@
         "tracks": [
           {
             "offset": -25,
-            "gauge": 16.5,
+            "gauges": [
+              16.5
+            ],
             "railSystem": "TwoRail"
           },
           {
             "offset": 25,
-            "gauge": 16.5,
+            "gauges": [
+              16.5
+            ],
             "railSystem": "TwoRail"
           }
         ],
@@ -1904,9 +1910,15 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "shortName": "FREMO/H0-RE",
-        "scale": "H0",
+        "scale": {
+          "shortName": "H0"
+        },
         "railSystem": "TwoRail",
-        "normalGauge": 16.5,
+        "gauges": [
+          {
+            "width": 16.5
+          }
+        ],
         "railTopHeight": 1300,
         "minimumClearance": 0,
         "operatorSpaceDepth": 800,
@@ -1915,8 +1927,7 @@
         "defaultDoubleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
         "source": {
           "title": "FREMO module standard H0-RE"
-        },
-        "countries": []
+        }
       }
     ],
     "overrides": [],

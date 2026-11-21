@@ -101,8 +101,8 @@ else if (draft is not null)
 
     public static string Url(Guid id) => $"drawing/{id}";
 
-    private Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard? _standard;
-    private Tellurian.Trains.Drawing.Model.Catalogue.DrawingCatalogue? _catalogue;
+    private ModuleStandard? _standard;
+    private DrawingCatalogue? _catalogue;
 
     /// <summary>
     /// The end profile as it is now in the catalogue, so that changes such as a new short name show; the module
@@ -127,7 +127,7 @@ else if (draft is not null)
     }
 
     /// <summary>The standard of a module draft, for its track colour.</summary>
-    private async Task<Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard?> StandardOfAsync(Draft? draft)
+    private async Task<ModuleStandard?> StandardOfAsync(Draft? draft)
     {
         if (draft?.Kind != DrawingFileKind.Module) return null;
         try
@@ -167,7 +167,7 @@ else if (draft is not null)
     /// The module draft with its embedded end profiles updated from <paramref name="catalogue"/> where they have
     /// changed there, so that the module's file gets them when it is saved; the draft then has unsaved changes.
     /// </summary>
-    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, Tellurian.Trains.Drawing.Model.Catalogue.DrawingCatalogue catalogue)
+    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, DrawingCatalogue catalogue)
     {
         try
         {

@@ -312,6 +312,8 @@
   <data name="Field_Countries" xml:space="preserve"><value>Lande</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Landekoder på to bogstaver, for eksempel SE, adskilt med komma. Tomt: standarden gælder i alle lande.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: brug landekoder på to bogstaver, for eksempel SE.</value></data>
+  <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: en standard skal have mindst én sporvidde.</value></data>
+  <data name="Problem_GaugeRepeated" xml:space="preserve"><value>{0}: smalsporvidden skal være forskellig fra normalsporvidden.</value></data>
   <data name="RevisionLog" xml:space="preserve"><value>Ændringslog</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Endnu ikke gemt af nogen med brugernavn.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Intet brugernavn i indstillingerne: når du gemmer en tegning, registreres det ikke i ændringsloggen.</value></data>

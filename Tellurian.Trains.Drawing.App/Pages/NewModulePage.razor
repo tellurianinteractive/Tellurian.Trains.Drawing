@@ -194,7 +194,7 @@ else
     /// <summary>End B may have an end profile of any standard of the same scale, e.g. FREMO at end A and MMM at end B.</summary>
     private IEnumerable<EndProfile> EndProfilesOfScale =>
         catalogue?.FindStandard(form.StandardId) is { } standard
-            ? catalogue.EndProfiles.Where(p => p.Scale == standard.Scale).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation)
+            ? catalogue.EndProfiles.Where(p => p.Scale == standard.ScaleName).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation)
             : [];
 
     private string ProfileText(EndProfile profile) =>
@@ -208,7 +208,7 @@ else
             form.Name = T["NewModuleName"];
             // Start with a standard that has end profiles, so the form can be submitted as it is.
             var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
-            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id).Any()) ?? standards.FirstOrDefault();
+            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id ?? Guid.Empty).Any()) ?? standards.FirstOrDefault();
             if (standard is not null) UseStandard(standard);
         }
         catch (StorageException ex)
@@ -224,7 +224,7 @@ else
 
     private void UseStandard(ModuleStandard standard)
     {
-        form.StandardId = standard.Id;
+        form.StandardId = standard.Id ?? Guid.Empty;
         form.EndProfileId = EndProfiles.FirstOrDefault()?.Id ?? Guid.Empty;
         if (!EndProfilesOfScale.Any(p => p.Id == form.SecondEndProfileId)) form.SecondEndProfileId = Guid.Empty;
         form.Radius = standard.DefaultCurveRadius ?? Form.FallbackRadius;

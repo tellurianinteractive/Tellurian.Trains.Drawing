@@ -66,8 +66,8 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
             case EndProfileItemKind.Track when id.Index < document.Tracks.Count:
                 var track = document.Tracks[id.Index];
                 yield return new PointTarget(new(track.Offset, 0), id);
-                yield return new PointTarget(new(track.Offset - track.Gauge / 2, 0), id);
-                yield return new PointTarget(new(track.Offset + track.Gauge / 2, 0), id);
+                yield return new PointTarget(new(track.Offset - track.WidestGauge / 2, 0), id);
+                yield return new PointTarget(new(track.Offset + track.WidestGauge / 2, 0), id);
                 break;
             case EndProfileItemKind.ScrewHole when id.Index < document.ScrewHoles.Count:
                 yield return new PointTarget(document.ScrewHoles[id.Index].Center, id);
@@ -123,7 +123,7 @@ public sealed class EndProfileScene : ISelectableScene<EndProfile, EndProfileIte
     /// <summary>The area a track is drawn in: its sleeper, from the sleeper's underside to rail top.</summary>
     public static BoundingBox TrackBounds(EndProfileTrack track)
     {
-        var half = Math.Max(TrackCrossSection.SleeperLength(track.Gauge), track.Gauge + TrackCrossSection.RailWidth(track.Gauge)) / 2;
+        var half = Math.Max(TrackCrossSection.SleeperLength(track.WidestGauge), track.WidestGauge + TrackCrossSection.RailWidth(track.WidestGauge)) / 2;
         return new(new(track.Offset - half, -TrackCrossSection.Height), new(track.Offset + half, 0));
     }
 

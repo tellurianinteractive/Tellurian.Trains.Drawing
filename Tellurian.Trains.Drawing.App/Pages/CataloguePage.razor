@@ -118,20 +118,20 @@
                 <tr><th>@T["Standard"]</th><th>@T["Scale"]</th><th>@T["Gauge"]</th><th>@T["RailTopHeight"]</th><th>@T["Origin"]</th><th></th></tr>
             </thead>
             <tbody>
-                @foreach (var standard in catalogue.Standards.OrderBy(s => s.Scale).ThenBy(s => s.ShortName))
+                @foreach (var standard in catalogue.Standards.OrderBy(s => s.ScaleName).ThenBy(s => s.ShortName))
                 {
-                    var origin = CatalogueService.Origin(CatalogueService.BuiltIn.FindStandard(standard.Id) is not null, user.FindStandard(standard.Id) is not null);
+                    var origin = CatalogueService.Origin(CatalogueService.BuiltIn.FindStandard(standard.Id ?? Guid.Empty) is not null, user.FindStandard(standard.Id ?? Guid.Empty) is not null);
                     <tr>
                         <td>@standard.ShortName</td>
-                        <td>@standard.Scale</td>
-                        <td>@standard.NormalGauge.ToString("0.#")</td>
-                        <td>@standard.RailTopHeight.ToString("0")</td>
+                        <td>@standard.ScaleName</td>
+                        <td>@(standard.NormalGauge?.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture))</td>
+                        <td>@standard.RailTopHeightOrDefault.ToString("0", System.Globalization.CultureInfo.CurrentCulture)</td>
                         <td><span class="badge @origin.ToString().ToLowerInvariant()">@T[$"Origin_{origin}"]</span></td>
                         <td class="actions">
                             <a href="catalogue/standard/@standard.Id">@T["Edit"]</a>
                             @if (origin != CatalogueOrigin.BuiltIn)
                             {
-                                <button type="button" class="link" @onclick="() => RemoveAsync(standard.ShortName, origin, () => Catalogues.DeleteStandardAsync(standard.Id))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
+                                <button type="button" class="link" @onclick="() => RemoveAsync(standard.ShortName, origin, () => Catalogues.DeleteStandardAsync(standard.Id ?? Guid.Empty))">@T[origin == CatalogueOrigin.ReplacesBuiltIn ? "RestoreBuiltIn" : "Delete"]</button>
                             }
                         </td>
                     </tr>

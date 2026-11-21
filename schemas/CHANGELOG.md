@@ -8,6 +8,21 @@ new version per file kind, and files of the older version are upgraded when they
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
 upgraded; files are written as version 2. See `docs/OperationLocationsTasks.md` for what is still to come in this version.
 
+### 2026-11-21 (catalogue, standards and gauges in the shared model)
+The catalogue, its standards and add-ons and the end profiles are read and written by the Schedules packages
+`Importers.Drawing` and `Exporters.Drawing` (4.0.16); decisions 11 to 13 of `CrossAppReview.md`.
+- **An end-profile track has `gauges`**, a list of widths in mm, in place of `gauge`: one, or more for a dual-gauge
+  track. In end profile files and wherever end profiles are embedded (module files, catalogues, hall plans).
+- **A standard has `gauges`**, a list with `width`, optional `name` (e.g. "H0m") and `prototypeWidth`, the normal gauge
+  first, in place of `normalGauge` and `narrowGauge`.
+- **A standard's `scale` is the shared model's scale** (`{ "shortName": "H0" }`) in place of its short name as text, as a
+  module's `standard` already was.
+- A standard's properties beyond `id`, `shortName` and `scale` are optional: `railSystem`, `railTopHeight`,
+  `operatorSpaceDepth`, `trackColor` and `countries` are left out when not stated (an empty country list means every
+  country, as before), and their defaults apply where they are used.
+- A scale's `denominator` may have decimals (1:43.5); a scale has no gauge.
+- Files in the earlier shape are still read, also version 2 files written by development builds.
+
 ### 2026-11-21 (the shared layout model 4.0)
 - **The tracks of a module that is an operation location are written with the location**, as
   `operationLocation.tracks`; `module.tracks` is written only for a module of plain line. A file with the tracks on

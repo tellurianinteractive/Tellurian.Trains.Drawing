@@ -22,7 +22,7 @@ public sealed class BuiltInCatalogueTests
     {
         Assert.IsFalse(string.IsNullOrWhiteSpace(Catalogue.Version));
         CollectionAssert.IsSubsetOf(new[] { "FREMO/H0-RE", "MMM-2R", "MMM-3R", "FREMO/N-RE" }, Catalogue.Standards.Select(s => s.ShortName).ToArray());
-        CollectionAssert.AreEquivalent(new[] { "MMM-Summer", "MMM-Modern" }, Catalogue.AddOnsOf(Catalogue.FindStandard("MMM-2R")!.Id).Select(a => a.ShortName).ToArray());
+        CollectionAssert.AreEquivalent(new[] { "MMM-Summer", "MMM-Modern" }, Catalogue.AddOnsOf(Catalogue.FindStandard("MMM-2R")!.Id!.Value).Select(a => a.ShortName).ToArray());
         Assert.AreSame(Catalogue, BuiltInCatalogue.Instance);
     }
 
@@ -31,7 +31,7 @@ public sealed class BuiltInCatalogueTests
     {
         foreach (var standard in Catalogue.Standards)
         {
-            Assert.IsNotNull(Catalogue.FindScale(standard.Scale), $"{standard} has an unknown scale.");
+            Assert.IsNotNull(Catalogue.FindScale(standard.ScaleName), $"{standard} has an unknown scale.");
             foreach (var id in new[] { standard.DefaultSingleTrackEndProfileId, standard.DefaultDoubleTrackEndProfileId }.OfType<Guid>())
             {
                 var profile = Catalogue.FindEndProfile(id);
@@ -52,7 +52,7 @@ public sealed class BuiltInCatalogueTests
     [TestMethod]
     public void IdsAreUnique()
     {
-        var ids = Catalogue.Standards.Select(s => s.Id).Concat(Catalogue.AddOns.Select(a => a.Id)).Concat(Catalogue.EndProfiles.Select(p => p.Id)).ToList();
+        var ids = Catalogue.Standards.Select(s => s.Id!.Value).Concat(Catalogue.AddOns.Select(a => a.Id)).Concat(Catalogue.EndProfiles.Select(p => p.Id)).ToList();
         Assert.HasCount(ids.Count, ids.Distinct());
     }
 
@@ -212,7 +212,7 @@ public sealed class BuiltInCatalogueTests
     [TestMethod]
     public void UserEntryReplacesBuiltInEntryWithTheSameKey()
     {
-        var standard = Catalogue.FindStandard("MMM-2R")! with { DefaultCurveRadius = 1800 };
+        var standard = Catalogue.FindStandard("MMM-2R")!.With(edited => { edited.DefaultCurveRadius = 1800; });
         var user = new DrawingCatalogue { Standards = [standard], Scales = [new() { ShortName = " h0 ", Denominator = 87 }] };
         var merged = DrawingCatalogue.Merge(Catalogue, user);
         Assert.HasCount(Catalogue.Standards.Count, merged.Standards);

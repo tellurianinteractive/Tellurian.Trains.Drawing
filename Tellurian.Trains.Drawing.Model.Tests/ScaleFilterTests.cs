@@ -14,7 +14,7 @@ public sealed class ScaleFilterTests
         var catalogue = BuiltIn.ForScale(scale);
 
         Assert.IsNotEmpty(catalogue.Standards);
-        Assert.IsTrue(catalogue.Standards.All(s => s.Scale.Equals(scale.Trim(), StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(catalogue.Standards.All(s => s.ScaleName.Equals(scale.Trim(), StringComparison.OrdinalIgnoreCase)));
         Assert.IsNotEmpty(catalogue.EndProfiles);
         Assert.IsTrue(catalogue.EndProfiles.All(p => p.Scale.Equals(scale.Trim(), StringComparison.OrdinalIgnoreCase)));
         Assert.IsTrue(catalogue.AddOns.All(a => catalogue.FindStandard(a.BaseStandardId) is not null));
@@ -31,10 +31,10 @@ public sealed class ScaleFilterTests
     {
         var swedishH0 = BuiltIn.ForChoices("SE", "H0");
         Assert.IsTrue(swedishH0.Standards.Any(s => s.ShortName.StartsWith("MMM", StringComparison.Ordinal)));
-        Assert.IsTrue(swedishH0.Standards.All(s => s.Scale == "H0"));
+        Assert.IsTrue(swedishH0.Standards.All(s => s.ScaleName == "H0"));
 
         var germanN = BuiltIn.ForChoices("DE", "N");
-        Assert.IsTrue(germanN.Standards.All(s => s.Scale == "N" && s.Countries.Count == 0));
+        Assert.IsTrue(germanN.Standards.All(s => s.ScaleName == "N" && s.Countries is not { Count: > 0 }));
         Assert.IsEmpty(germanN.AddOns);
     }
 }

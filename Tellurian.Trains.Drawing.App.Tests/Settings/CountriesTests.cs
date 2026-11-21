@@ -19,7 +19,7 @@ public sealed class CountriesTests
     public void CodesAreIsoCodesAlsoForTheUnitedKingdom()
     {
         Assert.AreEqual("GB", Countries.All.Single(c => c.EnglishName == "United Kingdom").Code);
-        Assert.IsTrue(Countries.All.All(c => Model.Catalogue.CatalogueValidation.IsCountryCode(c.Code)));
+        Assert.IsTrue(Countries.All.All(c => CatalogueValidation.IsCountryCode(c.Code)));
         Assert.AreEqual(Countries.All.Count, Countries.All.Select(c => c.Code).Distinct().Count());
     }
 

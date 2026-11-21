@@ -58,8 +58,8 @@ internal static class TestHalls
             Id = Guid.NewGuid(),
             Name = "Club meeting",
             Hall = hall,
-            Scale = standard.Scale,
-            PrimaryStandard = new(standard.Id, standard.ShortName),
+            Scale = standard.ScaleName,
+            PrimaryStandard = new(standard.Id!.Value, standard.ShortName),
             Layouts =
             [
                 new()

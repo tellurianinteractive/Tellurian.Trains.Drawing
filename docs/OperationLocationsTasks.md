@@ -18,6 +18,8 @@ Done 2026-11-21: the survey's step 3 on Module Draw's side. Module Draw builds a
 
 Done 2026-11-21, step 5 sub-steps 1 and 2 (`CrossAppReview.md` decisions 18 to 20): reading and writing are separate packages, `Importers.Drawing` and `Exporters.Drawing` (4.0.11). The end profile with its parts and the drawing values moved to `Model.Layouts`; the end profile is a mutable class (values stay records). Module Draw's `DrawingFileSerializer` hands end profiles to the shared importer and exporter, so its callers didn't change; the end profile file is unchanged byte for byte. Next: the catalogue, then the hall.
 
+Done 2026-11-21, sub-step 3 together with survey step 7 (review decisions 20 and 21): the catalogue (standards, add-ons, overrides, validation), the fit evaluator, comparison, analysis and templates are the shared model's; one `ModuleStandard` with a `Guid` id and optional properties; scales without gauges; gauges as lists on standards and end-profile tracks, with the 1->2 migration. `DrawingFileSerializer` hands catalogues to the shared importer and exporter too. The standard editor still edits a normal and a narrow gauge; names and prototype gauges, and a second gauge on an end-profile track (dual gauge), aren't editable yet. Next: the hall.
+
 ## Before starting: one new schema version
 
 Several tasks change the file formats in ways that are not additions (renamed enum values, moved ids, removed owner properties, another shape of a hall plan line). The file formats are public and only additions are allowed within a major version.

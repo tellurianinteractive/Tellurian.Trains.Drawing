@@ -97,8 +97,8 @@ public sealed class ModuleValidationTests
         var module = TestModules.Straight();
         var standard = TestCatalogue.Instance.FindStandard(TestCatalogue.FremoId)!;
         Assert.AreEqual(standard.Id, module.StandardId);
-        Assert.AreEqual(standard.ToShared(), module.Standard);
-        Assert.AreEqual((standard.ShortName, standard.Scale), (module.Standard!.ShortName, module.Scale?.ShortName));
+        Assert.AreEqual(standard.NameOnly, module.Standard);
+        Assert.AreEqual((standard.ShortName, standard.ScaleName), (module.Standard!.ShortName, module.Scale?.ShortName));
         Assert.IsNull((module.With(c => c.Standard = null)).Scale);
     }
 }

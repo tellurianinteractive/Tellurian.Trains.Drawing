@@ -33,8 +33,9 @@ public static class DrawingFileSerializer
     public static string Serialize(ModuleFileContent module, string? appVersion = null) =>
         JsonSerializer.Serialize(Envelope(DrawingFileKind.Module, module, appVersion), Context.DrawingFileModuleFileContent);
 
+    /// <summary>The catalogue file of <paramref name="catalogue"/>, written by the shared <see cref="CatalogueExporter"/>.</summary>
     public static string Serialize(DrawingCatalogue catalogue, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.Catalogue, catalogue, appVersion), Context.DrawingFileDrawingCatalogue);
+        new CatalogueExporter().Write(catalogue, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     public static string Serialize(Hall hall, string? appVersion = null) =>
         JsonSerializer.Serialize(Envelope(DrawingFileKind.Hall, hall, appVersion), Context.DrawingFileHall);
@@ -66,10 +67,15 @@ public static class DrawingFileSerializer
     public static ModuleFileContent DeserializeModule(Stream stream) => Read(Parse(stream), DrawingFileKind.Module, Context.DrawingFileModuleFileContent);
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
-    public static DrawingCatalogue DeserializeCatalogue(string json) => Read(Parse(json), DrawingFileKind.Catalogue, Context.DrawingFileDrawingCatalogue);
+    public static DrawingCatalogue DeserializeCatalogue(string json) => Imported(new CatalogueImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
-    public static DrawingCatalogue DeserializeCatalogue(Stream stream) => Read(Parse(stream), DrawingFileKind.Catalogue, Context.DrawingFileDrawingCatalogue);
+    public static DrawingCatalogue DeserializeCatalogue(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeCatalogue(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall file.</exception>
     public static Hall DeserializeHall(string json) => Read(Parse(json), DrawingFileKind.Hall, Context.DrawingFileHall);

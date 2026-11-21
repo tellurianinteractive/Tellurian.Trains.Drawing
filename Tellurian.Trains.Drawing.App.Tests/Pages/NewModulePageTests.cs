@@ -65,8 +65,8 @@ public sealed class NewModulePageTests
     public void DefaultStandardHasEndProfiles()
     {
         using var context = new AppTestContext();
-        var empty = new Model.Catalogue.ModuleStandard { Id = Guid.NewGuid(), ShortName = "AAA-FIRST", Scale = "H0", NormalGauge = 16.5 };
-        context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().SaveUserAsync(Model.Catalogue.DrawingCatalogue.Empty with { Standards = [empty] }).Wait();
+        var empty = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "AAA-FIRST", Scale = new() { ShortName = "H0" }, Gauges = [new(16.5)] };
+        context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().SaveUserAsync(DrawingCatalogue.Empty with { Standards = [empty] }).Wait();
 
         var page = context.Render<NewModulePage>();
 

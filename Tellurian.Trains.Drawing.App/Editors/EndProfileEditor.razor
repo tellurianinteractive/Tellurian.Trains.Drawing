@@ -187,7 +187,7 @@
                     case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
                         var track = _document.Current.Tracks[item.Index];
                         <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Offset = Frame.FromDisplayX(v); })))" />
-                        <NumberField Label="@T["Gauge"]" Value="track.Gauge" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Gauge = v; })))" />
+                        <NumberField Label="@T["Gauge"]" Value="track.Gauges.FirstOrDefault()" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Gauges = [v, .. track.Gauges.Skip(1)]; })))" />
                         <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Label = v; })))" />
                         break;
                     case { Kind: EndProfileItemKind.ScrewHole } item when item.Index < _document.Current.ScrewHoles.Count:
@@ -460,7 +460,7 @@
             AllowsClosed = false,
         };
         _screwHole = new(_document, _snap, EndProfileCommands.AddScrewHole);
-        _track = new(_document, _snap, p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauge = profile.Tracks.FirstOrDefault()?.Gauge ?? 16.5 }))
+        _track = new(_document, _snap, p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauges = [profile.Tracks.FirstOrDefault()?.WidestGauge ?? 16.5] }))
         {
             Constrain = p => new(p.X, 0),
         };

@@ -73,11 +73,11 @@ public sealed class EndProfileEditingTests
         var profile = Profile().With(edited => { edited.ScrewHoles = [new(new(0, -50), 10)]; });
         var withHole = EndProfileCommands.AddScrewHole(new(100, -50)).Apply(profile);
         Assert.AreEqual(10, withHole.ScrewHoles[^1].Diameter);
-        var withTrack = EndProfileCommands.AddTrack(90, new() { Offset = 0, Gauge = 9 }).Apply(profile);
-        Assert.AreEqual(16.5, withTrack.Tracks[^1].Gauge, "The gauge of the existing tracks, not the default.");
+        var withTrack = EndProfileCommands.AddTrack(90, new() { Offset = 0, Gauges = [9] }).Apply(profile);
+        Assert.AreEqual(16.5, withTrack.Tracks[^1].Gauges.Single(), "The gauge of the existing tracks, not the default.");
         Assert.AreEqual(90, withTrack.Tracks[^1].Offset);
-        var first = EndProfileCommands.AddTrack(0, new() { Offset = 0, Gauge = 9 }).Apply(profile.With(edited => { edited.Tracks = []; }));
-        Assert.AreEqual(9, first.Tracks.Single().Gauge);
+        var first = EndProfileCommands.AddTrack(0, new() { Offset = 0, Gauges = [9] }).Apply(profile.With(edited => { edited.Tracks = []; }));
+        Assert.AreEqual(9, first.Tracks.Single().Gauges.Single());
     }
 
     [TestMethod]
@@ -131,7 +131,7 @@ public sealed class EndProfileEditingTests
     public void PlaceToolPutsTracksOnRailTop()
     {
         var document = new EditorDocument<EndProfile>(Profile(), comparer: EndProfileContentComparer.Comparer);
-        var tool = new PlaceTool<EndProfile>(document, new SnapEngine(), p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauge = 16.5 }))
+        var tool = new PlaceTool<EndProfile>(document, new SnapEngine(), p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauges = [16.5] }))
         {
             Constrain = p => new(p.X, 0),
         };

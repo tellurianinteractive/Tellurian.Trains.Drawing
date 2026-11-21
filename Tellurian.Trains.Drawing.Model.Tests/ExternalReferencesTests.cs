@@ -80,7 +80,7 @@ public sealed class ExternalReferencesTests
         {
             Modules = [.. plan.Modules.Select(m => m.With(c => c.ExternalReferences = TestReferences.Registry("""{"stationId":1}""")))],
             EndProfiles = [.. plan.EndProfiles.Select(p => p.With(edited => { edited.ExternalReferences = TestReferences.Registry("""{"endProfileId":2}"""); }))],
-            Standards = [.. plan.Standards.Select(s => s with { ExternalReferences = TestReferences.Registry("""{"standardId":3}""") })],
+            Standards = [.. plan.Standards.Select(s => s.With(edited => { edited.ExternalReferences = TestReferences.Registry("""{"standardId":3}"""); }))],
         };
         var read = DrawingFileSerializer.DeserializeHallPlan(DrawingFileSerializer.Serialize(plan));
         Assert.IsTrue(read.Modules.All(m => TestReferences.RegistryEntry(m.ExternalReferences) == """{"stationId":1}"""));

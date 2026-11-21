@@ -27,7 +27,7 @@ public sealed class CatalogueEditorPageTests
         page.Find("form").Submit();
 
         var standard = User(context).Standards.Single();
-        Assert.AreEqual(("MY-H0", "H0", 16.5), (standard.ShortName, standard.Scale, standard.NormalGauge));
+        Assert.AreEqual(("MY-H0", "H0", (double?)16.5), (standard.ShortName, standard.ScaleName, standard.NormalGauge));
         Assert.EndsWith("catalogue", Uri(context));
     }
 
@@ -42,7 +42,7 @@ public sealed class CatalogueEditorPageTests
 
         var problems = page.FindAll(".problems li").Select(e => e.TextContent).ToList();
         CollectionAssert.Contains(problems, "Short name: the name is already used.");
-        CollectionAssert.Contains(problems, "Normal gauge (mm) must be greater than 0.");
+        CollectionAssert.Contains(problems, "Normal gauge (mm): a standard needs at least one gauge.");
         Assert.IsEmpty(User(context).Standards);
     }
 

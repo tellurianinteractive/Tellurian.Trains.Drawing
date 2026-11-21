@@ -312,6 +312,8 @@
   <data name="Field_Countries" xml:space="preserve"><value>Länder</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Ländercodes mit zwei Buchstaben, zum Beispiel SE, durch Kommas getrennt. Leer: Die Norm gilt in allen Ländern.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: verwende Ländercodes mit zwei Buchstaben, zum Beispiel SE.</value></data>
+  <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: ein Standard braucht mindestens eine Spurweite.</value></data>
+  <data name="Problem_GaugeRepeated" xml:space="preserve"><value>{0}: die Schmalspurweite muss sich von der Normalspurweite unterscheiden.</value></data>
   <data name="RevisionLog" xml:space="preserve"><value>Änderungsprotokoll</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Noch von niemandem mit Benutzernamen gespeichert.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Kein Benutzername in den Einstellungen: Wenn du eine Zeichnung speicherst, wird das nicht im Änderungsprotokoll festgehalten.</value></data>

@@ -10,7 +10,7 @@ public sealed class CatalogueValidationTests
 
     private static ModuleStandard Fremo => Catalogue.FindStandard(TestCatalogue.FremoId)!;
 
-    private static ModuleStandard NewStandard() => new() { Id = Guid.NewGuid(), ShortName = "MY-H0", Scale = "H0", NormalGauge = 16.5 };
+    private static ModuleStandard NewStandard() => new() { Id = Guid.NewGuid(), ShortName = "MY-H0", Scale = new() { ShortName = "H0" }, Gauges = [new(16.5)] };
 
     private static CatalogueProblemCode[] Codes(IEnumerable<CatalogueProblem> problems) => [.. problems.Select(p => p.Code)];
 
@@ -26,21 +26,13 @@ public sealed class CatalogueValidationTests
     public void EditedStandardMayKeepItsOwnName()
     {
         var builtIn = BuiltInCatalogue.Instance.Standards[0];
-        Assert.IsEmpty(CatalogueValidation.Validate(builtIn with { MinimumClearance = 50 }, BuiltInCatalogue.Instance));
+        Assert.IsEmpty(CatalogueValidation.Validate(builtIn.With(edited => { edited.MinimumClearance = 50; }), BuiltInCatalogue.Instance));
     }
 
     [TestMethod]
     public void StandardProblemsAreListedPerProperty()
     {
-        var standard = NewStandard() with
-        {
-            ShortName = " fremo/h0-re ",
-            Scale = "Z",
-            NormalGauge = 0,
-            RailTopHeight = -1,
-            TrackColor = "blue",
-            DefaultSingleTrackEndProfileId = TestCatalogue.Mmm480.Id,
-        };
+        var standard = NewStandard().With(edited => { edited.ShortName = " fremo/h0-re "; edited.Scale = new() { ShortName = "Z" }; edited.Gauges = [new(0)]; edited.RailTopHeight = -1; edited.TrackColor = "blue"; edited.DefaultSingleTrackEndProfileId = TestCatalogue.Mmm480.Id; });
         var problems = CatalogueValidation.Validate(standard, Catalogue);
         CollectionAssert.AreEquivalent(
             new[] { "ShortName", "Scale", "NormalGauge", "RailTopHeight", "TrackColor", "DefaultSingleTrackEndProfileId" },
@@ -50,7 +42,7 @@ public sealed class CatalogueValidationTests
 
     [TestMethod]
     public void MissingNameIsReported() =>
-        CollectionAssert.AreEqual(new[] { CatalogueProblemCode.ShortNameMissing }, Codes(CatalogueValidation.Validate(NewStandard() with { ShortName = " " }, Catalogue)));
+        CollectionAssert.AreEqual(new[] { CatalogueProblemCode.ShortNameMissing }, Codes(CatalogueValidation.Validate(NewStandard().With(edited => { edited.ShortName = " "; }), Catalogue)));
 
     [TestMethod]
     [DataRow("#1f5fbf", true), DataRow("#abc", true), DataRow("1f5fbf", false), DataRow("#12345", false), DataRow("#gggggg", false)]
@@ -62,7 +54,7 @@ public sealed class CatalogueValidationTests
         var summer = Catalogue.AddOns.Single();
         var duplicate = new StandardAddOn { Id = Guid.NewGuid(), ShortName = "mmm-summer", BaseStandardId = summer.BaseStandardId };
         CollectionAssert.AreEqual(new[] { CatalogueProblemCode.ShortNameInUse }, Codes(CatalogueValidation.Validate(duplicate, Catalogue)));
-        Assert.IsEmpty(CatalogueValidation.Validate(duplicate with { BaseStandardId = TestCatalogue.FremoId }, Catalogue));
+        Assert.IsEmpty(CatalogueValidation.Validate(duplicate.With(edited => { edited.BaseStandardId = TestCatalogue.FremoId; }), Catalogue));
     }
 
     [TestMethod]
@@ -93,13 +85,13 @@ public sealed class CatalogueValidationTests
     [TestMethod]
     public void WithAndWithoutReplaceAndRemoveEntries()
     {
-        var edited = Fremo with { MinimumClearance = 77 };
+        var edited = Fremo.With(edited => { edited.MinimumClearance = 77; });
         var catalogue = Catalogue.With(edited);
         Assert.HasCount(Catalogue.Standards.Count, catalogue.Standards);
-        Assert.AreEqual(77, catalogue.FindStandard(Fremo.Id)!.MinimumClearance);
-        Assert.IsNull(catalogue.WithoutStandard(Fremo.Id).FindStandard(Fremo.Id));
+        Assert.AreEqual(77, catalogue.FindStandard(Fremo.Id!.Value)!.MinimumClearance);
+        Assert.IsNull(catalogue.WithoutStandard(Fremo.Id!.Value).FindStandard(Fremo.Id!.Value));
 
-        var addOn = new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Fremo.Id };
+        var addOn = new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Fremo.Id!.Value };
         Assert.HasCount(Catalogue.AddOns.Count + 1, Catalogue.With(addOn).AddOns);
         Assert.HasCount(Catalogue.AddOns.Count, Catalogue.With(addOn).WithoutAddOn(addOn.Id).AddOns);
     }
@@ -109,7 +101,7 @@ public sealed class CatalogueValidationTests
     {
         var user = DrawingCatalogue.Empty
             .With(NewStandard())
-            .With(new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Fremo.Id })
+            .With(new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Fremo.Id!.Value })
             .With(new EndProfileCompatibilityOverride { FirstEndProfileId = TestCatalogue.FremoSingle.Id, SecondEndProfileId = TestCatalogue.Mmm480.Id, Fit = JointFit.FitsWithClamps });
         Assert.IsEmpty(CatalogueValidation.ValidateUserEntries(user, DrawingCatalogue.Merge(Catalogue, user)));
     }
@@ -117,7 +109,7 @@ public sealed class CatalogueValidationTests
     [TestMethod]
     public void UserEntriesThatBecameInvalidAreReportedWithTheirEntry()
     {
-        var standard = NewStandard() with { DefaultSingleTrackEndProfileId = Guid.NewGuid() };
+        var standard = NewStandard().With(edited => { edited.DefaultSingleTrackEndProfileId = Guid.NewGuid(); });
         var addOn = new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Guid.NewGuid() };
         var entry = new EndProfileCompatibilityOverride { FirstEndProfileId = TestCatalogue.FremoSingle.Id, SecondEndProfileId = Guid.NewGuid(), Fit = JointFit.Fits };
         var user = DrawingCatalogue.Empty.With(standard).With(addOn).With(entry);
@@ -126,7 +118,7 @@ public sealed class CatalogueValidationTests
 
         CollectionAssert.AreEqual(new[]
         {
-            new CatalogueEntryProblem(CatalogueEntryKind.Standard, standard.Id, null, new(CatalogueProblemCode.EndProfileNotOfStandard, "DefaultSingleTrackEndProfileId")),
+            new CatalogueEntryProblem(CatalogueEntryKind.Standard, standard.Id!.Value, null, new(CatalogueProblemCode.EndProfileNotOfStandard, "DefaultSingleTrackEndProfileId")),
             new CatalogueEntryProblem(CatalogueEntryKind.AddOn, addOn.Id, null, new(CatalogueProblemCode.BaseStandardUnknown, "BaseStandardId")),
             new CatalogueEntryProblem(CatalogueEntryKind.Override, entry.FirstEndProfileId, entry.SecondEndProfileId, new(CatalogueProblemCode.EndProfileUnknown, "SecondEndProfileId")),
         }, problems.ToArray());
