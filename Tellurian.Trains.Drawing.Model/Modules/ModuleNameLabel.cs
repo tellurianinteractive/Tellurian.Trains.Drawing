@@ -5,7 +5,8 @@ namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
 /// The module's name written on its surface (MD-23): its title in the shared model, e.g. <c>SFjä 7900 Tellby</c>,
-/// with the names of its owners in smaller text under it. It runs along the track, centred between the track ends,
+/// with the names of its owners in smaller text under it when the title has no prefix; a prefix already says who owns
+/// the module (decided 2026-11-21). It runs along the track, centred between the track ends,
 /// and is placed on the side of the track that is above it as the text is read on screen. So when a module is turned
 /// on screen, e.g. placed in a hall plan, the text still reads upright and stays above the track.
 /// The text is as big as fits between the tracks and the module's side and within the module's length, up to a
@@ -39,7 +40,9 @@ public static class ModuleNameLabel
         ArgumentNullException.ThrowIfNull(module);
         var title = module.Title;
         if (title.Length == 0) return null;
-        var owner = string.IsNullOrWhiteSpace(module.ModuleOwners) ? null : module.ModuleOwners.Trim();
+        // The prefix in the title already says who owns the module.
+        var hasPrefix = module.Designation is not null && !string.IsNullOrWhiteSpace(module.Prefix);
+        var owner = hasPrefix || string.IsNullOrWhiteSpace(module.ModuleOwners) ? null : module.ModuleOwners.Trim();
         return new(title, owner);
     }
 

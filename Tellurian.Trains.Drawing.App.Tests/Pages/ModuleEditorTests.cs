@@ -8,6 +8,7 @@ using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.Components.Canvas;
 using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
+using Tellurian.Trains.Drawing.Model.Tracks;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -19,16 +20,31 @@ public sealed class ModuleEditorTests
 {
     private const double Length = 2000;
 
-    private static IRenderedComponent<DrawingPage> OpenStraightModule(AppTestContext context)
+    /// <summary>A straight module that is a station, with the station track of its through track; or plain line.</summary>
+    private static IRenderedComponent<DrawingPage> OpenStraightModule(AppTestContext context, bool isStation = true)
     {
         var catalogue = BuiltInCatalogue.Instance;
         AutoDrawExit west = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
         var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitDirection.Right }] }, catalogue).Module!;
+        // The editor gives a station without station tracks the list of its generated tracks, measured, when it is opened.
+        if (isStation) module = module.With(c => c.OperationLocation = Tellby);
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile));
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(json).Result;
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
         page.WaitForElement(".sections-pane");
         return page;
+    }
+
+    private static Tellurian.Trains.Schedules.Model.Layouts.Station Tellby => new() { Name = "Tellby", Signature = "Tby" };
+
+    [TestMethod]
+    public void APlainLineModuleHasNoStationTracksAndNeedsNone()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context, isStation: false);
+
+        Assert.IsEmpty(page.FindComponent<ModuleEditor>().Instance.Current!.Module.Tracks);
+        Assert.IsEmpty(page.FindAll(".track-problems"));
     }
 
     private static Point OnTrack(IRenderedComponent<DrawingPage> page, double distance) =>
@@ -125,14 +141,14 @@ public sealed class ModuleEditorTests
     }
 
     [TestMethod]
-    public void AModuleDrawnBeforeEveryModuleHadTracksGetsItsListWhenOpened()
+    public void AStationWithoutStationTracksGetsItsListWhenOpened()
     {
         using var context = new AppTestContext();
         var catalogue = BuiltInCatalogue.Instance;
         AutoDrawExit west = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
         var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitDirection.Right }] }, catalogue).Module!;
         var drawing = module.Drawing with { TrackElements = [.. module.Drawing.TrackElements.Select(e => e with { StationTrackId = null })] };
-        var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module.With(c => { c.Tracks = []; c.Drawing = drawing; }), catalogue.FindEndProfile));
+        var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module.With(c => { c.Tracks = []; c.Drawing = drawing; c.OperationLocation = Tellby; }), catalogue.FindEndProfile));
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(json).Result;
 
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
@@ -199,7 +215,7 @@ public sealed class ModuleEditorTests
 
         page.Find("#remove-track").Click();
 
-        StringAssert.Contains(page.Find(".track-problems").TextContent, "Every module has at least one");
+        StringAssert.Contains(page.Find(".track-problems").TextContent, "An operation location has at least one");
 
         Assert.IsEmpty(editor.Current!.Module.Tracks);
         Assert.HasCount(elements, editor.Current.Module.Drawing.TrackElements);
@@ -229,7 +245,7 @@ public sealed class ModuleEditorTests
     {
         using var context = new AppTestContext();
         context.JSInterop.Setup<bool>("confirm", _ => true).SetResult(true);
-        var page = OpenStraightModule(context);
+        var page = OpenStraightModule(context, isStation: false);
         var editor = page.FindComponent<ModuleEditor>().Instance;
         Assert.IsNull(editor.Current!.Module.OperationLocation, "A module is plain line until it is made a location.");
         Assert.IsNotNull(page.Find("#no-location"));
@@ -263,7 +279,7 @@ public sealed class ModuleEditorTests
         using var context = new AppTestContext();
         var confirm = context.JSInterop.Setup<bool>("confirm", _ => true);
         confirm.SetResult(false);
-        var page = OpenStraightModule(context);
+        var page = OpenStraightModule(context, isStation: false);
         var editor = page.FindComponent<ModuleEditor>().Instance;
         page.Find("#add-location").Click();
         const string Halt = nameof(Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind.Other);

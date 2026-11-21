@@ -24,8 +24,11 @@ public enum ModuleLayers
     DuckUnderAreas = 1 << 6,
     Labels = 1 << 7,
 
-    /// <summary>The module's FREMO designation or name, with the owner's name, along the track (MD-23).</summary>
+    /// <summary>The module's FREMO designation or name along the track, with the owners' names when there is no prefix (MD-23).</summary>
     Name = 1 << 8,
 
-    All = Sections | EndPlates | Tracks | Exits | OperatorSpaces | PublicSides | DuckUnderAreas | Labels | Name,
+    /// <summary>The designations of the station tracks, at the middle of each track's longest element.</summary>
+    TrackDesignations = 1 << 9,
+
+    All = Sections | EndPlates | Tracks | Exits | OperatorSpaces | PublicSides | DuckUnderAreas | Labels | Name | TrackDesignations,
 }

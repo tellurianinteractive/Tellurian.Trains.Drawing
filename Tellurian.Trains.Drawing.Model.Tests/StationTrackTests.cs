@@ -166,11 +166,13 @@ public sealed class StationTrackTests
     }
 
     [TestMethod]
-    public void AModuleWithoutTracksIsLeftAsItIsAndReported()
+    public void AModuleWithoutStationTracksIsLeftAsItIsAndReportedOnlyAsAnOperationLocation()
     {
-        var module = TestModules.Straight().With(c => c.Tracks = []);
-        Assert.AreSame(module, module.WithMeasuredTracks(Clearance, TestCatalogue.Lookup));
-        CollectionAssert.Contains(Codes(module), StationTrackProblemCode.NoTracks);
+        var plainLine = TestModules.Straight().With(c => c.Tracks = []);
+        Assert.AreSame(plainLine, plainLine.WithMeasuredTracks(Clearance, TestCatalogue.Lookup));
+        CollectionAssert.DoesNotContain(Codes(plainLine), StationTrackProblemCode.NoTracks, "The line between operation locations has no station tracks.");
+        var station = plainLine.With(c => c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station { Name = "Tellby", Signature = "Tby" });
+        CollectionAssert.Contains(Codes(station), StationTrackProblemCode.NoTracks);
     }
 
     [TestMethod]

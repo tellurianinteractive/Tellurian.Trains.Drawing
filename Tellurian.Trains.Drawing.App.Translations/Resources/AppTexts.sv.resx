@@ -512,7 +512,7 @@
   <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>På ett magasin sker alltid resandeutbyte.</value></data>
   <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Tåg kan inte byta riktning på den här typen av plats.</value></data>
   <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Tåg kan inte mötas på den här typen av plats.</value></data>
-  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Modulen har inget spår i listan. Varje modul har minst ett: ett genomgående spår eller ett spår som slutar.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Driftplatsen har inget spår i listan. En driftplats har minst ett: ett genomgående spår eller ett spår som slutar.</value></data>
   <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Ett spår saknar beteckning.</value></data>
   <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mer än ett spår heter {0}.</value></data>
   <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Spårelement {0} är en del av ett spår som inte finns i listan.</value></data>

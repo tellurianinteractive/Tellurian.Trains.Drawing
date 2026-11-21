@@ -46,7 +46,7 @@ dotnet pack Tellurian.Trains.Drawing.Components               # pack libraries o
 - Texts longer than a sentence or two, or with several paragraphs or headings, go in a Markdown document in the Translations project, not in RESX. Every document exists in all five languages (`Name.md` in English, `Name.sv.md` and so on); a test fails when one is missing.
 - UI changes must be checked in a browser; the AOT Release build before releases.
 
-- A module file is **one complete module with one drawing** (`Module.Drawing`). There are no variants here: a module that can be set up in several ways is several modules, and only the Module Registry knows that they belong together. Every module has a list of tracks; the operation location is optional.
+- A module file is **one complete module with one drawing** (`Module.Drawing`). There are no variants here: a module that can be set up in several ways is several modules, and only the Module Registry knows that they belong together. Every module has its drawn tracks (track elements); the operation location is optional, and only an operation location has **station tracks**, the list of designated tracks with a function (decided 2026-11-21). A module of plain line is the line between operation locations and has none unless the user adds them.
 - A hall plan refers to a module's exit by side and number (`ExitPlace`: Left 1, Right 2), never by its label.
 
 ## Local NuGet Development

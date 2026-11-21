@@ -3,6 +3,7 @@
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Editing.Input
 @using Tellurian.Trains.Drawing.Model.Modules
+@using Tellurian.Trains.Drawing.Model.Tracks
 @using OperationLocation = Tellurian.Trains.Schedules.Model.Layouts.OperationLocation
 @using OperationLocationKind = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind
 @using OperationLocationRules = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationRules
@@ -109,7 +110,8 @@
 
     private static bool Checked(ChangeEventArgs e) => e.Value is true;
 
-    private Task ApplyAsync(OperationLocation? location) => ModuleChanged.InvokeAsync(Content.Module.With(c => c.OperationLocation = location));
+    // A module that becomes an operation location gets the list of its generated tracks, if it has none.
+    private Task ApplyAsync(OperationLocation? location) => ModuleChanged.InvokeAsync(Content.Module.With(c => c.OperationLocation = location).WithGeneratedTrackList());
 
     private Task ChangeAsync(Func<OperationLocation, OperationLocation> change) =>
         Content.Module.OperationLocation is { } location ? ApplyAsync(change(location)) : Task.CompletedTask;

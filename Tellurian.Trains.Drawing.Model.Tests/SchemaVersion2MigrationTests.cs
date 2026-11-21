@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
+using Tellurian.Trains.Drawing.Model.Tracks;
 using OperationLocationKind = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -310,7 +311,7 @@ public sealed class SchemaVersion2MigrationTests
     public void ADevelopmentVersion2FileBecomesTheModuleOfTheSharedModel(bool isAutoDrawn)
     {
         var module = isAutoDrawn
-            ? TestModules.Straight().With(c => { c.Number = 12; c.Prefix = "AOw"; c.ModuleOwners = "A. Owner, Club"; })
+            ? TestModules.Straight().With(c => { c.Number = 12; c.Prefix = "AOw"; c.ModuleOwners = "A. Owner, Club"; c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station { Name = "Tellby", Signature = "Tby" }; }).WithGeneratedTrackList()
             : TestModules.WithEverything();
         if (isAutoDrawn) module = module.With(c => c.Drawing = module.Drawing with { AutoDraw = module.Drawing.AutoDraw! with { Parameters = module.Drawing.AutoDraw.Parameters with { Number = 12, Prefix = "AOw", ModuleOwners = "A. Owner, Club" } } });
         var content = ModuleFileContent.Create(module, TestCatalogue.Lookup);

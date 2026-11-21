@@ -46,7 +46,8 @@ public static class StationTrackValidation
         var tracks = module.Tracks;
         var ids = tracks.Select(t => t.Id).ToHashSet();
 
-        if (tracks.Count == 0) problems.Add(new(StationTrackProblemCode.NoTracks));
+        // Only an operation location needs tracks; a module of plain line may have none (decided 2026-11-21).
+        if (tracks.Count == 0 && module.OperationLocation is not null) problems.Add(new(StationTrackProblemCode.NoTracks));
         problems.AddRange(tracks.Where(t => string.IsNullOrWhiteSpace(t.Designation)).Select(t => new StationTrackProblem(StationTrackProblemCode.DesignationMissing, t.Id)));
         problems.AddRange(tracks
             .Where(t => !string.IsNullOrWhiteSpace(t.Designation))

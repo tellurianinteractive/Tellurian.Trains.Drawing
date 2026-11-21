@@ -6,17 +6,18 @@ using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 namespace Tellurian.Trains.Drawing.Model.Tracks;
 
 /// <summary>
-/// Gives a module the list of tracks that every module has (spec MD-8): at least one track, a through track or a
-/// track ending. Auto-draw knows which tracks it has drawn, so it can make the list. Tracks drawn by hand are put in
-/// the list by the user.
+/// Gives a module that is an operation location its list of tracks (spec MD-8): at least one track, a through track
+/// or a track ending. A module of plain line needs no list, though the user may add tracks (decided 2026-11-21).
+/// Auto-draw knows which tracks it has drawn, so it can make the list. Tracks drawn by hand are put in the list by the
+/// user.
 /// </summary>
 public static class StationTrackList
 {
     /// <summary>
     /// The module with a list of tracks made from its generated tracks: one main track that trains are planned on per
     /// generated track element, called 1, 2 and so on in the order they were drawn, which is from the viewer's side
-    /// of the module, with the same numbers as ids. Only for a module without a list whose track elements are all
-    /// generated; otherwise unchanged, since the user's list isn't touched and tracks drawn by hand can't be told
+    /// of the module, with the same numbers as ids. Only for an operation location without a list whose track elements
+    /// are all generated; otherwise unchanged, since the user's list isn't touched and tracks drawn by hand can't be told
     /// apart by rule.
     /// </summary>
     public static Module WithGeneratedTrackList(this Module module)
@@ -24,8 +25,8 @@ public static class StationTrackList
         ArgumentNullException.ThrowIfNull(module);
         var drawing = module.Drawing;
         var elements = drawing.TrackElements.Where(e => e is not BufferStop).ToList();
-        if (module.Tracks.Count > 0 || elements.Count == 0 || drawing.TrackElements.Any(e => !e.IsGenerated || e.StationTrackId is not null)) return module;
-        var tracks = elements.Select((element, index) => (element.Id, Track: Track(index + 1))).ToDictionary(t => t.Id, t => t.Track);
+        if (module.OperationLocation is null || module.Tracks.Count > 0 || elements.Count == 0 || drawing.TrackElements.Any(e => !e.IsGenerated || e.StationTrackId is not null)) return module;
+        var tracks = elements.Select((element, index) => (element.Id, Track: GeneratedTrack(index + 1))).ToDictionary(t => t.Id, t => t.Track);
         return module.With(m =>
         {
             m.Tracks = [.. tracks.Values];
@@ -56,7 +57,8 @@ public static class StationTrackList
         return Designation(number);
     }
 
-    private static StationTrack Track(int number) => new(number, Designation(number), isMain: true, isScheduled: true)
+    /// <summary>A station track as made for a generated track: a main track that trains are planned on, called <paramref name="number"/>.</summary>
+    internal static StationTrack GeneratedTrack(int number) => new(number, Designation(number), isMain: true, isScheduled: true)
     {
         DisplayOrder = number,
     };

@@ -31,7 +31,7 @@
 {
     <div class="editor-layout">
         <div class="editor-canvas">
-            <ModuleView @ref="_moduleView" Json="@Draft.Json" Drawing="Shown.Module.Drawing" Standard="@Standard" EndProfiles="FindEndProfile" PrintTitle="@Draft.Name"
+            <ModuleView @ref="_moduleView" Json="@Draft.Json" Drawing="Shown.Module.Drawing" Tracks="@([.. Shown.Module.Tracks])" Standard="@Standard" EndProfiles="FindEndProfile" PrintTitle="@Draft.Name"
                         FitText="@T["ZoomToFit"]" Error="@T["CannotShow"]" IsEditable="true" ViewChanged="v => _view = v"
                         OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDown="OnKey">
                 <Overlay>

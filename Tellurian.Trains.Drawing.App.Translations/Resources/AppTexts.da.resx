@@ -512,7 +512,7 @@
   <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>På en skyggebanegård udveksles der altid passagerer.</value></data>
   <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Tog kan ikke skifte retning på denne type sted.</value></data>
   <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Tog kan ikke krydse på denne type sted.</value></data>
-  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Modulet har intet spor i listen. Hvert modul har mindst ét: et gennemgående spor eller et spor, der ender.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Driftsstedet har intet spor i listen. Et driftssted har mindst ét: et gennemgående spor eller et spor, der ender.</value></data>
   <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Et spor mangler betegnelse.</value></data>
   <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mere end ét spor hedder {0}.</value></data>
   <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Sporelement {0} er en del af et spor, som ikke er i listen.</value></data>

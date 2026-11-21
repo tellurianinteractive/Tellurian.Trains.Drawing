@@ -153,13 +153,16 @@ public static class ModuleRedraw
         var elements = redrawn.Drawing.TrackElements.Select((element, index) =>
         {
             if (index < before.Count) return element with { StationTrackId = before[index].StationTrackId };
-            if (element.StationTrackId is not { } id || redrawn.Tracks.FirstOrDefault(t => t.Id == id) is not { } track) return element with { StationTrackId = null };
-            if (!added.TryGetValue(id, out var newId))
+            // Only an operation location has station tracks; the line of a plain module has none (decided 2026-11-21).
+            if (old.OperationLocation is null || element is BufferStop) return element with { StationTrackId = null };
+            var key = element.StationTrackId ?? -(index + 1);
+            if (!added.TryGetValue(key, out var newId))
             {
                 newId = StationTrackList.FreeId(tracks);
-                added.Add(id, newId);
+                added.Add(key, newId);
                 var designation = StationTrackList.FreeDesignation(tracks);
                 var displayOrder = tracks.Select(t => t.DisplayOrder).DefaultIfEmpty().Max() + 1;
+                var track = (element.StationTrackId is { } id ? redrawn.Tracks.FirstOrDefault(t => t.Id == id) : null) ?? StationTrackList.GeneratedTrack(newId);
                 tracks.Add(track.With(t =>
                 {
                     t.Id = newId;

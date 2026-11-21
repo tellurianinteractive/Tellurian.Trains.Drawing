@@ -512,7 +512,7 @@
   <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>In einem Schattenbahnhof gibt es immer Reisendenwechsel.</value></data>
   <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>An dieser Art von Stelle können Züge die Richtung nicht wechseln.</value></data>
   <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>An dieser Art von Stelle können Züge nicht kreuzen.</value></data>
-  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Das Modul hat kein Gleis in der Liste. Jedes Modul hat mindestens eines: ein durchgehendes Gleis oder ein endendes Gleis.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Die Betriebsstelle hat kein Gleis in der Liste. Eine Betriebsstelle hat mindestens eines: ein durchgehendes Gleis oder ein endendes Gleis.</value></data>
   <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Ein Gleis hat keine Bezeichnung.</value></data>
   <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mehr als ein Gleis heißt {0}.</value></data>
   <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Gleiselement {0} gehört zu einem Gleis, das nicht in der Liste ist.</value></data>

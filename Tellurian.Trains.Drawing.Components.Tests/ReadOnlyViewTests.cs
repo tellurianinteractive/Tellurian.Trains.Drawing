@@ -108,7 +108,24 @@ public sealed partial class ReadOnlyViewTests
     }
 
     [TestMethod]
-    public async Task ModuleViewWritesTheFremoDesignationAndTheOwnerOnTheModule()
+    public async Task ModuleViewWritesTheDesignationsOfTheStationTracks()
+    {
+        var station = Station().With(c => c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station { Name = "Tellby", Signature = "Tby" });
+        station = Tellurian.Trains.Drawing.Model.Tracks.StationTrackList.WithGeneratedTrackList(station);
+        station = station.With(c => c.Tracks = [.. station.Tracks.Select(t => t.With(r => r.Designation = "1a"))]);
+        var parameters = new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = station };
+
+        var html = await StaticRendering.RenderAsync<ModuleView>(parameters);
+        var hidden = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>(parameters) { [nameof(Views.ModuleView.Layers)] = ModuleLayers.All & ~ModuleLayers.TrackDesignations });
+
+        Assert.AreEqual(station.Tracks.Count, Count(html, "md-track-designation"));
+        StringAssert.Contains(html, ">1a</text>");
+        Assert.AreEqual(0, Count(hidden, "md-track-designation"));
+        Assert.AreEqual(0, Count(await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = Station() }), "md-track-designation"), "Plain line has no station tracks.");
+    }
+
+    [TestMethod]
+    public async Task ModuleViewWritesTheFremoDesignationWithoutTheOwnerOnTheModule()
     {
         var module = Station().With(c => { c.Number = 7900; c.Prefix = "SFjä"; c.ModuleOwners = "Stefan Fjällemark"; });
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
@@ -117,9 +134,16 @@ public sealed partial class ReadOnlyViewTests
             [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
         });
         StringAssert.Contains(html, ">SFjä 7900</text>");
-        StringAssert.Contains(html, ">Stefan Fjällemark</text>");
+        Assert.DoesNotContain(">Stefan Fjällemark</text>", html, "The prefix says who owns the module.");
         Assert.AreEqual(1, Count(html, "md-module-name"));
-        Assert.AreEqual(1, Count(html, "md-module-owner"));
+        Assert.AreEqual(0, Count(html, "md-module-owner"));
+    }
+
+    [TestMethod]
+    public async Task ModuleViewWritesTheOwnersUnderANameWithoutPrefix()
+    {
+        var owned = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = Station().With(c => c.ModuleOwners = "Module Club") });
+        StringAssert.Contains(owned, ">Module Club</text>");
     }
 
     [TestMethod]

@@ -6,6 +6,7 @@
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Files
 @using Tellurian.Trains.Drawing.Model.Modules
+@using Tellurian.Trains.Drawing.Model.Tracks
 @using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions
 
 @* Plan view of a module (EX-8), in module coordinates; read-only and without JS, or the canvas of the module
@@ -76,6 +77,13 @@ else
                     }
                 </g>
             }
+            @if (Show(ModuleLayers.TrackDesignations))
+            {
+                @foreach (var label in _trackLabels)
+                {
+                    <WorldText At="label.Pose.Position" Text="@label.Designation" Rotation="label.Pose.Heading" Size="MarkerSize" FontWeight="bold" Class="md-label md-track-designation" />
+                }
+            }
             @if (Show(ModuleLayers.Exits))
             {
                 @* The end profile's short name along the plate, inside the module beyond the shading. Exit labels aren't drawn: they aren't marked on real modules. *@
@@ -135,6 +143,7 @@ else
     private Module? _module;
     private ModuleDrawing? _drawing;
     private IReadOnlyList<EndPlate> _plates = [];
+    private IReadOnlyList<StationTrackLabel> _trackLabels = [];
     private IReadOnlyList<ProfileShade> _shades = [];
     private IReadOnlyDictionary<string, (string Text, double Depth)> _profileNames = new Dictionary<string, (string, double)>();
     private BoundingBox _bounds;
@@ -179,6 +188,11 @@ else
     [Parameter] public ModuleStandard? Standard { get; set; }
 
     [Parameter] public ModuleLayers Layers { get; set; } = ModuleLayers.All;
+
+    /// <summary>
+    /// The station tracks whose designations are written, e.g. an editor's current list; null for those of the module.
+    /// </summary>
+    [Parameter] public IReadOnlyList<Tellurian.Trains.Schedules.Model.Layouts.StationTrack>? Tracks { get; set; }
 
     /// <summary>
     /// When given, a print sheet is rendered too: the drawing with this title below it, in a <c>div.print-sheet</c>
@@ -261,6 +275,7 @@ else
         _bounds = Bounds(drawing, _plates);
         if (fit) _view = Viewport.Fit(_bounds, Width, Height);
         _name = ModuleNameLabel.Text(_module!);
+        _trackLabels = StationTrackLabels.Of(Tracks ?? (IEnumerable<Tellurian.Trains.Schedules.Model.Layouts.StationTrack>?)_module?.Tracks ?? [], drawing);
         _namePlacement = _name is null ? null : NamePlacement(drawing, _name, _lookup);
     }
 

@@ -7,6 +7,7 @@ using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
 using StationTrack = Tellurian.Trains.Schedules.Model.Layouts.StationTrack;
+using Station = Tellurian.Trains.Schedules.Model.Layouts.Station;
 
 namespace Tellurian.Trains.Drawing.Editing.Tests;
 
@@ -40,6 +41,10 @@ public sealed class ModuleTracksTests
     private static ModuleFileContent AutoDrawn(AutoDrawParameters parameters) =>
         ModuleFileContent.Create(ModuleAutoDraw.Create(parameters, Catalogue).Module!, Catalogue.FindEndProfile);
 
+    /// <summary><paramref name="content"/> made an operation location, which gets the list of its generated tracks.</summary>
+    private static ModuleFileContent AsStation(ModuleFileContent content) =>
+        Tracks.Measured(content with { Module = content.Module.With(m => m.OperationLocation = new Station { Name = "Tellby", Signature = "Tby" }).WithGeneratedTrackList() });
+
     private static ModuleFileContent WithoutTrackList(ModuleFileContent content)
     {
         var drawing = content.Module.Drawing;
@@ -48,9 +53,19 @@ public sealed class ModuleTracksTests
     }
 
     [TestMethod]
-    public void AnAutoDrawnModuleHasItsThroughTracksInTheList()
+    public void AnAutoDrawnModuleOfPlainLineHasNoTrackListAndNeedsNone()
     {
         var module = AutoDrawn(new() { Name = "Double", Standard = Standard.ShortName, Straight = Length, NumberOfThroughTracks = 2, Exits = [Left, Right] }).Module;
+        Assert.IsEmpty(module.Tracks);
+        Assert.IsTrue(module.Drawing.TrackElements.All(e => e.StationTrackId is null));
+        Assert.IsEmpty(StationTrackValidation.Validate(module, Catalogue.FindEndProfile));
+        Assert.AreSame(module, module.WithGeneratedTrackList());
+    }
+
+    [TestMethod]
+    public void AModuleMadeAnOperationLocationGetsItsThroughTracksInTheList()
+    {
+        var module = AsStation(AutoDrawn(new() { Name = "Double", Standard = Standard.ShortName, Straight = Length, NumberOfThroughTracks = 2, Exits = [Left, Right] })).Module;
         CollectionAssert.AreEqual(
             new[] { (1, "1", 1, true, true, false, Length / MillimetresPerMetre), (2, "2", 2, true, true, false, Length / MillimetresPerMetre) },
             module.Tracks.Select(t => (t.Id, t.Designation, t.DisplayOrder, t.IsMain, t.IsScheduled, t.IsStub, t.Length)).ToArray());
@@ -61,23 +76,24 @@ public sealed class ModuleTracksTests
     [TestMethod]
     public void AnAutoDrawnTerminusHasTracksThatEnd()
     {
-        var module = AutoDrawn(new() { Name = "Terminus", Standard = Standard.ShortName, Straight = Length, NumberOfThroughTracks = 2, IsEndOfLine = true, Exits = [Left] }).Module;
+        var module = AsStation(AutoDrawn(new() { Name = "Terminus", Standard = Standard.ShortName, Straight = Length, NumberOfThroughTracks = 2, IsEndOfLine = true, Exits = [Left] })).Module;
         Assert.HasCount(2, module.Tracks);
         Assert.IsTrue(module.Tracks.All(t => t.IsStub && t.Length > 0), "Each track ends at a buffer stop.");
         Assert.IsTrue(module.Drawing.TrackElements.OfType<BufferStop>().All(b => b.StationTrackId is null));
     }
 
     [TestMethod]
-    public void AModuleWithoutATrackInItsListIsReported()
+    public void AnOperationLocationWithoutATrackInItsListIsReported()
     {
-        var problems = StationTrackValidation.Validate(DoubleTrack().Module, Catalogue.FindEndProfile);
-        CollectionAssert.AreEqual(new[] { StationTrackProblemCode.NoTracks }, problems.Select(p => p.Code).ToArray());
+        var station = DoubleTrack().Module.With(m => m.OperationLocation = new Station { Name = "Tellby", Signature = "Tby" });
+        CollectionAssert.AreEqual(new[] { StationTrackProblemCode.NoTracks }, StationTrackValidation.Validate(station, Catalogue.FindEndProfile).Select(p => p.Code).ToArray());
+        Assert.IsEmpty(StationTrackValidation.Validate(DoubleTrack().Module, Catalogue.FindEndProfile), "Plain line needs no tracks.");
     }
 
     [TestMethod]
     public void AListIsMadeOnlyForADrawingWithoutOneWhoseTracksAreAllGenerated()
     {
-        var emptied = DoubleTrack().Module;
+        var emptied = DoubleTrack().Module.With(m => m.OperationLocation = new Station { Name = "Tellby", Signature = "Tby" });
         var generated = emptied.WithGeneratedTrackList();
         CollectionAssert.AreEqual(new[] { Track1, Track2 }, generated.Tracks.Select(t => t.Id).ToArray(), "An older drawing gets its list.");
         CollectionAssert.AreEqual(new int?[] { Track1, Track2 }, generated.Drawing.TrackElements.Select(e => e.StationTrackId).ToArray());
@@ -90,7 +106,7 @@ public sealed class ModuleTracksTests
     [TestMethod]
     public void ARedrawnModuleWithMoreTracksGetsThemInItsList()
     {
-        var single = AutoDrawn(new() { Name = "Single", Standard = Standard.ShortName, Straight = Length, Exits = [Left with { EndProfile = "FREMO-H0-B96" }, Right with { EndProfile = "FREMO-H0-B96" }] });
+        var single = AsStation(AutoDrawn(new() { Name = "Single", Standard = Standard.ShortName, Straight = Length, Exits = [Left with { EndProfile = "FREMO-H0-B96" }, Right with { EndProfile = "FREMO-H0-B96" }] }));
         var first = TracksOf(single).Single();
         single = Tracks.Set(first.Id, t => t.With(c => { c.Designation = "2"; c.Usage = "Main line"; })).Apply(single);
         var doubleTrack = Catalogue.FindEndProfile("FREMO-H0-2E96", "H0")!;

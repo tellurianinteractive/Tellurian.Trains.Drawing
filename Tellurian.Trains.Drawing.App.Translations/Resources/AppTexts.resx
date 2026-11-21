@@ -512,7 +512,7 @@
   <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>Passengers are always exchanged at a shadow station.</value></data>
   <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Trains can't change direction at this kind of location.</value></data>
   <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Trains can't cross at this kind of location.</value></data>
-  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>The module has no track in the list. Every module has at least one: a through track or a track ending.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>The operation location has no track in the list. An operation location has at least one: a through track or a track ending.</value></data>
   <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>A track has no designation.</value></data>
   <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>More than one track is called {0}.</value></data>
   <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Track element {0} is part of a track that isn't in the list.</value></data>

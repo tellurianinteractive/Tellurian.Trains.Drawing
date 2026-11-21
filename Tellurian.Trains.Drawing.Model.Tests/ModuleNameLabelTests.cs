@@ -15,10 +15,10 @@ public sealed class ModuleNameLabelTests
         ModuleNameLabel.Place(module.Drawing, withOwner ? WithOwner : TitleOnly, new(screenDegrees), TrackHalfWidth);
 
     [TestMethod]
-    public void FremoDesignationIsWrittenInsteadOfTheName()
+    public void FremoDesignationIsWrittenInsteadOfTheNameAndWithoutTheOwners()
     {
         var module = TestModules.Straight().With(c => { c.Name = "Tellby"; c.Number = 7900; c.Prefix = "SFjä"; c.ModuleOwners = "Stefan Fjällemark"; });
-        Assert.AreEqual(new ModuleNameText("SFjä 7900", "Stefan Fjällemark"), ModuleNameLabel.Text(module));
+        Assert.AreEqual(new ModuleNameText("SFjä 7900", null), ModuleNameLabel.Text(module), "The prefix says who owns the module.");
     }
 
     [TestMethod]
