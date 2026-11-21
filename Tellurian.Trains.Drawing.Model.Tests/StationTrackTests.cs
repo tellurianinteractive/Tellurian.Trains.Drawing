@@ -61,10 +61,7 @@ public sealed class StationTrackTests
     [TestMethod]
     public void TheTrackOutsideTheTurnoutsDoesNotAddToTheLength()
     {
-        var withoutLeads = Station.Drawing with
-        {
-            TrackElements = [.. Station.Drawing.TrackElements.Select(t => t == Station.LeadIn || t == Station.LeadOut ? t with { StationTrackId = null } : t)],
-        };
+        var withoutLeads = Station.Drawing.With(edited => edited.TrackElements = [.. Station.Drawing.TrackElements.Select(t => t == Station.LeadIn || t == Station.LeadOut ? t.With(edited => edited.StationTrackId = null) : t)]);
         Assert.AreEqual(
             StationTrackMeasurement.UsableLength(withoutLeads, TestStation.Track1, Clearance),
             StationTrackMeasurement.UsableLength(Station.Drawing, TestStation.Track1, Clearance),
@@ -87,14 +84,11 @@ public sealed class StationTrackTests
     [TestMethod]
     public void TwoPlainTracksAtTheFoulingDistanceAreBothFree()
     {
-        var drawing = TestModules.Straight().Drawing with
-        {
-            TrackElements =
+        var drawing = TestModules.Straight().Drawing.With(edited => edited.TrackElements =
             [
                 new StraightTrack { Start = TestStation.At(0, 0), Length = 1200, StationTrackId = TestStation.Track1 },
                 new StraightTrack { Start = TestStation.At(0, 0, Clearance), Length = 1000, StationTrackId = TestStation.Track2 },
-            ],
-        };
+            ]);
         Assert.AreEqual(1200, StationTrackMeasurement.UsableLength(drawing, TestStation.Track1, Clearance), Precision);
         Assert.AreEqual(1000, StationTrackMeasurement.UsableLength(drawing, TestStation.Track2, Clearance), Precision);
     }
@@ -125,7 +119,7 @@ public sealed class StationTrackTests
         var open = Station.WithTrack(Third(), turnout, siding).Drawing;
         Assert.IsTrue(StationTrackMeasurement.IsStub(open, Track3, TestCatalogue.Lookup));
 
-        var withBuffer = open with { TrackElements = [.. open.TrackElements, new BufferStop { Pose = end.Advanced(200).Reversed() }] };
+        var withBuffer = open.With(edited => edited.TrackElements = [.. open.TrackElements, new BufferStop { Pose = end.Advanced(200).Reversed() }]);
         Assert.IsTrue(StationTrackMeasurement.IsStub(withBuffer, Track3, TestCatalogue.Lookup));
         Assert.IsFalse(StationTrackMeasurement.IsStub(Station.WithTrack(Third()).Drawing, Track3, TestCatalogue.Lookup), "A track without elements has no ends.");
     }
@@ -133,7 +127,7 @@ public sealed class StationTrackTests
     [TestMethod]
     public void MeasuredValuesAreWrittenInMetresUnlessEntered()
     {
-        var entered = Station.Module.With(copy => { copy.Tracks = [.. Station.Module.Tracks.Select(t => t.Id == TestStation.Track2 ? t.With(c => { c.Length = EnteredLength; c.IsStub = true; }) : t)]; copy.Drawing = Station.Drawing with { TracksWithEnteredLength = [TestStation.Track2], TracksWithEnteredStub = [TestStation.Track2] }; });
+        var entered = Station.Module.With(copy => { copy.Tracks = [.. Station.Module.Tracks.Select(t => t.Id == TestStation.Track2 ? t.With(c => { c.Length = EnteredLength; c.IsStub = true; }) : t)]; copy.Drawing = Station.Drawing.With(edited => { edited.TracksWithEnteredLength = [TestStation.Track2]; edited.TracksWithEnteredStub = [TestStation.Track2]; }); });
 
         var measured = entered.WithMeasuredTracks(Clearance, TestCatalogue.Lookup);
 
@@ -215,17 +209,14 @@ public sealed class StationTrackTests
     public void ATurnoutGivesEachRouteToTheTrackThatContinuesFromIt()
     {
         // Both turnouts refer to track 1; the loop still gets their diverging routes, so it reaches the exits.
-        var loopOnly = Station.Module.With(c => { c.Tracks = [.. Station.Module.Tracks.Where(t => t.Id == TestStation.Track2)]; c.Drawing = Station.Drawing with
-            {
-                TrackElements = [.. Station.Drawing.TrackElements.Select(t => t.StationTrackId == TestStation.Track1 ? t with { StationTrackId = null } : t)],
-            }; });
+        var loopOnly = Station.Module.With(c => { c.Tracks = [.. Station.Module.Tracks.Where(t => t.Id == TestStation.Track2)]; c.Drawing = Station.Drawing.With(edited => edited.TrackElements = [.. Station.Drawing.TrackElements.Select(t => t.StationTrackId == TestStation.Track1 ? t.With(edited => edited.StationTrackId = null) : t)]); });
         CollectionAssert.DoesNotContain(Codes(loopOnly), StationTrackProblemCode.ScheduledTrackReachesNoExit);
     }
 
     [TestMethod]
     public void TheStationRoundTripsAndMatchesTheSchema()
     {
-        var module = (Station.Module.With(c => c.Drawing = Station.Drawing with { TracksWithEnteredLength = [TestStation.Track2], TracksWithEnteredStub = [TestStation.Track1] }))
+        var module = (Station.Module.With(c => c.Drawing = Station.Drawing.With(edited => { edited.TracksWithEnteredLength = [TestStation.Track2]; edited.TracksWithEnteredStub = [TestStation.Track1]; })))
             .WithMeasuredTracks(Clearance, TestCatalogue.Lookup);
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, TestCatalogue.Lookup));
         SchemaValidator.AssertValid(DrawingFileKind.Module, json);

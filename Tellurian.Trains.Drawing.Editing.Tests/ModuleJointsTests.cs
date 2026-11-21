@@ -1,5 +1,4 @@
 using Tellurian.Trains.Drawing.Editing.Modules;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -12,8 +11,8 @@ public sealed class ModuleJointsTests
     private const double Length = 2000;
     private const double Reach = 20;
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitSide.Right, EndProfile = "FREMO-H0-B96" };
 
     private static ModuleFileContent Straight()
     {

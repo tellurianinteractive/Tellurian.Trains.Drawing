@@ -45,7 +45,7 @@ public sealed class ModulePropertiesPaneTests
         Enter(page, Owners, " Stefan Fjällemark, Module Club ");
 
         // In the module editor, changes are autosaved to the draft a moment later.
-        context.Time.Advance(Editing.Commands.AutosaveScheduler<Model.Files.ModuleFileContent>.DefaultDelay);
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<ModuleFileContent>.DefaultDelay);
         page.WaitForAssertion(() => Assert.AreEqual("SFjä 0012", context.Workbench.Drafts[id].Name, "A module that is no operation location is named by its designation."));
         var module = DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module;
         Assert.AreEqual(("SFjä", 12, "Stefan Fjällemark, Module Club"), (module.Prefix, module.Number, module.ModuleOwners));
@@ -60,11 +60,11 @@ public sealed class ModulePropertiesPaneTests
         var (page, id) = OpenNewModule(context);
 
         Enter(page, Package, " Box 3 ");
-        context.Time.Advance(Editing.Commands.AutosaveScheduler<Model.Files.ModuleFileContent>.DefaultDelay);
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<ModuleFileContent>.DefaultDelay);
         page.WaitForAssertion(() => Assert.AreEqual("Box 3", DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module.PackageLabel));
 
         Enter(page, Package, "");
-        context.Time.Advance(Editing.Commands.AutosaveScheduler<Model.Files.ModuleFileContent>.DefaultDelay);
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<ModuleFileContent>.DefaultDelay);
         page.WaitForAssertion(() => Assert.IsNull(DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module.PackageLabel));
     }
 

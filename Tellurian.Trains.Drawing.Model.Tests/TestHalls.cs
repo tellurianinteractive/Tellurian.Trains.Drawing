@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
@@ -16,8 +15,8 @@ internal static class TestHalls
     private const string SingleTrack = "FREMO-H0-B96";
     private const string DoubleTrack = "FREMO-H0-2E96";
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = SingleTrack };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = SingleTrack };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitSide.Left, EndProfile = SingleTrack };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitSide.Right, EndProfile = SingleTrack };
 
     /// <summary>A 12 × 8 m hall with two pillars, a door, an emergency exit and a no-go zone.</summary>
     public static Hall Club() => Hall.Rectangle("Club hall", Width, Depth).With(hall =>
@@ -58,7 +57,7 @@ internal static class TestHalls
                 new()
                 {
                     Name = "Main",
-                    AnchorModuleId = straight.Id,
+                    AnchorModuleId = straight.Id!.Value,
                     AnchorPose = new(new(2000, 2000), Angle.Zero),
                     IsAnchorLocked = true,
                     AnchorDimensions = new()
@@ -83,16 +82,16 @@ internal static class TestHalls
                         new()
                         {
                             Name = "Branch",
-                            StartAt = new(junction.Id, ExitDirection.Right, 2),
-                            Entries = [new() { ModuleId = terminus.Id }],
+                            StartAt = new(junction.Id!.Value, ExitSide.Right, 2),
+                            Entries = [new() { ModuleId = terminus.Id!.Value }],
                         },
                     ],
                 },
             ],
-            Joints = [new() { First = new(straight.Id, ExitDirection.Right), Second = new(curve.Id, ExitDirection.Right), JoinMethodOverride = JoinMethod.Clamped, NumberOfClamps = 3, Note = "No screw-hole data" }],
+            Joints = [new() { First = new(straight.Id!.Value, ExitSide.Right), Second = new(curve.Id!.Value, ExitSide.Right), JoinMethodOverride = JoinMethod.Clamped, NumberOfClamps = 3, Note = "No screw-hole data" }],
             PublicAreas = [new() { Area = PathDrawing.Rectangle(new(6000, 6500), 4000, 1500, Angle.Zero), Label = "Visitors" }],
             WalkingPaths = [new() { CentreLine = PathDrawing.Polyline([new(1000, 1000), new(1000, 3500), new(5000, 3500)]), Width = 700, Label = "Drivers" }],
-            Acknowledgements = [new() { FindingCode = "VA-11", ModuleIds = [junction.Id], Fingerprint = "sample", Note = "Operator space overlaps the stage edge", Time = new(2026, 11, 14, 10, 0, 0, TimeSpan.Zero) }],
+            Acknowledgements = [new() { FindingCode = "VA-11", ModuleIds = [junction.Id!.Value], Fingerprint = "sample", Note = "Operator space overlaps the stage edge", Time = new(2026, 11, 14, 10, 0, 0, TimeSpan.Zero) }],
             Modules = modules,
             EndProfiles = [.. modules.SelectMany(m => m.Drawing.Exits).Select(e => e.EndProfile.Id).Distinct().Select(id => catalogue.FindEndProfile(id)!)],
             Standards = [standard],
@@ -100,7 +99,7 @@ internal static class TestHalls
     }
 
     private static LineEntry Entry(Module module) =>
-        new() { ModuleId = module.Id };
+        new() { ModuleId = module.Id!.Value };
 
     private static Module Draw(DrawingCatalogue catalogue, AutoDrawParameters parameters) =>
         ModuleAutoDraw.Create(parameters, catalogue).Module ?? throw new InvalidOperationException($"{parameters.Name} couldn't be drawn.");

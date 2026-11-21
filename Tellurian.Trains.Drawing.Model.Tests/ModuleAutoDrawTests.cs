@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
@@ -9,8 +8,8 @@ public sealed class ModuleAutoDrawTests
 {
     private const string Fremo = "FREMO/H0-RE";
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitSide.Right, EndProfile = "FREMO-H0-B96" };
 
     private static AutoDrawParameters Parameters(double? straight = null, double? radius = null, double? angle = null, params AutoDrawExit[] exits) =>
         new() { Name = "Test", Standard = Fremo, Straight = straight, Radius = radius, Angle = angle, Exits = exits };
@@ -124,8 +123,8 @@ public sealed class ModuleAutoDrawTests
     {
         var result = Draw(Parameters(straight: 1000, exits:
         [
-            new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-2E96" },
-            new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "TEST-2-55" },
+            new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-2E96" },
+            new() { Label = "E", Direction = ExitSide.Right, EndProfile = "TEST-2-55" },
         ]));
         Assert.AreEqual(AutoDrawStatus.Complete, result.Status);
         var tracks = Drawing(result).TrackElements.Cast<FlexTrack>().ToList();
@@ -142,8 +141,8 @@ public sealed class ModuleAutoDrawTests
     {
         var result = Draw(Parameters(radius: 2000, angle: 30, exits:
         [
-            new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-2E96" },
-            new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "TEST-2-55" },
+            new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-2E96" },
+            new() { Label = "E", Direction = ExitSide.Right, EndProfile = "TEST-2-55" },
         ]));
         Assert.AreEqual(AutoDrawStatus.NeedsManualCompletion, result.Status);
         Assert.AreEqual(2, result.Notes.Count(n => n.Code == AutoDrawNoteCode.TrackNotGenerated));
@@ -153,7 +152,7 @@ public sealed class ModuleAutoDrawTests
     [TestMethod]
     public void SingleToDoubleTransitionContinuesOneTrack()
     {
-        var result = Draw(Parameters(straight: 1000, exits: [West, new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-2E96" }]));
+        var result = Draw(Parameters(straight: 1000, exits: [West, new() { Label = "E", Direction = ExitSide.Right, EndProfile = "FREMO-H0-2E96" }]));
         Assert.AreEqual(AutoDrawStatus.NeedsManualCompletion, result.Status);
         Assert.AreEqual(1, result.Notes.Count(n => n.Code == AutoDrawNoteCode.TrackNotGenerated));
         Assert.HasCount(1, Drawing(result).TrackElements);
@@ -370,7 +369,7 @@ public sealed class ModuleAutoDrawTests
     [TestMethod]
     public void UndefinedDirectionsUseRegisteredOrder()
     {
-        var result = Draw(Parameters(straight: 1000, exits: [East with { Label = "B", Direction = ExitDirection.Undefined }, West with { Label = "A", Direction = ExitDirection.Undefined }]));
+        var result = Draw(Parameters(straight: 1000, exits: [East with { Label = "B", Direction = ExitSide.Undefined }, West with { Label = "A", Direction = ExitSide.Undefined }]));
         Assert.AreEqual(AutoDrawNoteCode.ExitDirectionsUndefined, result.Notes.Single().Code);
         Assert.AreEqual("B", Drawing(result).Exits[0].Label);
     }

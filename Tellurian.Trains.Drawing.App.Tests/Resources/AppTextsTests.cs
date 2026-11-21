@@ -3,7 +3,6 @@ using System.Resources;
 using System.Text.RegularExpressions;
 using Tellurian.Trains.Drawing.App.Catalogue;
 using Tellurian.Trains.Drawing.App.Translations.Resources;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
@@ -48,7 +47,7 @@ public sealed partial class AppTextsTests
             .Concat(Keys<CatalogueProblemCode>("Problem"))
             .Concat(Keys<Editing.EndProfiles.MeasureOrigin>("MeasureOrigin"))
             .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.TrackDirection>("TrackDirection"))
-            .Concat(Keys<Model.Tracks.StationTrackProblemCode>("TrackProblem"))
+            .Concat(Keys<StationTrackProblemCode>("TrackProblem"))
             .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind>("LocationKind"))
             .Concat(LocationProblemsShown.Select(code => $"LocationProblem_{code}"))
             .Concat(new[] { "StraightTrack", "CurvedTrack", "FlexTrack", "Turnout", "Crossing", "DoubleSlip" }.Select(n => $"TrackElement_{n}"))

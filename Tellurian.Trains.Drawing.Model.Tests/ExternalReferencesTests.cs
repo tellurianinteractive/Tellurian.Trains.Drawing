@@ -1,7 +1,6 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using System.Text.Json.Nodes;
 using Tellurian.Trains.Drawing.Model.Files;
-using Module = Tellurian.Trains.Drawing.Model.Modules.Module;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 

@@ -431,7 +431,7 @@
     protected override async Task OnInitializedAsync()
     {
         var hall = Model.Files.DrawingFileSerializer.DeserializeHall(Draft.Json);
-        _document = new(hall);
+        _document = new(hall, comparer: HallContentComparer.Comparer);
         var bounds = hall.Outline.ToPath().Bounds;
         _view = Viewport.Fit(bounds.Inflated(Math.Max(bounds.Width, bounds.Height) * MarginPerExtent), 800, 500);
         _select = new(_document, _selection, _scene, _snap);

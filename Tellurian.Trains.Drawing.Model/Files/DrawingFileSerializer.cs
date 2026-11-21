@@ -29,8 +29,9 @@ public static class DrawingFileSerializer
     public static string Serialize(EndProfile endProfile, string? appVersion = null) =>
         EndProfiles.Write(endProfile, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
+    /// <summary>The module file of <paramref name="module"/>, written by the shared <see cref="ModuleExporter"/>.</summary>
     public static string Serialize(ModuleFileContent module, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.Module, module, appVersion), Context.DrawingFileModuleFileContent);
+        new ModuleExporter().Write(module, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     /// <summary>The catalogue file of <paramref name="catalogue"/>, written by the shared <see cref="CatalogueExporter"/>.</summary>
     public static string Serialize(DrawingCatalogue catalogue, string? appVersion = null) =>
@@ -61,10 +62,15 @@ public static class DrawingFileSerializer
     }
 
     /// <exception cref="DrawingFileException">The file can't be read as a module file.</exception>
-    public static ModuleFileContent DeserializeModule(string json) => Read(Parse(json), DrawingFileKind.Module, Context.DrawingFileModuleFileContent);
+    public static ModuleFileContent DeserializeModule(string json) => Imported(new ModuleImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a module file.</exception>
-    public static ModuleFileContent DeserializeModule(Stream stream) => Read(Parse(stream), DrawingFileKind.Module, Context.DrawingFileModuleFileContent);
+    public static ModuleFileContent DeserializeModule(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeModule(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
     public static DrawingCatalogue DeserializeCatalogue(string json) => Imported(new CatalogueImporter().Import(json));

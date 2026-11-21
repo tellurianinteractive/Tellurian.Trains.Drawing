@@ -5,7 +5,16 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "12b330a9-dc0e-40fc-8644-6bdbec17aa39",
+      "id": "4cbb8832-f34c-44c0-87c7-6454219c879f",
+      "name": "Summer curve",
+      "hasFremoDesignation": false,
+      "standard": {
+        "shortName": "MMM-2R",
+        "scale": {
+          "shortName": "H0"
+        }
+      },
+      "tracks": [],
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
       "addOns": [
         {
@@ -23,15 +32,6 @@
       "isStandAlone": false,
       "revision": 0,
       "revisionLog": [],
-      "name": "Summer curve",
-      "hasFremoDesignation": false,
-      "standard": {
-        "shortName": "MMM-2R",
-        "scale": {
-          "shortName": "H0"
-        }
-      },
-      "tracks": [],
       "drawing": {
         "exits": [
           {
@@ -279,7 +279,7 @@
               ],
               "isClosed": false
             },
-            "id": "2caf6c16-4232-4c98-b3c5-ef4a992b99fe",
+            "id": "e2a25ad7-f5d6-4a77-92e4-7c1efb62c879",
             "isNarrowGauge": false,
             "isGenerated": true
           }

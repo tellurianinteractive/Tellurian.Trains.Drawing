@@ -97,7 +97,7 @@ public sealed class ModuleGeometryTests
     public void SideOffTheCornerIsRejected()
     {
         var drawing = Straight();
-        drawing = drawing with { Sides = [drawing.Sides[0] with { Path = PathDrawing.Polyline([new(0, -240), new(1000, -250)]) }, drawing.Sides[1]] };
+        drawing = drawing.With(edited => edited.Sides = [drawing.Sides[0].With(edited => edited.Path = PathDrawing.Polyline([new(0, -240), new(1000, -250)])), drawing.Sides[1]]);
         var exception = Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing, Lookup));
         Assert.Contains("right corner of exit W", exception.Message);
     }
@@ -106,7 +106,7 @@ public sealed class ModuleGeometryTests
     public void TinyCornerGapIsBridged()
     {
         var drawing = Straight();
-        drawing = drawing with { Sides = [drawing.Sides[0] with { Path = PathDrawing.Polyline([new(0, -250.005), new(1000, -250)]) }, drawing.Sides[1]] };
+        drawing = drawing.With(edited => edited.Sides = [drawing.Sides[0].With(edited => edited.Path = PathDrawing.Polyline([new(0, -250.005), new(1000, -250)])), drawing.Sides[1]]);
         Assert.IsNotNull(ModuleGeometry.Outline(drawing, Lookup));
     }
 
@@ -114,7 +114,7 @@ public sealed class ModuleGeometryTests
     public void UnknownExitAndMissingProfileAreReported()
     {
         var drawing = Straight();
-        Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing with { Sides = [drawing.Sides[0] with { ToExit = "X" }, drawing.Sides[1]] }, Lookup));
+        Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing.With(edited => edited.Sides = [drawing.Sides[0].With(edited => edited.ToExit = "X"), drawing.Sides[1]]), Lookup));
         Assert.ThrowsExactly<KeyNotFoundException>(() => ModuleGeometry.Outline(drawing, _ => null));
     }
 

@@ -1,7 +1,6 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using OperationLocationKind = Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind;
 using TrackDirection = Tellurian.Trains.Schedules.Model.Layouts.TrackDirection;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
@@ -12,8 +11,8 @@ internal static class TestModules
 {
     private const string Fremo = "FREMO/H0-RE";
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitSide.Right, EndProfile = "FREMO-H0-B96" };
 
     public static Module Straight() => Draw(new() { Name = "Straight", Standard = Fremo, Straight = 1200, Exits = [West, East] });
 
@@ -51,14 +50,7 @@ internal static class TestModules
             new DoubleSlip { Center = At(1000), Length = 200, Angle = 15 },
             new BufferStop { Pose = At(1100, 180) },
         };
-        var withEverything = drawing with
-        {
-            TrackElements = [.. drawing.TrackElements, .. tracks],
-            TracksWithEnteredLength = [TestStation.Track1],
-            Labels = [new() { Kind = LabelKind.StationName, Text = "Tellby", Pose = new(new(600, 100), Angle.Zero) }, new() { Kind = LabelKind.PlatformEdge, Pose = At(400), Length = 300 }],
-            PublicSides = [new() { Attachment = new() { SideIndex = 1, From = 100, To = 500 } }],
-            AutoDraw = null,
-        };
+        var withEverything = drawing.With(edited => { edited.TrackElements = [.. drawing.TrackElements, .. tracks]; edited.TracksWithEnteredLength = [TestStation.Track1]; edited.Labels = [new() { Kind = LabelKind.StationName, Text = "Tellby", Pose = new(new(600, 100), Angle.Zero) }, new() { Kind = LabelKind.PlatformEdge, Pose = At(400), Length = 300 }]; edited.PublicSides = [new() { Attachment = new() { SideIndex = 1, From = 100, To = 500 } }]; edited.AutoDraw = null; });
         return module.With(c =>
         {
             c.Number = 12;
@@ -67,7 +59,6 @@ internal static class TestModules
             c.PackageLabel = "Box 1";
             c.Tracks = [new() { Id = TestStation.Track1, Designation = "1", DisplayOrder = 1, IsMain = true, IsScheduled = true, Length = 0.1, PlatformLength = 0.3, Direction = TrackDirection.LeftToRight, SpeedLimit = 40, Usage = "Passenger trains" }];
             c.ExternalReferences = TestReferences.Registry("""{ "stationId": 1234, "moduleId": 5678 }""");
-            c.Theme = "Sweden 1970s";
             c.RepresentsFromYear = 1965;
             c.RepresentsUptoYear = 1980;
             c.Note = "Note with \"quotes\", åäö and ‰.";

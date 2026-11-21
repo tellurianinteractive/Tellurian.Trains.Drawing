@@ -199,8 +199,8 @@
     /// <summary>A direction in terms of the module's ends, by their names, when it has a left and a right one.</summary>
     private string DirectionText(TrackDirection direction, ModuleDrawing drawing)
     {
-        var left = drawing.Exits.FirstOrDefault(e => e.Direction == ExitDirection.Left)?.Label;
-        var right = drawing.Exits.FirstOrDefault(e => e.Direction == ExitDirection.Right)?.Label;
+        var left = drawing.Exits.FirstOrDefault(e => e.Direction == ExitSide.Left)?.Label;
+        var right = drawing.Exits.FirstOrDefault(e => e.Direction == ExitSide.Right)?.Label;
         return direction switch
         {
             TrackDirection.LeftToRight when left is not null && right is not null => T.Format("TrackDirectionFromTo", left, right),

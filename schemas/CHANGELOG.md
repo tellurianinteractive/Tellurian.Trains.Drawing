@@ -8,6 +8,16 @@ new version per file kind, and files of the older version are upgraded when they
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
 upgraded; files are written as version 2. See `docs/OperationLocationsTasks.md` for what is still to come in this version.
 
+### 2026-11-21 (the module in the shared model)
+Modules are read and written by the Schedules packages `Importers.Drawing` and `Exporters.Drawing` (4.0.22): Module
+Draw's module is the shared model's `Module`, which the planner uses too (survey step 6a).
+- **A module has no `theme`**: the text is removed when an earlier file is read, until what a module's theme means is
+  settled with the Module Registry.
+- A module's `id`, `standardId` and `drawing` are optional in the schema, since the planner's modules have none. Module
+  Draw still writes all three in a module file and in a hall plan. A drawing with nothing in it isn't written.
+- The module's properties are written in another order: the shared model's first (name, owners, standard, location,
+  tracks), then Module Draw's, with `id` still first and `drawing` still last.
+
 ### 2026-11-21 (the hall in the shared model)
 Halls are read and written by the Schedules packages `Importers.Drawing` and `Exporters.Drawing` (4.0.19); decision 10
 of `CrossAppReview.md` (an entity inside a document has an `int` id unique within it).

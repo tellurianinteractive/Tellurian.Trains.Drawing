@@ -5,7 +5,16 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "b86659c1-1dfc-4acc-a0e1-b7368dfb1a83",
+      "id": "ec243cf4-e3f8-4eae-9fc4-6f4df7c76aa5",
+      "name": "Straight 1200",
+      "hasFremoDesignation": false,
+      "standard": {
+        "shortName": "FREMO/H0-RE",
+        "scale": {
+          "shortName": "H0"
+        }
+      },
+      "tracks": [],
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
@@ -19,15 +28,6 @@
       "isStandAlone": false,
       "revision": 0,
       "revisionLog": [],
-      "name": "Straight 1200",
-      "hasFremoDesignation": false,
-      "standard": {
-        "shortName": "FREMO/H0-RE",
-        "scale": {
-          "shortName": "H0"
-        }
-      },
-      "tracks": [],
       "drawing": {
         "exits": [
           {
@@ -185,7 +185,7 @@
               ],
               "isClosed": false
             },
-            "id": "f191f40c-a39a-4dcf-be26-ccfcc684fa11",
+            "id": "4568cdff-0b39-4a55-9aff-326637fa579a",
             "isNarrowGauge": false,
             "isGenerated": true
           }

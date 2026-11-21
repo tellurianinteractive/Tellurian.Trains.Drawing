@@ -6,7 +6,6 @@ using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
-using Module = Tellurian.Trains.Drawing.Model.Modules.Module;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
@@ -144,7 +143,7 @@ public sealed class DrawingFileTests
     [TestMethod]
     public void EveryEnumInTheFilesIsWrittenAsInTheCodeAndReadInAnyCase()
     {
-        var enums = typeof(DrawingFileSerializer).Assembly.GetTypes().Where(t => t.IsEnum && t.GetCustomAttribute<FlagsAttribute>() is null);
+        var enums = new[] { typeof(DrawingFileSerializer).Assembly, typeof(ModuleDrawing).Assembly }.SelectMany(a => a.GetTypes()).Where(t => t.IsEnum && t.GetCustomAttribute<FlagsAttribute>() is null);
         var checkedCount = 0;
         foreach (var type in enums)
         {

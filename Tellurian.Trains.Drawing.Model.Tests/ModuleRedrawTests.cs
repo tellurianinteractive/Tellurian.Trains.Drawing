@@ -1,6 +1,5 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using Tellurian.Trains.Schedules.Model.Geometry;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
@@ -31,7 +30,7 @@ public sealed class ModuleRedrawTests
     /// <summary>A 30° left curve of radius 2000 mm with <paramref name="profile"/> at both ends.</summary>
     private static ModuleFileContent Curve(EndProfile profile, bool isEndProfileSwitcher = false)
     {
-        AutoDrawExit a = new() { Label = "A", Direction = ExitDirection.Left, EndProfile = profile.Designation, EndProfileId = profile.Id };
+        AutoDrawExit a = new() { Label = "A", Direction = ExitSide.Left, EndProfile = profile.Designation, EndProfileId = profile.Id };
         var module = ModuleAutoDraw.Create(new()
         {
             Name = "Kurvan",
@@ -40,7 +39,7 @@ public sealed class ModuleRedrawTests
             Angle = 30,
             CurveDirection = CurveDirection.Left,
             IsEndProfileSwitcher = isEndProfileSwitcher,
-            Exits = [a, a with { Label = "B", Direction = ExitDirection.Right }],
+            Exits = [a, a with { Label = "B", Direction = ExitSide.Right }],
         }, Catalogue).Module!;
         return ModuleFileContent.Create(module, Catalogue.FindEndProfile);
     }
@@ -55,7 +54,7 @@ public sealed class ModuleRedrawTests
         if (bend != 0)
         {
             var pose = main.PoseAt(main.Length / 2);
-            joint = joint with { Bends = [pose.Position + pose.Left * 100 + pose.Forward * bend] };
+            joint = joint.With(edited => edited.Bends = [pose.Position + pose.Left * 100 + pose.Forward * bend]);
         }
         var cut = ModuleSections.WithJoints(drawing, outline, [joint])!;
         return content with { Module = content.Module.With(c => c.Drawing = cut) };
@@ -110,8 +109,8 @@ public sealed class ModuleRedrawTests
     [TestMethod]
     public void StraightModulesHaveNoCurveToFlip()
     {
-        AutoDrawExit a = new() { Label = "A", Direction = ExitDirection.Left, EndProfile = TestCatalogue.FremoSingle.Designation };
-        var straight = ModuleAutoDraw.Create(new() { Standard = "FREMO/H0-RE", Straight = 1000, Exits = [a, a with { Label = "B", Direction = ExitDirection.Right }] }, Catalogue).Module!;
+        AutoDrawExit a = new() { Label = "A", Direction = ExitSide.Left, EndProfile = TestCatalogue.FremoSingle.Designation };
+        var straight = ModuleAutoDraw.Create(new() { Standard = "FREMO/H0-RE", Straight = 1000, Exits = [a, a with { Label = "B", Direction = ExitSide.Right }] }, Catalogue).Module!;
         var content = ModuleFileContent.Create(straight, Catalogue.FindEndProfile);
 
         Assert.IsFalse(ModuleRedraw.HasCurve(content));

@@ -14,60 +14,60 @@ public sealed class ExitDirectionsTests
 
     // The viewer has the left exit on the left, so the side away from the viewer is +Y when left to right is +X.
     [TestMethod]
-    [DataRow(90, ExitDirection.Up)]
-    [DataRow(46, ExitDirection.Up)]
-    [DataRow(134, ExitDirection.Up)]
-    [DataRow(-90, ExitDirection.Down)]
-    [DataRow(270, ExitDirection.Down)]
-    [DataRow(-46, ExitDirection.Down)]
-    [DataRow(0, ExitDirection.Undefined)]
-    [DataRow(45, ExitDirection.Undefined)]
-    [DataRow(135, ExitDirection.Undefined)]
-    [DataRow(180, ExitDirection.Undefined)]
-    [DataRow(-15, ExitDirection.Undefined)]
-    public void AnExitAcrossTheLeftRightDirectionIsUpOrDown(double heading, ExitDirection expected) =>
+    [DataRow(90, ExitSide.Up)]
+    [DataRow(46, ExitSide.Up)]
+    [DataRow(134, ExitSide.Up)]
+    [DataRow(-90, ExitSide.Down)]
+    [DataRow(270, ExitSide.Down)]
+    [DataRow(-46, ExitSide.Down)]
+    [DataRow(0, ExitSide.Undefined)]
+    [DataRow(45, ExitSide.Undefined)]
+    [DataRow(135, ExitSide.Undefined)]
+    [DataRow(180, ExitSide.Undefined)]
+    [DataRow(-15, ExitSide.Undefined)]
+    public void AnExitAcrossTheLeftRightDirectionIsUpOrDown(double heading, ExitSide expected) =>
         Assert.AreEqual(expected, ExitDirections.Infer(Heading(heading), Left, Right));
 
     [TestMethod]
     public void UpFollowsTheModuleHoweverItIsDrawn()
     {
         // Left to right is +Y here, so away from the viewer is −X.
-        Assert.AreEqual(ExitDirection.Up, ExitDirections.Infer(Heading(180), Point.Origin, new(0, 1000)));
-        Assert.AreEqual(ExitDirection.Down, ExitDirections.Infer(Heading(0), Point.Origin, new(0, 1000)));
+        Assert.AreEqual(ExitSide.Up, ExitDirections.Infer(Heading(180), Point.Origin, new(0, 1000)));
+        Assert.AreEqual(ExitSide.Down, ExitDirections.Infer(Heading(0), Point.Origin, new(0, 1000)));
     }
 
     [TestMethod]
     public void NothingIsInferredWhenLeftAndRightAreAtTheSamePlace() =>
-        Assert.AreEqual(ExitDirection.Undefined, ExitDirections.Infer(Heading(90), Left, Left));
+        Assert.AreEqual(ExitSide.Undefined, ExitDirections.Infer(Heading(90), Left, Left));
 
     [TestMethod]
     public void ABranchAtARightAngleBecomesUp()
     {
-        var drawing = WithThirdExit(ExitDirection.Undefined, 90).WithInferredExitDirections();
+        var drawing = WithThirdExit(ExitSide.Undefined, 90).WithInferredExitDirections();
         CollectionAssert.AreEqual(
-            new[] { ExitDirection.Left, ExitDirection.Right, ExitDirection.Up },
+            new[] { ExitSide.Left, ExitSide.Right, ExitSide.Up },
             drawing.Exits.Select(e => e.Direction).ToArray());
     }
 
     [TestMethod]
     public void AChosenDirectionIsNotChanged()
     {
-        var drawing = WithThirdExit(ExitDirection.Right, 90);
+        var drawing = WithThirdExit(ExitSide.Right, 90);
         Assert.AreSame(drawing, drawing.WithInferredExitDirections());
     }
 
     [TestMethod]
     public void AnExitAlongTheModuleStaysUndefined()
     {
-        var drawing = WithThirdExit(ExitDirection.Undefined, 10);
+        var drawing = WithThirdExit(ExitSide.Undefined, 10);
         Assert.AreSame(drawing, drawing.WithInferredExitDirections());
     }
 
     [TestMethod]
     public void NothingIsInferredWithoutBothLeftAndRight()
     {
-        var drawing = WithThirdExit(ExitDirection.Undefined, 90);
-        var withoutRight = drawing with { Exits = [.. drawing.Exits.Select(e => e.Direction == ExitDirection.Right ? e with { Direction = ExitDirection.Undefined } : e)] };
+        var drawing = WithThirdExit(ExitSide.Undefined, 90);
+        var withoutRight = drawing.With(edited => edited.Exits = [.. drawing.Exits.Select(e => e.Direction == ExitSide.Right ? e.With(edited => edited.Direction = ExitSide.Undefined) : e)]);
         Assert.AreSame(withoutRight, withoutRight.WithInferredExitDirections());
     }
 
@@ -76,15 +76,15 @@ public sealed class ExitDirectionsTests
     {
         var exits = TestModules.Junction().Drawing.Exits;
         CollectionAssert.AreEqual(
-            new[] { ExitDirection.Left, ExitDirection.Right, ExitDirection.Right },
+            new[] { ExitSide.Left, ExitSide.Right, ExitSide.Right },
             exits.Select(e => e.Direction).ToArray());
     }
 
     /// <summary>The junction with its third exit turned to <paramref name="heading"/> and given <paramref name="direction"/>.</summary>
-    private static ModuleDrawing WithThirdExit(ExitDirection direction, double heading)
+    private static ModuleDrawing WithThirdExit(ExitSide direction, double heading)
     {
         var drawing = TestModules.Junction().Drawing;
-        var third = drawing.Exits[2] with { Direction = direction, Pose = new(new(750, 250), new(heading)) };
-        return drawing with { Exits = [drawing.Exits[0], drawing.Exits[1], third] };
+        var third = drawing.Exits[2].With(edited => { edited.Direction = direction; edited.Pose = new(new(750, 250), new(heading)); });
+        return drawing.With(edited => edited.Exits = [drawing.Exits[0], drawing.Exits[1], third]);
     }
 }

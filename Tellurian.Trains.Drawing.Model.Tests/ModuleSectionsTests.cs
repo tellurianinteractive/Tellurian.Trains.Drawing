@@ -38,7 +38,7 @@ public sealed class ModuleSectionsTests
     [TestMethod]
     public void BentJointCutsAlongItsPolyline()
     {
-        var joint = Straight(1000) with { Bends = [new(1000, -50), new(1200, -50), new(1200, 50), new(1000, 50)] };
+        var joint = Straight(1000).With(edited => edited.Bends = [new(1000, -50), new(1200, -50), new(1200, 50), new(1000, 50)]);
         var drawing = ModuleSections.WithJoints(Drawing, Outline, [joint])!;
         var first = Math.Abs(drawing.Sections[0].Outline.Tessellate().SignedArea);
         var second = Math.Abs(drawing.Sections[1].Outline.Tessellate().SignedArea);
@@ -49,8 +49,8 @@ public sealed class ModuleSectionsTests
     [TestMethod]
     public void JointsMustCutTheModule()
     {
-        Assert.IsNull(ModuleSections.WithJoints(Drawing, Outline, [Straight(1000) with { End = new(1000, 100) }]), "An end inside the module.");
-        Assert.IsNull(ModuleSections.WithJoints(Drawing, Outline, [Straight(1000) with { Bends = [new(1000, 900)] }]), "A bend outside the module.");
+        Assert.IsNull(ModuleSections.WithJoints(Drawing, Outline, [Straight(1000).With(edited => edited.End = new(1000, 100))]), "An end inside the module.");
+        Assert.IsNull(ModuleSections.WithJoints(Drawing, Outline, [Straight(1000).With(edited => edited.Bends = [new(1000, 900)])]), "A bend outside the module.");
         var crossing = new InternalJoint { FirstSection = "", SecondSection = "", Start = new(500, -HalfWidth), End = new(1500, HalfWidth) };
         Assert.IsNull(ModuleSections.WithJoints(Drawing, Outline, [Straight(1000), crossing]), "Joints crossing each other.");
     }

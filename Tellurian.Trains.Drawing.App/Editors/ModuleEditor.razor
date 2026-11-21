@@ -11,7 +11,6 @@
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Schedules.Model.Geometry
-@using Tellurian.Trains.Drawing.Model.AutoDraw
 @using Tellurian.Trains.Drawing.Model.Catalogue
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Modules
@@ -218,9 +217,9 @@
     private readonly SelectionSet<ModuleItem> _selection = new();
     private readonly ModuleScene _scene = new();
     private readonly SnapEngine _snap = new(ModuleScene.IndexCellSize);
-    private EditorDocument<Model.Files.ModuleFileContent>? _document;
-    private EditorSession<Model.Files.ModuleFileContent>? _session;
-    private SelectMoveTool<Model.Files.ModuleFileContent, ModuleItem> _select = default!;
+    private EditorDocument<ModuleFileContent>? _document;
+    private EditorSession<ModuleFileContent>? _session;
+    private SelectMoveTool<ModuleFileContent, ModuleItem> _select = default!;
     private ModuleTool _activeTool = ModuleTool.Select;
     private Viewport _view = Viewport.Fit(new BoundingBox(new(0, 0), new(1000, 1000)), 800, 500);
     private SegmentPath? _outline;
@@ -249,7 +248,7 @@
     [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
 
     /// <summary>The module as edited now.</summary>
-    public Model.Files.ModuleFileContent? Current => _document?.Current;
+    public ModuleFileContent? Current => _document?.Current;
 
     /// <summary>Saves unsaved edits to the draft at once, e.g. before saving to a file.</summary>
     public async Task<bool> FlushAsync() => _session is null || await _session.FlushAsync();
@@ -262,11 +261,11 @@
     private ModuleTracks TrackCommands => new(Standard, FindEndProfile);
 
     /// <summary>A command that changes the module's shape, with its tracks measured again afterwards.</summary>
-    private IEditCommand<Model.Files.ModuleFileContent> WithTracksMeasured(IEditCommand<Model.Files.ModuleFileContent> command) =>
-        new EditCommand<Model.Files.ModuleFileContent>(command.Description, content => TrackCommands.Measured(command.Apply(content)));
+    private IEditCommand<ModuleFileContent> WithTracksMeasured(IEditCommand<ModuleFileContent> command) =>
+        new EditCommand<ModuleFileContent>(command.Description, content => TrackCommands.Measured(command.Apply(content)));
 
     /// <summary>The module with a dragged selection shown where it is being moved.</summary>
-    private Model.Files.ModuleFileContent Shown =>
+    private ModuleFileContent Shown =>
         _select.DragOffset is { } offset ? ModuleJoints.Move([.. _selection.Items], offset).Apply(_document!.Current) : _document!.Current;
 
     private bool IsSelected(int joint) => _selection.Items.Any(i => i.Joint == joint);
@@ -303,7 +302,7 @@
         var key = Draft.Id.ToString();
         try
         {
-            if (await EditorSession<Model.Files.ModuleFileContent>.LoadStateAsync(Workbench, key) is { } state)
+            if (await EditorSession<ModuleFileContent>.LoadStateAsync(Workbench, key) is { } state)
             {
                 var items = ModuleScene.Items(content).ToHashSet();
                 _selection.Set(state.Selection.Select(s => ModuleItem.TryParse(s, out var item) ? (ModuleItem?)item : null).OfType<ModuleItem>().Where(items.Contains));
@@ -322,12 +321,12 @@
     }
 
     /// <summary>Stores the module with its end profiles and its measures derived again, e.g. its sections' lengths.</summary>
-    private async Task SaveDraftAsync(Model.Files.ModuleFileContent content, CancellationToken cancellationToken)
+    private async Task SaveDraftAsync(ModuleFileContent content, CancellationToken cancellationToken)
     {
-        Model.Files.ModuleFileContent file;
+        ModuleFileContent file;
         try
         {
-            file = Model.Files.ModuleFileContent.Create(content.Module, FindEndProfile).WithMeasuredTracks(Standard, FindEndProfile);
+            file = ModuleFileContent.Create(content.Module, FindEndProfile).WithMeasuredTracks(Standard, FindEndProfile);
         }
         catch (KeyNotFoundException)
         {
@@ -383,7 +382,7 @@
         else if (e.Key is "Delete" or "Backspace" && _activeTool == ModuleTool.Select) DeleteSelection();
     }
 
-    private void Apply(IEditCommand<Model.Files.ModuleFileContent> command)
+    private void Apply(IEditCommand<ModuleFileContent> command)
     {
         _select.Cancel();
         _document!.Apply(command);
@@ -464,7 +463,7 @@
     private void FlipEnd(string exitLabel) => Apply(ModuleEnds.FlipEnd(exitLabel));
 
     private void ChangeModule(Module module) =>
-        Apply(new EditCommand<Model.Files.ModuleFileContent>("Change properties", content => content with { Module = module }));
+        Apply(new EditCommand<ModuleFileContent>("Change properties", content => content with { Module = module }));
 
     private async Task PrintAsync()
     {

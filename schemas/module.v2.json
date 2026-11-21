@@ -491,11 +491,88 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uuid"
         },
+        "name": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "number": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hasFremoDesignation": {
+          "type": "boolean"
+        },
+        "configurationLabel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "packageLabel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "moduleOwners": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "standard": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SharedModuleStandard"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operationLocation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationLocation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operationLocationId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "tracks": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/StationTrack"
+          }
+        },
         "standardId": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uuid"
         },
         "addOns": {
@@ -503,12 +580,6 @@
           "items": {
             "$ref": "#/$defs/CatalogueReference"
           }
-        },
-        "theme": {
-          "type": [
-            "string",
-            "null"
-          ]
         },
         "representsFromYear": {
           "type": [
@@ -585,86 +656,19 @@
             "null"
           ]
         },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "number": {
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "hasFremoDesignation": {
-          "type": "boolean"
-        },
-        "configurationLabel": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "packageLabel": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "moduleOwners": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "standard": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/SharedModuleStandard"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "operationLocation": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/OperationLocation"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "operationLocationId": {
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "tracks": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/$defs/StationTrack"
-          }
-        },
         "drawing": {
-          "$ref": "#/$defs/ModuleDrawing"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModuleDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
-        "id",
-        "standardId",
-        "name",
-        "drawing"
+        "name"
       ]
     },
     "ModuleDrawing": {

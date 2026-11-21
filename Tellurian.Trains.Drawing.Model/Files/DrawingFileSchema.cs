@@ -20,7 +20,7 @@ public static class DrawingFileSchema
     private const string Definitions = "$defs";
     private const string ModelNamespace = "Tellurian.Trains.Drawing";
     private const string SharedNamespace = "Tellurian.Trains.Schedules.Model";
-    private static readonly HashSet<string> SharedNamesInUse = new(StringComparer.Ordinal) { "Module", "ModuleStandard", "Scale" };
+    private static readonly HashSet<string> SharedNamesInUse = new(StringComparer.Ordinal) { "ModuleStandard", "Scale" };
 
     /// <summary>The kinds that have a schema: all of them.</summary>
     public static IReadOnlyList<DrawingFileKind> Kinds { get; } = Enum.GetValues<DrawingFileKind>();

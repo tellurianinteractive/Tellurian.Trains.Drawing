@@ -1,4 +1,3 @@
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
@@ -94,8 +93,8 @@ public sealed class BuiltInCatalogueTests
             IsEndProfileSwitcher = isEndewender,
             Exits =
             [
-                new() { Label = "W", Direction = ExitDirection.Left, EndProfile = west },
-                new() { Label = "E", Direction = ExitDirection.Right, EndProfile = east },
+                new() { Label = "W", Direction = ExitSide.Left, EndProfile = west },
+                new() { Label = "E", Direction = ExitSide.Right, EndProfile = east },
             ],
         }, Catalogue).Module!.Drawing;
 

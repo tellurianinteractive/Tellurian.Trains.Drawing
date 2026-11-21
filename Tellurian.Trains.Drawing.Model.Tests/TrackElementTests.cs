@@ -54,7 +54,7 @@ public sealed class TrackElementTests
     public void RightTurnoutMirrorsLeft()
     {
         var left = new Turnout { Start = Pose.Origin, Kind = TurnoutKind.Left, Length = 230, Radius = 900, Angle = 12 };
-        var right = left with { Kind = TurnoutKind.Right };
+        var right = left.With(edited => edited.Kind = TurnoutKind.Right);
         var l = left.Routes()[1].End;
         var r = right.Routes()[1].End;
         Assert.AreEqual(l.X, r.X, Precision);

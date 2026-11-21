@@ -4,10 +4,10 @@
   "schemaVersion": 2,
   "appVersion": "0.9.1",
   "content": {
-    "id": "08ed9366-623a-404e-98a5-6a88a9ba1440",
+    "id": "722f05cf-d35b-4ccb-a125-66a97f478ad1",
     "name": "Club meeting",
     "hall": {
-      "id": "74d8d843-3a8f-447a-81c8-cdb6bee10682",
+      "id": "69d99483-b322-474f-8fc0-add113071574",
       "name": "Club hall",
       "address": "Station Road 1",
       "outline": {
@@ -258,9 +258,9 @@
     },
     "layouts": [
       {
-        "id": "69a6a52f-361d-4d8e-b784-f800fdc4d53a",
+        "id": "4541350e-fae4-471a-8486-fc979f6bb8ae",
         "name": "Main",
-        "anchorModuleId": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
+        "anchorModuleId": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
         "anchorPose": {
           "x": 2000,
           "y": 2000,
@@ -288,39 +288,39 @@
         },
         "lines": [
           {
-            "id": "b2129532-d1b0-481e-b284-a0081059e6bc",
+            "id": "d7f4ad28-2544-4831-9216-1cb205802596",
             "name": "Main line",
             "entries": [
               {
-                "moduleId": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
+                "moduleId": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
                 "isTurned": false,
                 "legAdjustment": 0
               },
               {
-                "moduleId": "5e5f0554-6549-4a79-9b12-0f16fdde019d",
+                "moduleId": "f4c1026d-7536-4806-ad57-bf5a76e0afec",
                 "isTurned": true,
                 "legAdjustment": 5,
                 "note": "Bends the other way"
               },
               {
-                "moduleId": "d888dee0-cc0c-4e7a-8606-008c5bc08626",
+                "moduleId": "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4",
                 "isTurned": false,
                 "legAdjustment": 0
               }
             ]
           },
           {
-            "id": "b6b1abc1-161f-461e-a00a-3169548e67a7",
+            "id": "65f43d93-6372-43ed-829f-0a083f16b688",
             "name": "Branch",
             "entries": [
               {
-                "moduleId": "dcd20581-399a-49c3-b0e7-20a22ab94c45",
+                "moduleId": "a17837c8-0d2b-4a9b-8454-74903aa9c6f8",
                 "isTurned": false,
                 "legAdjustment": 0
               }
             ],
             "startAt": {
-              "moduleId": "d888dee0-cc0c-4e7a-8606-008c5bc08626",
+              "moduleId": "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4",
               "side": "Right",
               "number": 2
             }
@@ -331,12 +331,12 @@
     "joints": [
       {
         "first": {
-          "moduleId": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
+          "moduleId": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
           "side": "Right",
           "number": 1
         },
         "second": {
-          "moduleId": "5e5f0554-6549-4a79-9b12-0f16fdde019d",
+          "moduleId": "f4c1026d-7536-4806-ad57-bf5a76e0afec",
           "side": "Right",
           "number": 1
         },
@@ -347,7 +347,7 @@
     ],
     "publicAreas": [
       {
-        "id": "8586d73c-2d63-4496-8369-cdd93fd00b57",
+        "id": "31d36e1d-f94b-423d-89b7-b31324a81878",
         "area": {
           "start": {
             "x": 4000,
@@ -390,7 +390,7 @@
     ],
     "walkingPaths": [
       {
-        "id": "b59ecaeb-ec0d-41c1-8fae-666fa63305f1",
+        "id": "ec9afc25-2d4d-4974-9895-0071876158ad",
         "centreLine": {
           "start": {
             "x": 1000,
@@ -420,10 +420,10 @@
     ],
     "acknowledgements": [
       {
-        "id": "33654f1a-23e4-47c2-a285-776d8c12dff6",
+        "id": "35d90304-d2ad-4803-82c8-44aa9535f33d",
         "findingCode": "VA-11",
         "moduleIds": [
-          "d888dee0-cc0c-4e7a-8606-008c5bc08626"
+          "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4"
         ],
         "fingerprint": "sample",
         "note": "Operator space overlaps the stage edge",
@@ -432,7 +432,16 @@
     ],
     "modules": [
       {
-        "id": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
+        "id": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
+        "name": "Straight",
+        "hasFremoDesignation": false,
+        "standard": {
+          "shortName": "FREMO/H0-RE",
+          "scale": {
+            "shortName": "H0"
+          }
+        },
+        "tracks": [],
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
@@ -445,15 +454,6 @@
         "isStandAlone": false,
         "revision": 0,
         "revisionLog": [],
-        "name": "Straight",
-        "hasFremoDesignation": false,
-        "standard": {
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -611,7 +611,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "e77dd782-371d-4090-94c2-1a8cf0957950",
+              "id": "bd86b953-2d23-4651-8621-2f22d4eeadb1",
               "isNarrowGauge": false,
               "isGenerated": true
             }
@@ -657,7 +657,16 @@
         }
       },
       {
-        "id": "5e5f0554-6549-4a79-9b12-0f16fdde019d",
+        "id": "f4c1026d-7536-4806-ad57-bf5a76e0afec",
+        "name": "Curve",
+        "hasFremoDesignation": false,
+        "standard": {
+          "shortName": "FREMO/H0-RE",
+          "scale": {
+            "shortName": "H0"
+          }
+        },
+        "tracks": [],
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
@@ -670,15 +679,6 @@
         "isStandAlone": false,
         "revision": 0,
         "revisionLog": [],
-        "name": "Curve",
-        "hasFremoDesignation": false,
-        "standard": {
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -842,7 +842,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "528149d3-5c7f-4ec4-8da5-41f85f944ccc",
+              "id": "50f443c3-00f9-4fee-9a5a-e0fb39c36d47",
               "isNarrowGauge": false,
               "isGenerated": true
             }
@@ -890,7 +890,16 @@
         }
       },
       {
-        "id": "d888dee0-cc0c-4e7a-8606-008c5bc08626",
+        "id": "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4",
+        "name": "Junction",
+        "hasFremoDesignation": false,
+        "standard": {
+          "shortName": "FREMO/H0-RE",
+          "scale": {
+            "shortName": "H0"
+          }
+        },
+        "tracks": [],
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
@@ -903,15 +912,6 @@
         "isStandAlone": false,
         "revision": 0,
         "revisionLog": [],
-        "name": "Junction",
-        "hasFremoDesignation": false,
-        "standard": {
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -1120,7 +1120,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "ceb6bc7c-bc05-45ce-a999-4ee7291123d9",
+              "id": "46f67dda-5405-4e8d-9300-717b2942f588",
               "isNarrowGauge": false,
               "isGenerated": true
             }
@@ -1171,7 +1171,16 @@
         }
       },
       {
-        "id": "dcd20581-399a-49c3-b0e7-20a22ab94c45",
+        "id": "a17837c8-0d2b-4a9b-8454-74903aa9c6f8",
+        "name": "Terminus",
+        "hasFremoDesignation": false,
+        "standard": {
+          "shortName": "FREMO/H0-RE",
+          "scale": {
+            "shortName": "H0"
+          }
+        },
+        "tracks": [],
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "numberOfThroughTracks": 2,
@@ -1185,15 +1194,6 @@
         "isStandAlone": false,
         "revision": 0,
         "revisionLog": [],
-        "name": "Terminus",
-        "hasFremoDesignation": false,
-        "standard": {
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -1328,7 +1328,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "c4676207-b51d-4e81-84d2-c12f4c380947",
+              "id": "4081dab4-1ffa-472c-8d7e-9d144803bdf6",
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1339,7 +1339,7 @@
                 "y": -25,
                 "heading": 180
               },
-              "id": "998634d9-3403-4c43-b80b-aa152c5c15f6",
+              "id": "230ba26d-8827-4c3e-922a-7660cc2df062",
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1361,7 +1361,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "fab84fee-bbdd-44b7-9006-9ec9d416118c",
+              "id": "1b253517-2cd0-4969-aa95-080637e44534",
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1372,7 +1372,7 @@
                 "y": 25,
                 "heading": 180
               },
-              "id": "19c09963-69ed-42fc-b8f6-2ad8e185cbd0",
+              "id": "e26f1ebf-b993-4013-ba14-8c3a7b30d0d1",
               "isNarrowGauge": false,
               "isGenerated": true
             }

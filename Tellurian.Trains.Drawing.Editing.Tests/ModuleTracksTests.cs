@@ -1,7 +1,6 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using TrackDirection = Tellurian.Trains.Schedules.Model.Layouts.TrackDirection;
 using Tellurian.Trains.Drawing.Editing.Modules;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -22,7 +21,7 @@ public sealed class ModuleTracksTests
     private const int UnknownTrack = 99;
     private const double EnteredLength = 1.5;
 
-    private static readonly AutoDrawExit Left = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-2E96" };
+    private static readonly AutoDrawExit Left = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-2E96" };
 
     private static DrawingCatalogue Catalogue => BuiltInCatalogue.Instance;
 
@@ -36,7 +35,7 @@ public sealed class ModuleTracksTests
     /// </summary>
     private static ModuleFileContent DoubleTrack() => WithoutTrackList(AutoDrawn(new() { Name = "Double", Standard = Standard.ShortName, Straight = Length, NumberOfThroughTracks = 2, Exits = [Left, Right] }));
 
-    private static readonly AutoDrawExit Right = Left with { Label = "E", Direction = ExitDirection.Right };
+    private static readonly AutoDrawExit Right = Left with { Label = "E", Direction = ExitSide.Right };
 
     private static ModuleFileContent AutoDrawn(AutoDrawParameters parameters) =>
         ModuleFileContent.Create(ModuleAutoDraw.Create(parameters, Catalogue).Module!, Catalogue.FindEndProfile);
@@ -48,7 +47,7 @@ public sealed class ModuleTracksTests
     private static ModuleFileContent WithoutTrackList(ModuleFileContent content)
     {
         var drawing = content.Module.Drawing;
-        var emptied = drawing with { TrackElements = [.. drawing.TrackElements.Select(e => e with { StationTrackId = null })] };
+        var emptied = drawing.With(edited => edited.TrackElements = [.. drawing.TrackElements.Select(e => e.With(edited => edited.StationTrackId = null))]);
         return content with { Module = content.Module.With(c => { c.Tracks = []; c.Drawing = emptied; }) };
     }
 
@@ -99,7 +98,7 @@ public sealed class ModuleTracksTests
         CollectionAssert.AreEqual(new int?[] { Track1, Track2 }, generated.Drawing.TrackElements.Select(e => e.StationTrackId).ToArray());
         var listed = WithTwoTracks().Module;
         Assert.AreSame(listed, listed.WithGeneratedTrackList(), "The user's list is not touched.");
-        var drawnByHand = emptied.With(c => c.Drawing = emptied.Drawing with { TrackElements = [.. emptied.Drawing.TrackElements.Select((e, i) => i == 0 ? e with { IsGenerated = false } : e)] });
+        var drawnByHand = emptied.With(c => c.Drawing = emptied.Drawing.With(edited => edited.TrackElements = [.. emptied.Drawing.TrackElements.Select((e, i) => i == 0 ? e.With(edited => edited.IsGenerated = false) : e)]));
         Assert.AreSame(drawnByHand, drawnByHand.WithGeneratedTrackList(), "Tracks drawn by hand are put in the list by the user.");
     }
 

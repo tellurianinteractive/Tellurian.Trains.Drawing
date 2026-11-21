@@ -5,7 +5,16 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "07bde25a-3b01-47b6-b1e0-c723d0421c8b",
+      "id": "b2e46b7a-2c6a-4254-8da8-91ff9a3ed89b",
+      "name": "Terminus",
+      "hasFremoDesignation": false,
+      "standard": {
+        "shortName": "FREMO/H0-RE",
+        "scale": {
+          "shortName": "H0"
+        }
+      },
+      "tracks": [],
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 2,
@@ -19,15 +28,6 @@
       "isStandAlone": false,
       "revision": 0,
       "revisionLog": [],
-      "name": "Terminus",
-      "hasFremoDesignation": false,
-      "standard": {
-        "shortName": "FREMO/H0-RE",
-        "scale": {
-          "shortName": "H0"
-        }
-      },
-      "tracks": [],
       "drawing": {
         "exits": [
           {
@@ -162,7 +162,7 @@
               ],
               "isClosed": false
             },
-            "id": "9703464a-7f05-4d74-b32f-7f8aa86aa2e3",
+            "id": "ee821273-9aa1-4416-9d46-e9a54c07bcc5",
             "isNarrowGauge": false,
             "isGenerated": true
           },
@@ -173,7 +173,7 @@
               "y": -25,
               "heading": 180
             },
-            "id": "bc84a181-46b7-4b20-ad9f-ff0cab92baf7",
+            "id": "8c91eb80-12d8-48b8-b581-ff1604bf47a9",
             "isNarrowGauge": false,
             "isGenerated": true
           },
@@ -195,7 +195,7 @@
               ],
               "isClosed": false
             },
-            "id": "0c849d1d-b261-445f-9da3-bc85aa7216f3",
+            "id": "8a465a4d-da34-461e-88e2-ea805c6b152c",
             "isNarrowGauge": false,
             "isGenerated": true
           },
@@ -206,7 +206,7 @@
               "y": 25,
               "heading": 180
             },
-            "id": "c6f7237b-12f3-4d26-950b-69d621a23605",
+            "id": "d8a5ebcb-1597-4aba-a800-5f91797bb033",
             "isNarrowGauge": false,
             "isGenerated": true
           }

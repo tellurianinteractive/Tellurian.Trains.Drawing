@@ -135,7 +135,7 @@ public static class ModuleJoints
     }
 
     private static InternalJoint WithPoints(InternalJoint joint, IReadOnlyList<Point> points) =>
-        joint with { Start = points[0], End = points[^1], Bends = points.Count > 2 ? [.. points.Skip(1).Take(points.Count - 2)] : null };
+        joint.With(edited => { edited.Start = points[0]; edited.End = points[^1]; edited.Bends = points.Count > 2 ? [.. points.Skip(1).Take(points.Count - 2)] : null; });
 
     private static IReadOnlyList<InternalJoint> Replace(IReadOnlyList<InternalJoint> joints, int index, InternalJoint joint) =>
         [.. joints.Select((existing, i) => i == index ? joint : existing)];

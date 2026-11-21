@@ -1,5 +1,4 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -14,8 +13,8 @@ internal static class SchemaExamples
 {
     private static DrawingCatalogue Catalogue => BuiltInCatalogue.Instance;
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitSide.Right, EndProfile = "FREMO-H0-B96" };
 
     public static void Write(string directory)
     {

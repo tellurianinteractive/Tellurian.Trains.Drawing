@@ -1,5 +1,3 @@
-using Tellurian.Trains.Drawing.Model.AutoDraw;
-using Tellurian.Trains.Drawing.Model.Measures;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -10,8 +8,8 @@ public sealed class ModuleMeasurementTests
     private const string Fremo = "FREMO/H0-RE";
     private const double PlateWidth = 500;
 
-    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit West = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+    private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitSide.Right, EndProfile = "FREMO-H0-B96" };
 
     private static ModuleDrawing Draw(AutoDrawParameters parameters)
     {
@@ -119,7 +117,7 @@ public sealed class ModuleMeasurementTests
     public void RampHasHeightDifferenceAndGradient()
     {
         var drawing = Draw(Parameters(straight: 1000));
-        drawing = drawing with { Exits = [drawing.Exits[0], drawing.Exits[1] with { RailTopOffset = 20 }] };
+        drawing = drawing.With(edited => edited.Exits = [drawing.Exits[0], drawing.Exits[1].With(edited => edited.RailTopOffset = 20)]);
         var measures = Measure(drawing);
         Assert.IsTrue(measures.IsRamp);
         Assert.AreEqual(20, measures.RampHeightDifference!.Value, Precision);
@@ -130,7 +128,7 @@ public sealed class ModuleMeasurementTests
     public void DescendingRampHasNegativeGradient()
     {
         var drawing = Draw(Parameters(straight: 2000));
-        drawing = drawing with { Exits = [drawing.Exits[0] with { RailTopOffset = 10 }, drawing.Exits[1] with { RailTopOffset = -10 }] };
+        drawing = drawing.With(edited => edited.Exits = [drawing.Exits[0].With(edited => edited.RailTopOffset = 10), drawing.Exits[1].With(edited => edited.RailTopOffset = -10)]);
         var measures = Measure(drawing);
         Assert.AreEqual(20, measures.RampHeightDifference!.Value, Precision);
         Assert.AreEqual(-10, measures.RampGradient!.Value, Precision);
@@ -139,7 +137,7 @@ public sealed class ModuleMeasurementTests
     [TestMethod]
     public void WithoutMainPathOnlyDrawingMeasuresAreDerived()
     {
-        var measures = Measure(Draw(Parameters(straight: 1000)) with { MainPath = null });
+        var measures = Measure(Draw(Parameters(straight: 1000)).With(edited => edited.MainPath = null));
         Assert.IsNull(measures.Length);
         Assert.IsNull(measures.Width);
         Assert.IsNull(measures.Angle);

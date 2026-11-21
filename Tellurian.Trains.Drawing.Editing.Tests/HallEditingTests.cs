@@ -197,6 +197,18 @@ public sealed class HallEditingTests
     }
 
     [TestMethod]
+    public void ACommandThatChangesNothingAddsNoUndoStep()
+    {
+        var document = new EditorDocument<Hall>(Hall(), comparer: HallContentComparer.Comparer);
+
+        // Moving nothing still copies the hall, which is a mutable class.
+        Assert.IsFalse(document.Apply(HallCommands.Move([], new(100, 0))));
+        Assert.IsFalse(document.CanUndo);
+        Assert.IsTrue(document.Apply(HallCommands.AddRoundPillar(new(4000, 4000))));
+        Assert.IsTrue(document.CanUndo);
+    }
+
+    [TestMethod]
     public void ItemsRoundTripAsText()
     {
         Assert.IsTrue(HallItem.TryParse(HallItem.NoGoZone(2).ToString(), out var item));

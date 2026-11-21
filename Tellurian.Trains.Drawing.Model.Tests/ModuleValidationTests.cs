@@ -60,7 +60,7 @@ public sealed class ModuleValidationTests
     {
         var module = TestModules.Straight().With(c => { c.Name = name; c.Prefix = "SFjä"; c.Number = number; c.ConfigurationLabel = label; });
         Assert.AreEqual(expected, module.Title);
-        Assert.AreEqual(expected, module.ToString());
+        Assert.AreEqual(module.DisplayName, module.ToString(), "As the shared model names a module: with its standard.");
     }
 
     [TestMethod]

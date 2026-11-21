@@ -49,8 +49,8 @@ public sealed class SchemaVersion2MigrationTests
     {
         var content = DrawingFileSerializer.DeserializeModule(Version1(ModuleFile).ToJsonString());
         var drawing = content.Module.Drawing;
-        CollectionAssert.AreEqual(new[] { ExitDirection.Left, ExitDirection.Right }, drawing.Exits.Select(e => e.Direction).ToArray());
-        CollectionAssert.AreEqual(new[] { ExitDirection.Left, ExitDirection.Right }, drawing.AutoDraw!.Parameters.Exits.Select(e => e.Direction).ToArray());
+        CollectionAssert.AreEqual(new[] { ExitSide.Left, ExitSide.Right }, drawing.Exits.Select(e => e.Direction).ToArray());
+        CollectionAssert.AreEqual(new[] { ExitSide.Left, ExitSide.Right }, drawing.AutoDraw!.Parameters.Exits.Select(e => e.Direction).ToArray());
         CollectionAssert.AreEqual(new[] { "W", "E" }, drawing.Exits.Select(e => e.Label).ToArray(), "Exit labels are not changed.");
         Assert.IsNull(content.Module.ExternalReferences);
     }
@@ -82,6 +82,18 @@ public sealed class SchemaVersion2MigrationTests
 
         Assert.AreEqual("""{"moduleId":5678}""", TestReferences.RegistryEntry(content.Module.ExternalReferences));
         AssertNothingOldIsWritten(DrawingFileSerializer.Serialize(content));
+    }
+
+    [TestMethod]
+    public void TheThemeOfAModuleIsDropped()
+    {
+        var file = Version1(ModuleFile);
+        ModuleOf(file)["theme"] = "Sweden 1970s";
+
+        var content = DrawingFileSerializer.DeserializeModule(file.ToJsonString());
+
+        Assert.IsNull(content.Module.ExtensionData, "The theme isn't kept as an unknown property either.");
+        Assert.DoesNotContain("\"theme\"", DrawingFileSerializer.Serialize(content));
     }
 
     [TestMethod]
@@ -313,7 +325,7 @@ public sealed class SchemaVersion2MigrationTests
         var module = isAutoDrawn
             ? TestModules.Straight().With(c => { c.Number = 12; c.Prefix = "AOw"; c.ModuleOwners = "A. Owner, Club"; c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station { Name = "Tellby", Signature = "Tby" }; }).WithGeneratedTrackList()
             : TestModules.WithEverything();
-        if (isAutoDrawn) module = module.With(c => c.Drawing = module.Drawing with { AutoDraw = module.Drawing.AutoDraw! with { Parameters = module.Drawing.AutoDraw.Parameters with { Number = 12, Prefix = "AOw", ModuleOwners = "A. Owner, Club" } } });
+        if (isAutoDrawn) module = module.With(c => c.Drawing = module.Drawing.With(edited => edited.AutoDraw = module.Drawing.AutoDraw! with { Parameters = module.Drawing.AutoDraw.Parameters with { Number = 12, Prefix = "AOw", ModuleOwners = "A. Owner, Club" } }));
         var content = ModuleFileContent.Create(module, TestCatalogue.Lookup);
         var development = DevelopmentVersion2(content);
         Assert.IsTrue(ModuleOf(development)["drawing"]!["stationTracks"]!.AsArray().Count > 0, "The test needs a module with tracks.");
@@ -332,7 +344,7 @@ public sealed class SchemaVersion2MigrationTests
     {
         var station = new TestStation();
         // Ids that aren't 1 and 2 in the order of the list: the development file loses them, being GUIDs there.
-        var module = station.Module.With(c => { c.Tracks = [.. station.Module.Tracks.Reverse()]; c.Drawing = station.Drawing with { TracksWithEnteredStub = [TestStation.Track2], TracksWithEnteredLength = [TestStation.Track1, TestStation.Track2] }; });
+        var module = station.Module.With(c => { c.Tracks = [.. station.Module.Tracks.Reverse()]; c.Drawing = station.Drawing.With(edited => { edited.TracksWithEnteredStub = [TestStation.Track2]; edited.TracksWithEnteredLength = [TestStation.Track1, TestStation.Track2]; }); });
         var development = DevelopmentVersion2(ModuleFileContent.Create(module, TestCatalogue.Lookup));
         var elements = ModuleOf(development)["drawing"]!["tracks"]!.AsArray();
         elements[0]!["stationTrackId"] = Guid.NewGuid().ToString();
@@ -508,7 +520,7 @@ public sealed class SchemaVersion2MigrationTests
         var main = layout.Lines[0].Entries;
         CollectionAssert.AreEqual(new[] { false, true, false }, main.Select(e => e.IsTurned).ToArray(), "The curve was entered at its east exit.");
         Assert.IsTrue(main.All(e => e.ContinuesFrom is null), "Each line continues from the first exit on the other side.");
-        Assert.AreEqual(new ExitReference(plan.Modules[2].Id, ExitDirection.Right, 2), layout.Lines[1].StartAt);
+        Assert.AreEqual(new ExitReference(plan.Modules[2].Id!.Value, ExitSide.Right, 2), layout.Lines[1].StartAt);
         Assert.IsFalse(layout.Lines[1].Entries[0].IsTurned, "The terminus is entered at its only exit, on the left.");
         Assert.AreEqual(ExitPlace.Left, layout.AnchorDimensions!.ReferencePoint.Exit);
         Assert.AreEqual((ExitPlace.Right, ExitPlace.Right), (plan.Joints[0].First.Place, plan.Joints[0].Second.Place));
@@ -553,7 +565,7 @@ public sealed class SchemaVersion2MigrationTests
         var plan = DrawingFileSerializer.DeserializeHallPlan(file.ToJsonString());
 
         var directions = plan.Modules.SelectMany(m => m.Drawing.Exits).Select(e => e.Direction).Distinct().ToList();
-        CollectionAssert.AreEquivalent(new[] { ExitDirection.Left, ExitDirection.Right }, directions);
+        CollectionAssert.AreEquivalent(new[] { ExitSide.Left, ExitSide.Right }, directions);
         Assert.AreEqual("""{"moduleId":5678}""", TestReferences.RegistryEntry(plan.Modules[0].ExternalReferences));
         Assert.AreEqual("A. Owner", plan.Modules[0].ModuleOwners);
         Assert.IsNull(plan.Modules[0].Prefix);

@@ -40,11 +40,7 @@ internal sealed class TestStation
         Module = module.With(c => { c.Tracks = [
                 new() { Id = Track1, Designation = "1", DisplayOrder = 1, IsMain = true, IsScheduled = true },
                 new() { Id = Track2, Designation = "2", DisplayOrder = 2, IsScheduled = true },
-            ]; c.Drawing = module.Drawing with
-            {
-                TrackElements = [LeadIn, FirstTurnout, Between, SecondTurnout, LeadOut, Loop],
-                AutoDraw = null,
-            }; });
+            ]; c.Drawing = module.Drawing.With(edited => { edited.TrackElements = [LeadIn, FirstTurnout, Between, SecondTurnout, LeadOut, Loop]; edited.AutoDraw = null; }); });
     }
 
     public Module Module { get; }
@@ -64,7 +60,7 @@ internal sealed class TestStation
 
     public static Pose At(double x, double heading, double y = 0) => new(new(x, y), new(heading));
 
-    public Module With(params TrackElement[] added) => Module.With(c => c.Drawing = Drawing with { TrackElements = [.. Drawing.TrackElements, .. added] });
+    public Module With(params TrackElement[] added) => Module.With(c => c.Drawing = Drawing.With(edited => edited.TrackElements = [.. Drawing.TrackElements, .. added]));
 
     public Module WithTrack(StationTrack track, params TrackElement[] elements) =>
         With(elements).With(c => c.Tracks = [.. Module.Tracks, track]);

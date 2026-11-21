@@ -5,7 +5,16 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "d901061c-732f-4492-8bd6-d8c5c9a2480e",
+      "id": "7099293c-b81f-487c-9655-757dab07a654",
+      "name": "Curve R2000 30\u00B0",
+      "hasFremoDesignation": false,
+      "standard": {
+        "shortName": "FREMO/H0-RE",
+        "scale": {
+          "shortName": "H0"
+        }
+      },
+      "tracks": [],
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
@@ -19,15 +28,6 @@
       "isStandAlone": false,
       "revision": 0,
       "revisionLog": [],
-      "name": "Curve R2000 30\u00B0",
-      "hasFremoDesignation": false,
-      "standard": {
-        "shortName": "FREMO/H0-RE",
-        "scale": {
-          "shortName": "H0"
-        }
-      },
-      "tracks": [],
       "drawing": {
         "exits": [
           {
@@ -191,7 +191,7 @@
               ],
               "isClosed": false
             },
-            "id": "a70a7191-45cb-4d11-990c-972a297677f3",
+            "id": "1bbe1ba9-9e6b-4c8a-a71e-5f2cb3b2e6c3",
             "isNarrowGauge": false,
             "isGenerated": true
           }

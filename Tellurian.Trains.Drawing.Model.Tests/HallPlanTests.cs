@@ -47,8 +47,8 @@ public sealed class HallPlanTests
     [TestMethod]
     public void AJunctionSaysWhichExitTheLineContinuesFrom()
     {
-        var entry = new LineEntry { ModuleId = Guid.NewGuid(), ContinuesFrom = new(ExitDirection.Right, 2) };
-        Assert.AreEqual(new ExitPlace(ExitDirection.Right, 2), entry.Exit);
+        var entry = new LineEntry { ModuleId = Guid.NewGuid(), ContinuesFrom = new(ExitSide.Right, 2) };
+        Assert.AreEqual(new ExitPlace(ExitSide.Right, 2), entry.Exit);
         Assert.AreEqual(ExitPlace.Left, entry.Entry);
     }
 
@@ -56,12 +56,12 @@ public sealed class HallPlanTests
     public void AnExitIsFoundBySideAndNumberWhateverItsLabel()
     {
         var junction = Plan().Modules[2].Drawing;
-        var second = new ExitPlace(ExitDirection.Right, 2).In(junction)!;
+        var second = new ExitPlace(ExitSide.Right, 2).In(junction)!;
         Assert.AreEqual("E2", second.Label);
-        Assert.AreEqual(new ExitPlace(ExitDirection.Right, 2), ExitPlace.Of(junction, second));
-        var relabelled = junction with { Exits = [.. junction.Exits.Select(e => e with { Label = $"x{e.Label}" })] };
-        Assert.AreEqual("xE2", new ExitPlace(ExitDirection.Right, 2).In(relabelled)!.Label);
-        Assert.IsNull(new ExitPlace(ExitDirection.Right, 3).In(junction));
+        Assert.AreEqual(new ExitPlace(ExitSide.Right, 2), ExitPlace.Of(junction, second));
+        var relabelled = junction.With(edited => edited.Exits = [.. junction.Exits.Select(e => e.With(edited => edited.Label = $"x{e.Label}"))]);
+        Assert.AreEqual("xE2", new ExitPlace(ExitSide.Right, 2).In(relabelled)!.Label);
+        Assert.IsNull(new ExitPlace(ExitSide.Right, 3).In(junction));
     }
 
     [TestMethod]
@@ -70,7 +70,7 @@ public sealed class HallPlanTests
         var plan = Plan();
         var terminus = plan.Modules[3];
         Assert.AreEqual(4, plan.Entries().Count());
-        Assert.IsNotNull(plan.FindEntry(terminus.Id));
+        Assert.IsNotNull(plan.FindEntry(terminus.Id!.Value));
         Assert.IsTrue(plan.Layouts[0].Lines[1].IsBranch);
         Assert.IsFalse(plan.Layouts[0].Lines[0].IsBranch);
         Assert.IsEmpty(plan.ModulesPlacedMoreThanOnce());
@@ -111,7 +111,7 @@ public sealed class HallPlanTests
     public void EmbeddedDataIsFound()
     {
         var plan = Plan();
-        Assert.AreSame(plan.Modules[0], plan.FindModule(plan.Modules[0].Id));
+        Assert.AreSame(plan.Modules[0], plan.FindModule(plan.Modules[0].Id!.Value));
         Assert.IsNotNull(plan.FindEndProfile(TestCatalogue.FremoDouble.Id));
         Assert.IsNotNull(plan.FindStandard(TestCatalogue.FremoId));
     }

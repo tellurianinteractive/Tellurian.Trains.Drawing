@@ -133,7 +133,7 @@ else if (draft is not null)
         try
         {
             var module = DrawingFileSerializer.DeserializeModule(draft.Json).Module;
-            return (await Catalogues.GetAsync()).FindStandard(module.StandardId);
+            return module.StandardId is { } standardId ? (await Catalogues.GetAsync()).FindStandard(standardId) : null;
         }
         catch (DrawingFileException)
         {

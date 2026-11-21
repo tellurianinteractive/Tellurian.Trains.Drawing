@@ -7,7 +7,6 @@ using Tellurian.Trains.Drawing.App.Editors;
 using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.Components.Canvas;
 using Tellurian.Trains.Schedules.Model.Geometry;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Tracks;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
@@ -24,8 +23,8 @@ public sealed class ModuleEditorTests
     private static IRenderedComponent<DrawingPage> OpenStraightModule(AppTestContext context, bool isStation = true)
     {
         var catalogue = BuiltInCatalogue.Instance;
-        AutoDrawExit west = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitDirection.Right }] }, catalogue).Module!;
+        AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
         // The editor gives a station without station tracks the list of its generated tracks, measured, when it is opened.
         if (isStation) module = module.With(c => c.OperationLocation = Tellby);
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile));
@@ -63,8 +62,8 @@ public sealed class ModuleEditorTests
     {
         using var context = new AppTestContext();
         var catalogue = BuiltInCatalogue.Instance;
-        AutoDrawExit west = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitDirection.Right }] }, catalogue).Module!;
+        AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile));
         var documents = context.Services.GetRequiredService<DrawingDocuments>();
         var draft = documents.CreateAsync(json).Result;
@@ -145,9 +144,9 @@ public sealed class ModuleEditorTests
     {
         using var context = new AppTestContext();
         var catalogue = BuiltInCatalogue.Instance;
-        AutoDrawExit west = new() { Label = "W", Direction = ExitDirection.Left, EndProfile = "FREMO-H0-B96" };
-        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitDirection.Right }] }, catalogue).Module!;
-        var drawing = module.Drawing with { TrackElements = [.. module.Drawing.TrackElements.Select(e => e with { StationTrackId = null })] };
+        AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
+        var drawing = module.Drawing.With(edited => edited.TrackElements = [.. module.Drawing.TrackElements.Select(e => e.With(edited => edited.StationTrackId = null))]);
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module.With(c => { c.Tracks = []; c.Drawing = drawing; c.OperationLocation = Tellby; }), catalogue.FindEndProfile));
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(json).Result;
 

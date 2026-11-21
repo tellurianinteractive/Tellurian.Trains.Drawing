@@ -2,7 +2,6 @@ using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using System.Text.RegularExpressions;
 using Tellurian.Trains.Drawing.Components.Views;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -30,7 +29,7 @@ public sealed partial class ReadOnlyViewTests
         }.Create(Catalogue).Module!;
         var drawing = module.Drawing;
         var publicSide = new PublicSide { Attachment = new() { SideIndex = 0, From = 100, To = 600 } };
-        return module.With(c => c.Drawing = drawing with { PublicSides = [publicSide] });
+        return module.With(c => c.Drawing = drawing.With(edited => edited.PublicSides = [publicSide]));
     }
 
     private static int Count(string html, string cssClass) => ClassPattern(cssClass).Matches(html).Count;
@@ -110,7 +109,7 @@ public sealed partial class ReadOnlyViewTests
     public async Task ModuleViewWritesTheDesignationsOfTheStationTracks()
     {
         var station = Station().With(c => c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station { Name = "Tellby", Signature = "Tby" });
-        station = Tellurian.Trains.Drawing.Model.Tracks.StationTrackList.WithGeneratedTrackList(station);
+        station = StationTrackList.WithGeneratedTrackList(station);
         station = station.With(c => c.Tracks = [.. station.Tracks.Select(t => t.With(r => r.Designation = "1a"))]);
         var parameters = new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = station };
 

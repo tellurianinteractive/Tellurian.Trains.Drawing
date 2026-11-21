@@ -10,7 +10,7 @@ namespace Tellurian.Trains.Drawing.Model.HallPlans;
 /// <param name="ModuleId">The placed module.</param>
 /// <param name="Side">The side of the module the exit is on.</param>
 /// <param name="Number">The number of the exit among those on the side, from 1.</param>
-public sealed record ExitReference(Guid ModuleId, ExitDirection Side, int Number = 1) : ExtensibleRecord
+public sealed record ExitReference(Guid ModuleId, ExitSide Side, int Number = 1) : ExtensibleRecord
 {
     /// <summary>The exit of <paramref name="moduleId"/> at <paramref name="place"/>.</summary>
     public static ExitReference To(Guid moduleId, ExitPlace place)

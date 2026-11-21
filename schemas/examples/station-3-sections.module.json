@@ -5,20 +5,7 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "7319facd-c32d-468c-86f6-79a0ce6b0b36",
-      "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-      "addOns": [],
-      "numberOfThroughTracks": 1,
-      "hasNormalGauge": true,
-      "hasNarrowGauge": false,
-      "isDuckunder": false,
-      "isTurntable": false,
-      "isEndOfLine": false,
-      "isEndProfileSwitcher": false,
-      "isSignalModule": false,
-      "isStandAlone": false,
-      "revision": 0,
-      "revisionLog": [],
+      "id": "b55e46c8-0b3e-43aa-be34-275031c09426",
       "name": "Station",
       "prefix": "SFj\u00E4",
       "number": 12,
@@ -56,6 +43,19 @@
         "tracks": [],
         "timings": {}
       },
+      "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+      "addOns": [],
+      "numberOfThroughTracks": 1,
+      "hasNormalGauge": true,
+      "hasNarrowGauge": false,
+      "isDuckunder": false,
+      "isTurntable": false,
+      "isEndOfLine": false,
+      "isEndProfileSwitcher": false,
+      "isSignalModule": false,
+      "isStandAlone": false,
+      "revision": 0,
+      "revisionLog": [],
       "drawing": {
         "exits": [
           {
@@ -346,7 +346,7 @@
               ],
               "isClosed": false
             },
-            "id": "d3e8363b-acbe-451f-8b2e-02c6420b4d48",
+            "id": "1d4e3382-20cb-4706-8568-68104a713eb0",
             "isNarrowGauge": false,
             "isGenerated": true
           }

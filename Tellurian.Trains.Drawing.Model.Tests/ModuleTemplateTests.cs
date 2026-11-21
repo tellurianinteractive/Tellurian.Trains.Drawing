@@ -1,7 +1,5 @@
-using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
-using Tellurian.Trains.Drawing.Model.Measures;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
