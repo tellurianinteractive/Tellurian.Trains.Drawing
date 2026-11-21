@@ -5,7 +5,7 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "07cf39c2-8eec-46fc-8aae-0899ee6fdd15",
+      "id": "b86659c1-1dfc-4acc-a0e1-b7368dfb1a83",
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
@@ -27,22 +27,7 @@
           "shortName": "H0"
         }
       },
-      "tracks": [
-        {
-          "id": 1,
-          "designation": "1",
-          "displayOrder": 1,
-          "isScheduled": true,
-          "isMain": true,
-          "length": 1.2,
-          "isStub": false,
-          "platformLength": 0,
-          "isLockable": false,
-          "usage": "",
-          "direction": "Both",
-          "appliesInBothDirections": false
-        }
-      ],
+      "tracks": [],
       "drawing": {
         "exits": [
           {
@@ -200,8 +185,7 @@
               ],
               "isClosed": false
             },
-            "id": "ffd20849-8f81-436a-b6d6-8f09b4be65c7",
-            "stationTrackId": 1,
+            "id": "f191f40c-a39a-4dcf-be26-ccfcc684fa11",
             "isNarrowGauge": false,
             "isGenerated": true
           }

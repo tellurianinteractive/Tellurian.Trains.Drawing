@@ -4,10 +4,10 @@
   "schemaVersion": 2,
   "appVersion": "0.9.1",
   "content": {
-    "id": "3f5eea5e-849e-4627-a708-2a4a96ced615",
+    "id": "08ed9366-623a-404e-98a5-6a88a9ba1440",
     "name": "Club meeting",
     "hall": {
-      "id": "2f952ef5-bf03-4bd6-8b02-21241e5cfaf0",
+      "id": "74d8d843-3a8f-447a-81c8-cdb6bee10682",
       "name": "Club hall",
       "address": "Station Road 1",
       "outline": {
@@ -50,7 +50,7 @@
       "minimumAisleWidth": 1200,
       "obstacles": [
         {
-          "id": "2b5c4f99-5705-49af-aa0f-f605c0f7eeb8",
+          "id": 1,
           "kind": "Pillar",
           "area": {
             "start": {
@@ -80,7 +80,7 @@
           "label": "P1"
         },
         {
-          "id": "0bded085-77bd-4172-a111-a6c8f2b0e85a",
+          "id": 2,
           "kind": "Pillar",
           "area": {
             "start": {
@@ -121,7 +121,7 @@
           }
         },
         {
-          "id": "c1436d96-a1c5-4556-ac98-df429570619b",
+          "id": 3,
           "kind": "Furniture",
           "area": {
             "start": {
@@ -165,7 +165,7 @@
       ],
       "doors": [
         {
-          "id": "76733f69-3946-4ea8-b658-939e42ed60fa",
+          "id": 1,
           "kind": "Door",
           "position": {
             "x": 1500,
@@ -178,7 +178,7 @@
           "isModuleEntrance": true
         },
         {
-          "id": "088d943f-4534-49f6-aa15-8867f6ceb5fa",
+          "id": 2,
           "kind": "EmergencyExit",
           "position": {
             "x": 12000,
@@ -192,7 +192,7 @@
       ],
       "noGoZones": [
         {
-          "id": "8751030f-1036-42b5-ad40-4ecf00d2f254",
+          "id": 1,
           "area": {
             "start": {
               "x": 5600,
@@ -258,9 +258,9 @@
     },
     "layouts": [
       {
-        "id": "11ecacc1-91cf-4491-8aa5-db1d201cfa67",
+        "id": "69a6a52f-361d-4d8e-b784-f800fdc4d53a",
         "name": "Main",
-        "anchorModuleId": "db73c83a-d6ec-4113-88dc-be9d2ba739ac",
+        "anchorModuleId": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
         "anchorPose": {
           "x": 2000,
           "y": 2000,
@@ -282,45 +282,45 @@
           },
           "second": {
             "kind": "Obstacle",
-            "obstacleId": "2b5c4f99-5705-49af-aa0f-f605c0f7eeb8"
+            "obstacleId": 1
           },
           "angleWall": 0
         },
         "lines": [
           {
-            "id": "9bb3b59c-7a12-4e43-b446-48a8ec562d8f",
+            "id": "b2129532-d1b0-481e-b284-a0081059e6bc",
             "name": "Main line",
             "entries": [
               {
-                "moduleId": "db73c83a-d6ec-4113-88dc-be9d2ba739ac",
+                "moduleId": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
                 "isTurned": false,
                 "legAdjustment": 0
               },
               {
-                "moduleId": "ef115813-cc9b-4ba5-854b-b9d9e041b607",
+                "moduleId": "5e5f0554-6549-4a79-9b12-0f16fdde019d",
                 "isTurned": true,
                 "legAdjustment": 5,
                 "note": "Bends the other way"
               },
               {
-                "moduleId": "7e1074cf-26d0-4a6e-a286-be78f536153f",
+                "moduleId": "d888dee0-cc0c-4e7a-8606-008c5bc08626",
                 "isTurned": false,
                 "legAdjustment": 0
               }
             ]
           },
           {
-            "id": "be67e456-e7b1-4dc1-9c4b-5ac75a6cc492",
+            "id": "b6b1abc1-161f-461e-a00a-3169548e67a7",
             "name": "Branch",
             "entries": [
               {
-                "moduleId": "b86b109c-a789-4378-8f33-362d48343247",
+                "moduleId": "dcd20581-399a-49c3-b0e7-20a22ab94c45",
                 "isTurned": false,
                 "legAdjustment": 0
               }
             ],
             "startAt": {
-              "moduleId": "7e1074cf-26d0-4a6e-a286-be78f536153f",
+              "moduleId": "d888dee0-cc0c-4e7a-8606-008c5bc08626",
               "side": "Right",
               "number": 2
             }
@@ -331,12 +331,12 @@
     "joints": [
       {
         "first": {
-          "moduleId": "db73c83a-d6ec-4113-88dc-be9d2ba739ac",
+          "moduleId": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
           "side": "Right",
           "number": 1
         },
         "second": {
-          "moduleId": "ef115813-cc9b-4ba5-854b-b9d9e041b607",
+          "moduleId": "5e5f0554-6549-4a79-9b12-0f16fdde019d",
           "side": "Right",
           "number": 1
         },
@@ -347,7 +347,7 @@
     ],
     "publicAreas": [
       {
-        "id": "862a4ca2-b224-4e90-af0a-e40724793841",
+        "id": "8586d73c-2d63-4496-8369-cdd93fd00b57",
         "area": {
           "start": {
             "x": 4000,
@@ -390,7 +390,7 @@
     ],
     "walkingPaths": [
       {
-        "id": "045cbd2f-3642-46ac-9d2b-54c7260dc55e",
+        "id": "b59ecaeb-ec0d-41c1-8fae-666fa63305f1",
         "centreLine": {
           "start": {
             "x": 1000,
@@ -420,10 +420,10 @@
     ],
     "acknowledgements": [
       {
-        "id": "d2fa152a-a982-46cf-a9f2-2975bae62656",
+        "id": "33654f1a-23e4-47c2-a285-776d8c12dff6",
         "findingCode": "VA-11",
         "moduleIds": [
-          "7e1074cf-26d0-4a6e-a286-be78f536153f"
+          "d888dee0-cc0c-4e7a-8606-008c5bc08626"
         ],
         "fingerprint": "sample",
         "note": "Operator space overlaps the stage edge",
@@ -432,7 +432,7 @@
     ],
     "modules": [
       {
-        "id": "db73c83a-d6ec-4113-88dc-be9d2ba739ac",
+        "id": "2fbbc947-aa39-4746-a0b1-325d8c3aa3e6",
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
@@ -453,22 +453,7 @@
             "shortName": "H0"
           }
         },
-        "tracks": [
-          {
-            "id": 1,
-            "designation": "1",
-            "displayOrder": 1,
-            "isScheduled": true,
-            "isMain": true,
-            "length": 1.2,
-            "isStub": false,
-            "platformLength": 0,
-            "isLockable": false,
-            "usage": "",
-            "direction": "Both",
-            "appliesInBothDirections": false
-          }
-        ],
+        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -626,8 +611,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "eea09459-d181-4b05-8acb-bca906194731",
-              "stationTrackId": 1,
+              "id": "e77dd782-371d-4090-94c2-1a8cf0957950",
               "isNarrowGauge": false,
               "isGenerated": true
             }
@@ -673,7 +657,7 @@
         }
       },
       {
-        "id": "ef115813-cc9b-4ba5-854b-b9d9e041b607",
+        "id": "5e5f0554-6549-4a79-9b12-0f16fdde019d",
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
@@ -694,22 +678,7 @@
             "shortName": "H0"
           }
         },
-        "tracks": [
-          {
-            "id": 1,
-            "designation": "1",
-            "displayOrder": 1,
-            "isScheduled": true,
-            "isMain": true,
-            "length": 1.047,
-            "isStub": false,
-            "platformLength": 0,
-            "isLockable": false,
-            "usage": "",
-            "direction": "Both",
-            "appliesInBothDirections": false
-          }
-        ],
+        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -873,8 +842,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "6db486e8-e3cd-49af-97b2-0c18415b39d3",
-              "stationTrackId": 1,
+              "id": "528149d3-5c7f-4ec4-8da5-41f85f944ccc",
               "isNarrowGauge": false,
               "isGenerated": true
             }
@@ -922,7 +890,7 @@
         }
       },
       {
-        "id": "7e1074cf-26d0-4a6e-a286-be78f536153f",
+        "id": "d888dee0-cc0c-4e7a-8606-008c5bc08626",
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
@@ -943,22 +911,7 @@
             "shortName": "H0"
           }
         },
-        "tracks": [
-          {
-            "id": 1,
-            "designation": "1",
-            "displayOrder": 1,
-            "isScheduled": true,
-            "isMain": true,
-            "length": 1.5,
-            "isStub": false,
-            "platformLength": 0,
-            "isLockable": false,
-            "usage": "",
-            "direction": "Both",
-            "appliesInBothDirections": false
-          }
-        ],
+        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -1167,8 +1120,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "0016c76e-b2b5-4c48-a4ca-5b012a9a3102",
-              "stationTrackId": 1,
+              "id": "ceb6bc7c-bc05-45ce-a999-4ee7291123d9",
               "isNarrowGauge": false,
               "isGenerated": true
             }
@@ -1219,7 +1171,7 @@
         }
       },
       {
-        "id": "b86b109c-a789-4378-8f33-362d48343247",
+        "id": "dcd20581-399a-49c3-b0e7-20a22ab94c45",
         "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "numberOfThroughTracks": 2,
@@ -1241,36 +1193,7 @@
             "shortName": "H0"
           }
         },
-        "tracks": [
-          {
-            "id": 1,
-            "designation": "1",
-            "displayOrder": 1,
-            "isScheduled": true,
-            "isMain": true,
-            "length": 1.15,
-            "isStub": true,
-            "platformLength": 0,
-            "isLockable": false,
-            "usage": "",
-            "direction": "Both",
-            "appliesInBothDirections": false
-          },
-          {
-            "id": 2,
-            "designation": "2",
-            "displayOrder": 2,
-            "isScheduled": true,
-            "isMain": true,
-            "length": 1.15,
-            "isStub": true,
-            "platformLength": 0,
-            "isLockable": false,
-            "usage": "",
-            "direction": "Both",
-            "appliesInBothDirections": false
-          }
-        ],
+        "tracks": [],
         "drawing": {
           "exits": [
             {
@@ -1405,8 +1328,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "f4dedd23-e1a7-4134-88ec-41f205b4371b",
-              "stationTrackId": 1,
+              "id": "c4676207-b51d-4e81-84d2-c12f4c380947",
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1417,7 +1339,7 @@
                 "y": -25,
                 "heading": 180
               },
-              "id": "1972bae7-1eed-44cc-a657-07d24c72d98a",
+              "id": "998634d9-3403-4c43-b80b-aa152c5c15f6",
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1439,8 +1361,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "9af5148b-4ae0-474f-a8ee-b304a03c8e2d",
-              "stationTrackId": 2,
+              "id": "fab84fee-bbdd-44b7-9006-9ec9d416118c",
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1451,7 +1372,7 @@
                 "y": 25,
                 "heading": 180
               },
-              "id": "6efd5d17-4c16-420e-ba73-6b31edd194af",
+              "id": "19c09963-69ed-42fc-b8f6-2ad8e185cbd0",
               "isNarrowGauge": false,
               "isGenerated": true
             }

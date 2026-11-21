@@ -8,10 +8,10 @@ public sealed record HallElementReference : ExtensibleRecord
     /// <summary>For <see cref="HallElementKind.Wall"/>: the index of the wall in the hall outline.</summary>
     public int? WallIndex { get; init; }
 
-    /// <summary>For <see cref="HallElementKind.Obstacle"/>.</summary>
-    public Guid? ObstacleId { get; init; }
+    /// <summary>For <see cref="HallElementKind.Obstacle"/>: the obstacle's id in the plan's hall.</summary>
+    public int? ObstacleId { get; init; }
 
     public static HallElementReference Wall(int index) => new() { Kind = HallElementKind.Wall, WallIndex = index };
 
-    public static HallElementReference Obstacle(Guid id) => new() { Kind = HallElementKind.Obstacle, ObstacleId = id };
+    public static HallElementReference Obstacle(int id) => new() { Kind = HallElementKind.Obstacle, ObstacleId = id };
 }

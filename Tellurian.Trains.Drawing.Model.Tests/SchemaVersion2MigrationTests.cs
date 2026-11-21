@@ -380,8 +380,8 @@ public sealed class SchemaVersion2MigrationTests
         var hall = DrawingFileSerializer.DeserializeHall(file.ToJsonString());
 
         Assert.AreEqual((string)file["content"]!["name"]!, hall.Name);
-        CollectionAssert.Contains(hall.Obstacles.Select(o => o.Kind).ToArray(), Halls.ObstacleKind.Pillar);
-        CollectionAssert.Contains(hall.Doors.Select(d => d.Kind).ToArray(), Halls.DoorKind.EmergencyExit);
+        CollectionAssert.Contains(hall.Obstacles.Select(o => o.Kind).ToArray(), ObstacleKind.Pillar);
+        CollectionAssert.Contains(hall.Doors.Select(d => d.Kind).ToArray(), DoorKind.EmergencyExit);
         var written = DrawingFileSerializer.Serialize(hall);
         Assert.AreEqual(new DrawingFileHeader(DrawingFileKind.Hall, 2, ModuleDrawVersion.Current), DrawingFileSerializer.ReadHeader(written));
         StringAssert.Contains(written, "\"kind\": \"Hall\"");
@@ -514,6 +514,27 @@ public sealed class SchemaVersion2MigrationTests
         Assert.AreEqual((ExitPlace.Right, ExitPlace.Right), (plan.Joints[0].First.Place, plan.Joints[0].Second.Place));
         var written = DrawingFileSerializer.Serialize(plan);
         foreach (var old in new[] { "entryExit", "exitExit", "exitLabel", "variantId" }) Assert.DoesNotContain($"\"{old}\"", written);
+        Assert.AreEqual(written, DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeHallPlan(written)), "A version 2 plan is read as it is.");
+    }
+
+    [TestMethod]
+    public void HallPlanRefersToObstaclesByTheirNewNumbers()
+    {
+        var file = Version1(HallPlanFile);
+        var content = file["content"]!;
+        var dimensions = content["layouts"]![0]!["anchorDimensions"]!;
+        dimensions["first"] = new JsonObject { ["kind"] = "obstacle", ["obstacleId"] = Guid.NewGuid().ToString() };
+        dimensions["second"]!["obstacleId"] = (string)content["hall"]!["obstacles"]![1]!["id"]!;
+
+        var plan = DrawingFileSerializer.DeserializeHallPlan(file.ToJsonString());
+
+        CollectionAssert.AreEqual(new[] { 1, 2, 3 }, plan.Hall.Obstacles.Select(o => o.Id).ToArray());
+        CollectionAssert.AreEqual(new[] { 1, 2 }, plan.Hall.Doors.Select(d => d.Id).ToArray());
+        var anchor = plan.Layouts[0].AnchorDimensions!;
+        Assert.AreEqual(2, anchor.Second.ObstacleId);
+        Assert.AreSame(plan.Hall.Obstacles[1], plan.Hall.FindObstacle(anchor.Second.ObstacleId!.Value));
+        Assert.IsNull(anchor.First.ObstacleId, "A reference to an obstacle the hall doesn't have refers to none, as before.");
+        var written = DrawingFileSerializer.Serialize(plan);
         Assert.AreEqual(written, DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeHallPlan(written)), "A version 2 plan is read as it is.");
     }
 

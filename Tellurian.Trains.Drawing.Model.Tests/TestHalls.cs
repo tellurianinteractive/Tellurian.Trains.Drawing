@@ -2,7 +2,6 @@ using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
-using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -21,23 +20,17 @@ internal static class TestHalls
     private static readonly AutoDrawExit East = new() { Label = "E", Direction = ExitDirection.Right, EndProfile = SingleTrack };
 
     /// <summary>A 12 × 8 m hall with two pillars, a door, an emergency exit and a no-go zone.</summary>
-    public static Hall Club() => Hall.Rectangle("Club hall", Width, Depth) with
+    public static Hall Club() => Hall.Rectangle("Club hall", Width, Depth).With(hall =>
     {
-        Address = "Station Road 1",
-        MinimumAisleWidth = 1200,
-        Obstacles =
-        [
-            Obstacle.RoundPillar(new(4000, 4000), 400) with { Label = "P1" },
-            Obstacle.RectangularPillar(new(8000, 4000), 300, 500, new(15)),
-            new() { Kind = ObstacleKind.Furniture, Area = PathDrawing.Rectangle(new(11000, 7000), 2000, 1000, Angle.Zero), Label = "Stage" },
-        ],
-        Doors =
-        [
-            new() { Position = new(new(1500, 0), new(90)), Width = 1000, Label = "Entrance", IsModuleEntrance = true },
-            new() { Kind = DoorKind.EmergencyExit, Position = new(new(Width, 4000), new(180)), Width = 1200, KeepFreeDepth = 1500 },
-        ],
-        NoGoZones = [new() { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose cabinet" }],
-    };
+        hall.Address = "Station Road 1";
+        hall.MinimumAisleWidth = 1200;
+        hall.Add(Obstacle.RoundPillar(new(4000, 4000), 400).With(o => o.Label = "P1"));
+        hall.Add(Obstacle.RectangularPillar(new(8000, 4000), 300, 500, new(15)));
+        hall.Add(new Obstacle { Kind = ObstacleKind.Furniture, Area = PathDrawing.Rectangle(new(11000, 7000), 2000, 1000, Angle.Zero), Label = "Stage" });
+        hall.Add(new Door { Position = new(new(1500, 0), new(90)), Width = 1000, Label = "Entrance", IsModuleEntrance = true });
+        hall.Add(new Door { Kind = DoorKind.EmergencyExit, Position = new(new(Width, 4000), new(180)), Width = 1200, KeepFreeDepth = 1500 });
+        hall.Add(new NoGoZone { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose cabinet" });
+    });
 
     /// <summary>
     /// A plan with a main line (straight, flipped curve, junction) anchored at the straight, a branch from the

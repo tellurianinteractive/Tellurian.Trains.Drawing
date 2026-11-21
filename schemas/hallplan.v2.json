@@ -360,8 +360,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "kind": {
           "enum": [
@@ -748,10 +747,9 @@
         },
         "obstacleId": {
           "type": [
-            "string",
+            "integer",
             "null"
-          ],
-          "format": "uuid"
+          ]
         }
       },
       "required": [
@@ -1494,8 +1492,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "area": {
           "$ref": "#/$defs/PathDrawing"
@@ -1513,8 +1510,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "kind": {
           "enum": [

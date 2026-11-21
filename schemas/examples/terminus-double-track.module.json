@@ -5,7 +5,7 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "b2ceeab4-4c97-4601-8d3c-49434dbf6d34",
+      "id": "07bde25a-3b01-47b6-b1e0-c723d0421c8b",
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 2,
@@ -27,36 +27,7 @@
           "shortName": "H0"
         }
       },
-      "tracks": [
-        {
-          "id": 1,
-          "designation": "1",
-          "displayOrder": 1,
-          "isScheduled": true,
-          "isMain": true,
-          "length": 1.15,
-          "isStub": true,
-          "platformLength": 0,
-          "isLockable": false,
-          "usage": "",
-          "direction": "Both",
-          "appliesInBothDirections": false
-        },
-        {
-          "id": 2,
-          "designation": "2",
-          "displayOrder": 2,
-          "isScheduled": true,
-          "isMain": true,
-          "length": 1.15,
-          "isStub": true,
-          "platformLength": 0,
-          "isLockable": false,
-          "usage": "",
-          "direction": "Both",
-          "appliesInBothDirections": false
-        }
-      ],
+      "tracks": [],
       "drawing": {
         "exits": [
           {
@@ -191,8 +162,7 @@
               ],
               "isClosed": false
             },
-            "id": "015558a3-b4a2-42ce-8bb6-ef481bfa15e9",
-            "stationTrackId": 1,
+            "id": "9703464a-7f05-4d74-b32f-7f8aa86aa2e3",
             "isNarrowGauge": false,
             "isGenerated": true
           },
@@ -203,7 +173,7 @@
               "y": -25,
               "heading": 180
             },
-            "id": "dcce4828-1210-4767-9245-69ea01a2e3ec",
+            "id": "bc84a181-46b7-4b20-ad9f-ff0cab92baf7",
             "isNarrowGauge": false,
             "isGenerated": true
           },
@@ -225,8 +195,7 @@
               ],
               "isClosed": false
             },
-            "id": "0bfcc2f1-e8a7-42a9-b4eb-44076a9fb55c",
-            "stationTrackId": 2,
+            "id": "0c849d1d-b261-445f-9da3-bc85aa7216f3",
             "isNarrowGauge": false,
             "isGenerated": true
           },
@@ -237,7 +206,7 @@
               "y": 25,
               "heading": 180
             },
-            "id": "c01c6bea-293e-4b37-87bf-b530b3ca30fa",
+            "id": "c6f7237b-12f3-4d26-950b-69d621a23605",
             "isNarrowGauge": false,
             "isGenerated": true
           }

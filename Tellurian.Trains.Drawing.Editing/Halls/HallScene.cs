@@ -3,7 +3,6 @@ using Tellurian.Trains.Drawing.Editing.Snapping;
 using Tellurian.Trains.Drawing.Editing.Tools;
 using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.Halls;
 
 namespace Tellurian.Trains.Drawing.Editing.Halls;
 

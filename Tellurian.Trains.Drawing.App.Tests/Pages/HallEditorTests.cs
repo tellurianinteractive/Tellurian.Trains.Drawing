@@ -6,7 +6,6 @@ using Tellurian.Trains.Drawing.App.Editors;
 using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.Files;
-using Tellurian.Trains.Drawing.Model.Halls;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Pages;
 
@@ -48,7 +47,7 @@ public sealed class HallEditorTests
     public void DrawingPageShowsTheHallEditorWithDerivedMeasures()
     {
         using var context = new AppTestContext();
-        var page = RenderHall(context, Hall.Rectangle("Hall", 12000, 8000) with { Obstacles = [Obstacle.RoundPillar(new(4000, 4000), 400)] });
+        var page = RenderHall(context, Hall.Rectangle("Hall", 12000, 8000).With(h => h.Add(Obstacle.RoundPillar(new(4000, 4000), 400))));
 
         Assert.IsNotNull(page.FindComponent<HallEditor>());
         Assert.AreEqual("4", page.Find("#wall-count").TextContent);
@@ -91,7 +90,7 @@ public sealed class HallEditorTests
     public void DoorPositionIsShownAndTypedFromTheCorners()
     {
         using var context = new AppTestContext();
-        var hall = Hall.Rectangle("Hall", 12000, 8000) with { Doors = [new() { Position = new(new(3000, 0), new(90)), Width = 1000 }] };
+        var hall = Hall.Rectangle("Hall", 12000, 8000).With(h => h.Add(new Door { Position = new(new(3000, 0), new(90)), Width = 1000 }));
         var page = RenderHall(context, hall, selection: "Door:0");
         Assert.AreEqual(2, page.FindAll(".dimension").Count, "Dimension lines from the corners to the opening.");
 
@@ -120,7 +119,7 @@ public sealed class HallEditorTests
     public void HallHasAPrintSheetWithItsName()
     {
         using var context = new AppTestContext();
-        var page = RenderHall(context, Hall.Rectangle("Club hall", 12000, 8000) with { Address = "Station Road 1" });
+        var page = RenderHall(context, Hall.Rectangle("Club hall", 12000, 8000).With(h => h.Address = "Station Road 1"));
 
         var sheet = page.Find(".print-sheet svg.print-drawing");
         StringAssert.Contains(sheet.InnerHtml, ">Club hall</text>");
@@ -164,7 +163,7 @@ public sealed class HallEditorTests
     public void DoorCanBeMarkedAsModuleEntrance()
     {
         using var context = new AppTestContext();
-        var hall = Hall.Rectangle("Hall", 12000, 8000) with { Doors = [new() { Position = new(new(3000, 0), new(90)), Width = 1000, Label = "Gate" }] };
+        var hall = Hall.Rectangle("Hall", 12000, 8000).With(h => h.Add(new Door { Position = new(new(3000, 0), new(90)), Width = 1000, Label = "Gate" }));
         // The editor reopens with its stored selection (AP-7); a click on the canvas would need JS.
         var page = RenderHall(context, hall, selection: "Door:0");
         Assert.AreEqual("None marked", page.Find("#module-entrances").TextContent);

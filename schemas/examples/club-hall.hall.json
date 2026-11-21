@@ -4,7 +4,7 @@
   "schemaVersion": 2,
   "appVersion": "0.9.1",
   "content": {
-    "id": "abc3306e-8141-4c2a-9101-083874c0b046",
+    "id": "0576d3ec-460c-40d6-a23d-86e3e00cb5ba",
     "name": "Club hall",
     "address": "Station Road 1",
     "outline": {
@@ -47,7 +47,7 @@
     "minimumAisleWidth": 1200,
     "obstacles": [
       {
-        "id": "ccf2e34a-f4ae-444c-aa58-62c331d31988",
+        "id": 1,
         "kind": "Pillar",
         "area": {
           "start": {
@@ -77,7 +77,7 @@
         "label": "P1"
       },
       {
-        "id": "6aabc656-e65c-469a-a19e-461949c3fbf7",
+        "id": 2,
         "kind": "Pillar",
         "area": {
           "start": {
@@ -118,7 +118,7 @@
         }
       },
       {
-        "id": "237fde1d-7477-421f-810c-f73ea7a0ce99",
+        "id": 3,
         "kind": "Furniture",
         "area": {
           "start": {
@@ -162,7 +162,7 @@
     ],
     "doors": [
       {
-        "id": "ef71e3cf-707e-4d2f-9caf-48b0c262136d",
+        "id": 1,
         "kind": "Door",
         "position": {
           "x": 1500,
@@ -175,7 +175,7 @@
         "isModuleEntrance": true
       },
       {
-        "id": "6c498135-4f88-4c03-a7ec-3577c56253c0",
+        "id": 2,
         "kind": "EmergencyExit",
         "position": {
           "x": 12000,
@@ -189,7 +189,7 @@
     ],
     "noGoZones": [
       {
-        "id": "7603135e-839b-4d81-bd78-aa33fc4da232",
+        "id": 1,
         "area": {
           "start": {
             "x": 5600,

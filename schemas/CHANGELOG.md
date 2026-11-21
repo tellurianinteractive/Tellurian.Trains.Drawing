@@ -8,6 +8,15 @@ new version per file kind, and files of the older version are upgraded when they
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
 upgraded; files are written as version 2. See `docs/OperationLocationsTasks.md` for what is still to come in this version.
 
+### 2026-11-21 (the hall in the shared model)
+Halls are read and written by the Schedules packages `Importers.Drawing` and `Exporters.Drawing` (4.0.19); decision 10
+of `CrossAppReview.md` (an entity inside a document has an `int` id unique within it).
+- **Obstacles, doors and no-go zones have whole numbers as `id`**, unique among their kind in the hall, in place of
+  GUIDs. In hall files and in the hall embedded in a hall plan. Earlier files are numbered 1, 2 and so on in the order
+  of each list.
+- **A hall plan's `obstacleId`** (in the anchor dimensions, `first` and `second`) is the obstacle's new number.
+- Files in the earlier shape are still read, also version 2 files written by development builds.
+
 ### 2026-11-21 (catalogue, standards and gauges in the shared model)
 The catalogue, its standards and add-ons and the end profiles are read and written by the Schedules packages
 `Importers.Drawing` and `Exporters.Drawing` (4.0.16); decisions 11 to 13 of `CrossAppReview.md`.

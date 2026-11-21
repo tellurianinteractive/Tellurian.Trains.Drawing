@@ -3,7 +3,6 @@ using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
-using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
 using Shared = Tellurian.Trains.Schedules.Model.Layouts;

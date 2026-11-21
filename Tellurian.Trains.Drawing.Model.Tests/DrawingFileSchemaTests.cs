@@ -57,7 +57,7 @@ public sealed class DrawingFileSchemaTests
     public void HallFilesMatchTheSchema()
     {
         SchemaValidator.AssertValid(DrawingFileKind.Hall, DrawingFileSerializer.Serialize(TestHalls.Club()));
-        SchemaValidator.AssertValid(DrawingFileKind.Hall, DrawingFileSerializer.Serialize(Halls.Hall.Rectangle("Empty", 10000, 6000)));
+        SchemaValidator.AssertValid(DrawingFileKind.Hall, DrawingFileSerializer.Serialize(Hall.Rectangle("Empty", 10000, 6000)));
     }
 
     [TestMethod]

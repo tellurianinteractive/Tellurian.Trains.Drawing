@@ -5,7 +5,7 @@ namespace Tellurian.Trains.Drawing.Model.Files;
 /// <summary>The migration pipeline: older schema versions are upgraded step by step on load (spec §6).</summary>
 public static class DrawingFileMigrations
 {
-    /// <summary>All migrations of this library: from version 1 to 2 for every kind but halls, which are still at version 1.</summary>
+    /// <summary>All migrations of this library: from version 1 to 2 for every kind.</summary>
     public static IReadOnlyList<DrawingFileMigration> All { get; } = [.. SchemaVersion2.Migrations];
 
     /// <summary>

@@ -5,7 +5,7 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "871ee178-17bb-4f0b-b016-6a72794fc148",
+      "id": "7319facd-c32d-468c-86f6-79a0ce6b0b36",
       "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
@@ -53,22 +53,7 @@
         "isTerminus": false,
         "isHarbour": false,
         "isKeyRequired": false,
-        "tracks": [
-          {
-            "id": 1,
-            "designation": "1",
-            "displayOrder": 1,
-            "isScheduled": true,
-            "isMain": true,
-            "length": 3,
-            "isStub": false,
-            "platformLength": 0,
-            "isLockable": false,
-            "usage": "",
-            "direction": "Both",
-            "appliesInBothDirections": false
-          }
-        ],
+        "tracks": [],
         "timings": {}
       },
       "drawing": {
@@ -361,8 +346,7 @@
               ],
               "isClosed": false
             },
-            "id": "a1237e51-f330-4a15-9579-f07d7e0d6dbf",
-            "stationTrackId": 1,
+            "id": "d3e8363b-acbe-451f-8b2e-02c6420b4d48",
             "isNarrowGauge": false,
             "isGenerated": true
           }

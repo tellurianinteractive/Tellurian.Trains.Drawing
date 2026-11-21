@@ -58,7 +58,7 @@ public sealed class DrawingDocumentsTests
         var (_, json) = TestDrawings.Hall();
         var documents = Documents(new FakeFileService { FilesToOpen = [new("club.tdhall", json)] });
         var draft = (await documents.OpenAsync()).Drafts.Single();
-        var changed = await documents.UpdateAsync(draft, DrawingFileSerializer.Serialize(TestDrawings.ReadHall(json) with { Name = "Renamed" }));
+        var changed = await documents.UpdateAsync(draft, DrawingFileSerializer.Serialize(TestDrawings.ReadHall(json).With(h => h.Name = "Renamed")));
 
         var reopened = (await documents.OpenAsync()).Drafts.Single();
 
@@ -72,7 +72,7 @@ public sealed class DrawingDocumentsTests
         var (_, json) = TestDrawings.Hall();
         var documents = Documents(new FakeFileService { FilesToOpen = [new("club.tdhall", json)] });
         var draft = (await documents.OpenAsync()).Drafts.Single();
-        var hall = TestDrawings.ReadHall(json) with { Name = "Big hall" };
+        var hall = TestDrawings.ReadHall(json).With(h => h.Name = "Big hall");
         _time.Advance(TimeSpan.FromMinutes(5));
 
         var updated = await documents.UpdateAsync(draft, DrawingFileSerializer.Serialize(hall));

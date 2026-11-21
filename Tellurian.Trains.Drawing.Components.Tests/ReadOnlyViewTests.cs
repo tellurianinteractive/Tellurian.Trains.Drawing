@@ -5,7 +5,6 @@ using Tellurian.Trains.Drawing.Model;
 using Tellurian.Trains.Drawing.Model.AutoDraw;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.Files;
-using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Components.Tests;
@@ -241,16 +240,13 @@ public sealed partial class ReadOnlyViewTests
     [TestMethod]
     public async Task HallView()
     {
-        var hall = Hall.Rectangle("Club hall", 12000, 8000) with
+        var hall = Hall.Rectangle("Club hall", 12000, 8000).With(h =>
         {
-            Obstacles = [Obstacle.RoundPillar(new(4000, 4000), 400) with { Label = "P1" }],
-            Doors =
-            [
-                new() { Position = new(new(1500, 0), new(90)), Width = 1000, Kind = DoorKind.EmergencyExit },
-                new() { Position = new(new(6000, 0), new(90)), Width = 2000, IsModuleEntrance = true },
-            ],
-            NoGoZones = [new() { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose" }],
-        };
+            h.Add(Obstacle.RoundPillar(new(4000, 4000), 400).With(o => o.Label = "P1"));
+            h.Add(new Door { Position = new(new(1500, 0), new(90)), Width = 1000, Kind = DoorKind.EmergencyExit });
+            h.Add(new Door { Position = new(new(6000, 0), new(90)), Width = 2000, IsModuleEntrance = true });
+            h.Add(new NoGoZone { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose" });
+        });
         var html = await StaticRendering.RenderAsync<HallView>(new Dictionary<string, object?> { [nameof(Views.HallView.Json)] = DrawingFileSerializer.Serialize(hall) });
         Assert.AreEqual(1, Count(html, "hl-walls"));
         Assert.AreEqual(1, Count(html, "pillar"));

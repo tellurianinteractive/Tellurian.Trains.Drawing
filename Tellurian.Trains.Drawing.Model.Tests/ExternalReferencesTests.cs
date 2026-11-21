@@ -50,7 +50,7 @@ public sealed class ExternalReferencesTests
             ModuleJson(TestModules.Straight().With(c => c.ExternalReferences = references)),
             DrawingFileSerializer.Serialize(TestProfiles.FremoSingle().With(edited => { edited.ExternalReferences = references; })),
             DrawingFileSerializer.Serialize(TestCatalogue.Instance with { ExternalReferences = references }),
-            DrawingFileSerializer.Serialize(TestHalls.Club() with { ExternalReferences = references }),
+            DrawingFileSerializer.Serialize(TestHalls.Club().With(h => h.ExternalReferences = references)),
             DrawingFileSerializer.Serialize(TestHalls.Plan(TestCatalogue.Instance) with { ExternalReferences = references }),
         ];
         foreach (var json in files)

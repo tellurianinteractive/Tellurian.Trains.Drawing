@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
-using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.HallPlans;

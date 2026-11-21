@@ -34,8 +34,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "kind": {
           "enum": [
@@ -158,8 +157,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "area": {
           "$ref": "#/$defs/PathDrawing"
@@ -177,8 +175,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "kind": {
           "enum": [

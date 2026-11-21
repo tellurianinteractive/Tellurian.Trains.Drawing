@@ -57,6 +57,7 @@ internal static class SchemaVersion2
     private const string TracksWithEnteredLength = "tracksWithEnteredLength";
     private const string TracksWithEnteredStub = "tracksWithEnteredStub";
     private const string OwnerSeparator = ", ";
+    private const string ObstacleId = "obstacleId";
 
     private static readonly string Left = nameof(ExitDirection.Left);
     private static readonly string Right = nameof(ExitDirection.Right);
@@ -85,10 +86,15 @@ internal static class SchemaVersion2
             Each(content, EndProfiles, EndProfile);
             return content;
         }),
-        // A hall has the same shape in version 2. Its enum values are written as in the code, and read in either form.
-        new(DrawingFileKind.Hall, 1, content => content),
+        // The shared model reads hall files; this step is for tests that run every kind's migration.
+        new(DrawingFileKind.Hall, 1, content =>
+        {
+            Tellurian.Trains.Schedules.Importers.Drawing.DrawingMigrations.HallToVersion2(content);
+            return content;
+        }),
         new(DrawingFileKind.HallPlan, 1, content =>
         {
+            HallPlanHall(content);
             Each(content, "modules", Module);
             Each(content, EndProfiles, EndProfile);
             Each(content, Standards, Standard);
@@ -326,6 +332,28 @@ internal static class SchemaVersion2
                     }
                 });
             });
+        });
+    }
+
+    /// <summary>
+    /// The embedded hall is migrated as a hall file is: its obstacles, doors and no-go zones get whole numbers as ids.
+    /// The anchor dimensions that refer to an obstacle get its new id; a reference to an obstacle that isn't in the hall
+    /// is removed from the reference, which then refers to nothing, as before.
+    /// </summary>
+    private static void HallPlanHall(JsonNode content)
+    {
+        var ids = Tellurian.Trains.Schedules.Importers.Drawing.DrawingMigrations.HallToVersion2(Property(content, "hall"));
+        void Reference(JsonNode? node)
+        {
+            if (node is not JsonObject reference || reference[ObstacleId] is not JsonValue value || !value.TryGetValue<string>(out var id)) return;
+            if (ids.TryGetValue(id, out var number)) reference[ObstacleId] = number;
+            else reference.Remove(ObstacleId);
+        }
+        Each(content, "layouts", layout =>
+        {
+            var dimensions = Property(layout, "anchorDimensions");
+            Reference(Property(dimensions, "first"));
+            Reference(Property(dimensions, "second"));
         });
     }
 

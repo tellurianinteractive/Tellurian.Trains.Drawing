@@ -4,7 +4,6 @@ using System.Text.Json.Serialization.Metadata;
 using Tellurian.Trains.Drawing.Model.Catalogue;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
-using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Schedules.Exporters.Drawing;
 using Tellurian.Trains.Schedules.Exporters.Interfaces;
 using Tellurian.Trains.Schedules.Importers.Drawing;
@@ -37,8 +36,9 @@ public static class DrawingFileSerializer
     public static string Serialize(DrawingCatalogue catalogue, string? appVersion = null) =>
         new CatalogueExporter().Write(catalogue, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
+    /// <summary>The hall file of <paramref name="hall"/>, written by the shared <see cref="HallExporter"/>.</summary>
     public static string Serialize(Hall hall, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.Hall, hall, appVersion), Context.DrawingFileHall);
+        new HallExporter().Write(hall, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     public static string Serialize(HallPlan hallPlan, string? appVersion = null) =>
         JsonSerializer.Serialize(Envelope(DrawingFileKind.HallPlan, hallPlan, appVersion), Context.DrawingFileHallPlan);
@@ -78,10 +78,15 @@ public static class DrawingFileSerializer
     }
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall file.</exception>
-    public static Hall DeserializeHall(string json) => Read(Parse(json), DrawingFileKind.Hall, Context.DrawingFileHall);
+    public static Hall DeserializeHall(string json) => Imported(new HallImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall file.</exception>
-    public static Hall DeserializeHall(Stream stream) => Read(Parse(stream), DrawingFileKind.Hall, Context.DrawingFileHall);
+    public static Hall DeserializeHall(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeHall(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall plan file.</exception>
     public static HallPlan DeserializeHallPlan(string json) => Read(Parse(json), DrawingFileKind.HallPlan, Context.DrawingFileHallPlan);
