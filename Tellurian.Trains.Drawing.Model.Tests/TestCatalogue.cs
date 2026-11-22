@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -15,7 +15,7 @@ internal static class TestCatalogue
     public static readonly EndProfile FremoDoubleWide = TestProfiles.Double(55).With(edited => { edited.Id = Guid.Parse("20000000-0000-0000-0000-000000000003"); edited.Designation = "TEST-2-55"; });
     public static readonly EndProfile Mmm480 = TestProfiles.MmmSingle().With(edited => { edited.Id = Guid.Parse("20000000-0000-0000-0000-000000000004"); edited.Designation = "MMM480"; });
 
-    public static readonly DrawingCatalogue Instance = new()
+    public static readonly Catalogue Instance = new()
     {
         Scales = [new() { ShortName = "H0", Denominator = 87 }],
         Standards =

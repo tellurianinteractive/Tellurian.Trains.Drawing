@@ -20,7 +20,7 @@
       ]
     },
     "content": {
-      "$ref": "#/$defs/DrawingCatalogue"
+      "$ref": "#/$defs/Catalogue"
     }
   },
   "required": [
@@ -30,6 +30,53 @@
     "content"
   ],
   "$defs": {
+    "Catalogue": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scales": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SharedScale"
+          }
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SharedModuleStandard"
+          }
+        },
+        "addOns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StandardAddOn"
+          }
+        },
+        "endProfiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfile"
+          }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileCompatibilityOverride"
+          }
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
     "CatalogueReference": {
       "type": "object",
       "properties": {
@@ -79,53 +126,6 @@
         "revision": {
           "type": [
             "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "DrawingCatalogue": {
-      "type": "object",
-      "properties": {
-        "version": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "scales": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SharedScale"
-          }
-        },
-        "standards": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SharedModuleStandard"
-          }
-        },
-        "addOns": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/StandardAddOn"
-          }
-        },
-        "endProfiles": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/EndProfile"
-          }
-        },
-        "overrides": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/EndProfileCompatibilityOverride"
-          }
-        },
-        "externalReferences": {
-          "type": [
-            "object",
             "null"
           ]
         }

@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Fakes;
@@ -13,7 +13,7 @@ internal static class TestDrawings
     }
 
     public static string EndProfile() =>
-        DrawingFileSerializer.Serialize(BuiltInCatalogue.Instance.EndProfiles[0]);
+        DrawingFileSerializer.Serialize(SampleCatalogue.Instance.EndProfiles[0]);
 
     public static Hall ReadHall(string json) => DrawingFileSerializer.DeserializeHall(json);
 }

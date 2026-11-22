@@ -37,7 +37,7 @@ public static class DrawingFileSchema
         {
             DrawingFileKind.EndProfile => context.DrawingFileEndProfile,
             DrawingFileKind.Module => context.DrawingFileModuleFileContent,
-            DrawingFileKind.Catalogue => context.DrawingFileDrawingCatalogue,
+            DrawingFileKind.Catalogue => context.DrawingFileCatalogue,
             DrawingFileKind.Hall => context.DrawingFileHall,
             DrawingFileKind.HallPlan => context.DrawingFileHallPlan,
             _ => throw new NotSupportedException($"There is no schema for {kind} files."),

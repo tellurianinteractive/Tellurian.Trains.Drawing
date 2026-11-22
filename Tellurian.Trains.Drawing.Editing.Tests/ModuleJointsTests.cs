@@ -1,5 +1,5 @@
 using Tellurian.Trains.Drawing.Editing.Modules;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
 
@@ -16,7 +16,7 @@ public sealed class ModuleJointsTests
 
     private static ModuleFileContent Straight()
     {
-        var catalogue = BuiltInCatalogue.Instance;
+        var catalogue = SampleCatalogue.Instance;
         var module = ModuleAutoDraw.Create(new() { Name = "Straight", Standard = "FREMO/H0-RE", Straight = Length, Exits = [West, East] }, catalogue).Module!;
         return ModuleFileContent.Create(module, catalogue.FindEndProfile);
     }
@@ -24,7 +24,7 @@ public sealed class ModuleJointsTests
     /// <summary>A curve of 30° with radius 2000 mm, after 300 mm of straight track.</summary>
     private static ModuleFileContent Curve()
     {
-        var catalogue = BuiltInCatalogue.Instance;
+        var catalogue = SampleCatalogue.Instance;
         var module = ModuleAutoDraw.Create(new() { Name = "Curve", Standard = "FREMO/H0-RE", Straight = 300, Radius = 2000, Angle = 30, Exits = [West, East] }, catalogue).Module!;
         return ModuleFileContent.Create(module, catalogue.FindEndProfile);
     }

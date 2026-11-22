@@ -1,63 +1,55 @@
 using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Settings;
 using Tellurian.Trains.Drawing.App.Storage;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 
-namespace Tellurian.Trains.Drawing.App.Catalogue;
+namespace Tellurian.Trains.Drawing.App.Catalogues;
 
 /// <summary>
-/// The catalogue to work with (CA-1, CA-2): the built-in catalogue with the user's own entries layered
-/// on top. The user's part is kept in the workbench as a catalogue file, and can be exported and imported (CA-3).
+/// The user's catalogue (CA-2): the standards, add-ons, end profiles and overrides the user has imported or made. The
+/// app has no catalogue of its own (survey step 7); a new user imports a catalogue file (CA-3), and later one from the
+/// Module Registry (CA-5). It is kept in the workbench as a catalogue file, and can be exported.
 /// </summary>
 public sealed class CatalogueService(IWorkbench workbench, IFileService files, SettingsService settings)
 {
     public const string UserCatalogueKey = "user-catalogue";
     public const string ExportFileName = "my-catalogue.catalogue.json";
 
-    private DrawingCatalogue? _user;
-
-    public static DrawingCatalogue BuiltIn => BuiltInCatalogue.Instance;
+    private Catalogue? _user;
 
     /// <summary>Raised after the user's part of the catalogue has been saved.</summary>
     public event Action? Changed;
 
-    /// <summary>The built-in and user entries merged; a user entry replaces a built-in one with the same id.</summary>
-    public async Task<DrawingCatalogue> GetAsync(CancellationToken cancellationToken = default) =>
-        DrawingCatalogue.Merge(BuiltIn, await GetUserAsync(cancellationToken));
+    /// <summary>The catalogue to work with: the user's.</summary>
+    public Task<Catalogue> GetAsync(CancellationToken cancellationToken = default) => GetUserAsync(cancellationToken);
 
     /// <summary>
     /// The entries to choose from: <see cref="GetAsync"/> limited to the country (CA-6) and the scale (AP-9) in the
     /// settings. Drawings are still read with the whole catalogue.
     /// </summary>
-    public async Task<DrawingCatalogue> GetForChoicesAsync(CancellationToken cancellationToken = default) =>
+    public async Task<Catalogue> GetForChoicesAsync(CancellationToken cancellationToken = default) =>
         (await GetAsync(cancellationToken)).ForChoices(await settings.CountryCodeAsync(cancellationToken), await settings.ScaleAsync(cancellationToken));
 
-    public async Task<DrawingCatalogue> GetUserAsync(CancellationToken cancellationToken = default)
+    public async Task<Catalogue> GetUserAsync(CancellationToken cancellationToken = default)
     {
         if (_user is not null) return _user;
         var json = await workbench.GetValueAsync(UserCatalogueKey, cancellationToken);
-        _user = json is null ? DrawingCatalogue.Empty : DrawingFileSerializer.DeserializeCatalogue(json);
+        _user = json is null ? Catalogue.Empty : DrawingFileSerializer.DeserializeCatalogue(json);
         return _user;
     }
 
-    public async Task SaveUserAsync(DrawingCatalogue user, CancellationToken cancellationToken = default)
+    public async Task SaveUserAsync(Catalogue user, CancellationToken cancellationToken = default)
     {
         await workbench.SetValueAsync(UserCatalogueKey, DrawingFileSerializer.Serialize(user), cancellationToken);
         _user = user;
         Changed?.Invoke();
     }
 
-    /// <summary>Where an entry comes from: built in, the user's own, or the user's replacement of a built-in entry.</summary>
-    public static CatalogueOrigin Origin(bool isBuiltIn, bool isUser) =>
-        (isBuiltIn, isUser) switch
-        {
-            (true, true) => CatalogueOrigin.ReplacesBuiltIn,
-            (false, true) => CatalogueOrigin.User,
-            _ => CatalogueOrigin.BuiltIn,
-        };
-
-    /// <summary>Lets the user pick files, a ZIP archive or a folder, and compares the end profiles in them with the catalogue (UC-2).</summary>
+    /// <summary>
+    /// Lets the user pick files, a ZIP archive or a folder, and compares the end profiles in them with the catalogue
+    /// (UC-2); a catalogue file's other entries come along (CA-3).
+    /// </summary>
     public async Task<CatalogueImportPreview?> PickImportAsync(ImportSourceKind source, CancellationToken cancellationToken = default)
     {
         DrawingImportResult? result;
@@ -80,12 +72,22 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
         }
         if (result is null) return null;
         var (profiles, problems) = EndProfileImport.Read(result.Files);
-        return new(EndProfileImport.Compare(profiles, await GetAsync(cancellationToken)), [.. result.Problems, .. problems], result.Skipped);
+        return new(EndProfileImport.Compare(profiles, await GetAsync(cancellationToken)), [.. result.Problems, .. problems], result.Skipped, EndProfileImport.Entries(result.Files));
     }
 
-    /// <summary>Adds the chosen imported end profiles to the user's catalogue.</summary>
-    public async Task ApplyImportAsync(IEnumerable<EndProfileImportItem> chosen, CancellationToken cancellationToken = default) =>
-        await SaveUserAsync(EndProfileImport.Apply(await GetUserAsync(cancellationToken), chosen), cancellationToken);
+    /// <summary>
+    /// Takes the imported catalogue entries and the chosen end profiles into the user's catalogue; an entry with the id
+    /// of one of the user's replaces it.
+    /// </summary>
+    public async Task ApplyImportAsync(IEnumerable<EndProfileImportItem> chosen, Catalogue? entries = null, CancellationToken cancellationToken = default) =>
+        await SaveUserAsync(EndProfileImport.Apply(await GetUserAsync(cancellationToken), entries ?? Catalogue.Empty, chosen), cancellationToken);
+
+    /// <summary>Adds end profiles to the user's catalogue, e.g. those a module embeds and the catalogue lacks; one with a known id replaces it.</summary>
+    public async Task AddEndProfilesAsync(IEnumerable<EndProfile> profiles, CancellationToken cancellationToken = default)
+    {
+        var user = await GetUserAsync(cancellationToken);
+        await SaveUserAsync(profiles.Aggregate(user, (catalogue, profile) => catalogue.With(profile)), cancellationToken);
+    }
 
     /// <summary>Copies an end profile as a new user profile (CA-2) and returns the copy.</summary>
     public async Task<EndProfile> CopyEndProfileAsync(Guid id, string designation, CancellationToken cancellationToken = default)
@@ -101,14 +103,14 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
     public async Task SaveEndProfileAsync(EndProfile profile, CancellationToken cancellationToken = default) =>
         await SaveUserAsync((await GetUserAsync(cancellationToken)).With(profile), cancellationToken);
 
-    /// <summary>Removes a user end profile; a replaced built-in profile becomes visible again.</summary>
+    /// <summary>Removes an end profile from the user's catalogue.</summary>
     public async Task DeleteEndProfileAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var user = await GetUserAsync(cancellationToken);
         await SaveUserAsync(user with { EndProfiles = [.. user.EndProfiles.Where(p => p.Id != id)] }, cancellationToken);
     }
 
-    /// <summary>Saves a standard as a user entry, replacing a built-in one with the same id; returns the problems if it isn't valid.</summary>
+    /// <summary>Saves a standard in the user's catalogue, replacing one with the same id; returns the problems if it isn't valid.</summary>
     public async Task<IReadOnlyList<CatalogueProblem>> SaveStandardAsync(ModuleStandard standard, CancellationToken cancellationToken = default)
     {
         var problems = CatalogueValidation.Validate(standard, await GetAsync(cancellationToken));
@@ -131,7 +133,7 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
         return problems;
     }
 
-    /// <summary>Removes a user standard; a replaced built-in standard becomes visible again.</summary>
+    /// <summary>Removes a standard from the user's catalogue.</summary>
     public async Task DeleteStandardAsync(Guid id, CancellationToken cancellationToken = default) =>
         await SaveUserAsync((await GetUserAsync(cancellationToken)).WithoutStandard(id), cancellationToken);
 
@@ -141,12 +143,12 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
     public async Task DeleteOverrideAsync(EndProfileCompatibilityOverride entry, CancellationToken cancellationToken = default) =>
         await SaveUserAsync((await GetUserAsync(cancellationToken)).WithoutOverride(entry), cancellationToken);
 
-    /// <summary>Saves the user's part of the catalogue as a file (CA-3); null if the user cancelled.</summary>
+    /// <summary>Saves the user's catalogue as a file (CA-3); null if the user cancelled.</summary>
     public async Task<SavedFile?> ExportAsync(CancellationToken cancellationToken = default) =>
         await files.SaveAsync(DrawingFileSerializer.Serialize(await GetUserAsync(cancellationToken)), ExportFileName, handleId: null, saveAs: true, cancellationToken);
 
     /// <summary>A name for a copy that isn't used by another end profile of the same scale.</summary>
-    public static string CopyName(string designation, string scale, DrawingCatalogue catalogue, string suffix)
+    public static string CopyName(string designation, string scale, Catalogue catalogue, string suffix)
     {
         var name = $"{designation} {suffix}";
         for (var n = 2; catalogue.FindEndProfile(name, scale) is not null; n++) name = $"{designation} {suffix} {n}";

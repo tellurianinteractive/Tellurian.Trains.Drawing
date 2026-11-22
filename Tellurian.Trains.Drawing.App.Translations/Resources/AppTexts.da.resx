@@ -85,7 +85,9 @@
   <data name="MustBePositive" xml:space="preserve"><value>{0} skal være større end 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} skal være større end 0 og højst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tilføjelser og endeprofiler. De indbyggede poster følger med appen; dine egne poster gemmes i denne browser og kan eksporteres som en fil.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tilføjelser og endeprofiler. Dit katalog gemmes i denne browser: importér katalogfiler for at fylde det, tilføj dine egne poster, og eksportér det som en fil.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Dit katalog er tomt. Importér en katalogfil (.catalogue.json) med Importér filer, fx fra din klub eller din standard, for at få standarder og endeprofiler.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>Filerne har også {0} standarder, {1} tilføjelser og {2} kompatibilitetsundtagelser. De tilføjes sammen med de endeprofiler, du vælger; en post med id'et for en post i dit katalog erstatter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importér filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importér ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importér mappe…</value></data>
@@ -115,17 +117,11 @@
   <data name="Scale" xml:space="preserve"><value>Skala</value></data>
   <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
   <data name="Tracks" xml:space="preserve"><value>Spor</value></data>
-  <data name="Origin" xml:space="preserve"><value>Oprindelse</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Indbygget</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, erstatter indbygget</value></data>
   <data name="Copy" xml:space="preserve"><value>Kopiér</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>kopi</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopieret som {0}.</value></data>
   <data name="Delete" xml:space="preserve"><value>Slet</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Gendan indbygget</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>Slet {0} fra dit katalog?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Fjern din version af {0} og brug den indbyggede igen?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Sporvidde (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>Skinneoverkant (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Tilføjelser</value></data>
@@ -142,7 +138,6 @@
   <data name="Overrides" xml:space="preserve"><value>Undtagelser for pasning</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>Der er ingen undtagelser. Samlinger vurderes kun efter reglerne.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>En undtagelse erstatter reglernes resultat for et par endeprofiler, for kendte særtilfælde. Brug den kun, hvor reglerne giver forkert svar.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>Denne post er indbygget. Når du gemmer, oprettes din egen version, som erstatter den indbyggede, indtil du gendanner den.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>Katalogposten findes ikke.</value></data>
   <data name="None" xml:space="preserve"><value>(ingen)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Toskinne</value></data>
@@ -259,8 +254,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Klik hvor et spor skal ligge; dets skinneoverkant ligger altid på referencelinjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klik for at markere, træk for at flytte (Skift: lige, Alt: uden fastgørelse), Delete for at slette. Set udefra modulet.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Gem i mit katalog</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} er gemt i dit katalog.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>Gemt i dit katalog: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Opdateret fra dit katalog: {0}. Gem modulet for at beholde ændringen i dets fil.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>Endeprofiler i dette modul, som ikke er i dit katalog: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Redigér</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Redigér</value></data>

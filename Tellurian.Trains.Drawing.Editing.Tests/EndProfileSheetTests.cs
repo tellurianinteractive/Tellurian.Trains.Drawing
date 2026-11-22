@@ -1,6 +1,6 @@
 using Tellurian.Trains.Drawing.Editing.EndProfiles;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Editing.Tests;
@@ -8,7 +8,7 @@ namespace Tellurian.Trains.Drawing.Editing.Tests;
 [TestClass]
 public sealed class EndProfileSheetTests
 {
-    private static EndProfile B96() => BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!;
+    private static EndProfile B96() => SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!;
 
     private static SheetLayout Sheet(EndProfile profile) =>
         EndProfileSheet.Create(profile, MeasureFrame.For(profile, MeasureOrigin.PlateLowerLeft), details: true);

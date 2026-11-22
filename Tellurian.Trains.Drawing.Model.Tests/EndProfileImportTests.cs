@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 
@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 [TestClass]
 public sealed class EndProfileImportTests
 {
-    private static DrawingCatalogue Catalogue => TestCatalogue.Instance;
+    private static Catalogue Catalogue => TestCatalogue.Instance;
 
     private static EndProfileImportItem CompareOne(EndProfile profile) => EndProfileImport.Compare([profile], Catalogue).Single();
 
@@ -54,18 +54,18 @@ public sealed class EndProfileImportTests
         var imported = TestCatalogue.FremoSingle.With(edited => { edited.Id = Guid.NewGuid(); edited.ExternalReferences = TestReferences.Registry("""{ "endProfileId": 42 }"""); });
         var item = CompareOne(imported);
 
-        var user = EndProfileImport.Apply(DrawingCatalogue.Empty, [item]);
+        var user = EndProfileImport.Apply(Catalogue.Empty, [item]);
 
         var stored = user.EndProfiles.Single();
         Assert.AreEqual(TestCatalogue.FremoSingle.Id, stored.Id);
         Assert.IsTrue(Files.ExternalReferences.Same(imported.ExternalReferences, stored.ExternalReferences));
-        Assert.IsTrue(Files.ExternalReferences.Same(imported.ExternalReferences, DrawingCatalogue.Merge(Catalogue, user).FindEndProfile(TestCatalogue.FremoSingle.Id)!.ExternalReferences));
+        Assert.IsTrue(Files.ExternalReferences.Same(imported.ExternalReferences, Catalogue.Merge(Catalogue, user).FindEndProfile(TestCatalogue.FremoSingle.Id)!.ExternalReferences));
     }
 
     [TestMethod]
     public void UnchangedProfilesAreNotAdded()
     {
-        var user = EndProfileImport.Apply(DrawingCatalogue.Empty, [CompareOne(TestCatalogue.FremoSingle)]);
+        var user = EndProfileImport.Apply(Catalogue.Empty, [CompareOne(TestCatalogue.FremoSingle)]);
         Assert.IsEmpty(user.EndProfiles);
     }
 
@@ -73,7 +73,7 @@ public sealed class EndProfileImportTests
     public void NewProfileIsAddedAndReplacesAnEarlierUserCopy()
     {
         var profile = TestProfiles.FremoSingle().With(edited => { edited.Designation = "NEW-1"; });
-        var user = EndProfileImport.Apply(DrawingCatalogue.Empty, [CompareOne(profile)]);
+        var user = EndProfileImport.Apply(Catalogue.Empty, [CompareOne(profile)]);
         var again = EndProfileImport.Apply(user, [CompareOne(profile.With(edited => { edited.Revision = 2; }))]);
         Assert.AreEqual(2, again.EndProfiles.Single().Revision);
     }
@@ -84,7 +84,7 @@ public sealed class EndProfileImportTests
         var files = DrawingImport.FromFiles(
         [
             ImportSource.FromText("p.tdendprofile", DrawingFileSerializer.Serialize(TestCatalogue.Mmm480)),
-            ImportSource.FromText("c.tdcatalogue", DrawingFileSerializer.Serialize(DrawingCatalogue.Empty with { EndProfiles = [TestCatalogue.FremoDouble] })),
+            ImportSource.FromText("c.tdcatalogue", DrawingFileSerializer.Serialize(Catalogue.Empty with { EndProfiles = [TestCatalogue.FremoDouble] })),
             ImportSource.FromText("m.tdmodule", DrawingFileSerializer.Serialize(ModuleFileContent.Create(TestModules.Straight(), TestCatalogue.Lookup))),
         ], EndProfileImport.Kinds);
 

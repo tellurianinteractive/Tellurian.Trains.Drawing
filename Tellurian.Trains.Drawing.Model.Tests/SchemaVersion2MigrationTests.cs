@@ -590,9 +590,9 @@ public sealed class SchemaVersion2MigrationTests
     }
 
     [TestMethod]
-    public void TheBuiltInCatalogueIsAVersion2File()
+    public void TheSampleCatalogueIsAVersion2File()
     {
-        using var stream = typeof(DrawingFileSerializer).Assembly.GetManifestResourceStream("Tellurian.Trains.Drawing.Model.BuiltInCatalogue.catalogue.json")!;
+        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(SampleCatalogue.Json));
         Assert.AreEqual(DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.Catalogue), DrawingFileSerializer.ReadHeader(stream).SchemaVersion);
     }
 }

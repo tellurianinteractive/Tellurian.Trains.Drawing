@@ -5,7 +5,7 @@ using Tellurian.Trains.Drawing.App.Layout;
 using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Translations;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Layout;
@@ -61,7 +61,7 @@ public sealed class HelpTests
     public void EveryEndProfileEditorPaneHasItsOwnHelp()
     {
         using var context = new AppTestContext();
-        var profile = BuiltInCatalogue.Instance.EndProfiles[0].Copy("HELP-ME");
+        var profile = SampleCatalogue.Instance.EndProfiles[0].Copy("HELP-ME");
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
         page.WaitForElement("#symmetry");

@@ -1,12 +1,12 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Editors;
 using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.App.Storage;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Pages;
@@ -46,7 +46,7 @@ public sealed class EndProfileEditorTests
     public void DrawingPageShowsTheEditorWithDerivedProperties()
     {
         using var context = new AppTestContext();
-        var profile = BuiltInCatalogue.Instance.EndProfiles[0].Copy("EDIT-ME");
+        var profile = SampleCatalogue.Instance.EndProfiles[0].Copy("EDIT-ME");
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
 
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
@@ -61,7 +61,7 @@ public sealed class EndProfileEditorTests
     public void MirrorScrewHolesIsUndoable()
     {
         using var context = new AppTestContext();
-        var source = BuiltInCatalogue.Instance.EndProfiles[0];
+        var source = SampleCatalogue.Instance.EndProfiles[0];
         var profile = source.Copy("ONE-SIDED").With(edited => { edited.ScrewHoles = [.. source.ScrewHoles.Where(h => h.Center.X < -1)]; });
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
@@ -78,7 +78,7 @@ public sealed class EndProfileEditorTests
     public async Task SaveToCatalogueStoresTheProfile()
     {
         using var context = new AppTestContext();
-        var profile = BuiltInCatalogue.Instance.EndProfiles[0].Copy("TO-CATALOGUE");
+        var profile = SampleCatalogue.Instance.EndProfiles[0].Copy("TO-CATALOGUE");
         var draft = await context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile));
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
         page.WaitForElement("#save-to-catalogue").Click();
@@ -92,7 +92,7 @@ public sealed class EndProfileEditorTests
     {
         using var context = new AppTestContext();
         var documents = context.Services.GetRequiredService<DrawingDocuments>();
-        var json = DrawingFileSerializer.Serialize(BuiltInCatalogue.Instance.EndProfiles[0].Copy("MINE"));
+        var json = DrawingFileSerializer.Serialize(SampleCatalogue.Instance.EndProfiles[0].Copy("MINE"));
 
         var first = await documents.EditAsync(json);
         Assert.IsFalse(first.HasUnsavedChanges);
@@ -109,7 +109,7 @@ public sealed class EndProfileEditorTests
     {
         using var context = new AppTestContext();
         var documents = context.Services.GetRequiredService<DrawingDocuments>();
-        var json = DrawingFileSerializer.Serialize(BuiltInCatalogue.Instance.EndProfiles[0].Copy("SAVED"));
+        var json = DrawingFileSerializer.Serialize(SampleCatalogue.Instance.EndProfiles[0].Copy("SAVED"));
         var stale = await documents.CreateAsync(json);
         context.Files.SaveAsName = "saved.tdendprofile";
         await documents.SaveAsync(stale.Id, saveAs: true);
@@ -123,7 +123,7 @@ public sealed class EndProfileEditorTests
     public void MeasuresFollowTheChosenOrigin()
     {
         using var context = new AppTestContext();
-        var profile = BuiltInCatalogue.Instance.EndProfiles[0].Copy("ORIGIN");
+        var profile = SampleCatalogue.Instance.EndProfiles[0].Copy("ORIGIN");
         var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile)).Result;
         var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
         page.WaitForElement("#measure-origin");

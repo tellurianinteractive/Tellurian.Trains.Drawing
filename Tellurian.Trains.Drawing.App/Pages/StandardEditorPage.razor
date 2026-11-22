@@ -1,18 +1,14 @@
 @page "/catalogue/standard/new"
 @page "/catalogue/standard/{Id:guid}"
-@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
 @using Tellurian.Trains.Drawing.Model
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @inject CatalogueService Catalogues
 @inject NavigationManager Navigation
 
 <PageTitle>@Title</PageTitle>
 
 <h1>@Title</h1>
-@if (isBuiltIn)
-{
-    <p class="note">@T["EditBuiltInNote"]</p>
-}
 
 @if (message is not null)
 {
@@ -25,7 +21,7 @@
         <label>
             <span>@T["Field_Scale"]</span>
             <select id="scale" @bind="form.Scale">
-                @foreach (var scale in catalogue.Scales)
+                @foreach (var scale in ScaleChoices.Of(catalogue))
                 {
                     <option value="@scale.ShortName">@scale</option>
                 }
@@ -94,9 +90,11 @@
 @code {
     [Parameter] public Guid? Id { get; set; }
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
+
+    /// <summary>The scale of a new standard when the catalogue has none: H0, the most common.</summary>
+    private const string DefaultScale = "H0";
     private ModuleStandard? original;
-    private bool isBuiltIn;
     private Form form = new();
     private IReadOnlyList<CatalogueProblem> problems = [];
     private string? message;
@@ -119,8 +117,7 @@
                 catalogue = null;
                 return;
             }
-            isBuiltIn = Id is { } builtInId && CatalogueService.BuiltIn.FindStandard(builtInId) is not null && user.FindStandard(builtInId) is null;
-            form = original is null ? new() { Scale = catalogue.Scales.FirstOrDefault()?.ShortName ?? string.Empty } : Form.From(original);
+            form = original is null ? new() { Scale = catalogue.Scales.FirstOrDefault()?.ShortName ?? DefaultScale } : Form.From(original);
         }
         catch (StorageException ex)
         {

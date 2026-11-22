@@ -14,4 +14,11 @@
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The sample catalogue for tests (TestData/SampleCatalogue.cs): the app has no built-in catalogue. -->
+    <Compile Include="..\TestData\SampleCatalogue.cs" Link="TestData\SampleCatalogue.cs" />
+    <EmbeddedResource Include="..\TestData\sample.catalogue.json" LogicalName="sample.catalogue.json" />
+    <Using Include="Tellurian.Trains.Drawing.TestData" />
+  </ItemGroup>
+
 </Project>

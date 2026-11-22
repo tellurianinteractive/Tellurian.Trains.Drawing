@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -35,7 +35,7 @@ internal static class TestHalls
     /// A plan with a main line (straight, flipped curve, junction) anchored at the straight, a branch from the
     /// junction to a terminus, a joint override, a public area, a walking path and an acknowledgement.
     /// </summary>
-    public static HallPlan Plan(DrawingCatalogue catalogue)
+    public static HallPlan Plan(Catalogue catalogue)
     {
         var straight = Draw(catalogue, new() { Name = "Straight", Standard = Fremo, Straight = 1200, Exits = [West, East] });
         var curve = Draw(catalogue, new() { Name = "Curve", Standard = Fremo, Radius = 2000, Angle = 30, Exits = [West, East] });
@@ -101,6 +101,6 @@ internal static class TestHalls
     private static LineEntry Entry(Module module) =>
         new() { ModuleId = module.Id!.Value };
 
-    private static Module Draw(DrawingCatalogue catalogue, AutoDrawParameters parameters) =>
+    private static Module Draw(Catalogue catalogue, AutoDrawParameters parameters) =>
         ModuleAutoDraw.Create(parameters, catalogue).Module ?? throw new InvalidOperationException($"{parameters.Name} couldn't be drawn.");
 }

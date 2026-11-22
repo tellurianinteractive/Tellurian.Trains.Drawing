@@ -1,6 +1,6 @@
 @page "/new/module"
-@using Tellurian.Trains.Drawing.App.Catalogue
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Modules
 @using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions
@@ -175,7 +175,7 @@ else
 }
 
 @code {
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
     private readonly Form form = new();
     private IReadOnlyList<string> errors = [];
     private IReadOnlyList<AutoDrawNote> notes = [];
@@ -249,7 +249,7 @@ else
         }
     }
 
-    private async Task CreateModuleAsync(DrawingCatalogue catalogue)
+    private async Task CreateModuleAsync(Catalogue catalogue)
     {
         var template = new ModuleTemplate
         {

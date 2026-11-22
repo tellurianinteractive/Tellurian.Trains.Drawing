@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Resources;
 using System.Text.RegularExpressions;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Translations.Resources;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 
@@ -29,15 +29,14 @@ public sealed partial class AppTextsTests
     }
 
     [TestMethod]
-    [DataRow("RestoreBuiltIn"), DataRow("Delete"), DataRow("ConfirmRestoreBuiltIn"), DataRow("ConfirmDelete")]
+    [DataRow("Delete"), DataRow("ConfirmDelete"), DataRow("CatalogueEmpty"), DataRow("ImportEntries")]
     public void TextsChosenInCodeExist(string key) =>
         Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
 
     [TestMethod]
     public void EveryEnumValueShownInTheUiHasAText()
     {
-        var keys = Keys<CatalogueOrigin>("Origin")
-            .Concat(Keys<EndProfileImportStatus>("ImportStatus"))
+        var keys = Keys<EndProfileImportStatus>("ImportStatus")
             .Concat(Keys<EndProfileChanges>("Change").Where(k => k != "Change_None"))
             .Concat(Keys<ModuleTemplateKind>("Template"))
             .Concat(Keys<CurveDirection>("CurveDirection"))

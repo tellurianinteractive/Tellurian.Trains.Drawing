@@ -85,7 +85,9 @@
   <data name="MustBePositive" xml:space="preserve"><value>{0} måste vara större än 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} måste vara större än 0 och högst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillägg och ändprofiler. De inbyggda posterna följer med appen; dina egna poster sparas i den här webbläsaren och kan exporteras som en fil.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillägg och ändprofiler. Din katalog sparas i den här webbläsaren: importera katalogfiler för att fylla den, lägg till egna poster och exportera den som en fil.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Din katalog är tom. Importera en katalogfil (.catalogue.json) med Importera filer, t.ex. från din klubb eller din standard, för att få standarder och ändprofiler.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>Filerna har också {0} standarder, {1} tillägg och {2} kompatibilitetsundantag. De läggs till med de ändprofiler du väljer; en post med samma id som en post i din katalog ersätter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importera filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importera ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importera mapp…</value></data>
@@ -115,17 +117,11 @@
   <data name="Scale" xml:space="preserve"><value>Skala</value></data>
   <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
   <data name="Tracks" xml:space="preserve"><value>Spår</value></data>
-  <data name="Origin" xml:space="preserve"><value>Ursprung</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Inbyggd</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, ersätter inbyggd</value></data>
   <data name="Copy" xml:space="preserve"><value>Kopiera</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>kopia</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopierad som {0}.</value></data>
   <data name="Delete" xml:space="preserve"><value>Ta bort</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Återställ inbyggd</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>Ta bort {0} från din katalog?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Ta bort din version av {0} och använda den inbyggda igen?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Spårvidd (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>RÖK (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Tillägg</value></data>
@@ -142,7 +138,6 @@
   <data name="Overrides" xml:space="preserve"><value>Undantag för passning</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>Det finns inga undantag. Skarvar bedöms enbart enligt reglerna.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>Ett undantag ersätter regelns resultat för ett par ändprofiler, för kända undantagsfall. Använd det bara där reglerna ger fel svar.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>Den här posten är inbyggd. När du sparar skapas din egen version, som ersätter den inbyggda tills du återställer den.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>Katalogposten finns inte.</value></data>
   <data name="None" xml:space="preserve"><value>(ingen)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Tvåräls</value></data>
@@ -259,8 +254,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Klicka där ett spår ska ligga; dess RÖK ligger alltid på RÖK-linjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klicka för att markera, dra för att flytta (Skift: rakt, Alt: utan fästning), Delete för att ta bort. Sett utifrån modulen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Spara i min katalog</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} är sparad i din katalog.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>Sparat i din katalog: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Uppdaterad från din katalog: {0}. Spara modulen för att behålla ändringen i dess fil.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>Ändprofiler i den här modulen som inte finns i din katalog: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Redigera</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Redigera</value></data>

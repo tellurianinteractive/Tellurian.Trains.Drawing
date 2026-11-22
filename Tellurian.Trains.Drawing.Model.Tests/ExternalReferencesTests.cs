@@ -127,7 +127,7 @@ public sealed class ExternalReferencesTests
             ModuleJson(TestModules.WithEverything()),
             ModuleJson(TestModules.Station()),
             DrawingFileSerializer.Serialize(TestProfiles.Asymmetric().With(edited => { edited.Source = new() { Title = "T" }; })),
-            DrawingFileSerializer.Serialize(Catalogue.BuiltInCatalogue.Instance),
+            DrawingFileSerializer.Serialize(SampleCatalogue.Instance),
             DrawingFileSerializer.Serialize(TestHalls.Club()),
             DrawingFileSerializer.Serialize(TestHalls.Plan(TestCatalogue.Instance)),
         ];

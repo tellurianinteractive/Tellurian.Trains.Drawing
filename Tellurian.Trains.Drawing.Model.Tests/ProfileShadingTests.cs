@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Modules;
 
@@ -52,7 +52,7 @@ public sealed class ProfileShadingTests
     [TestMethod]
     public void B96HasDarkAndLightParts()
     {
-        var intervals = ProfileShading.Intervals(BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!);
+        var intervals = ProfileShading.Intervals(SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!);
         Assert.IsTrue(intervals.Any(i => i.IsAboveRailTop));
         Assert.IsTrue(intervals.Any(i => !i.IsAboveRailTop));
     }

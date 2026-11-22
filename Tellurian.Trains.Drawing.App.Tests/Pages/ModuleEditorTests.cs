@@ -1,5 +1,5 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Tellurian.Trains.Drawing.App.Documents;
@@ -8,7 +8,7 @@ using Tellurian.Trains.Drawing.App.Pages;
 using Tellurian.Trains.Drawing.Components.Canvas;
 using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.Tracks;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
 
@@ -29,7 +29,7 @@ public sealed class ModuleEditorTests
 
     private static IRenderedComponent<DrawingPage> OpenModule(AppTestContext context, bool isStation, double straight, double? radius = null, double? angle = null)
     {
-        var catalogue = BuiltInCatalogue.Instance;
+        var catalogue = SampleCatalogue.Instance;
         AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
         var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = straight, Radius = radius, Angle = angle, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
         // The editor gives a station without station tracks the list of its generated tracks, measured, when it is opened.
@@ -68,7 +68,7 @@ public sealed class ModuleEditorTests
     public void EndProfilesChangedInTheCatalogueAreUpdatedWhenTheModuleOpens()
     {
         using var context = new AppTestContext();
-        var catalogue = BuiltInCatalogue.Instance;
+        var catalogue = SampleCatalogue.Instance;
         AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
         var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile));
@@ -108,7 +108,7 @@ public sealed class ModuleEditorTests
         using var context = new AppTestContext();
         var page = OpenStraightModule(context);
         var editor = page.FindComponent<ModuleEditor>().Instance;
-        var other = BuiltInCatalogue.Instance.EndProfiles.First(p => p.Scale == "H0" && p.Id != editor.Current!.Module.Drawing.Exit("W")!.EndProfile.Id);
+        var other = SampleCatalogue.Instance.EndProfiles.First(p => p.Scale == "H0" && p.Id != editor.Current!.Module.Drawing.Exit("W")!.EndProfile.Id);
 
         page.Find("#end-profile-W").Change(other.Id.ToString());
 
@@ -150,7 +150,7 @@ public sealed class ModuleEditorTests
     public void AStationWithoutStationTracksGetsItsListWhenOpened()
     {
         using var context = new AppTestContext();
-        var catalogue = BuiltInCatalogue.Instance;
+        var catalogue = SampleCatalogue.Instance;
         AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
         var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
         var drawing = module.Drawing.With(edited => edited.TrackElements = [.. module.Drawing.TrackElements.Select(e => e.With(edited => edited.StationTrackId = null))]);
@@ -504,5 +504,29 @@ public sealed class ModuleEditorTests
 
         Press(page, "ArrowLeft", shift: true);
         Assert.AreEqual("691 mm", page.Find("#section-length-1").TextContent);
+    }
+
+    [TestMethod]
+    public void EndProfilesTheCatalogueLacksCanBeSavedThere()
+    {
+        using var context = new AppTestContext(withCatalogue: false);
+        var page = OpenStraightModule(context);
+
+        StringAssert.Contains(page.Find("#missing-end-profiles").TextContent, "FREMO-H0-B96");
+        page.Find("#save-missing-end-profiles").Click();
+
+        Assert.IsEmpty(page.FindAll("#missing-end-profiles"));
+        StringAssert.Contains(page.Find(".status").TextContent, "FREMO-H0-B96");
+        var user = context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogues.CatalogueService>().GetUserAsync().Result;
+        Assert.IsNotNull(user.FindEndProfile("FREMO-H0-B96", "H0"));
+    }
+
+    [TestMethod]
+    public void EndProfilesInTheCatalogueAreNotOfferedAgain()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+
+        Assert.IsEmpty(page.FindAll("#missing-end-profiles"));
     }
 }

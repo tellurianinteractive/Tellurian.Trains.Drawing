@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -60,7 +60,7 @@ public sealed class PlateShapeTests
     [TestMethod]
     public void BuiltInOutlineKeepsItsSize()
     {
-        var b96 = BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
+        var b96 = SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
         var read = PlateShape.From(b96);
         Assert.IsNotNull(read);
         Assert.AreEqual(b96.Outline!.ToPath().Bounds.Width, read.Width, Precision);

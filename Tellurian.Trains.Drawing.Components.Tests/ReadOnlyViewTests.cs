@@ -2,7 +2,7 @@ using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using System.Text.RegularExpressions;
 using Tellurian.Trains.Drawing.Components.Views;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
 
@@ -12,7 +12,7 @@ namespace Tellurian.Trains.Drawing.Components.Tests;
 [TestClass]
 public sealed partial class ReadOnlyViewTests
 {
-    private static DrawingCatalogue Catalogue => BuiltInCatalogue.Instance;
+    private static Catalogue Catalogue => SampleCatalogue.Instance;
 
     private static Module Station()
     {

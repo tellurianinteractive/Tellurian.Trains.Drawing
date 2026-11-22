@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -6,23 +6,23 @@ using Tellurian.Trains.Drawing.Model.Modules;
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
 [TestClass]
-public sealed class BuiltInCatalogueTests
+public sealed class SampleCatalogueTests
 {
-    private static DrawingCatalogue Catalogue => BuiltInCatalogue.Instance;
+    private static Catalogue Catalogue => SampleCatalogue.Instance;
 
     private static EndProfile Profile(string designation, string scale = "H0") =>
-        Catalogue.FindEndProfile(designation, scale) ?? throw new AssertFailedException($"{designation} isn't in the built-in catalogue.");
+        Catalogue.FindEndProfile(designation, scale) ?? throw new AssertFailedException($"{designation} isn't in the sample catalogue.");
 
     private static JointFit Fit(string a, string b, string scaleB = "H0") =>
         JointFitEvaluator.Evaluate(Profile(a), ProfileOrientation.Normal, Profile(b, scaleB), ProfileOrientation.Normal, Catalogue.Overrides).Fit;
 
     [TestMethod]
-    public void LoadsTheEmbeddedCatalogue()
+    public void LoadsTheSampleCatalogue()
     {
         Assert.IsFalse(string.IsNullOrWhiteSpace(Catalogue.Version));
         CollectionAssert.IsSubsetOf(new[] { "FREMO/H0-RE", "MMM-2R", "MMM-3R", "FREMO/N-RE" }, Catalogue.Standards.Select(s => s.ShortName).ToArray());
         CollectionAssert.AreEquivalent(new[] { "MMM-Summer", "MMM-Modern" }, Catalogue.AddOnsOf(Catalogue.FindStandard("MMM-2R")!.Id!.Value).Select(a => a.ShortName).ToArray());
-        Assert.AreSame(Catalogue, BuiltInCatalogue.Instance);
+        Assert.AreSame(Catalogue, SampleCatalogue.Instance);
     }
 
     [TestMethod]
@@ -60,8 +60,8 @@ public sealed class BuiltInCatalogueTests
     public void EveryProfileIsDrawnOrMarkedProvisional()
     {
         Assert.IsTrue(Catalogue.EndProfiles.All(p => !string.IsNullOrWhiteSpace(p.Source!.Revision)));
-        Assert.AreNotEqual(BuiltInCatalogue.ProvisionalRevision, Profile("FREMO-H0-B96").Source!.Revision);
-        Assert.AreNotEqual(BuiltInCatalogue.ProvisionalRevision, Profile("FREMO-H0-B96f").Source!.Revision);
+        Assert.AreNotEqual(SampleCatalogue.ProvisionalRevision, Profile("FREMO-H0-B96").Source!.Revision);
+        Assert.AreNotEqual(SampleCatalogue.ProvisionalRevision, Profile("FREMO-H0-B96f").Source!.Revision);
     }
 
     [TestMethod]
@@ -198,22 +198,22 @@ public sealed class BuiltInCatalogueTests
     public void UserEntriesAreAddedToTheBuiltInOnes()
     {
         var copy = Profile("FREMO-H0-B96").With(edited => { edited.Id = Guid.NewGuid(); edited.Designation = "MY-B96"; });
-        var user = new DrawingCatalogue { EndProfiles = [copy], Scales = [new() { ShortName = "0", Denominator = 45 }] };
-        var merged = DrawingCatalogue.Merge(Catalogue, user);
+        var user = new Catalogue { EndProfiles = [copy], Scales = [new() { ShortName = "0", Denominator = 45 }] };
+        var merged = Catalogue.Merge(Catalogue, user);
         Assert.HasCount(Catalogue.EndProfiles.Count + 1, merged.EndProfiles);
         Assert.IsNotNull(merged.FindEndProfile("FREMO-H0-B96", "H0"));
         Assert.IsNotNull(merged.FindEndProfile("MY-B96", "H0"));
         Assert.IsNotNull(merged.FindScale("0"));
         Assert.AreEqual(Catalogue.Version, merged.Version);
-        Assert.HasCount(Catalogue.EndProfiles.Count, BuiltInCatalogue.Instance.EndProfiles, "The built-in catalogue is unchanged.");
+        Assert.HasCount(Catalogue.EndProfiles.Count, SampleCatalogue.Instance.EndProfiles, "The built-in catalogue is unchanged.");
     }
 
     [TestMethod]
     public void UserEntryReplacesBuiltInEntryWithTheSameKey()
     {
         var standard = Catalogue.FindStandard("MMM-2R")!.With(edited => { edited.DefaultCurveRadius = 1800; });
-        var user = new DrawingCatalogue { Standards = [standard], Scales = [new() { ShortName = " h0 ", Denominator = 87 }] };
-        var merged = DrawingCatalogue.Merge(Catalogue, user);
+        var user = new Catalogue { Standards = [standard], Scales = [new() { ShortName = " h0 ", Denominator = 87 }] };
+        var merged = Catalogue.Merge(Catalogue, user);
         Assert.HasCount(Catalogue.Standards.Count, merged.Standards);
         Assert.AreEqual(1800, merged.FindStandard("MMM-2R")!.DefaultCurveRadius);
         Assert.HasCount(Catalogue.Scales.Count, merged.Scales);
@@ -225,8 +225,8 @@ public sealed class BuiltInCatalogueTests
         var a = Profile("FREMO-H0-B96").Id;
         var b = Profile("MMM480").Id;
         var builtIn = Catalogue with { Overrides = [new() { FirstEndProfileId = a, SecondEndProfileId = b, Fit = JointFit.FitsWithClamps }] };
-        var user = new DrawingCatalogue { Overrides = [new() { FirstEndProfileId = b, SecondEndProfileId = a, Fit = JointFit.Fits, Note = "Our club adapter." }] };
-        var merged = DrawingCatalogue.Merge(builtIn, user);
+        var user = new Catalogue { Overrides = [new() { FirstEndProfileId = b, SecondEndProfileId = a, Fit = JointFit.Fits, Note = "Our club adapter." }] };
+        var merged = Catalogue.Merge(builtIn, user);
         Assert.AreEqual(JointFit.Fits, merged.Overrides.Single().Fit);
     }
 }

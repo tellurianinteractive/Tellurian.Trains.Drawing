@@ -1,8 +1,9 @@
 @page "/settings"
 @using System.Globalization
 @using Tellurian.Trains.Drawing.App.Settings
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @inject SettingsService Settings
-@inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
+@inject Tellurian.Trains.Drawing.App.Catalogues.CatalogueService Catalogues
 @inject IWorkbench Workbench
 @inject IFileService Files
 @inject BrowserEnvironment Browser
@@ -117,7 +118,7 @@
     {
         try
         {
-            scales = [.. (await Catalogues.GetAsync()).Scales.OrderBy(s => s.ShortName, StringComparer.OrdinalIgnoreCase)];
+            scales = ScaleChoices.Of(await Catalogues.GetAsync());
             ShowInForm(await Settings.GetAsync());
             persisted = await Workbench.IsPersistedAsync();
         }

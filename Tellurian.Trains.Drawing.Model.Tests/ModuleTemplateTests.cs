@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 [TestClass]
 public sealed class ModuleTemplateTests
 {
-    private static DrawingCatalogue Catalogue => TestCatalogue.Instance;
+    private static Catalogue Catalogue => TestCatalogue.Instance;
 
     private static ModuleTemplate Template(ModuleTemplateKind kind) => new()
     {
@@ -77,7 +77,7 @@ public sealed class ModuleTemplateTests
     [TestMethod]
     public void BuiltInStandardsCanUseTheTemplates()
     {
-        var catalogue = BuiltInCatalogue.Instance;
+        var catalogue = SampleCatalogue.Instance;
         foreach (var standard in catalogue.Standards)
         {
             var profile = catalogue.EndProfilesOf(standard.Id!.Value).FirstOrDefault(p => p.Tracks.Count == 1);

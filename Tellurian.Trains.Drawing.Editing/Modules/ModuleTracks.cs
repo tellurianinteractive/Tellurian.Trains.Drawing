@@ -1,6 +1,6 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using Tellurian.Trains.Drawing.Editing.Commands;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;

@@ -12,7 +12,7 @@
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
 @using Tellurian.Trains.Schedules.Model.Geometry
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Modules
 @using Tellurian.Trains.Drawing.Model.Tracks
@@ -261,7 +261,7 @@
     [Parameter] public Func<Guid, EndProfile?>? EndProfiles { get; set; }
 
     /// <summary>The catalogue, for choosing other end profiles and redrawing the module; without it, its ends can only be flipped.</summary>
-    [Parameter] public DrawingCatalogue? Catalogue { get; set; }
+    [Parameter] public Catalogue? Catalogue { get; set; }
 
     /// <summary>The host's file actions and status, shown in the Archive pane.</summary>
     [Parameter] public RenderFragment? ArchiveContent { get; set; }

@@ -1,7 +1,7 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using TrackDirection = Tellurian.Trains.Schedules.Model.Layouts.TrackDirection;
 using Tellurian.Trains.Drawing.Editing.Modules;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
@@ -23,7 +23,7 @@ public sealed class ModuleTracksTests
 
     private static readonly AutoDrawExit Left = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-2E96" };
 
-    private static DrawingCatalogue Catalogue => BuiltInCatalogue.Instance;
+    private static Catalogue Catalogue => SampleCatalogue.Instance;
 
     private static ModuleStandard Standard => Catalogue.FindStandard("FREMO/H0-RE")!;
 

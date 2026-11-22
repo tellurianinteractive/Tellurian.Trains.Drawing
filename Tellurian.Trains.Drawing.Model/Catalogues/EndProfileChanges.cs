@@ -1,4 +1,4 @@
-namespace Tellurian.Trains.Drawing.Model.Catalogue;
+namespace Tellurian.Trains.Drawing.Model.Catalogues;
 
 /// <summary>What differs between two drawings of the same end profile.</summary>
 [Flags]

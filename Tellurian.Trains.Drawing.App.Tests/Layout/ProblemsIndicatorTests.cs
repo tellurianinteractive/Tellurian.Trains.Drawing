@@ -1,8 +1,8 @@
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Layout;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using SettingsService = Tellurian.Trains.Drawing.App.Settings.SettingsService;
 
@@ -13,7 +13,7 @@ public sealed class ProblemsIndicatorTests
 {
     private static readonly Guid Missing = Guid.NewGuid();
 
-    private static EndProfile Known => CatalogueService.BuiltIn.EndProfiles[0];
+    private static EndProfile Known => SampleCatalogue.Instance.EndProfiles[0];
 
     private static EndProfileCompatibilityOverride BrokenOverride => new()
     {
@@ -22,7 +22,7 @@ public sealed class ProblemsIndicatorTests
         Fit = JointFit.Fits,
     };
 
-    private static void SaveUser(AppTestContext context, DrawingCatalogue user) =>
+    private static void SaveUser(AppTestContext context, Catalogue user) =>
         context.Services.GetRequiredService<CatalogueService>().SaveUserAsync(user).Wait();
 
     private static void SetUserName(AppTestContext context, string? name) =>
@@ -72,7 +72,7 @@ public sealed class ProblemsIndicatorTests
     {
         using var context = new AppTestContext();
         SetUserName(context, "Anna");
-        SaveUser(context, DrawingCatalogue.Empty.With(BrokenOverride));
+        SaveUser(context, SampleCatalogue.Instance.With(BrokenOverride));
         var indicator = context.Render<ProblemsIndicator>();
 
         Assert.IsNotNull(indicator.Find(".problems-indicator.has-problems i.fa-circle-exclamation"));
@@ -90,7 +90,7 @@ public sealed class ProblemsIndicatorTests
     public void ErrorsComeBeforeWarningsAndBothAreCounted()
     {
         using var context = new AppTestContext();
-        SaveUser(context, DrawingCatalogue.Empty.With(BrokenOverride));
+        SaveUser(context, SampleCatalogue.Instance.With(BrokenOverride));
         var indicator = context.Render<ProblemsIndicator>();
 
         Assert.IsNotNull(indicator.Find(".has-problems"));
@@ -106,10 +106,10 @@ public sealed class ProblemsIndicatorTests
         SetUserName(context, "Anna");
         var indicator = context.Render<ProblemsIndicator>();
 
-        SaveUser(context, DrawingCatalogue.Empty.With(BrokenOverride));
+        SaveUser(context, SampleCatalogue.Instance.With(BrokenOverride));
         indicator.WaitForAssertion(() => Assert.AreEqual("1", indicator.Find(".badge").TextContent));
 
-        SaveUser(context, DrawingCatalogue.Empty);
+        SaveUser(context, Catalogue.Empty);
         indicator.WaitForAssertion(() => Assert.IsEmpty(indicator.FindAll(".badge")));
     }
 }

@@ -1,6 +1,6 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using Tellurian.Trains.Schedules.Model.Geometry;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -25,7 +25,7 @@ public sealed class ModuleRedrawTests
         TrackOffsets = [40],
     });
 
-    private static readonly DrawingCatalogue Catalogue = TestCatalogue.Instance.With(Asymmetric).With(OffCentre);
+    private static readonly Catalogue Catalogue = TestCatalogue.Instance.With(Asymmetric).With(OffCentre);
 
     /// <summary>A 30° left curve of radius 2000 mm with <paramref name="profile"/> at both ends.</summary>
     private static ModuleFileContent Curve(EndProfile profile, bool isEndProfileSwitcher = false)

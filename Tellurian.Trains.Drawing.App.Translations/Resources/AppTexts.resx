@@ -85,7 +85,9 @@
   <data name="MustBePositive" xml:space="preserve"><value>{0} must be greater than 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Catalogue</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Standards, add-ons and end profiles. The built-in entries come with the app; your own entries are kept in this browser and can be exported as a file.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standards, add-ons and end profiles. Your catalogue is kept in this browser: import catalogue files to fill it, add your own entries, and export it as a file.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Your catalogue is empty. Import a catalogue file (.catalogue.json) with Import files, e.g. one from your club or your standard, to get standards and end profiles.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>The files also have {0} standards, {1} add-ons and {2} compatibility overrides. They are added with the end profiles you choose; one that has the id of an entry in your catalogue replaces it.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Import files…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Import ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Import folder…</value></data>
@@ -115,17 +117,11 @@
   <data name="Scale" xml:space="preserve"><value>Scale</value></data>
   <data name="Standards" xml:space="preserve"><value>Standards</value></data>
   <data name="Tracks" xml:space="preserve"><value>Tracks</value></data>
-  <data name="Origin" xml:space="preserve"><value>Origin</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Built in</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Yours</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Yours, replaces built-in</value></data>
   <data name="Copy" xml:space="preserve"><value>Copy</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>copy</value></data>
   <data name="Copied" xml:space="preserve"><value>Copied as {0}.</value></data>
   <data name="Delete" xml:space="preserve"><value>Delete</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Restore built-in</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>Delete {0} from your catalogue?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Remove your version of {0} and use the built-in one again?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Gauge (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>Rail top (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Add-ons</value></data>
@@ -142,7 +138,6 @@
   <data name="Overrides" xml:space="preserve"><value>Compatibility overrides</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>There are no overrides. Joints are classified by the rules alone.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>An override replaces the rule result for one pair of end profiles, for known exceptions. Use it only where the rules give the wrong answer.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>This entry is built in. Saving it creates your own version, which replaces the built-in one until you restore it.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>The catalogue entry doesn't exist.</value></data>
   <data name="None" xml:space="preserve"><value>(none)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Two-rail</value></data>
@@ -259,8 +254,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Click where a track goes; its rail top is always at the rail-top line.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Click to select, drag to move (Shift: straight, Alt: no snapping), Delete to remove. Seen from outside the module.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Save to my catalogue</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} is saved in your catalogue.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>Saved in your catalogue: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Updated from your catalogue: {0}. Save the module to keep the change in its file.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>End profiles in this module that aren't in your catalogue: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Edit</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Archive</value></data>
   <data name="EditPane" xml:space="preserve"><value>Edit</value></data>

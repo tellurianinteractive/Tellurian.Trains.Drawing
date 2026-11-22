@@ -51,13 +51,14 @@ public sealed class SettingsPageTests
     }
 
     [TestMethod]
-    public void TheScaleIsChosenAmongTheCatalogueScales()
+    public void TheScaleIsChosenAmongTheKnownScales()
     {
         using var context = new AppTestContext();
         var page = RenderPage(context);
 
         var options = page.FindAll("#scale option").Select(o => o.GetAttribute("value")).ToArray();
-        CollectionAssert.AreEqual(new[] { "", "H0", "N" }, options);
+        Assert.AreEqual("", options[0]);
+        CollectionAssert.IsSubsetOf(new[] { "H0", "N", "TT" }, options, "The suite's scales, also without a catalogue.");
         Assert.AreEqual("(all scales)", page.Find("#scale option").TextContent);
 
         page.Find("#scale").Change("N");
@@ -72,7 +73,7 @@ public sealed class SettingsPageTests
         using var context = new AppTestContext();
         context.Services.GetRequiredService<SettingsService>().SaveAsync(new() { Scale = "N" }).Wait();
 
-        var choices = context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().GetForChoicesAsync().Result;
+        var choices = context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogues.CatalogueService>().GetForChoicesAsync().Result;
 
         Assert.IsNotEmpty(choices.Standards);
         Assert.IsTrue(choices.Standards.All(s => s.ScaleName == "N"));

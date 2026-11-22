@@ -2,11 +2,12 @@ using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 
-namespace Tellurian.Trains.Drawing.Model.Catalogue;
+namespace Tellurian.Trains.Drawing.Model.Catalogues;
 
 /// <summary>
-/// Importing end profiles into the user's catalogue (UC-2, CA-2). Each imported profile is matched with an
-/// existing one, by id or else by designation and scale, and compared, so the user can choose which to keep.
+/// Importing into the user's catalogue (UC-2, CA-2, CA-3). Each imported end profile is matched with an existing one,
+/// by id or else by designation and scale, and compared, so the user can choose which to keep. The other entries of a
+/// catalogue file, its scales, standards, add-ons and overrides, are taken in as they are (<see cref="Entries"/>).
 /// </summary>
 public static class EndProfileImport
 {
@@ -39,8 +40,44 @@ public static class EndProfileImport
         return (profiles, problems);
     }
 
+    /// <summary>
+    /// The other entries of the catalogue files among <paramref name="files"/>: their scales, standards, add-ons and
+    /// overrides, without end profiles, which the user chooses one by one (<see cref="Compare"/>). Several catalogue
+    /// files are taken in order, a later entry replacing an earlier one with the same id. Files that can't be read are
+    /// left out here; <see cref="Read"/> reports them.
+    /// </summary>
+    public static Catalogue Entries(IEnumerable<ImportedFile> files)
+    {
+        ArgumentNullException.ThrowIfNull(files);
+        var entries = Catalogue.Empty;
+        foreach (var file in files.Where(f => f.Header.Kind == DrawingFileKind.Catalogue))
+        {
+            try
+            {
+                entries = Catalogue.Merge(entries, DrawingFileSerializer.DeserializeCatalogue(file.Json) with { EndProfiles = [] });
+            }
+            catch (DrawingFileException)
+            {
+                // Reported by Read.
+            }
+        }
+        return entries;
+    }
+
+    /// <summary>
+    /// The user's catalogue with the imported <paramref name="entries"/> (<see cref="Entries"/>) taken in, an entry with
+    /// a known id replacing the user's (decision 12), and then the <paramref name="chosen"/> end profiles (<see cref="Apply"/>).
+    /// </summary>
+    public static Catalogue Apply(Catalogue user, Catalogue entries, IEnumerable<EndProfileImportItem> chosen)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(entries);
+        var merged = Catalogue.Merge(user, entries with { EndProfiles = [] }) with { Version = user.Version };
+        return Apply(merged, chosen);
+    }
+
     /// <summary>Matches and compares <paramref name="imported"/> with the profiles in <paramref name="catalogue"/>.</summary>
-    public static IReadOnlyList<EndProfileImportItem> Compare(IEnumerable<EndProfile> imported, DrawingCatalogue catalogue)
+    public static IReadOnlyList<EndProfileImportItem> Compare(IEnumerable<EndProfile> imported, Catalogue catalogue)
     {
         ArgumentNullException.ThrowIfNull(imported);
         ArgumentNullException.ThrowIfNull(catalogue);
@@ -57,7 +94,7 @@ public static class EndProfileImport
     /// Adds the <paramref name="chosen"/> profiles to the user's catalogue. A profile that replaces an existing
     /// one takes its id, so modules that refer to the existing profile now use the imported drawing.
     /// </summary>
-    public static DrawingCatalogue Apply(DrawingCatalogue user, IEnumerable<EndProfileImportItem> chosen)
+    public static Catalogue Apply(Catalogue user, IEnumerable<EndProfileImportItem> chosen)
     {
         ArgumentNullException.ThrowIfNull(user);
         ArgumentNullException.ThrowIfNull(chosen);

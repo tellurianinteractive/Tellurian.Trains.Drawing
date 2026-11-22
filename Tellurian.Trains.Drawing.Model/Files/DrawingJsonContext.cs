@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Modules;
@@ -27,7 +27,7 @@ namespace Tellurian.Trains.Drawing.Model.Files;
     ])]
 [JsonSerializable(typeof(DrawingFile<EndProfile>))]
 [JsonSerializable(typeof(DrawingFile<ModuleFileContent>))]
-[JsonSerializable(typeof(DrawingFile<DrawingCatalogue>))]
+[JsonSerializable(typeof(DrawingFile<Catalogue>))]
 [JsonSerializable(typeof(DrawingFile<Hall>))]
 [JsonSerializable(typeof(DrawingFile<HallPlan>))]
 [JsonSerializable(typeof(Shared.ModuleStandard), TypeInfoPropertyName = "SharedModuleStandard")]

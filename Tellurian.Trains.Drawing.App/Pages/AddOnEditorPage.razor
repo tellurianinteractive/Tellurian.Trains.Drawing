@@ -1,18 +1,14 @@
 @page "/catalogue/addon/new"
 @page "/catalogue/addon/{Id:guid}"
-@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
 @using Tellurian.Trains.Drawing.Model
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @inject CatalogueService Catalogues
 @inject NavigationManager Navigation
 
 <PageTitle>@Title</PageTitle>
 
 <h1>@Title</h1>
-@if (isBuiltIn)
-{
-    <p class="note">@T["EditBuiltInNote"]</p>
-}
 @if (message is not null)
 {
     <p class="error" role="alert">@message</p>
@@ -46,9 +42,8 @@
 @code {
     [Parameter] public Guid? Id { get; set; }
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
     private StandardAddOn? original;
-    private bool isBuiltIn;
     private string shortName = string.Empty;
     private Guid baseStandardId;
     private string? description;
@@ -72,7 +67,6 @@
                 catalogue = null;
                 return;
             }
-            isBuiltIn = original is not null && CatalogueService.BuiltIn.AddOns.Any(a => a.Id == original.Id) && !user.AddOns.Any(a => a.Id == original.Id);
             shortName = original?.ShortName ?? string.Empty;
             baseStandardId = original?.BaseStandardId ?? catalogue.Standards.OrderBy(s => s.ShortName).FirstOrDefault()?.Id ?? Guid.Empty;
             description = original?.Description;

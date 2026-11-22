@@ -358,14 +358,6 @@ a.button {
         color: var(--app-muted);
     }
 
-.badge.builtin {
-    background: #eef1f5;
-}
-
-.badge.user, .badge.replacesbuiltin {
-    background: #e3eefb;
-}
-
 .status {
     color: #1d6b33;
 }

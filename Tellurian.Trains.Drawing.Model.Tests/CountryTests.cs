@@ -1,11 +1,11 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
 [TestClass]
 public sealed class CountryTests
 {
-    private static DrawingCatalogue BuiltIn => BuiltInCatalogue.Instance;
+    private static Catalogue BuiltIn => SampleCatalogue.Instance;
 
     private static bool IsMmm(string shortName) => shortName.StartsWith("MMM", StringComparison.OrdinalIgnoreCase);
 

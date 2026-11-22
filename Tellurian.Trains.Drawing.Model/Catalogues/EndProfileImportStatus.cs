@@ -1,4 +1,4 @@
-namespace Tellurian.Trains.Drawing.Model.Catalogue;
+namespace Tellurian.Trains.Drawing.Model.Catalogues;
 
 /// <summary>How an imported end profile relates to the catalogue.</summary>
 public enum EndProfileImportStatus

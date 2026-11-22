@@ -3,7 +3,7 @@
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
-@inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
+@inject Tellurian.Trains.Drawing.App.Catalogues.CatalogueService Catalogues
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Views
 @using Tellurian.Trains.Drawing.App.Editors
@@ -81,6 +81,13 @@ else if (draft is not null)
     {
         <p class="note" id="updated-end-profiles">@T.Format("EndProfilesUpdated", string.Join(", ", _updatedEndProfiles))</p>
     }
+    @if (_missingEndProfiles.Count > 0)
+    {
+        <p class="note" id="missing-end-profiles">@T.Format("EndProfilesNotInCatalogue", string.Join(", ", _missingEndProfiles.Select(p => p.Designation)))</p>
+        <div class="pane-buttons">
+            <button type="button" id="save-missing-end-profiles" @onclick="SaveMissingEndProfilesAsync">@T["SaveToCatalogue"]</button>
+        </div>
+    }
     @if (!Documents.CanSaveInPlace)
     {
         <p class="note">@T["DownloadNote"]</p>
@@ -102,7 +109,7 @@ else if (draft is not null)
     public static string Url(Guid id) => $"drawing/{id}";
 
     private ModuleStandard? _standard;
-    private DrawingCatalogue? _catalogue;
+    private Catalogue? _catalogue;
 
     /// <summary>
     /// The end profile as it is now in the catalogue, so that changes such as a new short name show; the module
@@ -148,11 +155,48 @@ else if (draft is not null)
             // The draft is shown only when it is ready, so that an editor never starts from a module that is about to be updated.
             var loaded = await Workbench.GetDraftAsync(Id);
             _catalogue = loaded?.Kind == DrawingFileKind.Module ? await Catalogues.GetAsync() : null;
-            if (loaded is not null && _catalogue is not null) loaded = await WithCurrentEndProfilesAsync(loaded, _catalogue);
+            if (loaded is not null && _catalogue is not null)
+            {
+                loaded = await WithCurrentEndProfilesAsync(loaded, _catalogue);
+                _missingEndProfiles = MissingEndProfiles(loaded, _catalogue);
+            }
             _standard = await StandardOfAsync(loaded);
             _trackColor = await TrackColorOfAsync(loaded);
             draft = loaded;
             notFound = draft is null;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    /// <summary>The end profiles the module embeds that the catalogue doesn't have, which the user can save there.</summary>
+    private IReadOnlyList<Tellurian.Trains.Schedules.Model.Layouts.EndProfiles.EndProfile> _missingEndProfiles = [];
+
+    private static IReadOnlyList<Tellurian.Trains.Schedules.Model.Layouts.EndProfiles.EndProfile> MissingEndProfiles(Draft module, Catalogue catalogue)
+    {
+        try
+        {
+            return [.. DrawingFileSerializer.DeserializeModule(module.Json).EndProfiles.Where(p => catalogue.FindEndProfile(p.Id) is null)];
+        }
+        catch (DrawingFileException)
+        {
+            return [];
+        }
+    }
+
+    /// <summary>Saves the module's end profiles that the catalogue lacks there, so other modules can use them.</summary>
+    private async Task SaveMissingEndProfilesAsync()
+    {
+        message = null;
+        try
+        {
+            var saved = _missingEndProfiles;
+            await Catalogues.AddEndProfilesAsync(saved);
+            _catalogue = await Catalogues.GetAsync();
+            _missingEndProfiles = [];
+            _status = T.Format("SavedToCatalogue", string.Join(", ", saved.Select(p => p.Designation)));
         }
         catch (StorageException ex)
         {
@@ -167,7 +211,7 @@ else if (draft is not null)
     /// The module draft with its embedded end profiles updated from <paramref name="catalogue"/> where they have
     /// changed there, so that the module's file gets them when it is saved; the draft then has unsaved changes.
     /// </summary>
-    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, DrawingCatalogue catalogue)
+    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, Catalogue catalogue)
     {
         try
         {

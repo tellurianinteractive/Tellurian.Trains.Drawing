@@ -85,7 +85,9 @@
   <data name="MustBePositive" xml:space="preserve"><value>{0} må være større enn 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} må være større enn 0 og høyst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillegg og endeprofiler. De innebygde oppføringene følger med appen; dine egne oppføringer lagres i denne nettleseren og kan eksporteres som en fil.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillegg og endeprofiler. Katalogen din lagres i denne nettleseren: importer katalogfiler for å fylle den, legg til egne oppføringer, og eksporter den som en fil.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Katalogen din er tom. Importer en katalogfil (.catalogue.json) med Importer filer, f.eks. fra klubben din eller standarden din, for å få standarder og endeprofiler.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>Filene har også {0} standarder, {1} tillegg og {2} kompatibilitetsunntak. De legges til sammen med endeprofilene du velger; en oppføring med samme id som en i katalogen din erstatter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importer filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importer ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importer mappe…</value></data>
@@ -115,17 +117,11 @@
   <data name="Scale" xml:space="preserve"><value>Skala</value></data>
   <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
   <data name="Tracks" xml:space="preserve"><value>Spor</value></data>
-  <data name="Origin" xml:space="preserve"><value>Opprinnelse</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Innebygd</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, erstatter innebygd</value></data>
   <data name="Copy" xml:space="preserve"><value>Kopier</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>kopi</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopiert som {0}.</value></data>
   <data name="Delete" xml:space="preserve"><value>Slett</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Gjenopprett innebygd</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>Slette {0} fra katalogen din?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Fjerne din versjon av {0} og bruke den innebygde igjen?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Sporvidde (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>Skinnetopp (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Tillegg</value></data>
@@ -142,7 +138,6 @@
   <data name="Overrides" xml:space="preserve"><value>Unntak for tilpasning</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>Det finnes ingen unntak. Skjøter vurderes bare etter reglene.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>Et unntak erstatter reglenes resultat for et par endeprofiler, for kjente særtilfeller. Bruk det bare der reglene gir feil svar.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>Denne oppføringen er innebygd. Når du lagrer, opprettes din egen versjon, som erstatter den innebygde til du gjenoppretter den.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>Katalogoppføringen finnes ikke.</value></data>
   <data name="None" xml:space="preserve"><value>(ingen)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Toskinne</value></data>
@@ -259,8 +254,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Klikk der et spor skal ligge; skinnetoppen ligger alltid på referanselinjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klikk for å merke, dra for å flytte (Skift: rett, Alt: uten festing), Delete for å slette. Sett utenfra modulen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Lagre i min katalog</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} er lagret i katalogen din.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>Lagret i katalogen din: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Oppdatert fra katalogen din: {0}. Lagre modulen for å beholde endringen i filen.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>Endeprofiler i denne modulen som ikke er i katalogen din: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Rediger</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Rediger</value></data>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Tellurian.Localization;
 using Tellurian.Localization.DependencyInjection;
 using Tellurian.Trains.Drawing.App;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Storage;

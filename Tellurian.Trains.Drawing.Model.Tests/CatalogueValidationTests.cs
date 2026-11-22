@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 [TestClass]
 public sealed class CatalogueValidationTests
 {
-    private static DrawingCatalogue Catalogue => TestCatalogue.Instance;
+    private static Catalogue Catalogue => TestCatalogue.Instance;
 
     private static ModuleStandard Fremo => Catalogue.FindStandard(TestCatalogue.FremoId)!;
 
@@ -18,15 +18,15 @@ public sealed class CatalogueValidationTests
     public void ValidStandardHasNoProblems()
     {
         Assert.IsEmpty(CatalogueValidation.Validate(NewStandard(), Catalogue));
-        foreach (var standard in BuiltInCatalogue.Instance.Standards)
-            Assert.IsEmpty(CatalogueValidation.Validate(standard, BuiltInCatalogue.Instance), $"{standard.ShortName} is valid as it is built in.");
+        foreach (var standard in SampleCatalogue.Instance.Standards)
+            Assert.IsEmpty(CatalogueValidation.Validate(standard, SampleCatalogue.Instance), $"{standard.ShortName} is valid as it is built in.");
     }
 
     [TestMethod]
     public void EditedStandardMayKeepItsOwnName()
     {
-        var builtIn = BuiltInCatalogue.Instance.Standards[0];
-        Assert.IsEmpty(CatalogueValidation.Validate(builtIn.With(edited => { edited.MinimumClearance = 50; }), BuiltInCatalogue.Instance));
+        var builtIn = SampleCatalogue.Instance.Standards[0];
+        Assert.IsEmpty(CatalogueValidation.Validate(builtIn.With(edited => { edited.MinimumClearance = 50; }), SampleCatalogue.Instance));
     }
 
     [TestMethod]
@@ -99,11 +99,11 @@ public sealed class CatalogueValidationTests
     [TestMethod]
     public void ValidUserEntriesHaveNoProblems()
     {
-        var user = DrawingCatalogue.Empty
+        var user = Catalogue.Empty
             .With(NewStandard())
             .With(new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Fremo.Id!.Value })
             .With(new EndProfileCompatibilityOverride { FirstEndProfileId = TestCatalogue.FremoSingle.Id, SecondEndProfileId = TestCatalogue.Mmm480.Id, Fit = JointFit.FitsWithClamps });
-        Assert.IsEmpty(CatalogueValidation.ValidateUserEntries(user, DrawingCatalogue.Merge(Catalogue, user)));
+        Assert.IsEmpty(CatalogueValidation.ValidateUserEntries(user, Catalogue.Merge(Catalogue, user)));
     }
 
     [TestMethod]
@@ -112,9 +112,9 @@ public sealed class CatalogueValidationTests
         var standard = NewStandard().With(edited => { edited.DefaultSingleTrackEndProfileId = Guid.NewGuid(); });
         var addOn = new StandardAddOn { Id = Guid.NewGuid(), ShortName = "X", BaseStandardId = Guid.NewGuid() };
         var entry = new EndProfileCompatibilityOverride { FirstEndProfileId = TestCatalogue.FremoSingle.Id, SecondEndProfileId = Guid.NewGuid(), Fit = JointFit.Fits };
-        var user = DrawingCatalogue.Empty.With(standard).With(addOn).With(entry);
+        var user = Catalogue.Empty.With(standard).With(addOn).With(entry);
 
-        var problems = CatalogueValidation.ValidateUserEntries(user, DrawingCatalogue.Merge(Catalogue, user));
+        var problems = CatalogueValidation.ValidateUserEntries(user, Catalogue.Merge(Catalogue, user));
 
         CollectionAssert.AreEqual(new[]
         {

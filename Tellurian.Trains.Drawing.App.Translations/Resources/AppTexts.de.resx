@@ -85,7 +85,9 @@
   <data name="MustBePositive" xml:space="preserve"><value>{0} muss größer als 0 sein.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} muss größer als 0 und höchstens 360 sein.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Normen, Zusätze und Endprofile. Die eingebauten Einträge gehören zur App; deine eigenen Einträge werden in diesem Browser gespeichert und können als Datei exportiert werden.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Normen, Zusätze und Endprofile. Dein Katalog wird in diesem Browser gespeichert: Importiere Katalogdateien, um ihn zu füllen, füge eigene Einträge hinzu und exportiere ihn als Datei.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Dein Katalog ist leer. Importiere mit „Dateien importieren“ eine Katalogdatei (.catalogue.json), z. B. von deinem Verein oder deiner Norm, um Normen und Endprofile zu bekommen.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>Die Dateien enthalten außerdem {0} Normen, {1} Zusätze und {2} Kompatibilitätsausnahmen. Sie werden mit den gewählten Endprofilen hinzugefügt; ein Eintrag mit der Id eines Eintrags in deinem Katalog ersetzt diesen.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Dateien importieren…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>ZIP importieren…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Ordner importieren…</value></data>
@@ -115,17 +117,11 @@
   <data name="Scale" xml:space="preserve"><value>Maßstab</value></data>
   <data name="Standards" xml:space="preserve"><value>Normen</value></data>
   <data name="Tracks" xml:space="preserve"><value>Gleise</value></data>
-  <data name="Origin" xml:space="preserve"><value>Herkunft</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Eingebaut</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Deine</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Deine, ersetzt eingebaute</value></data>
   <data name="Copy" xml:space="preserve"><value>Kopieren</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>Kopie</value></data>
   <data name="Copied" xml:space="preserve"><value>Als {0} kopiert.</value></data>
   <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Eingebaute wiederherstellen</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>{0} aus deinem Katalog löschen?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Deine Version von {0} entfernen und wieder die eingebaute verwenden?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Spurweite (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>SOK (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Zusätze</value></data>
@@ -142,7 +138,6 @@
   <data name="Overrides" xml:space="preserve"><value>Passungsausnahmen</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>Es gibt keine Ausnahmen. Übergänge werden nur nach den Regeln beurteilt.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>Eine Ausnahme ersetzt das Ergebnis der Regeln für ein Paar Endprofile, für bekannte Sonderfälle. Verwende sie nur, wo die Regeln falsch urteilen.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>Dieser Eintrag ist eingebaut. Beim Speichern entsteht deine eigene Version, die den eingebauten Eintrag ersetzt, bis du ihn wiederherstellst.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>Der Katalogeintrag existiert nicht.</value></data>
   <data name="None" xml:space="preserve"><value>(keine)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Zweileiter</value></data>
@@ -259,8 +254,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Klicke dorthin, wo ein Gleis liegt; seine SOK liegt immer auf der SOK-Linie.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klicken wählt aus, Ziehen verschiebt (Umschalt: gerade, Alt: ohne Fangen), Entf löscht. Von außen auf das Modul gesehen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>In meinem Katalog speichern</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} ist in deinem Katalog gespeichert.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>In deinem Katalog gespeichert: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Aus deinem Katalog aktualisiert: {0}. Speichere das Modul, damit die Änderung in seiner Datei bleibt.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>Endprofile dieses Moduls, die nicht in deinem Katalog sind: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Archiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Bearbeiten</value></data>

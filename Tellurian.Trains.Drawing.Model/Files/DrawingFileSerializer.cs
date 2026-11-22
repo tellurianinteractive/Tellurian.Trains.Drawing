@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Schedules.Exporters.Drawing;
@@ -34,7 +34,7 @@ public static class DrawingFileSerializer
         new ModuleExporter().Write(module, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     /// <summary>The catalogue file of <paramref name="catalogue"/>, written by the shared <see cref="CatalogueExporter"/>.</summary>
-    public static string Serialize(DrawingCatalogue catalogue, string? appVersion = null) =>
+    public static string Serialize(Catalogue catalogue, string? appVersion = null) =>
         new CatalogueExporter().Write(catalogue, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     /// <summary>The hall file of <paramref name="hall"/>, written by the shared <see cref="HallExporter"/>.</summary>
@@ -73,10 +73,10 @@ public static class DrawingFileSerializer
     }
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
-    public static DrawingCatalogue DeserializeCatalogue(string json) => Imported(new CatalogueImporter().Import(json));
+    public static Catalogue DeserializeCatalogue(string json) => Imported(new CatalogueImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
-    public static DrawingCatalogue DeserializeCatalogue(Stream stream)
+    public static Catalogue DeserializeCatalogue(Stream stream)
     {
         ArgumentNullException.ThrowIfNull(stream);
         using var reader = new StreamReader(stream, leaveOpen: true);

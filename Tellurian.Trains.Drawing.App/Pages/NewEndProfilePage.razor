@@ -1,6 +1,6 @@
 @page "/new/endprofile"
-@using Tellurian.Trains.Drawing.App.Catalogue
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @inject CatalogueService Catalogues
 @inject DrawingDocuments Documents
@@ -71,7 +71,7 @@
     private const double FallbackBottom = 200;
     private const double FallbackCentreDistancePerGauge = 2.75;
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
     private readonly Form form = new();
     private IReadOnlyList<string> errors = [];
     private string? message;

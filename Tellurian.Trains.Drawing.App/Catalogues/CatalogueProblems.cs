@@ -1,7 +1,7 @@
 using Tellurian.Trains.Drawing.App.Storage;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 
-namespace Tellurian.Trains.Drawing.App.Catalogue;
+namespace Tellurian.Trains.Drawing.App.Catalogues;
 
 /// <summary>
 /// The problems with the user's catalogue entries, shown by the problems indicator in the top bar.
@@ -20,7 +20,7 @@ public sealed class CatalogueProblems : IDisposable
     public IReadOnlyList<CatalogueEntryProblem> Problems { get; private set; } = [];
 
     /// <summary>The catalogue that was checked, for the names of the entries.</summary>
-    public DrawingCatalogue Catalogue { get; private set; } = CatalogueService.BuiltIn;
+    public Catalogue Catalogue { get; private set; } = Catalogue.Empty;
 
     public bool IsChecked { get; private set; }
 
@@ -33,9 +33,8 @@ public sealed class CatalogueProblems : IDisposable
         try
         {
             var user = await _catalogue.GetUserAsync(cancellationToken);
-            var merged = DrawingCatalogue.Merge(CatalogueService.BuiltIn, user);
-            Problems = CatalogueValidation.ValidateUserEntries(user, merged);
-            Catalogue = merged;
+            Problems = CatalogueValidation.ValidateUserEntries(user, user);
+            Catalogue = user;
             IsChecked = true;
         }
         catch (StorageException)

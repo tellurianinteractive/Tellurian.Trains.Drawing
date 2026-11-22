@@ -66,7 +66,7 @@ public sealed class NewModulePageTests
     {
         using var context = new AppTestContext();
         var empty = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "AAA-FIRST", Scale = new() { ShortName = "H0" }, Gauges = [new(16.5)] };
-        context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogue.CatalogueService>().SaveUserAsync(DrawingCatalogue.Empty with { Standards = [empty] }).Wait();
+        context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Catalogues.CatalogueService>().SaveUserAsync(SampleCatalogue.Instance with { Standards = [empty, .. SampleCatalogue.Instance.Standards] }).Wait();
 
         var page = context.Render<NewModulePage>();
 
