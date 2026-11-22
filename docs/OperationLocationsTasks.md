@@ -133,7 +133,7 @@ Design 4.5 and 4.6.
 - [ ] **G5** Validation: a signature occurs once in a plan, together with its country; a location without tracks; a location without a centre.
 - [ ] **G6 [model]** The **layout block**, written at every save and ignored at load: the operation locations with their tracks; the track stretches (the two locations, the side each leaves from, the distance from centre to centre, the number of tracks from the end profiles); for each track its previous and next location; the plan's GUID and revision. In the shared model's types.
 - [ ] **G7 [model]** Each location in the layout block carries its external reference, copied from the embedded module without interpreting it; without one, the module's GUID and variant.
-- [ ] **G8 [model]** Only the layout block is a public contract of the hall plan file. Say so in `schemas/README.md` and publish its schema (F1).
+- [x] **G8 [model]** ~~Only the layout block is a public contract of the hall plan file.~~ *Changed 2026-11-22 (survey step 8): the whole hall plan is the shared model's `HallPlan`, and its `layout` the contract's `Layout`; both are in the published schema.*
 - [ ] **G9** The hall plan shows the owners of a module (name and prefix), for the one who has a question about it.
 
 ## H. Working with the Module Registry (later)

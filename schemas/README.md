@@ -13,8 +13,8 @@ files are public contracts (spec EX-7): the Module Registry will accept them for
 
 The schemas of the earlier version are kept for files that still have it: [endprofile.v1.json](endprofile.v1.json),
 [module.v1.json](module.v1.json), [catalogue.v1.json](catalogue.v1.json), [hall.v1.json](hall.v1.json) and
-[hallplan.v1.json](hallplan.v1.json). They are no longer generated or checked. This library reads version 1 files and
-writes version 2.
+[hallplan.v1.json](hallplan.v1.json). They are no longer generated or checked. This library reads version 1 files,
+except hall plans, and writes version 2.
 
 Drawing files are plain JSON. The kind in the file name is a convention; readers identify a file by its `format`
 (`tellurian-drawing`) and `kind`. Files saved up to version 0.4 used the extensions `.tdendprofile`, `.tdmodule`,
@@ -180,18 +180,28 @@ wall `i` is step `i`. Obstacles (pillars, furniture) and no-go zones are closed 
 (the centre of the opening on the wall, heading into the hall), a `width` and a `keepFreeDepth`.
 
 ### Hall plans
-A hall plan file is self-contained: it embeds the `hall`, the placed `modules`, their `endProfiles`, the
-`standards` and any compatibility `overrides`. Embedded modules are read-only copies with their `revision`.
-- `layouts` hold the modules in `lines`. A line's `entries` are a list of modules joined end to end, each with
+A hall plan is a layout and where it stands in a hall. The file is self-contained: it embeds the `hall`, and its
+`layout` holds the placed modules with the end profiles, standards and compatibility overrides they need.
+- `layout` is the contract's layout (`Tellurian.Trains.Schedules.Model.Layouts`), the part the timetable planner
+  reads. It is written with the layout's own options: values that are the default of their type are left out. Its
+  `sourceId` and `sourceRevision` are the hall plan's `id` and `revision`. It also carries the planner's settings,
+  which are kept as they are.
+- `layout.modules` are the placed modules, `{ "id": 1, "module": { … } }`: read-only copies with their `revision`.
+  The `id` is the module's id in the layout, a whole number given when it is placed and kept; everything in the plan
+  refers to a module by it. An operation location is written once, in `layout.operationLocations`, and its module
+  refers to it by `operationLocationId`. A track has an id of the layout's, and its id in the module drawing as
+  `sourceId`.
+- `layout.lines` hold the modules in order. A line's `entries` are a list of modules joined end to end, each with
   `moduleId` and `isTurned`. Not turned: the module's left exit joins the previous module and its right exit the next.
   Turned 180°: the other way round. Only an entry of a module with three or more exits has `continuesFrom`, the exit
-  the line continues from. A branch line has `startAt`, the free exit of a module in another line where it starts;
-  `endAt` joins the last module to a free exit elsewhere (a rejoining branch or a loop).
-- Module poses are **not stored**; they are computed from the layout's `anchorModuleId` and `anchorPose`
-  (the anchor module's local origin and X axis in hall coordinates).
-- A module is placed at most once per plan.
-- `joints` only lists joints whose properties the planner has set (join-method override, number of clamps,
-  note). Joint fit is evaluated from the end profiles, not stored.
+  the line continues from. A line without `startAt` is a main line; a branch has `startAt`, the free exit of a module
+  in another line where it starts. `endAt` joins the last module to a free exit elsewhere (a rejoining branch or a
+  loop). A main line and the branches that start from it, and from theirs, are one connected group.
+- Module poses are **not stored**; they are computed from the `anchors`, one per main line: the `pose` of the module
+  `moduleId` (its local origin and X axis in hall coordinates), with the `dimensions` that tell how to find it.
+- A module is in at most one line, once.
+- `layout.joints` only lists joints whose properties the planner has set (join-method override, number of clamps,
+  note). Joint fit is evaluated from the end profiles with `layout.fitTolerances`, not stored.
 
 #### How a hall plan refers to exits
 A hall plan refers to an exit by its `side` and its `number` on that side, never by its label: `side` is the exit's
@@ -202,8 +212,8 @@ when left out.
   is the entry's or the anchor module.
 - `startAt` and `endAt` of a line, and `first` and `second` of a joint, have `moduleId`, `side` and `number`.
 
-Exit labels in a module drawing are text for the reader; nothing in a plan depends on them. Version 1 hall plans,
-which used exit labels, are migrated when opened.
+Exit labels in a module drawing are text for the reader; nothing in a plan depends on them. Hall plans in an earlier
+shape, also version 1 hall plans, are refused: no released version of Module Draw made one.
 
 ## Keeping the schemas up to date
 The schemas are generated from the code (`DrawingFileSchema.Create`), and a test fails when the code and

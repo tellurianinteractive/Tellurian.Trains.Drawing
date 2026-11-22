@@ -255,7 +255,9 @@ public sealed class DrawingFileTests
     {
         foreach (var kind in Enum.GetValues<DrawingFileKind>())
         {
-            for (var version = 1; version < DrawingFileFormat.CurrentSchemaVersion(kind); version++)
+            // No released version made a hall plan before version 2, so earlier hall plans are refused (2026-11-22).
+            var oldest = kind == DrawingFileKind.HallPlan ? 2 : 1;
+            for (var version = oldest; version < DrawingFileFormat.CurrentSchemaVersion(kind); version++)
                 Assert.AreEqual(1, DrawingFileMigrations.All.Count(m => m.Kind == kind && m.FromVersion == version), $"{kind} from version {version}");
         }
     }

@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
-using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
 using Shared = Tellurian.Trains.Schedules.Model.Layouts;

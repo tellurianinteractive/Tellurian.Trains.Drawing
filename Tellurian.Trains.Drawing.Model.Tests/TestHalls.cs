@@ -1,6 +1,6 @@
 using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
-using Tellurian.Trains.Drawing.Model.HallPlans;
+using Tellurian.Trains.Schedules.Model.Layouts;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -32,8 +32,9 @@ internal static class TestHalls
     });
 
     /// <summary>
-    /// A plan with a main line (straight, flipped curve, junction) anchored at the straight, a branch from the
-    /// junction to a terminus, a joint override, a public area, a walking path and an acknowledgement.
+    /// A plan with a main line (straight, turned curve, junction) anchored at the straight, a branch from the junction to
+    /// a terminus, a joint override, a public area, a walking path and an acknowledgement. The modules are placed in the
+    /// layout in that order, so their ids are 1 to 4.
     /// </summary>
     public static HallPlan Plan(Catalogue catalogue)
     {
@@ -45,61 +46,54 @@ internal static class TestHalls
         var hall = Club();
         var standard = catalogue.FindStandard(Fremo)!;
 
-        return new()
+        var layout = new Layout { PreferredStandard = standard };
+        layout.Include(standard);
+        foreach (var id in modules.SelectMany(m => m.Drawing.Exits).Select(e => e.EndProfile.Id).Distinct()) layout.Include(catalogue.FindEndProfile(id)!);
+        var placed = modules.Select(m => layout.Place(m)).ToArray();
+        var main = layout.Add(new Line
+        {
+            Name = "Main line",
+            Entries =
+            [
+                Entry(placed[0]),
+                Entry(placed[1]).Flipped().With(e => { e.LegAdjustment = 5; e.Note = "Bends the other way"; }),
+                Entry(placed[2]),
+            ],
+        });
+        layout.Add(new Line { Name = "Branch", StartAt = new(placed[2].Id, ExitSide.Right, 2), Entries = [Entry(placed[3])] });
+        layout.Joints.Add(new Joint { First = new(placed[0].Id, ExitSide.Right), Second = new(placed[1].Id, ExitSide.Right), JoinMethodOverride = JoinMethod.Clamped, NumberOfClamps = 3, Note = "No screw-hole data" });
+
+        var plan = new HallPlan
         {
             Id = Guid.NewGuid(),
             Name = "Club meeting",
             Hall = hall,
-            Scale = standard.ScaleName,
-            PrimaryStandard = new(standard.Id!.Value, standard.ShortName),
-            Layouts =
+            Layout = layout,
+            Anchors =
             [
                 new()
                 {
-                    Name = "Main",
-                    AnchorModuleId = straight.Id!.Value,
-                    AnchorPose = new(new(2000, 2000), Angle.Zero),
-                    IsAnchorLocked = true,
-                    AnchorDimensions = new()
+                    LineId = main.Id,
+                    ModuleId = placed[0].Id,
+                    Pose = new(new(2000, 2000), Angle.Zero),
+                    IsLocked = true,
+                    Dimensions = new()
                     {
                         ReferencePoint = AnchorReferencePoint.PlateCorner(ExitPlace.Left, PlateSide.Right),
                         First = HallElementReference.Wall(0),
                         Second = HallElementReference.Obstacle(hall.Obstacles[0].Id),
                         AngleWall = 0,
                     },
-                    Lines =
-                    [
-                        new()
-                        {
-                            Name = "Main line",
-                            Entries =
-                            [
-                                Entry(straight),
-                                Entry(curve).Flipped() with { LegAdjustment = 5, Note = "Bends the other way" },
-                                Entry(junction),
-                            ],
-                        },
-                        new()
-                        {
-                            Name = "Branch",
-                            StartAt = new(junction.Id!.Value, ExitSide.Right, 2),
-                            Entries = [new() { ModuleId = terminus.Id!.Value }],
-                        },
-                    ],
                 },
             ],
-            Joints = [new() { First = new(straight.Id!.Value, ExitSide.Right), Second = new(curve.Id!.Value, ExitSide.Right), JoinMethodOverride = JoinMethod.Clamped, NumberOfClamps = 3, Note = "No screw-hole data" }],
-            PublicAreas = [new() { Area = PathDrawing.Rectangle(new(6000, 6500), 4000, 1500, Angle.Zero), Label = "Visitors" }],
-            WalkingPaths = [new() { CentreLine = PathDrawing.Polyline([new(1000, 1000), new(1000, 3500), new(5000, 3500)]), Width = 700, Label = "Drivers" }],
-            Acknowledgements = [new() { FindingCode = "VA-11", ModuleIds = [junction.Id!.Value], Fingerprint = "sample", Note = "Operator space overlaps the stage edge", Time = new(2026, 11, 14, 10, 0, 0, TimeSpan.Zero) }],
-            Modules = modules,
-            EndProfiles = [.. modules.SelectMany(m => m.Drawing.Exits).Select(e => e.EndProfile.Id).Distinct().Select(id => catalogue.FindEndProfile(id)!)],
-            Standards = [standard],
         };
+        plan.Add(new PublicArea { Area = PathDrawing.Rectangle(new(6000, 6500), 4000, 1500, Angle.Zero), Label = "Visitors" });
+        plan.Add(new WalkingPath { CentreLine = PathDrawing.Polyline([new(1000, 1000), new(1000, 3500), new(5000, 3500)]), Width = 700, Label = "Drivers" });
+        plan.Add(new Acknowledgement { FindingCode = "VA-11", ModuleIds = [placed[2].Id], Fingerprint = "sample", Note = "Operator space overlaps the stage edge", Time = new(2026, 11, 14, 10, 0, 0, TimeSpan.Zero) });
+        return plan;
     }
 
-    private static LineEntry Entry(Module module) =>
-        new() { ModuleId = module.Id!.Value };
+    private static LineEntry Entry(LayoutModule module) => new() { ModuleId = module.Id };
 
     private static Module Draw(Catalogue catalogue, AutoDrawParameters parameters) =>
         ModuleAutoDraw.Create(parameters, catalogue).Module ?? throw new InvalidOperationException($"{parameters.Name} couldn't be drawn.");

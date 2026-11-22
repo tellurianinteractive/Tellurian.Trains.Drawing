@@ -8,6 +8,27 @@ new version per file kind, and files of the older version are upgraded when they
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
 upgraded; files are written as version 2. See `docs/OperationLocationsTasks.md` for what is still to come in this version.
 
+### 2026-11-22 (the hall plan is a layout in a hall)
+Survey step 8, Schedules packages 4.0.26. Hall plans are read and written by `Importers.Drawing` and `Exporters.Drawing`;
+the hall plan is the shared model's `HallPlan`, and its layout the contract's `Layout`, which the planner takes.
+- **New shape of `content`**: `id`, `name`, `note`, `hall`, `layout`, `anchors`, `acceptedStandards`, `preferredAddOns`,
+  `settings`, `publicAreas`, `walkingPaths`, `acknowledgements`, `revision`, `revisionLog`, `externalReferences`.
+- **`layout`** is the contract's layout, written with the layout's own options (default values left out): the modules
+  as `modules` (`{ "id": 1, "module": { … } }`, ids of the layout), the operation locations once in `operationLocations`
+  (a module refers to its location by `operationLocationId`), `lines`, `joints`, `endProfiles`, `standards`,
+  `overrides`, `fitTolerances` (was `settings.fit`), `preferredStandard` (was `primaryStandard` and `scale`), and
+  `sourceId` and `sourceRevision`, the hall plan's id and revision. It also carries the planner's settings.
+- **Modules are referred to by their id in the layout**, a whole number, in place of their GUID: in line entries,
+  joints, anchors and acknowledgements. A track of a placed module has an id of the layout's and keeps its id in the
+  drawing as `sourceId` (new, also in the module schema, where it is not written).
+- **`anchors`** in place of the layouts: one per main line, with `lineId`, `moduleId`, `pose`, `isLocked` and
+  `dimensions` (was `anchorDimensions`). A connected group is a main line and the branches that start from it.
+- Lines, public areas, walking paths and acknowledgements have whole numbers as `id`.
+- `settings.rotationStep` is gone: it is a setting of the editor.
+- **Hall plan files before this shape are refused**, not migrated: no released version of Module Draw made one.
+- The schemas say that what is drawn is in millimetres and degrees, and track and platform lengths, centres and
+  distances in metres (all file kinds).
+
 ### 2026-11-22 (the module's format in the shared model)
 Survey step 6b, Schedules packages 4.0.23. Earlier files, also version 2 files written by development builds, are read
 and upgraded.

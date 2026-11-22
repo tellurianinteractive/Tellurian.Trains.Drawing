@@ -1,6 +1,5 @@
 using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using System.Text.Json.Nodes;
-using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
 using Tellurian.Trains.Drawing.Model.Tracks;
@@ -59,10 +58,9 @@ public sealed class SchemaVersion2MigrationTests
     public void MigratedFilesAreWrittenAsVersion2AndMatchTheSchema()
     {
         var module = DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeModule(Version1(ModuleFile).ToJsonString()));
-        var hallPlan = DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeHallPlan(Version1(HallPlanFile).ToJsonString()));
         var endProfile = DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeEndProfile(Version1(EndProfileFile).ToJsonString()));
         var hall = DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeHall(Version1(HallFile).ToJsonString()));
-        foreach (var (kind, json) in new[] { (DrawingFileKind.Module, module), (DrawingFileKind.HallPlan, hallPlan), (DrawingFileKind.EndProfile, endProfile), (DrawingFileKind.Hall, hall) })
+        foreach (var (kind, json) in new[] { (DrawingFileKind.Module, module), (DrawingFileKind.EndProfile, endProfile), (DrawingFileKind.Hall, hall) })
         {
             Assert.AreEqual(2, DrawingFileSerializer.ReadHeader(json).SchemaVersion, kind.ToString());
             SchemaValidator.AssertValid(kind, json);
@@ -517,67 +515,11 @@ public sealed class SchemaVersion2MigrationTests
     }
 
     [TestMethod]
-    public void HallPlanRefersToExitsBySideAndNumberAndItsModulesAreTurnedOrNot()
+    public void AVersion1HallPlanIsRefused()
     {
-        var plan = DrawingFileSerializer.DeserializeHallPlan(Version1(HallPlanFile).ToJsonString());
-
-        var layout = plan.Layouts[0];
-        var main = layout.Lines[0].Entries;
-        CollectionAssert.AreEqual(new[] { false, true, false }, main.Select(e => e.IsTurned).ToArray(), "The curve was entered at its east exit.");
-        Assert.IsTrue(main.All(e => e.ContinuesFrom is null), "Each line continues from the first exit on the other side.");
-        Assert.AreEqual(new ExitReference(plan.Modules[2].Id!.Value, ExitSide.Right, 2), layout.Lines[1].StartAt);
-        Assert.IsFalse(layout.Lines[1].Entries[0].IsTurned, "The terminus is entered at its only exit, on the left.");
-        Assert.AreEqual(ExitPlace.Left, layout.AnchorDimensions!.ReferencePoint.Exit);
-        Assert.AreEqual((ExitPlace.Right, ExitPlace.Right), (plan.Joints[0].First.Place, plan.Joints[0].Second.Place));
-        var written = DrawingFileSerializer.Serialize(plan);
-        foreach (var old in new[] { "entryExit", "exitExit", "exitLabel", "variantId" }) Assert.DoesNotContain($"\"{old}\"", written);
-        Assert.AreEqual(written, DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeHallPlan(written)), "A version 2 plan is read as it is.");
-    }
-
-    [TestMethod]
-    public void HallPlanRefersToObstaclesByTheirNewNumbers()
-    {
-        var file = Version1(HallPlanFile);
-        var content = file["content"]!;
-        var dimensions = content["layouts"]![0]!["anchorDimensions"]!;
-        dimensions["first"] = new JsonObject { ["kind"] = "obstacle", ["obstacleId"] = Guid.NewGuid().ToString() };
-        dimensions["second"]!["obstacleId"] = (string)content["hall"]!["obstacles"]![1]!["id"]!;
-
-        var plan = DrawingFileSerializer.DeserializeHallPlan(file.ToJsonString());
-
-        CollectionAssert.AreEqual(new[] { 1, 2, 3 }, plan.Hall.Obstacles.Select(o => o.Id).ToArray());
-        CollectionAssert.AreEqual(new[] { 1, 2 }, plan.Hall.Doors.Select(d => d.Id).ToArray());
-        var anchor = plan.Layouts[0].AnchorDimensions!;
-        Assert.AreEqual(2, anchor.Second.ObstacleId);
-        Assert.AreSame(plan.Hall.Obstacles[1], plan.Hall.FindObstacle(anchor.Second.ObstacleId!.Value));
-        Assert.IsNull(anchor.First.ObstacleId, "A reference to an obstacle the hall doesn't have refers to none, as before.");
-        var written = DrawingFileSerializer.Serialize(plan);
-        Assert.AreEqual(written, DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeHallPlan(written)), "A version 2 plan is read as it is.");
-    }
-
-    [TestMethod]
-    public void HallPlanMigratesItsEmbeddedModulesEndProfilesAndStandards()
-    {
-        var file = Version1(HallPlanFile);
-        var content = file["content"]!;
-        var module = content["modules"]![0]!;
-        var drawing = module["variants"]![0]!;
-        drawing["registryModuleId"] = 5678;
-        module["owners"] = new JsonArray(new JsonObject { ["name"] = "A. Owner", ["share"] = 1 });
-        content["endProfiles"]![0]!["registryId"] = 12;
-        content["standards"]![0]!["registryId"] = 3;
-
-        var plan = DrawingFileSerializer.DeserializeHallPlan(file.ToJsonString());
-
-        var directions = plan.Modules.SelectMany(m => m.Drawing.Exits).Select(e => e.Direction).Distinct().ToList();
-        CollectionAssert.AreEquivalent(new[] { ExitSide.Left, ExitSide.Right }, directions);
-        Assert.AreEqual("""{"moduleId":5678}""", TestReferences.RegistryEntry(plan.Modules[0].ExternalReferences));
-        Assert.AreEqual("A. Owner", plan.Modules[0].ModuleOwners);
-        Assert.IsNull(plan.Modules[0].Prefix);
-        Assert.IsTrue(plan.Modules.All(m => m.Standard is { Scale: not null, Id: not null }), "Every embedded module has the standard of the shared model.");
-        Assert.AreEqual("""{"endProfileId":12}""", TestReferences.RegistryEntry(plan.EndProfiles[0].ExternalReferences));
-        Assert.AreEqual("""{"standardId":3}""", TestReferences.RegistryEntry(plan.Standards[0].ExternalReferences));
-        AssertNothingOldIsWritten(DrawingFileSerializer.Serialize(plan));
+        // No released version made a hall plan; the shape of version 2 is a layout in a hall (owner's decision 2026-11-22).
+        var exception = Assert.ThrowsExactly<DrawingFileException>(() => DrawingFileSerializer.DeserializeHallPlan(Version1(HallPlanFile).ToJsonString()));
+        Assert.AreEqual(DrawingFileError.InvalidContent, exception.Error);
     }
 
     [TestMethod]

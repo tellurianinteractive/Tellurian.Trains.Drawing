@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Tellurian Trains Drawing Hall file",
-  "description": "A .hall.json file, schema version 2. Lengths in millimetres, angles in degrees.",
+  "description": "A .hall.json file, schema version 2. What is drawn in millimetres and degrees; track and platform lengths, centres and distances in metres.",
   "type": "object",
   "properties": {
     "format": {

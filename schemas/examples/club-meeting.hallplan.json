@@ -4,10 +4,10 @@
   "schemaVersion": 2,
   "appVersion": "0.9.1",
   "content": {
-    "id": "cebf9439-aba7-4e6b-a66f-5be7cb6ca6ed",
+    "id": "dfab005d-4918-4507-a9b8-e602f1422580",
     "name": "Club meeting",
     "hall": {
-      "id": "b35028a7-a1bb-4b69-b8a3-6ca79dd44152",
+      "id": "b27331d5-a5de-4e6f-942e-8f2bb753993a",
       "name": "Club hall",
       "address": "Station Road 1",
       "outline": {
@@ -236,38 +236,1520 @@
       "revision": 0,
       "revisionLog": []
     },
-    "scale": "H0",
-    "primaryStandard": {
-      "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-      "name": "FREMO/H0-RE"
-    },
-    "acceptedStandards": [],
-    "preferredAddOns": [],
-    "settings": {
-      "fit": {
-        "joint": 0.5,
-        "landscape": 2,
-        "minimumBoltedScrewHoles": 3
+    "layout": {
+      "name": "Club meeting",
+      "settings": {
+        "identity": {
+          "theme": "European",
+          "scaleId": 3,
+          "defaultCountryId": 1
+        },
+        "general": {
+          "startDay": "Monday",
+          "maxSessions": 14,
+          "startTime": "06:00:00",
+          "endTime": "20:00:00",
+          "trainsPerTicket": 4,
+          "reportFontFamily": ""
+        },
+        "graphicTimetable": {
+          "showDepartureMinutes": true,
+          "minuteSpacing": 2,
+          "kilometerSpacing": 3,
+          "stationSpacing": 100,
+          "trackSpacing": 8,
+          "trainLabelFontSize": 8,
+          "printHourSpacingMm": 18,
+          "printKilometerSpacingMm": 1,
+          "printStationSpacingMm": 20,
+          "printTrackSpacingMm": 2
+        },
+        "timeAndSpeed": {
+          "fastClockSpeed": 5,
+          "slow": {
+            "scaleSpeedKmh": 60,
+            "realSpeedMetersPerSecond": 0.15
+          },
+          "normal": {
+            "scaleSpeedKmh": 100,
+            "realSpeedMetersPerSecond": 0.25
+          },
+          "high": {
+            "scaleSpeedKmh": 200,
+            "realSpeedMetersPerSecond": 0.35
+          },
+          "stationTimings": {
+            "minimumStopMinutes": 3,
+            "locoRunaroundRealMinutes": 5,
+            "trainClearanceRealMinutes": 1
+          },
+          "distanceFactor": 1
+        },
+        "validation": {
+          "validateStationCalls": true,
+          "validateStationTracks": true,
+          "validateStretches": true,
+          "validateTrainSpeed": true,
+          "validateRouteContinuity": true,
+          "validateTrainNumbers": true,
+          "validatePassengerExchange": true,
+          "validateStopPatterns": true,
+          "validateScheduledTracks": true,
+          "validateRequiredStopTimes": true,
+          "validateSchedules": true,
+          "validateLocomotiveCoverage": true,
+          "validateDriverDuties": true,
+          "minTrainSpeedMetersPerClockMinute": 0.3,
+          "maxTrainSpeedMetersPerClockMinute": 10
+        },
+        "integration": {
+          "moduleRegistryApiUrl": "https://moduleregistry.azurewebsites.net"
+        }
       },
-      "jointGap": 2,
-      "jointAngle": 0.5,
-      "height": 1,
-      "isClearanceChecked": true,
-      "walkingPathWidth": 600,
-      "rotationStep": 15
+      "countries": [],
+      "companies": [],
+      "regions": [],
+      "operationLocations": [],
+      "trackStretches": [],
+      "timetableStretches": [],
+      "dispatchStretches": [],
+      "topologyPositions": [],
+      "sourceId": "dfab005d-4918-4507-a9b8-e602f1422580",
+      "preferredStandard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+        "shortName": "FREMO/H0-RE",
+        "scale": {
+          "shortName": "H0"
+        },
+        "railSystem": "TwoRail",
+        "gauges": [
+          {
+            "width": 16.5
+          }
+        ],
+        "railTopHeight": 1300,
+        "minimumClearance": 0,
+        "operatorSpaceDepth": 800,
+        "trackColor": "#1f5fbf",
+        "defaultSingleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+        "defaultDoubleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
+        "source": {
+          "title": "FREMO module standard H0-RE"
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "module": {
+            "id": "70279134-4a7a-4554-aa9e-0c45bc17c0ab",
+            "name": "Straight",
+            "standard": {
+              "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+              "shortName": "FREMO/H0-RE",
+              "scale": {
+                "shortName": "H0"
+              }
+            },
+            "tracks": [],
+            "addOns": [],
+            "hasNormalGauge": true,
+            "revisionLog": [],
+            "drawing": {
+              "exits": [
+                {
+                  "label": "W",
+                  "direction": "Left",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "pose": {
+                    "x": 0,
+                    "y": 0,
+                    "heading": 180
+                  }
+                },
+                {
+                  "label": "E",
+                  "direction": "Right",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "orientation": "Mirrored",
+                  "pose": {
+                    "x": 1200,
+                    "y": 0,
+                    "heading": 0
+                  }
+                }
+              ],
+              "mainPath": {
+                "start": {
+                  "x": 0,
+                  "y": 0
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1200,
+                      "y": 0
+                    }
+                  }
+                ]
+              },
+              "sides": [
+                {
+                  "fromExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Right",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": 0,
+                      "y": -250.0000000000001
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": -250.0000000000001
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "fromExit": {
+                    "side": "Right",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": 1200,
+                      "y": 250.0000000000001
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 0,
+                          "y": 250.0000000000001
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "sections": [
+                {
+                  "label": "1",
+                  "outline": {
+                    "start": {
+                      "x": 0,
+                      "y": -250.0000000000001
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": -250.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": 250.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 0,
+                          "y": 250.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 0,
+                          "y": -250.0000000000001
+                        }
+                      }
+                    ],
+                    "isClosed": true
+                  }
+                }
+              ],
+              "internalJoints": [],
+              "trackElements": [
+                {
+                  "type": "flex",
+                  "path": {
+                    "start": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": 0
+                        }
+                      }
+                    ]
+                  },
+                  "id": 1,
+                  "isGenerated": true
+                }
+              ],
+              "operatorSpaces": [],
+              "publicSides": [],
+              "duckUnderAreas": [],
+              "labels": [],
+              "registryMeasures": {
+                "straight": 1200
+              },
+              "autoDraw": {
+                "generatorVersion": "1.2",
+                "parameters": {
+                  "name": "Straight",
+                  "standard": "FREMO/H0-RE",
+                  "straight": 1200,
+                  "exits": [
+                    {
+                      "label": "W",
+                      "direction": "Left",
+                      "endProfile": "FREMO-H0-B96"
+                    },
+                    {
+                      "label": "E",
+                      "direction": "Right",
+                      "endProfile": "FREMO-H0-B96"
+                    }
+                  ],
+                  "taperAngle": 45
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 2,
+          "module": {
+            "id": "7732f4f7-1006-4eb4-b740-83ae5e83b264",
+            "name": "Curve",
+            "standard": {
+              "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+              "shortName": "FREMO/H0-RE",
+              "scale": {
+                "shortName": "H0"
+              }
+            },
+            "tracks": [],
+            "addOns": [],
+            "hasNormalGauge": true,
+            "revisionLog": [],
+            "drawing": {
+              "exits": [
+                {
+                  "label": "W",
+                  "direction": "Left",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "pose": {
+                    "x": 1.2246467991473532E-13,
+                    "y": 0,
+                    "heading": 180
+                  }
+                },
+                {
+                  "label": "E",
+                  "direction": "Right",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "orientation": "Mirrored",
+                  "pose": {
+                    "x": 1000.0000000000002,
+                    "y": 267.9491924311228,
+                    "heading": 30
+                  }
+                }
+              ],
+              "mainPath": {
+                "start": {
+                  "x": 1.2246467991473532E-13,
+                  "y": 0
+                },
+                "steps": [
+                  {
+                    "type": "arc",
+                    "center": {
+                      "x": 0,
+                      "y": 2000
+                    },
+                    "sweep": 30
+                  }
+                ]
+              },
+              "sides": [
+                {
+                  "fromExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Right",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": 1.3777276490407724E-13,
+                      "y": -250
+                    },
+                    "steps": [
+                      {
+                        "type": "arc",
+                        "center": {
+                          "x": 0,
+                          "y": 2000
+                        },
+                        "sweep": 29.999999999999996
+                      }
+                    ]
+                  }
+                },
+                {
+                  "fromExit": {
+                    "side": "Right",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": 875.0000000000002,
+                      "y": 484.4555433772325
+                    },
+                    "steps": [
+                      {
+                        "type": "arc",
+                        "center": {
+                          "x": 0,
+                          "y": 2000
+                        },
+                        "sweep": -29.999999999999996
+                      }
+                    ]
+                  }
+                }
+              ],
+              "sections": [
+                {
+                  "label": "1",
+                  "outline": {
+                    "start": {
+                      "x": 1.3777276490407724E-13,
+                      "y": -250
+                    },
+                    "steps": [
+                      {
+                        "type": "arc",
+                        "center": {
+                          "x": 0,
+                          "y": 2000
+                        },
+                        "sweep": 29.999999999999996
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 875.0000000000002,
+                          "y": 484.4555433772325
+                        }
+                      },
+                      {
+                        "type": "arc",
+                        "center": {
+                          "x": 0,
+                          "y": 2000
+                        },
+                        "sweep": -29.999999999999996
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1.3777276490407724E-13,
+                          "y": -250
+                        }
+                      }
+                    ],
+                    "isClosed": true
+                  }
+                }
+              ],
+              "internalJoints": [],
+              "trackElements": [
+                {
+                  "type": "flex",
+                  "path": {
+                    "start": {
+                      "x": 1.2246467991473532E-13,
+                      "y": 0
+                    },
+                    "steps": [
+                      {
+                        "type": "arc",
+                        "center": {
+                          "x": 0,
+                          "y": 2000
+                        },
+                        "sweep": 30
+                      }
+                    ]
+                  },
+                  "id": 1,
+                  "isGenerated": true
+                }
+              ],
+              "operatorSpaces": [],
+              "publicSides": [],
+              "duckUnderAreas": [],
+              "labels": [],
+              "registryMeasures": {
+                "radius": 2000,
+                "angle": 30
+              },
+              "autoDraw": {
+                "generatorVersion": "1.2",
+                "parameters": {
+                  "name": "Curve",
+                  "standard": "FREMO/H0-RE",
+                  "radius": 2000,
+                  "angle": 30,
+                  "exits": [
+                    {
+                      "label": "W",
+                      "direction": "Left",
+                      "endProfile": "FREMO-H0-B96"
+                    },
+                    {
+                      "label": "E",
+                      "direction": "Right",
+                      "endProfile": "FREMO-H0-B96"
+                    }
+                  ],
+                  "taperAngle": 45
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 3,
+          "module": {
+            "id": "4f74f746-cd91-4f47-bd3b-c7eef7be7030",
+            "name": "Junction",
+            "standard": {
+              "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+              "shortName": "FREMO/H0-RE",
+              "scale": {
+                "shortName": "H0"
+              }
+            },
+            "tracks": [],
+            "addOns": [],
+            "hasNormalGauge": true,
+            "revisionLog": [],
+            "drawing": {
+              "exits": [
+                {
+                  "label": "W",
+                  "direction": "Left",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "pose": {
+                    "x": 0,
+                    "y": 0,
+                    "heading": 180
+                  }
+                },
+                {
+                  "label": "E",
+                  "direction": "Right",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "orientation": "Mirrored",
+                  "pose": {
+                    "x": 1500,
+                    "y": 0,
+                    "heading": 0
+                  }
+                },
+                {
+                  "label": "E2",
+                  "direction": "Right",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+                    "name": "FREMO-H0-B96"
+                  },
+                  "orientation": "Mirrored",
+                  "pose": {
+                    "x": 1500,
+                    "y": 600.0000000000002,
+                    "heading": 0
+                  },
+                  "isPositionProvisional": true
+                }
+              ],
+              "mainPath": {
+                "start": {
+                  "x": 0,
+                  "y": 0
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1500,
+                      "y": 0
+                    }
+                  }
+                ]
+              },
+              "sides": [
+                {
+                  "fromExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Right",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": -3.0616169978683844E-14,
+                      "y": -250.0000000000001
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": -250.0000000000001
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "fromExit": {
+                    "side": "Right",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Right",
+                    "number": 2
+                  },
+                  "path": {
+                    "start": {
+                      "x": 1500,
+                      "y": 250.0000000000001
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": 350.0000000000001
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "fromExit": {
+                    "side": "Right",
+                    "number": 2
+                  },
+                  "toExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": 1500,
+                      "y": 850.0000000000003
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 3.0616169978683844E-14,
+                          "y": 250.0000000000001
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "sections": [
+                {
+                  "label": "1",
+                  "outline": {
+                    "start": {
+                      "x": 3.0616169978683844E-14,
+                      "y": 250.0000000000001
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": -3.0616169978683844E-14,
+                          "y": -250.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": -250.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": 250.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": 350.0000000000001
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": 850.0000000000003
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 3.0616169978683844E-14,
+                          "y": 250.0000000000001
+                        }
+                      }
+                    ],
+                    "isClosed": true
+                  }
+                }
+              ],
+              "internalJoints": [],
+              "trackElements": [
+                {
+                  "type": "flex",
+                  "path": {
+                    "start": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1500,
+                          "y": 0
+                        }
+                      }
+                    ]
+                  },
+                  "id": 1,
+                  "isGenerated": true
+                }
+              ],
+              "operatorSpaces": [],
+              "publicSides": [],
+              "duckUnderAreas": [],
+              "labels": [],
+              "registryMeasures": {
+                "straight": 1500
+              },
+              "autoDraw": {
+                "generatorVersion": "1.2",
+                "parameters": {
+                  "name": "Junction",
+                  "standard": "FREMO/H0-RE",
+                  "straight": 1500,
+                  "exits": [
+                    {
+                      "label": "W",
+                      "direction": "Left",
+                      "endProfile": "FREMO-H0-B96"
+                    },
+                    {
+                      "label": "E",
+                      "direction": "Right",
+                      "endProfile": "FREMO-H0-B96"
+                    },
+                    {
+                      "label": "E2",
+                      "direction": "Right",
+                      "endProfile": "FREMO-H0-B96"
+                    }
+                  ],
+                  "taperAngle": 45
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 4,
+          "module": {
+            "id": "30c60e31-7c31-412d-81ef-4ea21dabe435",
+            "name": "Terminus",
+            "standard": {
+              "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+              "shortName": "FREMO/H0-RE",
+              "scale": {
+                "shortName": "H0"
+              }
+            },
+            "tracks": [],
+            "addOns": [],
+            "numberOfThroughTracks": 2,
+            "hasNormalGauge": true,
+            "isEndOfLine": true,
+            "revisionLog": [],
+            "drawing": {
+              "exits": [
+                {
+                  "label": "W",
+                  "direction": "Left",
+                  "endProfile": {
+                    "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
+                    "name": "FREMO-H0-2E96"
+                  },
+                  "pose": {
+                    "x": 0,
+                    "y": 0,
+                    "heading": 180
+                  }
+                }
+              ],
+              "mainPath": {
+                "start": {
+                  "x": 0,
+                  "y": 0
+                },
+                "steps": [
+                  {
+                    "type": "line",
+                    "end": {
+                      "x": 1200,
+                      "y": 0
+                    }
+                  }
+                ]
+              },
+              "sides": [
+                {
+                  "fromExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "toExit": {
+                    "side": "Left",
+                    "number": 1
+                  },
+                  "path": {
+                    "start": {
+                      "x": 0,
+                      "y": -250
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": -250
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": 250
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 0,
+                          "y": 250
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "sections": [
+                {
+                  "label": "1",
+                  "outline": {
+                    "start": {
+                      "x": 0,
+                      "y": -250
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": -250
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1200,
+                          "y": 250
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 0,
+                          "y": 250
+                        }
+                      },
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 0,
+                          "y": -250
+                        }
+                      }
+                    ],
+                    "isClosed": true
+                  }
+                }
+              ],
+              "internalJoints": [],
+              "trackElements": [
+                {
+                  "type": "flex",
+                  "path": {
+                    "start": {
+                      "x": 0,
+                      "y": -25
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1150,
+                          "y": -25
+                        }
+                      }
+                    ]
+                  },
+                  "id": 1,
+                  "isGenerated": true
+                },
+                {
+                  "type": "bufferStop",
+                  "pose": {
+                    "x": 1150,
+                    "y": -25,
+                    "heading": 180
+                  },
+                  "id": 2,
+                  "isGenerated": true
+                },
+                {
+                  "type": "flex",
+                  "path": {
+                    "start": {
+                      "x": 0,
+                      "y": 25
+                    },
+                    "steps": [
+                      {
+                        "type": "line",
+                        "end": {
+                          "x": 1150,
+                          "y": 25
+                        }
+                      }
+                    ]
+                  },
+                  "id": 3,
+                  "isGenerated": true
+                },
+                {
+                  "type": "bufferStop",
+                  "pose": {
+                    "x": 1150,
+                    "y": 25,
+                    "heading": 180
+                  },
+                  "id": 4,
+                  "isGenerated": true
+                }
+              ],
+              "operatorSpaces": [],
+              "publicSides": [],
+              "duckUnderAreas": [],
+              "labels": [],
+              "registryMeasures": {
+                "straight": 1200
+              },
+              "autoDraw": {
+                "generatorVersion": "1.2",
+                "parameters": {
+                  "name": "Terminus",
+                  "standard": "FREMO/H0-RE",
+                  "straight": 1200,
+                  "numberOfThroughTracks": 2,
+                  "exits": [
+                    {
+                      "label": "W",
+                      "direction": "Left",
+                      "endProfile": "FREMO-H0-2E96"
+                    }
+                  ],
+                  "isEndOfLine": true,
+                  "taperAngle": 45
+                }
+              }
+            }
+          }
+        }
+      ],
+      "lines": [
+        {
+          "id": 1,
+          "name": "Main line",
+          "entries": [
+            {
+              "moduleId": 1
+            },
+            {
+              "moduleId": 2,
+              "isTurned": true,
+              "legAdjustment": 5,
+              "note": "Bends the other way"
+            },
+            {
+              "moduleId": 3
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Branch",
+          "entries": [
+            {
+              "moduleId": 4
+            }
+          ],
+          "startAt": {
+            "moduleId": 3,
+            "side": "Right",
+            "number": 2
+          }
+        }
+      ],
+      "joints": [
+        {
+          "first": {
+            "moduleId": 1,
+            "side": "Right",
+            "number": 1
+          },
+          "second": {
+            "moduleId": 2,
+            "side": "Right",
+            "number": 1
+          },
+          "joinMethodOverride": "Clamped",
+          "numberOfClamps": 3,
+          "note": "No screw-hole data"
+        }
+      ],
+      "endProfiles": [
+        {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+          "designation": "FREMO-H0-B96",
+          "shortName": "B96",
+          "scale": "H0",
+          "standards": [
+            {
+              "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+              "name": "FREMO/H0-RE"
+            }
+          ],
+          "outline": {
+            "start": {
+              "x": -250,
+              "y": -195
+            },
+            "steps": [
+              {
+                "type": "line",
+                "end": {
+                  "x": 250,
+                  "y": -195
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 250.00000000000023,
+                  "y": 46.55332147444176
+                }
+              },
+              {
+                "type": "arc",
+                "center": {
+                  "x": 327,
+                  "y": -495
+                },
+                "sweep": 18.9734982539195
+              },
+              {
+                "type": "arc",
+                "center": {
+                  "x": 73.55769887408297,
+                  "y": 1
+                },
+                "sweep": -27.065777620219407
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 60,
+                  "y": -9
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 55,
+                  "y": -14
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 45,
+                  "y": -14
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 35,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 24,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 20,
+                  "y": 0
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -20,
+                  "y": 0
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -24,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -35,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -61,
+                  "y": -30
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -250,
+                  "y": -58
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -250,
+                  "y": -195
+                }
+              }
+            ],
+            "isClosed": true
+          },
+          "groundLine": {
+            "start": {
+              "x": -250,
+              "y": -58
+            },
+            "steps": [
+              {
+                "type": "line",
+                "end": {
+                  "x": -61,
+                  "y": -30
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -35,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -24,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -20,
+                  "y": 0
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 20,
+                  "y": 0
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 24,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 35,
+                  "y": -4
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 45,
+                  "y": -14
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 55,
+                  "y": -14
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 60,
+                  "y": -9
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 73.55769887408297,
+                  "y": -9
+                }
+              },
+              {
+                "type": "arc",
+                "center": {
+                  "x": 73.55769887408297,
+                  "y": 1
+                },
+                "sweep": 27.065777620219407
+              },
+              {
+                "type": "arc",
+                "center": {
+                  "x": 327,
+                  "y": -495
+                },
+                "sweep": -18.9734982539195
+              }
+            ]
+          },
+          "tracks": [
+            {
+              "offset": 0,
+              "gauges": [
+                16.5
+              ]
+            }
+          ],
+          "screwHoles": [
+            {
+              "center": {
+                "x": -180,
+                "y": -145
+              },
+              "diameter": 12
+            },
+            {
+              "center": {
+                "x": 180,
+                "y": -145
+              },
+              "diameter": 12
+            },
+            {
+              "center": {
+                "x": -180,
+                "y": -79
+              },
+              "diameter": 12
+            },
+            {
+              "center": {
+                "x": 180,
+                "y": -79
+              },
+              "diameter": 12
+            },
+            {
+              "center": {
+                "x": 0,
+                "y": -65
+              },
+              "diameter": 12
+            }
+          ],
+          "dowels": [],
+          "screwHolePattern": "FREMO-H0",
+          "source": {
+            "title": "FREMO H0-B96 dimensioned drawing, high and low profile (track at 195 / 104 mm above the plate bottom).",
+            "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
+            "revision": "drawing-2026-11-14"
+          },
+          "revisionLog": []
+        },
+        {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
+          "designation": "FREMO-H0-2E96",
+          "shortName": "2E96",
+          "scale": "H0",
+          "standards": [
+            {
+              "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+              "name": "FREMO/H0-RE"
+            }
+          ],
+          "outline": {
+            "start": {
+              "x": -250,
+              "y": -140
+            },
+            "steps": [
+              {
+                "type": "line",
+                "end": {
+                  "x": 250,
+                  "y": -140
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": 250,
+                  "y": -40
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -250,
+                  "y": -40
+                }
+              },
+              {
+                "type": "line",
+                "end": {
+                  "x": -250,
+                  "y": -140
+                }
+              }
+            ],
+            "isClosed": true
+          },
+          "groundLine": {
+            "start": {
+              "x": -250,
+              "y": -40
+            },
+            "steps": [
+              {
+                "type": "line",
+                "end": {
+                  "x": 250,
+                  "y": -40
+                }
+              }
+            ]
+          },
+          "tracks": [
+            {
+              "offset": -25,
+              "gauges": [
+                16.5
+              ]
+            },
+            {
+              "offset": 25,
+              "gauges": [
+                16.5
+              ]
+            }
+          ],
+          "screwHoles": [
+            {
+              "center": {
+                "x": -150,
+                "y": -70
+              },
+              "diameter": 8
+            },
+            {
+              "center": {
+                "x": 150,
+                "y": -70
+              },
+              "diameter": 8
+            },
+            {
+              "center": {
+                "x": -150,
+                "y": -110
+              },
+              "diameter": 8
+            },
+            {
+              "center": {
+                "x": 150,
+                "y": -110
+              },
+              "diameter": 8
+            }
+          ],
+          "dowels": [],
+          "screwHolePattern": "FREMO-H0",
+          "source": {
+            "title": "FREMO: H0 double-track end profile 2E96. Provisional values, to be drawn from the published FREMO PDF.",
+            "revision": "provisional"
+          },
+          "revisionLog": []
+        }
+      ],
+      "standards": [
+        {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
+          "shortName": "FREMO/H0-RE",
+          "scale": {
+            "shortName": "H0"
+          },
+          "railSystem": "TwoRail",
+          "gauges": [
+            {
+              "width": 16.5
+            }
+          ],
+          "railTopHeight": 1300,
+          "minimumClearance": 0,
+          "operatorSpaceDepth": 800,
+          "trackColor": "#1f5fbf",
+          "defaultSingleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
+          "defaultDoubleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
+          "source": {
+            "title": "FREMO module standard H0-RE"
+          }
+        }
+      ],
+      "overrides": []
     },
-    "layouts": [
+    "anchors": [
       {
-        "id": "f2eb7873-18ac-406f-ab20-f6efdd82b1a4",
-        "name": "Main",
-        "anchorModuleId": "cb573985-901c-4fe0-9ecd-1dc06df94686",
-        "anchorPose": {
+        "lineId": 1,
+        "moduleId": 1,
+        "pose": {
           "x": 2000,
           "y": 2000,
           "heading": 0
         },
-        "isAnchorLocked": true,
-        "anchorDimensions": {
+        "isLocked": true,
+        "dimensions": {
           "referencePoint": {
             "kind": "PlateCorner",
             "exit": {
@@ -285,69 +1767,21 @@
             "obstacleId": 1
           },
           "angleWall": 0
-        },
-        "lines": [
-          {
-            "id": "475bebcc-0c72-4a05-a023-b335e0c55009",
-            "name": "Main line",
-            "entries": [
-              {
-                "moduleId": "cb573985-901c-4fe0-9ecd-1dc06df94686",
-                "isTurned": false,
-                "legAdjustment": 0
-              },
-              {
-                "moduleId": "8db6e73a-8c3b-437b-85e7-c8b0ce0cb61e",
-                "isTurned": true,
-                "legAdjustment": 5,
-                "note": "Bends the other way"
-              },
-              {
-                "moduleId": "5bb2ace3-c993-4872-a720-4236c44c234c",
-                "isTurned": false,
-                "legAdjustment": 0
-              }
-            ]
-          },
-          {
-            "id": "090b021c-e417-4d94-ae15-b74daca8d20a",
-            "name": "Branch",
-            "entries": [
-              {
-                "moduleId": "4079b79b-fcf7-42f5-b411-fa20467367a2",
-                "isTurned": false,
-                "legAdjustment": 0
-              }
-            ],
-            "startAt": {
-              "moduleId": "5bb2ace3-c993-4872-a720-4236c44c234c",
-              "side": "Right",
-              "number": 2
-            }
-          }
-        ]
+        }
       }
     ],
-    "joints": [
-      {
-        "first": {
-          "moduleId": "cb573985-901c-4fe0-9ecd-1dc06df94686",
-          "side": "Right",
-          "number": 1
-        },
-        "second": {
-          "moduleId": "8db6e73a-8c3b-437b-85e7-c8b0ce0cb61e",
-          "side": "Right",
-          "number": 1
-        },
-        "joinMethodOverride": "Clamped",
-        "numberOfClamps": 3,
-        "note": "No screw-hole data"
-      }
-    ],
+    "acceptedStandards": [],
+    "preferredAddOns": [],
+    "settings": {
+      "jointGap": 2,
+      "jointAngle": 0.5,
+      "height": 1,
+      "isClearanceChecked": true,
+      "walkingPathWidth": 600
+    },
     "publicAreas": [
       {
-        "id": "82b51269-79dc-494b-9f0d-d6a1bbd16fd4",
+        "id": 1,
         "area": {
           "start": {
             "x": 4000,
@@ -390,7 +1824,7 @@
     ],
     "walkingPaths": [
       {
-        "id": "cfd0e504-2f22-45b1-8482-fd7e69cd0e63",
+        "id": 1,
         "centreLine": {
           "start": {
             "x": 1000,
@@ -420,1478 +1854,16 @@
     ],
     "acknowledgements": [
       {
-        "id": "dcc1c4fb-7269-4870-b6de-1db9f6a33a77",
+        "id": 1,
         "findingCode": "VA-11",
         "moduleIds": [
-          "5bb2ace3-c993-4872-a720-4236c44c234c"
+          3
         ],
         "fingerprint": "sample",
         "note": "Operator space overlaps the stage edge",
         "time": "2026-11-14T10:00:00+00:00"
       }
     ],
-    "modules": [
-      {
-        "id": "cb573985-901c-4fe0-9ecd-1dc06df94686",
-        "name": "Straight",
-        "hasFremoDesignation": false,
-        "standard": {
-          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
-        "addOns": [],
-        "hasNormalGauge": true,
-        "hasNarrowGauge": false,
-        "isDuckunder": false,
-        "isTurntable": false,
-        "isEndOfLine": false,
-        "isEndProfileSwitcher": false,
-        "isSignalModule": false,
-        "isStandAlone": false,
-        "revision": 0,
-        "revisionLog": [],
-        "drawing": {
-          "exits": [
-            {
-              "label": "W",
-              "direction": "Left",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Normal",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 0,
-                "y": 0,
-                "heading": 180
-              },
-              "isPositionProvisional": false
-            },
-            {
-              "label": "E",
-              "direction": "Right",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Mirrored",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 1200,
-                "y": 0,
-                "heading": 0
-              },
-              "isPositionProvisional": false
-            }
-          ],
-          "mainPath": {
-            "start": {
-              "x": 0,
-              "y": 0
-            },
-            "steps": [
-              {
-                "type": "line",
-                "end": {
-                  "x": 1200,
-                  "y": 0
-                }
-              }
-            ],
-            "isClosed": false
-          },
-          "sides": [
-            {
-              "fromExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Right",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 0,
-                  "y": -250.0000000000001
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": -250.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": false
-              }
-            },
-            {
-              "fromExit": {
-                "side": "Right",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 1200,
-                  "y": 250.0000000000001
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 0,
-                      "y": 250.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": false
-              }
-            }
-          ],
-          "sections": [
-            {
-              "label": "1",
-              "outline": {
-                "start": {
-                  "x": 0,
-                  "y": -250.0000000000001
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": -250.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": 250.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 0,
-                      "y": 250.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 0,
-                      "y": -250.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": true
-              }
-            }
-          ],
-          "internalJoints": [],
-          "trackElements": [
-            {
-              "type": "flex",
-              "path": {
-                "start": {
-                  "x": 0,
-                  "y": 0
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": 0
-                    }
-                  }
-                ],
-                "isClosed": false
-              },
-              "id": 1,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            }
-          ],
-          "operatorSpaces": [],
-          "publicSides": [],
-          "duckUnderAreas": [],
-          "labels": [],
-          "registryMeasures": {
-            "straight": 1200
-          },
-          "autoDraw": {
-            "generatorVersion": "1.2",
-            "parameters": {
-              "name": "Straight",
-              "standard": "FREMO/H0-RE",
-              "straight": 1200,
-              "exits": [
-                {
-                  "label": "W",
-                  "direction": "Left",
-                  "endProfile": "FREMO-H0-B96"
-                },
-                {
-                  "label": "E",
-                  "direction": "Right",
-                  "endProfile": "FREMO-H0-B96"
-                }
-              ],
-              "isEndOfLine": false,
-              "isDuckunder": false,
-              "isTurntable": false,
-              "isEndProfileSwitcher": false,
-              "isOperationPlace": false,
-              "curveDirection": "Left",
-              "straightPosition": "Before",
-              "wideningSide": "Left",
-              "taperAngle": 45
-            }
-          }
-        }
-      },
-      {
-        "id": "8db6e73a-8c3b-437b-85e7-c8b0ce0cb61e",
-        "name": "Curve",
-        "hasFremoDesignation": false,
-        "standard": {
-          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
-        "addOns": [],
-        "hasNormalGauge": true,
-        "hasNarrowGauge": false,
-        "isDuckunder": false,
-        "isTurntable": false,
-        "isEndOfLine": false,
-        "isEndProfileSwitcher": false,
-        "isSignalModule": false,
-        "isStandAlone": false,
-        "revision": 0,
-        "revisionLog": [],
-        "drawing": {
-          "exits": [
-            {
-              "label": "W",
-              "direction": "Left",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Normal",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 1.2246467991473532E-13,
-                "y": 0,
-                "heading": 180
-              },
-              "isPositionProvisional": false
-            },
-            {
-              "label": "E",
-              "direction": "Right",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Mirrored",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 1000.0000000000002,
-                "y": 267.9491924311228,
-                "heading": 30
-              },
-              "isPositionProvisional": false
-            }
-          ],
-          "mainPath": {
-            "start": {
-              "x": 1.2246467991473532E-13,
-              "y": 0
-            },
-            "steps": [
-              {
-                "type": "arc",
-                "center": {
-                  "x": 0,
-                  "y": 2000
-                },
-                "sweep": 30
-              }
-            ],
-            "isClosed": false
-          },
-          "sides": [
-            {
-              "fromExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Right",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 1.3777276490407724E-13,
-                  "y": -250
-                },
-                "steps": [
-                  {
-                    "type": "arc",
-                    "center": {
-                      "x": 0,
-                      "y": 2000
-                    },
-                    "sweep": 29.999999999999996
-                  }
-                ],
-                "isClosed": false
-              }
-            },
-            {
-              "fromExit": {
-                "side": "Right",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 875.0000000000002,
-                  "y": 484.4555433772325
-                },
-                "steps": [
-                  {
-                    "type": "arc",
-                    "center": {
-                      "x": 0,
-                      "y": 2000
-                    },
-                    "sweep": -29.999999999999996
-                  }
-                ],
-                "isClosed": false
-              }
-            }
-          ],
-          "sections": [
-            {
-              "label": "1",
-              "outline": {
-                "start": {
-                  "x": 1.3777276490407724E-13,
-                  "y": -250
-                },
-                "steps": [
-                  {
-                    "type": "arc",
-                    "center": {
-                      "x": 0,
-                      "y": 2000
-                    },
-                    "sweep": 29.999999999999996
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 875.0000000000002,
-                      "y": 484.4555433772325
-                    }
-                  },
-                  {
-                    "type": "arc",
-                    "center": {
-                      "x": 0,
-                      "y": 2000
-                    },
-                    "sweep": -29.999999999999996
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1.3777276490407724E-13,
-                      "y": -250
-                    }
-                  }
-                ],
-                "isClosed": true
-              }
-            }
-          ],
-          "internalJoints": [],
-          "trackElements": [
-            {
-              "type": "flex",
-              "path": {
-                "start": {
-                  "x": 1.2246467991473532E-13,
-                  "y": 0
-                },
-                "steps": [
-                  {
-                    "type": "arc",
-                    "center": {
-                      "x": 0,
-                      "y": 2000
-                    },
-                    "sweep": 30
-                  }
-                ],
-                "isClosed": false
-              },
-              "id": 1,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            }
-          ],
-          "operatorSpaces": [],
-          "publicSides": [],
-          "duckUnderAreas": [],
-          "labels": [],
-          "registryMeasures": {
-            "radius": 2000,
-            "angle": 30
-          },
-          "autoDraw": {
-            "generatorVersion": "1.2",
-            "parameters": {
-              "name": "Curve",
-              "standard": "FREMO/H0-RE",
-              "radius": 2000,
-              "angle": 30,
-              "exits": [
-                {
-                  "label": "W",
-                  "direction": "Left",
-                  "endProfile": "FREMO-H0-B96"
-                },
-                {
-                  "label": "E",
-                  "direction": "Right",
-                  "endProfile": "FREMO-H0-B96"
-                }
-              ],
-              "isEndOfLine": false,
-              "isDuckunder": false,
-              "isTurntable": false,
-              "isEndProfileSwitcher": false,
-              "isOperationPlace": false,
-              "curveDirection": "Left",
-              "straightPosition": "Before",
-              "wideningSide": "Left",
-              "taperAngle": 45
-            }
-          }
-        }
-      },
-      {
-        "id": "5bb2ace3-c993-4872-a720-4236c44c234c",
-        "name": "Junction",
-        "hasFremoDesignation": false,
-        "standard": {
-          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
-        "addOns": [],
-        "hasNormalGauge": true,
-        "hasNarrowGauge": false,
-        "isDuckunder": false,
-        "isTurntable": false,
-        "isEndOfLine": false,
-        "isEndProfileSwitcher": false,
-        "isSignalModule": false,
-        "isStandAlone": false,
-        "revision": 0,
-        "revisionLog": [],
-        "drawing": {
-          "exits": [
-            {
-              "label": "W",
-              "direction": "Left",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Normal",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 0,
-                "y": 0,
-                "heading": 180
-              },
-              "isPositionProvisional": false
-            },
-            {
-              "label": "E",
-              "direction": "Right",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Mirrored",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 1500,
-                "y": 0,
-                "heading": 0
-              },
-              "isPositionProvisional": false
-            },
-            {
-              "label": "E2",
-              "direction": "Right",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-                "name": "FREMO-H0-B96"
-              },
-              "orientation": "Mirrored",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 1500,
-                "y": 600.0000000000002,
-                "heading": 0
-              },
-              "isPositionProvisional": true
-            }
-          ],
-          "mainPath": {
-            "start": {
-              "x": 0,
-              "y": 0
-            },
-            "steps": [
-              {
-                "type": "line",
-                "end": {
-                  "x": 1500,
-                  "y": 0
-                }
-              }
-            ],
-            "isClosed": false
-          },
-          "sides": [
-            {
-              "fromExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Right",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": -3.0616169978683844E-14,
-                  "y": -250.0000000000001
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": -250.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": false
-              }
-            },
-            {
-              "fromExit": {
-                "side": "Right",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Right",
-                "number": 2
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 1500,
-                  "y": 250.0000000000001
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": 350.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": false
-              }
-            },
-            {
-              "fromExit": {
-                "side": "Right",
-                "number": 2
-              },
-              "toExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 1500,
-                  "y": 850.0000000000003
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 3.0616169978683844E-14,
-                      "y": 250.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": false
-              }
-            }
-          ],
-          "sections": [
-            {
-              "label": "1",
-              "outline": {
-                "start": {
-                  "x": 3.0616169978683844E-14,
-                  "y": 250.0000000000001
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": -3.0616169978683844E-14,
-                      "y": -250.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": -250.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": 250.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": 350.0000000000001
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": 850.0000000000003
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 3.0616169978683844E-14,
-                      "y": 250.0000000000001
-                    }
-                  }
-                ],
-                "isClosed": true
-              }
-            }
-          ],
-          "internalJoints": [],
-          "trackElements": [
-            {
-              "type": "flex",
-              "path": {
-                "start": {
-                  "x": 0,
-                  "y": 0
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1500,
-                      "y": 0
-                    }
-                  }
-                ],
-                "isClosed": false
-              },
-              "id": 1,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            }
-          ],
-          "operatorSpaces": [],
-          "publicSides": [],
-          "duckUnderAreas": [],
-          "labels": [],
-          "registryMeasures": {
-            "straight": 1500
-          },
-          "autoDraw": {
-            "generatorVersion": "1.2",
-            "parameters": {
-              "name": "Junction",
-              "standard": "FREMO/H0-RE",
-              "straight": 1500,
-              "exits": [
-                {
-                  "label": "W",
-                  "direction": "Left",
-                  "endProfile": "FREMO-H0-B96"
-                },
-                {
-                  "label": "E",
-                  "direction": "Right",
-                  "endProfile": "FREMO-H0-B96"
-                },
-                {
-                  "label": "E2",
-                  "direction": "Right",
-                  "endProfile": "FREMO-H0-B96"
-                }
-              ],
-              "isEndOfLine": false,
-              "isDuckunder": false,
-              "isTurntable": false,
-              "isEndProfileSwitcher": false,
-              "isOperationPlace": false,
-              "curveDirection": "Left",
-              "straightPosition": "Before",
-              "wideningSide": "Left",
-              "taperAngle": 45
-            }
-          }
-        }
-      },
-      {
-        "id": "4079b79b-fcf7-42f5-b411-fa20467367a2",
-        "name": "Terminus",
-        "hasFremoDesignation": false,
-        "standard": {
-          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-          "shortName": "FREMO/H0-RE",
-          "scale": {
-            "shortName": "H0"
-          }
-        },
-        "tracks": [],
-        "addOns": [],
-        "numberOfThroughTracks": 2,
-        "hasNormalGauge": true,
-        "hasNarrowGauge": false,
-        "isDuckunder": false,
-        "isTurntable": false,
-        "isEndOfLine": true,
-        "isEndProfileSwitcher": false,
-        "isSignalModule": false,
-        "isStandAlone": false,
-        "revision": 0,
-        "revisionLog": [],
-        "drawing": {
-          "exits": [
-            {
-              "label": "W",
-              "direction": "Left",
-              "endProfile": {
-                "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
-                "name": "FREMO-H0-2E96"
-              },
-              "orientation": "Normal",
-              "railTopOffset": 0,
-              "pose": {
-                "x": 0,
-                "y": 0,
-                "heading": 180
-              },
-              "isPositionProvisional": false
-            }
-          ],
-          "mainPath": {
-            "start": {
-              "x": 0,
-              "y": 0
-            },
-            "steps": [
-              {
-                "type": "line",
-                "end": {
-                  "x": 1200,
-                  "y": 0
-                }
-              }
-            ],
-            "isClosed": false
-          },
-          "sides": [
-            {
-              "fromExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "toExit": {
-                "side": "Left",
-                "number": 1
-              },
-              "mode": "Auto",
-              "path": {
-                "start": {
-                  "x": 0,
-                  "y": -250
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": -250
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": 250
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 0,
-                      "y": 250
-                    }
-                  }
-                ],
-                "isClosed": false
-              }
-            }
-          ],
-          "sections": [
-            {
-              "label": "1",
-              "outline": {
-                "start": {
-                  "x": 0,
-                  "y": -250
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": -250
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1200,
-                      "y": 250
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 0,
-                      "y": 250
-                    }
-                  },
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 0,
-                      "y": -250
-                    }
-                  }
-                ],
-                "isClosed": true
-              }
-            }
-          ],
-          "internalJoints": [],
-          "trackElements": [
-            {
-              "type": "flex",
-              "path": {
-                "start": {
-                  "x": 0,
-                  "y": -25
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1150,
-                      "y": -25
-                    }
-                  }
-                ],
-                "isClosed": false
-              },
-              "id": 1,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            },
-            {
-              "type": "bufferStop",
-              "pose": {
-                "x": 1150,
-                "y": -25,
-                "heading": 180
-              },
-              "id": 2,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            },
-            {
-              "type": "flex",
-              "path": {
-                "start": {
-                  "x": 0,
-                  "y": 25
-                },
-                "steps": [
-                  {
-                    "type": "line",
-                    "end": {
-                      "x": 1150,
-                      "y": 25
-                    }
-                  }
-                ],
-                "isClosed": false
-              },
-              "id": 3,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            },
-            {
-              "type": "bufferStop",
-              "pose": {
-                "x": 1150,
-                "y": 25,
-                "heading": 180
-              },
-              "id": 4,
-              "isNarrowGauge": false,
-              "isGenerated": true
-            }
-          ],
-          "operatorSpaces": [],
-          "publicSides": [],
-          "duckUnderAreas": [],
-          "labels": [],
-          "registryMeasures": {
-            "straight": 1200
-          },
-          "autoDraw": {
-            "generatorVersion": "1.2",
-            "parameters": {
-              "name": "Terminus",
-              "standard": "FREMO/H0-RE",
-              "straight": 1200,
-              "numberOfThroughTracks": 2,
-              "exits": [
-                {
-                  "label": "W",
-                  "direction": "Left",
-                  "endProfile": "FREMO-H0-2E96"
-                }
-              ],
-              "isEndOfLine": true,
-              "isDuckunder": false,
-              "isTurntable": false,
-              "isEndProfileSwitcher": false,
-              "isOperationPlace": false,
-              "curveDirection": "Left",
-              "straightPosition": "Before",
-              "wideningSide": "Left",
-              "taperAngle": 45
-            }
-          }
-        }
-      }
-    ],
-    "endProfiles": [
-      {
-        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-        "designation": "FREMO-H0-B96",
-        "shortName": "B96",
-        "scale": "H0",
-        "standards": [
-          {
-            "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-            "name": "FREMO/H0-RE"
-          }
-        ],
-        "outline": {
-          "start": {
-            "x": -250,
-            "y": -195
-          },
-          "steps": [
-            {
-              "type": "line",
-              "end": {
-                "x": 250,
-                "y": -195
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 250.00000000000023,
-                "y": 46.55332147444176
-              }
-            },
-            {
-              "type": "arc",
-              "center": {
-                "x": 327,
-                "y": -495
-              },
-              "sweep": 18.9734982539195
-            },
-            {
-              "type": "arc",
-              "center": {
-                "x": 73.55769887408297,
-                "y": 1
-              },
-              "sweep": -27.065777620219407
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 60,
-                "y": -9
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 55,
-                "y": -14
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 45,
-                "y": -14
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 35,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 24,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 20,
-                "y": 0
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -20,
-                "y": 0
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -24,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -35,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -61,
-                "y": -30
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -250,
-                "y": -58
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -250,
-                "y": -195
-              }
-            }
-          ],
-          "isClosed": true
-        },
-        "groundLine": {
-          "start": {
-            "x": -250,
-            "y": -58
-          },
-          "steps": [
-            {
-              "type": "line",
-              "end": {
-                "x": -61,
-                "y": -30
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -35,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -24,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -20,
-                "y": 0
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 20,
-                "y": 0
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 24,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 35,
-                "y": -4
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 45,
-                "y": -14
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 55,
-                "y": -14
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 60,
-                "y": -9
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 73.55769887408297,
-                "y": -9
-              }
-            },
-            {
-              "type": "arc",
-              "center": {
-                "x": 73.55769887408297,
-                "y": 1
-              },
-              "sweep": 27.065777620219407
-            },
-            {
-              "type": "arc",
-              "center": {
-                "x": 327,
-                "y": -495
-              },
-              "sweep": -18.9734982539195
-            }
-          ],
-          "isClosed": false
-        },
-        "tracks": [
-          {
-            "offset": 0,
-            "gauges": [
-              16.5
-            ],
-            "railSystem": "TwoRail"
-          }
-        ],
-        "screwHoles": [
-          {
-            "center": {
-              "x": -180,
-              "y": -145
-            },
-            "diameter": 12
-          },
-          {
-            "center": {
-              "x": 180,
-              "y": -145
-            },
-            "diameter": 12
-          },
-          {
-            "center": {
-              "x": -180,
-              "y": -79
-            },
-            "diameter": 12
-          },
-          {
-            "center": {
-              "x": 180,
-              "y": -79
-            },
-            "diameter": 12
-          },
-          {
-            "center": {
-              "x": 0,
-              "y": -65
-            },
-            "diameter": 12
-          }
-        ],
-        "dowels": [],
-        "screwHolePattern": "FREMO-H0",
-        "source": {
-          "title": "FREMO H0-B96 dimensioned drawing, high and low profile (track at 195 / 104 mm above the plate bottom).",
-          "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
-          "revision": "drawing-2026-11-14"
-        },
-        "revision": 0,
-        "revisionLog": []
-      },
-      {
-        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
-        "designation": "FREMO-H0-2E96",
-        "shortName": "2E96",
-        "scale": "H0",
-        "standards": [
-          {
-            "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-            "name": "FREMO/H0-RE"
-          }
-        ],
-        "outline": {
-          "start": {
-            "x": -250,
-            "y": -140
-          },
-          "steps": [
-            {
-              "type": "line",
-              "end": {
-                "x": 250,
-                "y": -140
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": 250,
-                "y": -40
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -250,
-                "y": -40
-              }
-            },
-            {
-              "type": "line",
-              "end": {
-                "x": -250,
-                "y": -140
-              }
-            }
-          ],
-          "isClosed": true
-        },
-        "groundLine": {
-          "start": {
-            "x": -250,
-            "y": -40
-          },
-          "steps": [
-            {
-              "type": "line",
-              "end": {
-                "x": 250,
-                "y": -40
-              }
-            }
-          ],
-          "isClosed": false
-        },
-        "tracks": [
-          {
-            "offset": -25,
-            "gauges": [
-              16.5
-            ],
-            "railSystem": "TwoRail"
-          },
-          {
-            "offset": 25,
-            "gauges": [
-              16.5
-            ],
-            "railSystem": "TwoRail"
-          }
-        ],
-        "screwHoles": [
-          {
-            "center": {
-              "x": -150,
-              "y": -70
-            },
-            "diameter": 8
-          },
-          {
-            "center": {
-              "x": 150,
-              "y": -70
-            },
-            "diameter": 8
-          },
-          {
-            "center": {
-              "x": -150,
-              "y": -110
-            },
-            "diameter": 8
-          },
-          {
-            "center": {
-              "x": 150,
-              "y": -110
-            },
-            "diameter": 8
-          }
-        ],
-        "dowels": [],
-        "screwHolePattern": "FREMO-H0",
-        "source": {
-          "title": "FREMO: H0 double-track end profile 2E96. Provisional values, to be drawn from the published FREMO PDF.",
-          "revision": "provisional"
-        },
-        "revision": 0,
-        "revisionLog": []
-      }
-    ],
-    "standards": [
-      {
-        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
-        "shortName": "FREMO/H0-RE",
-        "scale": {
-          "shortName": "H0"
-        },
-        "railSystem": "TwoRail",
-        "gauges": [
-          {
-            "width": 16.5
-          }
-        ],
-        "railTopHeight": 1300,
-        "minimumClearance": 0,
-        "operatorSpaceDepth": 800,
-        "trackColor": "#1f5fbf",
-        "defaultSingleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d01",
-        "defaultDoubleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
-        "source": {
-          "title": "FREMO module standard H0-RE"
-        }
-      }
-    ],
-    "overrides": [],
     "revision": 0,
     "revisionLog": []
   }

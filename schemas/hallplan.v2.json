@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Tellurian Trains Drawing HallPlan file",
-  "description": "A .hallplan.json file, schema version 2. Lengths in millimetres, angles in degrees.",
+  "description": "A .hallplan.json file, schema version 2. What is drawn in millimetres and degrees; track and platform lengths, centres and distances in metres.",
   "type": "object",
   "properties": {
     "format": {
@@ -34,8 +34,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "findingCode": {
           "type": "string"
@@ -43,8 +42,7 @@
         "moduleIds": {
           "type": "array",
           "items": {
-            "type": "string",
-            "format": "uuid"
+            "type": "integer"
           }
         },
         "fingerprint": {
@@ -63,10 +61,36 @@
       },
       "required": [
         "findingCode",
-        "moduleIds",
         "fingerprint",
         "time"
       ]
+    },
+    "Anchor": {
+      "type": "object",
+      "properties": {
+        "lineId": {
+          "type": "integer"
+        },
+        "moduleId": {
+          "type": "integer"
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "isLocked": {
+          "type": "boolean"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnchorDimensions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
     },
     "AnchorDimensions": {
       "type": "object",
@@ -332,6 +356,67 @@
         "center",
         "diameter"
       ]
+    },
+    "Company": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "countryId": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null
+        },
+        "logo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "signature"
+      ]
+    },
+    "DispatchStretch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "fromId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "toId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stretchIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
     },
     "DocumentReference": {
       "type": "object",
@@ -623,8 +708,7 @@
       "type": "object",
       "properties": {
         "moduleId": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "side": {
           "enum": [
@@ -656,6 +740,142 @@
         },
         "minimumBoltedScrewHoles": {
           "type": "integer"
+        }
+      }
+    },
+    "GeneralSettings": {
+      "type": "object",
+      "properties": {
+        "useDays": {
+          "type": "boolean"
+        },
+        "startDay": {
+          "enum": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ]
+        },
+        "maxSessions": {
+          "type": "integer"
+        },
+        "validFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "validTo": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "startTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": "string",
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "endTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": "string",
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "runsOverMidnight": {
+          "type": "boolean"
+        },
+        "firstSessionStartTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": "string",
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "breakTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "allowPlanTimeExtend": {
+          "type": "boolean"
+        },
+        "expectedLocoDrivers": {
+          "type": "integer"
+        },
+        "usePassengerTickets": {
+          "type": "boolean"
+        },
+        "trainsPerTicket": {
+          "type": "integer"
+        },
+        "useObjectLanguageInReports": {
+          "type": "boolean"
+        },
+        "reportFontFamily": {
+          "type": "string"
+        }
+      }
+    },
+    "GraphicTimetableSettings": {
+      "type": "object",
+      "properties": {
+        "orientation": {
+          "enum": [
+            "Horizontal",
+            "Vertical"
+          ]
+        },
+        "showArrivalMinutes": {
+          "type": "boolean"
+        },
+        "showDepartureMinutes": {
+          "type": "boolean"
+        },
+        "minuteSpacing": {
+          "type": "integer"
+        },
+        "kilometerSpacing": {
+          "type": "integer"
+        },
+        "stationSpacing": {
+          "type": "integer"
+        },
+        "trackSpacing": {
+          "type": "integer"
+        },
+        "showTrainCategory": {
+          "type": "boolean"
+        },
+        "showCompany": {
+          "type": "boolean"
+        },
+        "hideSessionsOrDays": {
+          "type": "boolean"
+        },
+        "trainLabelFontSize": {
+          "type": "integer"
+        },
+        "printHourSpacingMm": {
+          "type": "number"
+        },
+        "printKilometerSpacingMm": {
+          "type": "number"
+        },
+        "printStationSpacingMm": {
+          "type": "number"
+        },
+        "printTrackSpacingMm": {
+          "type": "number"
+        },
+        "printMonochrome": {
+          "type": "boolean"
         }
       }
     },
@@ -775,11 +995,14 @@
         "hall": {
           "$ref": "#/$defs/Hall"
         },
-        "scale": {
-          "type": "string"
+        "layout": {
+          "$ref": "#/$defs/Layout"
         },
-        "primaryStandard": {
-          "$ref": "#/$defs/CatalogueReference"
+        "anchors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Anchor"
+          }
         },
         "acceptedStandards": {
           "type": "array",
@@ -795,18 +1018,6 @@
         },
         "settings": {
           "$ref": "#/$defs/HallPlanSettings"
-        },
-        "layouts": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Layout"
-          }
-        },
-        "joints": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Joint"
-          }
         },
         "publicAreas": {
           "type": "array",
@@ -824,30 +1035,6 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/Acknowledgement"
-          }
-        },
-        "modules": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Module"
-          }
-        },
-        "endProfiles": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/EndProfile"
-          }
-        },
-        "standards": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SharedModuleStandard"
-          }
-        },
-        "overrides": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/EndProfileCompatibilityOverride"
           }
         },
         "revision": {
@@ -870,16 +1057,12 @@
         "id",
         "name",
         "hall",
-        "scale",
-        "primaryStandard"
+        "layout"
       ]
     },
     "HallPlanSettings": {
       "type": "object",
       "properties": {
-        "fit": {
-          "$ref": "#/$defs/FitTolerances"
-        },
         "jointGap": {
           "type": "number"
         },
@@ -900,9 +1083,40 @@
         },
         "walkingPathWidth": {
           "type": "number"
+        }
+      }
+    },
+    "IdentitySettings": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "enum": [
+            "American",
+            "European"
+          ]
         },
-        "rotationStep": {
-          "type": "number"
+        "scaleId": {
+          "type": "integer"
+        },
+        "defaultCountryId": {
+          "type": "integer"
+        }
+      }
+    },
+    "IntegrationSettings": {
+      "type": "object",
+      "properties": {
+        "moduleRegistryApiUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "moduleRegistryApiKey": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
@@ -980,52 +1194,175 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "name": {
+          "type": "string"
+        },
+        "settings": {
+          "$ref": "#/$defs/LayoutSettings"
+        },
+        "countries": {
+          "type": "array"
+        },
+        "companies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Company"
+          }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Region"
+          }
+        },
+        "operationLocations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OperationLocation"
+          }
+        },
+        "trackStretches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TrackStretch"
+          }
+        },
+        "timetableStretches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimetableStretch"
+          }
+        },
+        "dispatchStretches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DispatchStretch"
+          }
+        },
+        "topologyPositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TopologyPosition"
+          }
+        },
+        "sourceId": {
           "type": [
             "string",
             "null"
-          ]
-        },
-        "anchorModuleId": {
-          "type": "string",
+          ],
           "format": "uuid"
         },
-        "anchorPose": {
-          "$ref": "#/$defs/Pose"
+        "sourceRevision": {
+          "type": "integer"
         },
-        "isAnchorLocked": {
-          "type": "boolean"
-        },
-        "anchorDimensions": {
+        "preferredStandard": {
           "anyOf": [
             {
-              "$ref": "#/$defs/AnchorDimensions"
+              "$ref": "#/$defs/SharedModuleStandard"
             },
             {
               "type": "null"
             }
           ]
         },
+        "modules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LayoutModule"
+          }
+        },
         "lines": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/Line"
           }
+        },
+        "joints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Joint"
+          }
+        },
+        "endProfiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfile"
+          }
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SharedModuleStandard"
+          }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileCompatibilityOverride"
+          }
+        },
+        "fitTolerances": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FitTolerances"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "LayoutModule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "module": {
+          "$ref": "#/$defs/Module"
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
         }
       },
       "required": [
-        "anchorModuleId"
+        "module"
       ]
+    },
+    "LayoutSettings": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/IdentitySettings"
+        },
+        "general": {
+          "$ref": "#/$defs/GeneralSettings"
+        },
+        "graphicTimetable": {
+          "$ref": "#/$defs/GraphicTimetableSettings"
+        },
+        "timeAndSpeed": {
+          "$ref": "#/$defs/TimeAndSpeedSettings"
+        },
+        "validation": {
+          "$ref": "#/$defs/ValidationSettings"
+        },
+        "integration": {
+          "$ref": "#/$defs/IntegrationSettings"
+        }
+      }
     },
     "Line": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "name": {
           "type": [
@@ -1065,8 +1402,7 @@
       "type": "object",
       "properties": {
         "moduleId": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "isTurned": {
           "type": "boolean"
@@ -1090,10 +1426,7 @@
             "null"
           ]
         }
-      },
-      "required": [
-        "moduleId"
-      ]
+      }
     },
     "LockKey": {
       "type": "object",
@@ -2172,8 +2505,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "area": {
           "$ref": "#/$defs/PathDrawing"
@@ -2204,6 +2536,29 @@
       },
       "required": [
         "attachment"
+      ]
+    },
+    "Region": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "countryId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "backgroundColor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
       ]
     },
     "RegistryMeasures": {
@@ -2460,6 +2815,17 @@
         "sideIndex"
       ]
     },
+    "SpeedPoint": {
+      "type": "object",
+      "properties": {
+        "scaleSpeedKmh": {
+          "type": "integer"
+        },
+        "realSpeedMetersPerSecond": {
+          "type": "number"
+        }
+      }
+    },
     "StaffPost": {
       "type": "object",
       "properties": {
@@ -2496,6 +2862,12 @@
       "properties": {
         "id": {
           "type": "integer"
+        },
+        "sourceId": {
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "designation": {
           "type": "string"
@@ -2563,6 +2935,69 @@
         },
         "appliesInBothDirections": {
           "type": "boolean"
+        }
+      }
+    },
+    "TimeAndSpeedSettings": {
+      "type": "object",
+      "properties": {
+        "fastClockSpeed": {
+          "type": "integer"
+        },
+        "slow": {
+          "$ref": "#/$defs/SpeedPoint"
+        },
+        "normal": {
+          "$ref": "#/$defs/SpeedPoint"
+        },
+        "high": {
+          "$ref": "#/$defs/SpeedPoint"
+        },
+        "stationTimings": {
+          "$ref": "#/$defs/StationTimings"
+        },
+        "distanceFactor": {
+          "type": "number"
+        }
+      }
+    },
+    "TimetableStretch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "number": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "stretchIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "TopologyPosition": {
+      "type": "object",
+      "properties": {
+        "locationId": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
         }
       }
     },
@@ -2858,12 +3293,129 @@
         "width"
       ]
     },
+    "TrackStretch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "startId": {
+          "type": "integer"
+        },
+        "startSide": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "endId": {
+          "type": "integer"
+        },
+        "endSide": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "distance": {
+          "type": "number"
+        },
+        "isDistanceEntered": {
+          "type": "boolean"
+        },
+        "tracksCount": {
+          "type": "integer"
+        },
+        "speed": {
+          "type": "integer"
+        },
+        "time": {
+          "type": "integer"
+        },
+        "isTimeEntered": {
+          "type": "boolean"
+        },
+        "isElectrified": {
+          "type": "boolean"
+        },
+        "moduleIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "ValidationSettings": {
+      "type": "object",
+      "properties": {
+        "validateStationCalls": {
+          "type": "boolean"
+        },
+        "validateStationTracks": {
+          "type": "boolean"
+        },
+        "validateStretches": {
+          "type": "boolean"
+        },
+        "treatDoubleTrackAsTwoSingleTracks": {
+          "type": "boolean"
+        },
+        "validateTrainSpeed": {
+          "type": "boolean"
+        },
+        "validateRouteContinuity": {
+          "type": "boolean"
+        },
+        "validateTrainNumbers": {
+          "type": "boolean"
+        },
+        "validatePassengerExchange": {
+          "type": "boolean"
+        },
+        "validateStopPatterns": {
+          "type": "boolean"
+        },
+        "validateScheduledTracks": {
+          "type": "boolean"
+        },
+        "validateRequiredStopTimes": {
+          "type": "boolean"
+        },
+        "validateSchedules": {
+          "type": "boolean"
+        },
+        "validateLocomotiveCoverage": {
+          "type": "boolean"
+        },
+        "validateDriverDuties": {
+          "type": "boolean"
+        },
+        "minTrainSpeedMetersPerClockMinute": {
+          "type": "number"
+        },
+        "maxTrainSpeedMetersPerClockMinute": {
+          "type": "number"
+        },
+        "minMinutesBetweenTrackUsage": {
+          "type": "integer"
+        },
+        "extendTrackOccupancyByVehicleStay": {
+          "type": "boolean"
+        }
+      }
+    },
     "WalkingPath": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "integer"
         },
         "centreLine": {
           "$ref": "#/$defs/PathDrawing"

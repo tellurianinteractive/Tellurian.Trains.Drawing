@@ -3,6 +3,8 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Schema;
 using System.Text.Json.Serialization.Metadata;
 using Tellurian.Trains.Schedules.Model.Geometry;
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutSerialization;
+using SharedLayout = Tellurian.Trains.Schedules.Model.Layouts.Layout;
 
 namespace Tellurian.Trains.Drawing.Model.Files;
 
@@ -49,6 +51,7 @@ public static class DrawingFileSchema
             TransformSchemaNode = (exporterContext, node) => Reference(exporterContext, Transform(exporterContext, node), definitions),
         };
         var generated = typeInfo.GetJsonSchemaAsNode(exporterOptions).AsObject();
+        if (kind == DrawingFileKind.HallPlan) AddLayout(definitions, exporterOptions);
 
         var properties = generated["properties"]!.AsObject();
         properties["format"] = new JsonObject { ["const"] = DrawingFileFormat.Format };
@@ -60,7 +63,7 @@ public static class DrawingFileSchema
         {
             ["$schema"] = SchemaDialect,
             ["title"] = $"Tellurian Trains Drawing {kind} file",
-            ["description"] = $"A {DrawingFileFormat.Extension(kind)} file, schema version {DrawingFileFormat.CurrentSchemaVersion(kind)}. Lengths in millimetres, angles in degrees.",
+            ["description"] = $"A {DrawingFileFormat.Extension(kind)} file, schema version {DrawingFileFormat.CurrentSchemaVersion(kind)}. What is drawn in millimetres and degrees; track and platform lengths, centres and distances in metres.",
         };
         foreach (var (name, value) in generated.ToList())
         {
@@ -69,6 +72,16 @@ public static class DrawingFileSchema
         }
         schema[Definitions] = new JsonObject(definitions.Select(d => KeyValuePair.Create(d.Key, (JsonNode?)d.Value)));
         return schema;
+    }
+
+    /// <summary>
+    /// The hall plan's layout is written with the layout's own options (<c>HallPlan.Layout</c> has a converter), so its
+    /// schema comes from the layout's metadata, <c>Layout.JsonSerializerOptions</c>, with the same definitions.
+    /// </summary>
+    private static void AddLayout(IDictionary<string, JsonNode> definitions, JsonSchemaExporterOptions exporterOptions)
+    {
+        var layout = SharedLayout.JsonSerializerOptions.GetTypeInfo(typeof(SharedLayout)).GetJsonSchemaAsNode(exporterOptions);
+        definitions[nameof(HallPlan)]["properties"]!["layout"] = NonNullable(layout);
     }
 
     private static JsonNode Transform(JsonSchemaExporterContext context, JsonNode schema)

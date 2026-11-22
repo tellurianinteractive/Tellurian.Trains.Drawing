@@ -3,7 +3,6 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
 using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
-using Tellurian.Trains.Drawing.Model.HallPlans;
 using Tellurian.Trains.Schedules.Exporters.Drawing;
 using Tellurian.Trains.Schedules.Exporters.Interfaces;
 using Tellurian.Trains.Schedules.Importers.Drawing;
@@ -41,8 +40,9 @@ public static class DrawingFileSerializer
     public static string Serialize(Hall hall, string? appVersion = null) =>
         new HallExporter().Write(hall, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
+    /// <summary>The hall plan file of <paramref name="hallPlan"/>, written by the shared <see cref="HallPlanExporter"/>.</summary>
     public static string Serialize(HallPlan hallPlan, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.HallPlan, hallPlan, appVersion), Context.DrawingFileHallPlan);
+        new HallPlanExporter().Write(hallPlan, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     /// <exception cref="DrawingFileException">The file isn't a drawing file.</exception>
     public static DrawingFileHeader ReadHeader(string json) => Header(Parse(json));
@@ -95,10 +95,15 @@ public static class DrawingFileSerializer
     }
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall plan file.</exception>
-    public static HallPlan DeserializeHallPlan(string json) => Read(Parse(json), DrawingFileKind.HallPlan, Context.DrawingFileHallPlan);
+    public static HallPlan DeserializeHallPlan(string json) => Imported(new HallPlanImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall plan file.</exception>
-    public static HallPlan DeserializeHallPlan(Stream stream) => Read(Parse(stream), DrawingFileKind.HallPlan, Context.DrawingFileHallPlan);
+    public static HallPlan DeserializeHallPlan(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeHallPlan(reader.ReadToEnd());
+    }
 
     /// <summary>
     /// Reads <paramref name="root"/> as a <paramref name="kind"/> file, migrating with <paramref name="migrations"/>
