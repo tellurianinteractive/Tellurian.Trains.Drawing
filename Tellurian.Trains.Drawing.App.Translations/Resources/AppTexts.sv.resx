@@ -423,6 +423,11 @@
   <data name="RotationHelp" xml:space="preserve"><value>Hur mycket pelaren är vriden moturs, i grader.</value></data>
   <data name="WallLengthHelp" xml:space="preserve"><value>En ny längd flyttar hörnet där väggen slutar.</value></data>
   <data name="JointDistanceHelp" xml:space="preserve"><value>Där skarven korsar spåret, mätt längs spåret från modulens första ände.</value></data>
+  <data name="SectionCount" xml:space="preserve"><value>Antal sektioner</value></data>
+  <data name="SectionCountHelp" xml:space="preserve"><value>Delar modulen i så många lika långa sektioner längs spåret. De skarvar som finns nu ersätts.</value></data>
+  <data name="EqualSections" xml:space="preserve"><value>Gör lika långa</value></data>
+  <data name="JointAngle" xml:space="preserve"><value>Vinkel från kurvans början</value></data>
+  <data name="JointAngleHelp" xml:space="preserve"><value>Där skarven korsar spåret, som vinkeln från där kurvan börjar. Skarven går vinkelrätt mot spåret, så vinkeln är densamma vid spåret och vid båda kanterna.</value></data>
   <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Skrivs längs modulens ände i modulritningar, t.ex. B96. Utan det används beteckningen.</value></data>
   <data name="EndsPane" xml:space="preserve"><value>Ändar</value></data>
   <data name="ExitEnd" xml:space="preserve"><value>Ände {0}</value></data>

@@ -423,6 +423,11 @@
   <data name="RotationHelp" xml:space="preserve"><value>How far the pillar is turned counter-clockwise, in degrees.</value></data>
   <data name="WallLengthHelp" xml:space="preserve"><value>A new length moves the corner where the wall ends.</value></data>
   <data name="JointDistanceHelp" xml:space="preserve"><value>Where the joint crosses the track, measured along the track from the module's first end.</value></data>
+  <data name="SectionCount" xml:space="preserve"><value>Number of sections</value></data>
+  <data name="SectionCountHelp" xml:space="preserve"><value>Divides the module into this many sections of the same length along the track. The joints there are now are replaced.</value></data>
+  <data name="EqualSections" xml:space="preserve"><value>Make equal</value></data>
+  <data name="JointAngle" xml:space="preserve"><value>Angle from the start of the curve</value></data>
+  <data name="JointAngleHelp" xml:space="preserve"><value>Where the joint crosses the track, as the angle from where the curve starts. The joint is at right angles to the track, so the angle is the same at the track and at both edges.</value></data>
   <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Written along the module end in module drawings, e.g. B96. Without it, the designation is used.</value></data>
   <data name="EndsPane" xml:space="preserve"><value>Ends</value></data>
   <data name="ExitEnd" xml:space="preserve"><value>End {0}</value></data>

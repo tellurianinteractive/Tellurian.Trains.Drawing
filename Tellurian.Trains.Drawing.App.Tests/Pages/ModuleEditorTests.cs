@@ -20,11 +20,18 @@ public sealed class ModuleEditorTests
     private const double Length = 2000;
 
     /// <summary>A straight module that is a station, with the station track of its through track; or plain line.</summary>
-    private static IRenderedComponent<DrawingPage> OpenStraightModule(AppTestContext context, bool isStation = true)
+    private static IRenderedComponent<DrawingPage> OpenStraightModule(AppTestContext context, bool isStation = true) =>
+        OpenModule(context, isStation, straight: Length);
+
+    /// <summary>A curve of 30° with radius 2000 mm, plain line.</summary>
+    private static IRenderedComponent<DrawingPage> OpenCurveModule(AppTestContext context) =>
+        OpenModule(context, isStation: false, straight: 0, radius: 2000, angle: 30);
+
+    private static IRenderedComponent<DrawingPage> OpenModule(AppTestContext context, bool isStation, double straight, double? radius = null, double? angle = null)
     {
         var catalogue = BuiltInCatalogue.Instance;
         AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
-        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
+        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = straight, Radius = radius, Angle = angle, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
         // The editor gives a station without station tracks the list of its generated tracks, measured, when it is opened.
         if (isStation) module = module.With(c => c.OperationLocation = Tellby);
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile));
@@ -342,7 +349,7 @@ public sealed class ModuleEditorTests
 
         Click(page, OnTrack(page, 700));
         Assert.AreEqual("Joint between sections 1 and 2", page.Find("#joint-title").TextContent);
-        var distance = page.Find(".sections-pane .number-field-input");
+        var distance = page.Find(".joint-position .number-field-input");
         distance.Input("1234");
         distance.Change("1234");
 
@@ -364,5 +371,66 @@ public sealed class ModuleEditorTests
         var drawing = DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts.Values.Single().Json).Module.Drawing;
         Assert.HasCount(2, drawing.Sections);
         Assert.AreEqual(("1", "2"), (drawing.InternalJoints[0].FirstSection, drawing.InternalJoints[0].SecondSection));
+    }
+
+    private static void Type(AngleSharp.Dom.IElement field, string text)
+    {
+        field.Input(text);
+        field.Change(text);
+    }
+
+    [TestMethod]
+    public void TheModuleIsDividedIntoSectionsOfTheSameLength()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+
+        Type(page.Find(".section-count .number-field-input"), "4");
+
+        Assert.HasCount(4, page.FindAll(".module-sections tbody tr"));
+        Assert.IsTrue(Enumerable.Range(1, 4).All(i => page.Find($"#section-length-{i}").TextContent == "500 mm"));
+    }
+
+    [TestMethod]
+    public void SectionsAreMadeEqualAgain()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+        page.Find("#tool-joint").Click();
+        Click(page, OnTrack(page, 700));
+
+        page.Find("#equal-sections").Click();
+
+        Assert.AreEqual(("1000 mm", "1000 mm"), (page.Find("#section-length-1").TextContent, page.Find("#section-length-2").TextContent));
+    }
+
+    [TestMethod]
+    public void AJointOnACurveIsTypedAsAnAngle()
+    {
+        using var context = new AppTestContext();
+        var page = OpenCurveModule(context);
+        Type(page.Find(".section-count .number-field-input"), "2");
+        page.Find("#tool-select").Click();
+        Click(page, OnTrack(page, 2000 * Math.PI / 12));
+        var fields = page.FindAll(".joint-position .number-field-input");
+        Assert.HasCount(2, fields, "Distance and angle.");
+        Assert.AreEqual("15", fields[1].GetAttribute("value"));
+
+        Type(fields[1], "10");
+
+        Assert.AreEqual($"{Math.Round(2000 * Math.PI / 18)} mm", page.Find("#section-length-1").TextContent);
+    }
+
+    [TestMethod]
+    public void AJointOnAStraightModuleHasNoAngle()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+        Type(page.Find(".section-count .number-field-input"), "2");
+        page.Find("#tool-select").Click();
+
+        Click(page, OnTrack(page, 1000));
+
+        Assert.HasCount(1, page.FindAll(".joint-position .number-field-input"));
     }
 }

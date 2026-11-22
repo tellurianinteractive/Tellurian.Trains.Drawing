@@ -148,6 +148,16 @@
                     var drawing = _document.Current.Module.Drawing;
                     var main = drawing.MainPath;
                 }
+                @if (main is not null && _outline is not null)
+                {
+                    <div class="property-grid section-count">
+                        <NumberField Label="@T["SectionCount"]" Help="@T.Help("SectionCount")" Quantity="Quantity.Number" Unit="@null" Decimals="0" Min="1" Max="@MaxSections"
+                                     Value="drawing.Sections.Count" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(ModuleJoints.Divide((int)v))" />
+                    </div>
+                    <div class="pane-buttons">
+                        <button type="button" id="equal-sections" disabled="@(drawing.Sections.Count < 2)" @onclick="() => Apply(ModuleJoints.Divide(drawing.Sections.Count))">@T["EqualSections"]</button>
+                    </div>
+                }
                 <table class="plate-points module-sections">
                     <thead><tr><th>@T["Section"]</th>@if (main is not null) { <th>@T["SectionLength"]</th> }</tr></thead>
                     <tbody>
@@ -170,8 +180,15 @@
                     <h3 id="joint-title">@T.Format("JointBetween", joint.FirstSection, joint.SecondSection)</h3>
                     @if (main is not null)
                     {
-                        <NumberField Label="@T["JointDistance"]" Help="@T.Help("JointDistance")" Value="ModuleSections.DistanceAlongTrack(joint, main)" Min="0" InvalidText="@T["InvalidNumber"]"
-                                     ValueChanged="v => Apply(ModuleJoints.SetDistance(j, v))" />
+                        <div class="property-grid joint-position">
+                            <NumberField Label="@T["JointDistance"]" Help="@T.Help("JointDistance")" Value="ModuleSections.DistanceAlongTrack(joint, main)" Min="0" InvalidText="@T["InvalidNumber"]"
+                                         ValueChanged="v => Apply(ModuleJoints.SetDistance(j, v))" />
+                            @if (ModuleSections.AngleAlongTrack(joint, main) is { } angle)
+                            {
+                                <NumberField Label="@T["JointAngle"]" Help="@T.Help("JointAngle")" Value="angle" Unit="°" Quantity="Quantity.Angle" Decimals="2" Min="0" Max="@main.ToPath().Turning"
+                                             InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(ModuleJoints.SetAngle(j, v))" />
+                            }
+                        </div>
                     }
                     <table class="plate-points joint-points">
                         <thead><tr><th>#</th><th>X (mm)</th><th>Y (mm)</th></tr></thead>
@@ -224,6 +241,9 @@
     private Viewport _view = Viewport.Fit(new BoundingBox(new(0, 0), new(1000, 1000)), 800, 500);
     private SegmentPath? _outline;
     private InternalJoint? _jointPreview;
+
+    /// <summary>The most sections a module can be divided into in the Sections pane: more would be shorter than any real baseboard.</summary>
+    private const int MaxSections = 20;
     private string? _storageError;
 
     /// <summary>The track element that the Tracks pane points at, shown in the drawing.</summary>

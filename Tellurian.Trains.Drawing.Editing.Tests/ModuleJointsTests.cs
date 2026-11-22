@@ -21,6 +21,17 @@ public sealed class ModuleJointsTests
         return ModuleFileContent.Create(module, catalogue.FindEndProfile);
     }
 
+    /// <summary>A curve of 30° with radius 2000 mm, after 300 mm of straight track.</summary>
+    private static ModuleFileContent Curve()
+    {
+        var catalogue = BuiltInCatalogue.Instance;
+        var module = ModuleAutoDraw.Create(new() { Name = "Curve", Standard = "FREMO/H0-RE", Straight = 300, Radius = 2000, Angle = 30, Exits = [West, East] }, catalogue).Module!;
+        return ModuleFileContent.Create(module, catalogue.FindEndProfile);
+    }
+
+    private static double[] JointAngles(ModuleFileContent content) =>
+        [.. Drawing(content).InternalJoints.Select(j => Math.Round(ModuleSections.AngleAlongTrack(j, Drawing(content).MainPath!)!.Value, 3))];
+
     private static ModuleDrawing Drawing(ModuleFileContent content) => content.Module.Drawing;
 
     private static Point OnTrack(ModuleFileContent content, double distance) => Drawing(content).MainPath!.ToPath().PoseAt(distance).Position;
@@ -131,5 +142,59 @@ public sealed class ModuleJointsTests
     {
         Assert.IsTrue(ModuleItem.TryParse(ModuleItem.OfPoint(2, 3).ToString(), out var item));
         Assert.AreEqual(ModuleItem.OfPoint(2, 3), item);
+    }
+
+    [TestMethod]
+    public void AModuleIsDividedIntoSectionsOfTheSameLength()
+    {
+        var content = ModuleJoints.Divide(4).Apply(WithJointAt(800));
+
+        CollectionAssert.AreEqual(new[] { 500.0, 500.0, 500.0, 500.0 }, SectionLengths(content));
+        Assert.IsTrue(Drawing(content).InternalJoints.All(j => j.Bends is null));
+    }
+
+    [TestMethod]
+    public void OneSectionHasNoJoints()
+    {
+        var content = ModuleJoints.Divide(1).Apply(ModuleJoints.Divide(3).Apply(Straight()));
+
+        Assert.IsEmpty(Drawing(content).InternalJoints);
+        Assert.HasCount(1, Drawing(content).Sections);
+    }
+
+    [TestMethod]
+    public void NoSectionsIsRefused()
+    {
+        var before = WithJointAt(800);
+
+        Assert.AreSame(before, ModuleJoints.Divide(0).Apply(before));
+    }
+
+    [TestMethod]
+    public void ACurveIsDividedIntoTheSameLengthsAlongTheTrack()
+    {
+        var content = ModuleJoints.Divide(2).Apply(Curve());
+        var main = Drawing(content).MainPath!.ToPath();
+
+        Assert.AreEqual(main.Length / 2, ModuleSections.DistanceAlongTrack(Drawing(content).InternalJoints[0], Drawing(content).MainPath!), Precision);
+    }
+
+    [TestMethod]
+    public void AJointOnACurveIsPlacedByItsAngle()
+    {
+        var content = ModuleJoints.SetAngle(0, 10).Apply(ModuleJoints.Divide(2).Apply(Curve()));
+
+        CollectionAssert.AreEqual(new[] { 10.0 }, JointAngles(content));
+        Assert.AreEqual(300 + 2000 * Math.PI / 18, ModuleSections.DistanceAlongTrack(Drawing(content).InternalJoints[0], Drawing(content).MainPath!), Precision);
+    }
+
+    [TestMethod]
+    public void AJointOfAStraightModuleHasNoAngle()
+    {
+        var before = WithJointAt(800);
+
+        Assert.IsFalse(ModuleSections.IsCurve(Drawing(before).MainPath));
+        Assert.IsNull(ModuleSections.AngleAlongTrack(Drawing(before).InternalJoints[0], Drawing(before).MainPath!));
+        Assert.AreSame(before, ModuleJoints.SetAngle(0, 10).Apply(before));
     }
 }

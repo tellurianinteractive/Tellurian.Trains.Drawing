@@ -36,20 +36,42 @@ public static class ModuleJoints
             ModuleSections.Across(outline, drawing.MainPath, at) is { } joint ? [.. joints, joint] : null);
 
     /// <summary>
+    /// Divides the module into <paramref name="count"/> sections of the same length along the track, by straight joints at
+    /// right angles to it; on a curve the sections also have the same angle. The joints there were are replaced, bent
+    /// ones too. Refused for fewer than one section or a module without a main path.
+    /// </summary>
+    public static IEditCommand<ModuleFileContent> Divide(int count) =>
+        Change("Divide into sections", (drawing, outline, _) =>
+            drawing.MainPath is { } main ? ModuleSections.EqualSections(outline, main, count) : null);
+
+    /// <summary>
+    /// Moves joint <paramref name="joint"/> of a curved module so it crosses the track where the curve has turned
+    /// <paramref name="degrees"/> from its start, as <see cref="SetDistance"/> does at that distance. Refused when the
+    /// module isn't a curve (<see cref="ModuleSections.IsCurve"/>).
+    /// </summary>
+    public static IEditCommand<ModuleFileContent> SetAngle(int joint, double degrees) =>
+        Change("Move section joint", (drawing, outline, joints) =>
+            drawing.MainPath is { } main && ModuleSections.DistanceAtAngle(main, degrees) is { } distance ? MovedTo(joints, joint, main, outline, distance) : null);
+
+    /// <summary>
     /// Moves joint <paramref name="joint"/> so it crosses the track <paramref name="distance"/> from its start: a straight
     /// joint is drawn across the track there again, a bent one is moved as a whole with its ends kept on the outline.
     /// </summary>
     public static IEditCommand<ModuleFileContent> SetDistance(int joint, double distance) =>
         Change("Move section joint", (drawing, outline, joints) =>
-        {
-            if (joint >= joints.Count || drawing.MainPath is not { } main) return null;
-            var current = joints[joint];
-            if (current.Bends is not { Count: > 0 })
-                return ModuleSections.AcrossAt(outline, main, distance) is { } straight ? Replace(joints, joint, straight) : null;
-            var path = main.ToPath();
-            var offset = path.PoseAt(Math.Clamp(distance, 0, path.Length)).Position - path.PoseAt(ModuleSections.DistanceAlongTrack(current, main)).Position;
-            return Replace(joints, joint, Moved(current, offset, outline));
-        });
+            drawing.MainPath is { } main ? MovedTo(joints, joint, main, outline, distance) : null);
+
+    /// <summary>The joints with joint <paramref name="joint"/> moved to cross the track <paramref name="distance"/> from its start; null if there is no such joint.</summary>
+    private static IReadOnlyList<InternalJoint>? MovedTo(IReadOnlyList<InternalJoint> joints, int joint, PathDrawing main, SegmentPath outline, double distance)
+    {
+        if (joint >= joints.Count) return null;
+        var current = joints[joint];
+        if (current.Bends is not { Count: > 0 })
+            return ModuleSections.AcrossAt(outline, main, distance) is { } straight ? Replace(joints, joint, straight) : null;
+        var path = main.ToPath();
+        var offset = path.PoseAt(Math.Clamp(distance, 0, path.Length)).Position - path.PoseAt(ModuleSections.DistanceAlongTrack(current, main)).Position;
+        return Replace(joints, joint, Moved(current, offset, outline));
+    }
 
     /// <summary>Moves point <paramref name="point"/> of a joint; an end is kept on the module's outline.</summary>
     public static IEditCommand<ModuleFileContent> SetPoint(int joint, int point, Point at) =>

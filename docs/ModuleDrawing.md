@@ -220,6 +220,8 @@ positions with snapping. Snapping a track to an exit checks it against the end p
 ### 7.1 Sections
 - The outline is divided into sections by **section lines**, which are cuts across the outline. In auto-draw they are perpendicular to the main path.
 - *NumberOfSections* from the Registry gives equal-length sections by default. The positions can then be moved.
+- In the editor, the **number of sections** divides the module anew into sections of the same length along the track (on a curve, the same angle and the same length along either edge); **Make equal** does it for the sections the module has.
+- A joint's position is typed in millimetres as its **distance along the track** from the first end. On a **curve** (a main path that turns one way only) it can also be typed as its **angle from the start of the curve**: the joint is radial, so the angle is the same at the track and at both edges and can be measured on the real module (decided 2026-11-22).
 - Each section line is an **internal joint**. Its internal end profile is optional and free; it doesn't have to follow any standard (MD-4a).
 
 ### 7.2 Operator space

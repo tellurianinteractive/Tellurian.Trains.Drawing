@@ -423,6 +423,11 @@
   <data name="RotationHelp" xml:space="preserve"><value>Wie weit die Säule gegen den Uhrzeigersinn gedreht ist, in Grad.</value></data>
   <data name="WallLengthHelp" xml:space="preserve"><value>Eine neue Länge verschiebt die Ecke, an der die Wand endet.</value></data>
   <data name="JointDistanceHelp" xml:space="preserve"><value>Wo der Stoß das Gleis kreuzt, entlang des Gleises vom ersten Ende des Moduls gemessen.</value></data>
+  <data name="SectionCount" xml:space="preserve"><value>Anzahl Segmente</value></data>
+  <data name="SectionCountHelp" xml:space="preserve"><value>Teilt das Modul in so viele gleich lange Segmente entlang des Gleises. Die vorhandenen Stöße werden ersetzt.</value></data>
+  <data name="EqualSections" xml:space="preserve"><value>Gleich lang machen</value></data>
+  <data name="JointAngle" xml:space="preserve"><value>Winkel vom Anfang der Kurve</value></data>
+  <data name="JointAngleHelp" xml:space="preserve"><value>Wo der Stoß das Gleis kreuzt, als Winkel vom Anfang der Kurve. Der Stoß steht rechtwinklig zum Gleis, daher ist der Winkel am Gleis und an beiden Kanten gleich.</value></data>
   <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Wird in Modulzeichnungen entlang des Modulendes geschrieben, z. B. B96. Ohne ihn wird die Bezeichnung verwendet.</value></data>
   <data name="EndsPane" xml:space="preserve"><value>Enden</value></data>
   <data name="ExitEnd" xml:space="preserve"><value>Ende {0}</value></data>

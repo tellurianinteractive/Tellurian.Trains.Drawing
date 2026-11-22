@@ -423,6 +423,11 @@
   <data name="RotationHelp" xml:space="preserve"><value>Hvor mye søylen er dreid mot klokken, i grader.</value></data>
   <data name="WallLengthHelp" xml:space="preserve"><value>En ny lengde flytter hjørnet der veggen slutter.</value></data>
   <data name="JointDistanceHelp" xml:space="preserve"><value>Der skjøten krysser sporet, målt langs sporet fra modulens første ende.</value></data>
+  <data name="SectionCount" xml:space="preserve"><value>Antall seksjoner</value></data>
+  <data name="SectionCountHelp" xml:space="preserve"><value>Deler modulen i så mange like lange seksjoner langs sporet. Skjøtene som finnes nå, erstattes.</value></data>
+  <data name="EqualSections" xml:space="preserve"><value>Gjør like lange</value></data>
+  <data name="JointAngle" xml:space="preserve"><value>Vinkel fra starten av kurven</value></data>
+  <data name="JointAngleHelp" xml:space="preserve"><value>Der skjøten krysser sporet, som vinkelen fra der kurven starter. Skjøten står vinkelrett på sporet, så vinkelen er den samme ved sporet og ved begge kantene.</value></data>
   <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Skrives langs modulens ende i modultegninger, f.eks. B96. Uten det brukes betegnelsen.</value></data>
   <data name="EndsPane" xml:space="preserve"><value>Ender</value></data>
   <data name="ExitEnd" xml:space="preserve"><value>Ende {0}</value></data>
