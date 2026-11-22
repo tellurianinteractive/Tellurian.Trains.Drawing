@@ -4,10 +4,10 @@
   "schemaVersion": 2,
   "appVersion": "0.9.1",
   "content": {
-    "id": "722f05cf-d35b-4ccb-a125-66a97f478ad1",
+    "id": "cebf9439-aba7-4e6b-a66f-5be7cb6ca6ed",
     "name": "Club meeting",
     "hall": {
-      "id": "69d99483-b322-474f-8fc0-add113071574",
+      "id": "b35028a7-a1bb-4b69-b8a3-6ca79dd44152",
       "name": "Club hall",
       "address": "Station Road 1",
       "outline": {
@@ -258,9 +258,9 @@
     },
     "layouts": [
       {
-        "id": "4541350e-fae4-471a-8486-fc979f6bb8ae",
+        "id": "f2eb7873-18ac-406f-ab20-f6efdd82b1a4",
         "name": "Main",
-        "anchorModuleId": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
+        "anchorModuleId": "cb573985-901c-4fe0-9ecd-1dc06df94686",
         "anchorPose": {
           "x": 2000,
           "y": 2000,
@@ -288,39 +288,39 @@
         },
         "lines": [
           {
-            "id": "d7f4ad28-2544-4831-9216-1cb205802596",
+            "id": "475bebcc-0c72-4a05-a023-b335e0c55009",
             "name": "Main line",
             "entries": [
               {
-                "moduleId": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
+                "moduleId": "cb573985-901c-4fe0-9ecd-1dc06df94686",
                 "isTurned": false,
                 "legAdjustment": 0
               },
               {
-                "moduleId": "f4c1026d-7536-4806-ad57-bf5a76e0afec",
+                "moduleId": "8db6e73a-8c3b-437b-85e7-c8b0ce0cb61e",
                 "isTurned": true,
                 "legAdjustment": 5,
                 "note": "Bends the other way"
               },
               {
-                "moduleId": "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4",
+                "moduleId": "5bb2ace3-c993-4872-a720-4236c44c234c",
                 "isTurned": false,
                 "legAdjustment": 0
               }
             ]
           },
           {
-            "id": "65f43d93-6372-43ed-829f-0a083f16b688",
+            "id": "090b021c-e417-4d94-ae15-b74daca8d20a",
             "name": "Branch",
             "entries": [
               {
-                "moduleId": "a17837c8-0d2b-4a9b-8454-74903aa9c6f8",
+                "moduleId": "4079b79b-fcf7-42f5-b411-fa20467367a2",
                 "isTurned": false,
                 "legAdjustment": 0
               }
             ],
             "startAt": {
-              "moduleId": "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4",
+              "moduleId": "5bb2ace3-c993-4872-a720-4236c44c234c",
               "side": "Right",
               "number": 2
             }
@@ -331,12 +331,12 @@
     "joints": [
       {
         "first": {
-          "moduleId": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
+          "moduleId": "cb573985-901c-4fe0-9ecd-1dc06df94686",
           "side": "Right",
           "number": 1
         },
         "second": {
-          "moduleId": "f4c1026d-7536-4806-ad57-bf5a76e0afec",
+          "moduleId": "8db6e73a-8c3b-437b-85e7-c8b0ce0cb61e",
           "side": "Right",
           "number": 1
         },
@@ -347,7 +347,7 @@
     ],
     "publicAreas": [
       {
-        "id": "31d36e1d-f94b-423d-89b7-b31324a81878",
+        "id": "82b51269-79dc-494b-9f0d-d6a1bbd16fd4",
         "area": {
           "start": {
             "x": 4000,
@@ -390,7 +390,7 @@
     ],
     "walkingPaths": [
       {
-        "id": "ec9afc25-2d4d-4974-9895-0071876158ad",
+        "id": "cfd0e504-2f22-45b1-8482-fd7e69cd0e63",
         "centreLine": {
           "start": {
             "x": 1000,
@@ -420,10 +420,10 @@
     ],
     "acknowledgements": [
       {
-        "id": "35d90304-d2ad-4803-82c8-44aa9535f33d",
+        "id": "dcc1c4fb-7269-4870-b6de-1db9f6a33a77",
         "findingCode": "VA-11",
         "moduleIds": [
-          "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4"
+          "5bb2ace3-c993-4872-a720-4236c44c234c"
         ],
         "fingerprint": "sample",
         "note": "Operator space overlaps the stage edge",
@@ -432,17 +432,17 @@
     ],
     "modules": [
       {
-        "id": "0d786c11-5c04-49b7-b098-d1d1c6274bbb",
+        "id": "cb573985-901c-4fe0-9ecd-1dc06df94686",
         "name": "Straight",
         "hasFremoDesignation": false,
         "standard": {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
           "shortName": "FREMO/H0-RE",
           "scale": {
             "shortName": "H0"
           }
         },
         "tracks": [],
-        "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
         "hasNarrowGauge": false,
@@ -507,8 +507,14 @@
           },
           "sides": [
             {
-              "fromExit": "W",
-              "toExit": "E",
+              "fromExit": {
+                "side": "Left",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Right",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -528,8 +534,14 @@
               }
             },
             {
-              "fromExit": "E",
-              "toExit": "W",
+              "fromExit": {
+                "side": "Right",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Left",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -611,13 +623,11 @@
                 ],
                 "isClosed": false
               },
-              "id": "bd86b953-2d23-4651-8621-2f22d4eeadb1",
+              "id": 1,
               "isNarrowGauge": false,
               "isGenerated": true
             }
           ],
-          "tracksWithEnteredLength": [],
-          "tracksWithEnteredStub": [],
           "operatorSpaces": [],
           "publicSides": [],
           "duckUnderAreas": [],
@@ -657,17 +667,17 @@
         }
       },
       {
-        "id": "f4c1026d-7536-4806-ad57-bf5a76e0afec",
+        "id": "8db6e73a-8c3b-437b-85e7-c8b0ce0cb61e",
         "name": "Curve",
         "hasFremoDesignation": false,
         "standard": {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
           "shortName": "FREMO/H0-RE",
           "scale": {
             "shortName": "H0"
           }
         },
         "tracks": [],
-        "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
         "hasNarrowGauge": false,
@@ -733,8 +743,14 @@
           },
           "sides": [
             {
-              "fromExit": "W",
-              "toExit": "E",
+              "fromExit": {
+                "side": "Left",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Right",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -755,8 +771,14 @@
               }
             },
             {
-              "fromExit": "E",
-              "toExit": "W",
+              "fromExit": {
+                "side": "Right",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Left",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -842,13 +864,11 @@
                 ],
                 "isClosed": false
               },
-              "id": "50f443c3-00f9-4fee-9a5a-e0fb39c36d47",
+              "id": 1,
               "isNarrowGauge": false,
               "isGenerated": true
             }
           ],
-          "tracksWithEnteredLength": [],
-          "tracksWithEnteredStub": [],
           "operatorSpaces": [],
           "publicSides": [],
           "duckUnderAreas": [],
@@ -890,17 +910,17 @@
         }
       },
       {
-        "id": "a6e4f6eb-afdd-473a-addb-8ac0edd9cdf4",
+        "id": "5bb2ace3-c993-4872-a720-4236c44c234c",
         "name": "Junction",
         "hasFremoDesignation": false,
         "standard": {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
           "shortName": "FREMO/H0-RE",
           "scale": {
             "shortName": "H0"
           }
         },
         "tracks": [],
-        "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "hasNormalGauge": true,
         "hasNarrowGauge": false,
@@ -981,8 +1001,14 @@
           },
           "sides": [
             {
-              "fromExit": "W",
-              "toExit": "E",
+              "fromExit": {
+                "side": "Left",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Right",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -1002,8 +1028,14 @@
               }
             },
             {
-              "fromExit": "E",
-              "toExit": "E2",
+              "fromExit": {
+                "side": "Right",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Right",
+                "number": 2
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -1023,8 +1055,14 @@
               }
             },
             {
-              "fromExit": "E2",
-              "toExit": "W",
+              "fromExit": {
+                "side": "Right",
+                "number": 2
+              },
+              "toExit": {
+                "side": "Left",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -1120,13 +1158,11 @@
                 ],
                 "isClosed": false
               },
-              "id": "46f67dda-5405-4e8d-9300-717b2942f588",
+              "id": 1,
               "isNarrowGauge": false,
               "isGenerated": true
             }
           ],
-          "tracksWithEnteredLength": [],
-          "tracksWithEnteredStub": [],
           "operatorSpaces": [],
           "publicSides": [],
           "duckUnderAreas": [],
@@ -1171,17 +1207,17 @@
         }
       },
       {
-        "id": "a17837c8-0d2b-4a9b-8454-74903aa9c6f8",
+        "id": "4079b79b-fcf7-42f5-b411-fa20467367a2",
         "name": "Terminus",
         "hasFremoDesignation": false,
         "standard": {
+          "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
           "shortName": "FREMO/H0-RE",
           "scale": {
             "shortName": "H0"
           }
         },
         "tracks": [],
-        "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "addOns": [],
         "numberOfThroughTracks": 2,
         "hasNormalGauge": true,
@@ -1231,8 +1267,14 @@
           },
           "sides": [
             {
-              "fromExit": "W",
-              "toExit": "W",
+              "fromExit": {
+                "side": "Left",
+                "number": 1
+              },
+              "toExit": {
+                "side": "Left",
+                "number": 1
+              },
               "mode": "Auto",
               "path": {
                 "start": {
@@ -1328,7 +1370,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "4081dab4-1ffa-472c-8d7e-9d144803bdf6",
+              "id": 1,
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1339,7 +1381,7 @@
                 "y": -25,
                 "heading": 180
               },
-              "id": "230ba26d-8827-4c3e-922a-7660cc2df062",
+              "id": 2,
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1361,7 +1403,7 @@
                 ],
                 "isClosed": false
               },
-              "id": "1b253517-2cd0-4969-aa95-080637e44534",
+              "id": 3,
               "isNarrowGauge": false,
               "isGenerated": true
             },
@@ -1372,13 +1414,11 @@
                 "y": 25,
                 "heading": 180
               },
-              "id": "e26f1ebf-b993-4013-ba14-8c3a7b30d0d1",
+              "id": 4,
               "isNarrowGauge": false,
               "isGenerated": true
             }
           ],
-          "tracksWithEnteredLength": [],
-          "tracksWithEnteredStub": [],
           "operatorSpaces": [],
           "publicSides": [],
           "duckUnderAreas": [],

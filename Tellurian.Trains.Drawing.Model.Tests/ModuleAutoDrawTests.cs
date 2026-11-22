@@ -316,7 +316,7 @@ public sealed class ModuleAutoDrawTests
         Assert.IsTrue(result.Notes.Any(n => n.Code == AutoDrawNoteCode.StandardMapped));
         var module = result.Module!;
         Assert.AreEqual("MMM-2R", module.Standard!.ShortName);
-        Assert.AreEqual(TestCatalogue.Instance.FindStandard("MMM-2R")!.Id, module.StandardId);
+        Assert.AreEqual(TestCatalogue.Instance.FindStandard("MMM-2R")!.Id, module.Standard.Id);
         Assert.AreEqual("H0", module.Scale?.ShortName);
         Assert.AreEqual("MMM-Summer", module.AddOns.Single().Name);
         Assert.IsTrue(module.Drawing.Exits.All(e => e.EndProfile.Name == "MMM480"));

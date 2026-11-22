@@ -16,6 +16,7 @@ public sealed class ModuleGeometryTests
     private static ModuleExit Exit(string label, Pose pose, EndProfile? profile = null, ProfileOrientation orientation = ProfileOrientation.Normal) => new()
     {
         Label = label,
+        Direction = label == "E" ? ExitSide.Right : ExitSide.Left,
         Pose = pose,
         EndProfile = profile is null ? SingleRef : new(profile.Id, profile.Designation),
         Orientation = orientation,
@@ -32,8 +33,8 @@ public sealed class ModuleGeometryTests
             MainPath = PathDrawing.Polyline([new(0, 0), new(1000, 0)]),
             Sides =
             [
-                new() { FromExit = "W", ToExit = "E", Path = PathDrawing.Polyline([new(0, -250), new(1000, -250)]) },
-                new() { FromExit = "E", ToExit = "W", Path = PathDrawing.Polyline([new(1000, 250), new(0, 250)]) },
+                new() { FromExit = ExitPlace.Left, ToExit = ExitPlace.Right, Path = PathDrawing.Polyline([new(0, -250), new(1000, -250)]) },
+                new() { FromExit = ExitPlace.Right, ToExit = ExitPlace.Left, Path = PathDrawing.Polyline([new(1000, 250), new(0, 250)]) },
             ],
         };
     }
@@ -73,7 +74,7 @@ public sealed class ModuleGeometryTests
         {
             Exits = [west, east],
             MainPath = PathDrawing.From(main),
-            Sides = [new() { FromExit = "W", ToExit = "E", Path = PathDrawing.From(right) }, new() { FromExit = "E", ToExit = "W", Path = PathDrawing.From(left) }],
+            Sides = [new() { FromExit = ExitPlace.Left, ToExit = ExitPlace.Right, Path = PathDrawing.From(right) }, new() { FromExit = ExitPlace.Right, ToExit = ExitPlace.Left, Path = PathDrawing.From(left) }],
         };
         var polygon = ModuleGeometry.Outline(drawing, Lookup)!.Tessellate(0.01);
         var expectedArea = Math.PI / 12 * (2250 * 2250 - 1750 * 1750) / 2 * 2;
@@ -87,7 +88,7 @@ public sealed class ModuleGeometryTests
         var drawing = new ModuleDrawing
         {
             Exits = [exit],
-            Sides = [new() { FromExit = "A", ToExit = "A", Path = PathDrawing.Polyline([new(0, -250), new(1200, -250), new(1200, 250), new(0, 250)]) }],
+            Sides = [new() { FromExit = ExitPlace.Left, ToExit = ExitPlace.Left, Path = PathDrawing.Polyline([new(0, -250), new(1200, -250), new(1200, 250), new(0, 250)]) }],
         };
         Assert.AreEqual(ModuleKind.EndOfLine, drawing.Kind);
         Assert.AreEqual(1200 * 500, ModuleGeometry.Outline(drawing, Lookup)!.Tessellate().SignedArea, Tolerance.Length);
@@ -99,7 +100,7 @@ public sealed class ModuleGeometryTests
         var drawing = Straight();
         drawing = drawing.With(edited => edited.Sides = [drawing.Sides[0].With(edited => edited.Path = PathDrawing.Polyline([new(0, -240), new(1000, -250)])), drawing.Sides[1]]);
         var exception = Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing, Lookup));
-        Assert.Contains("right corner of exit W", exception.Message);
+        Assert.Contains("right corner of exit Left 1", exception.Message);
     }
 
     [TestMethod]
@@ -114,7 +115,7 @@ public sealed class ModuleGeometryTests
     public void UnknownExitAndMissingProfileAreReported()
     {
         var drawing = Straight();
-        Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing.With(edited => edited.Sides = [drawing.Sides[0].With(edited => edited.ToExit = "X"), drawing.Sides[1]]), Lookup));
+        Assert.ThrowsExactly<InvalidOperationException>(() => ModuleGeometry.Outline(drawing.With(edited => edited.Sides = [drawing.Sides[0].With(edited => edited.ToExit = new(ExitSide.Up)), drawing.Sides[1]]), Lookup));
         Assert.ThrowsExactly<KeyNotFoundException>(() => ModuleGeometry.Outline(drawing, _ => null));
     }
 

@@ -5,17 +5,17 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "7099293c-b81f-487c-9655-757dab07a654",
+      "id": "56b174d3-7b7f-4c71-83ab-12d5d9522ac4",
       "name": "Curve R2000 30\u00B0",
       "hasFremoDesignation": false,
       "standard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "shortName": "FREMO/H0-RE",
         "scale": {
           "shortName": "H0"
         }
       },
       "tracks": [],
-      "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
       "hasNormalGauge": true,
@@ -82,8 +82,14 @@
         },
         "sides": [
           {
-            "fromExit": "W",
-            "toExit": "E",
+            "fromExit": {
+              "side": "Left",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Right",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -104,8 +110,14 @@
             }
           },
           {
-            "fromExit": "E",
-            "toExit": "W",
+            "fromExit": {
+              "side": "Right",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Left",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -191,13 +203,11 @@
               ],
               "isClosed": false
             },
-            "id": "1bbe1ba9-9e6b-4c8a-a71e-5f2cb3b2e6c3",
+            "id": 1,
             "isNarrowGauge": false,
             "isGenerated": true
           }
         ],
-        "tracksWithEnteredLength": [],
-        "tracksWithEnteredStub": [],
         "operatorSpaces": [],
         "publicSides": [],
         "duckUnderAreas": [],

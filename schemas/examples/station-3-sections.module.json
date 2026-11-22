@@ -5,13 +5,14 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "b55e46c8-0b3e-43aa-be34-275031c09426",
+      "id": "c7bde66c-9317-4b98-983f-315cfcfe1e26",
       "name": "Station",
       "prefix": "SFj\u00E4",
       "number": 12,
       "hasFremoDesignation": false,
       "moduleOwners": "Module Club",
       "standard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "shortName": "FREMO/H0-RE",
         "scale": {
           "shortName": "H0"
@@ -43,7 +44,6 @@
         "tracks": [],
         "timings": {}
       },
-      "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
       "hasNormalGauge": true,
@@ -109,8 +109,14 @@
         },
         "sides": [
           {
-            "fromExit": "W",
-            "toExit": "E",
+            "fromExit": {
+              "side": "Left",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Right",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -130,8 +136,14 @@
             }
           },
           {
-            "fromExit": "E",
-            "toExit": "W",
+            "fromExit": {
+              "side": "Right",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Left",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -346,13 +358,11 @@
               ],
               "isClosed": false
             },
-            "id": "1d4e3382-20cb-4706-8568-68104a713eb0",
+            "id": 1,
             "isNarrowGauge": false,
             "isGenerated": true
           }
         ],
-        "tracksWithEnteredLength": [],
-        "tracksWithEnteredStub": [],
         "operatorSpaces": [
           {
             "attachment": {

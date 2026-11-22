@@ -193,13 +193,11 @@ public sealed class ModuleEditorTests
         page.Find("#track-stub-drawn").Change(false);
         page.Find("#track-stub").Change(true);
 
-        var drawing = editor.Current!.Module.Drawing;
-        CollectionAssert.AreEqual(new[] { Track().Id }, drawing.TracksWithEnteredLength.ToArray());
-        CollectionAssert.AreEqual(new[] { Track().Id }, drawing.TracksWithEnteredStub.ToArray());
+        Assert.IsTrue(Track() is { IsLengthEntered: true, IsStubEntered: true });
         Assert.AreEqual((Length / 1000, true), (Track().Length, Track().IsStub));
 
         page.Find("#track-stub-drawn").Change(true);
-        Assert.IsEmpty(editor.Current!.Module.Drawing.TracksWithEnteredStub);
+        Assert.IsFalse(Track().IsStubEntered);
         Assert.IsFalse(Track().IsStub);
     }
 

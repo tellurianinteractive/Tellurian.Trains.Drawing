@@ -204,17 +204,17 @@ public sealed class SchemaVersion2MigrationTests
         var content = DrawingFileSerializer.DeserializeModule(file.ToJsonString());
 
         var module = content.Module;
-        Assert.AreEqual(Guid.Parse(id), module.StandardId);
+        Assert.AreEqual(Guid.Parse(id), module.Standard?.Id);
         Assert.AreEqual((name, scale), (module.Standard!.ShortName, module.Standard.Scale!.ShortName));
         Assert.AreEqual(scale, module.Scale?.ShortName);
-        Assert.IsNull(module.Standard.Id, "The id of the shared standard is the Module Registry's, which a version 1 file didn't have.");
         Assert.IsNull(module.Standard.ExtensionData);
         var written = ModuleOf(JsonNode.Parse(DrawingFileSerializer.Serialize(content))!.AsObject());
-        Assert.AreEqual(id, (string)written["standardId"]!);
+        Assert.IsFalse(written.ContainsKey("standardId"), "The standard carries its id.");
         Assert.IsFalse(written.ContainsKey("scale"), "The scale is written in the standard only.");
         var standard = written["standard"]!.AsObject();
+        Assert.AreEqual(id, (string)standard["id"]!);
         Assert.AreEqual((name, scale), ((string)standard["shortName"]!, (string)standard["scale"]!["shortName"]!));
-        CollectionAssert.AreEqual(new[] { "shortName", "scale" }, standard.Select(p => p.Key).ToArray());
+        CollectionAssert.AreEqual(new[] { "id", "shortName", "scale" }, standard.Select(p => p.Key).ToArray());
     }
 
     [TestMethod]
@@ -269,9 +269,6 @@ public sealed class SchemaVersion2MigrationTests
         var drawing = module["drawing"]!.AsObject();
 
         var guids = new Dictionary<int, string>();
-        int[] Ids(string name) => drawing.Remove(name, out var ids) && ids is JsonArray list ? [.. list.Select(i => (int)i!)] : [];
-        var withLength = Ids("tracksWithEnteredLength");
-        var withStub = Ids("tracksWithEnteredStub");
         // Version 4.0 of the shared model writes the tracks of a location module with the location.
         var tracks = module["operationLocation"] is JsonObject location && location["tracks"] is JsonArray { Count: > 0 } locationTracks
             ? location.Remove("tracks", out _) ? locationTracks : null
@@ -283,15 +280,26 @@ public sealed class SchemaVersion2MigrationTests
                 var id = (int)track["id"]!;
                 guids.Add(id, Guid.NewGuid().ToString());
                 track["id"] = guids[id];
-                track["isLengthEntered"] = withLength.Contains(id);
-                track["isStubEntered"] = withStub.Contains(id);
+                track["isLengthEntered"] = (bool?)track["isLengthEntered"] ?? false;
+                track["isStubEntered"] = (bool?)track["isStubEntered"] ?? false;
             }
             drawing["stationTracks"] = trackList;
         }
         drawing.Remove("trackElements", out var elements);
-        foreach (var element in elements!.AsArray().Select(e => e!.AsObject()).Where(e => e.ContainsKey("stationTrackId")))
-            element["stationTrackId"] = guids[(int)element["stationTrackId"]!];
+        foreach (var element in elements!.AsArray().Select(e => e!.AsObject()))
+        {
+            element["id"] = Guid.NewGuid().ToString();
+            if (element.ContainsKey("stationTrackId")) element["stationTrackId"] = guids[(int)element["stationTrackId"]!];
+        }
         drawing["tracks"] = elements;
+        // Sides referred to their exits by label.
+        var exits = drawing["exits"]!.AsArray().Select(e => ((string)e!["direction"]!, (string)e["label"]!)).ToList();
+        string Label(JsonNode place) => exits.Where(e => e.Item1 == (string)place["side"]!).ElementAt((int)place["number"]! - 1).Item2;
+        foreach (var side in drawing["sides"]?.AsArray().Select(s => s!.AsObject()) ?? [])
+        {
+            side["fromExit"] = Label(side["fromExit"]!);
+            side["toExit"] = Label(side["toExit"]!);
+        }
 
         void Identification(JsonObject node)
         {
@@ -312,8 +320,7 @@ public sealed class SchemaVersion2MigrationTests
         if (drawing["autoDraw"]?["parameters"] is JsonObject parameters) Identification(parameters);
         var standard = module["standard"]!.AsObject();
         module["scale"] = (string)standard["scale"]!["shortName"]!;
-        module.Remove("standardId", out var standardId);
-        module["standard"] = new JsonObject { ["id"] = standardId, ["name"] = (string)standard["shortName"]! };
+        module["standard"] = new JsonObject { ["id"] = standard["id"]?.DeepClone(), ["name"] = (string)standard["shortName"]! };
         return file;
     }
 
@@ -344,7 +351,7 @@ public sealed class SchemaVersion2MigrationTests
     {
         var station = new TestStation();
         // Ids that aren't 1 and 2 in the order of the list: the development file loses them, being GUIDs there.
-        var module = station.Module.With(c => { c.Tracks = [.. station.Module.Tracks.Reverse()]; c.Drawing = station.Drawing.With(edited => { edited.TracksWithEnteredStub = [TestStation.Track2]; edited.TracksWithEnteredLength = [TestStation.Track1, TestStation.Track2]; }); });
+        var module = station.Module.With(c => c.Tracks = [.. station.Module.Tracks.Reverse().Select(t => t.With(e => { e.IsLengthEntered = true; e.IsStubEntered = t.Id == TestStation.Track2; }))]);
         var development = DevelopmentVersion2(ModuleFileContent.Create(module, TestCatalogue.Lookup));
         var elements = ModuleOf(development)["drawing"]!["tracks"]!.AsArray();
         elements[0]!["stationTrackId"] = Guid.NewGuid().ToString();
@@ -352,8 +359,7 @@ public sealed class SchemaVersion2MigrationTests
         var read = DrawingFileSerializer.DeserializeModule(development.ToJsonString()).Module;
 
         CollectionAssert.AreEqual(new[] { (1, "2"), (2, "1") }, read.Tracks.Select(t => (t.Id, t.Designation)).ToArray());
-        CollectionAssert.AreEqual(new[] { 1 }, read.Drawing.TracksWithEnteredStub.ToArray(), "Track 2 is the first in the list.");
-        CollectionAssert.AreEqual(new[] { 1, 2 }, read.Drawing.TracksWithEnteredLength.ToArray());
+        CollectionAssert.AreEqual(new[] { (1, true, true), (2, true, false) }, read.Tracks.Select(t => (t.Id, t.IsLengthEntered, t.IsStubEntered)).ToArray(), "Track 2 is the first in the list.");
         Assert.IsNull(read.Drawing.TrackElements[0].StationTrackId, "An element that refers to a track that isn't in the list gets no track.");
         CollectionAssert.AreEqual(
             station.Drawing.TrackElements.Skip(1).Select(e => (int?)(e.StationTrackId == TestStation.Track2 ? 1 : 2)).ToArray(),
@@ -457,8 +463,7 @@ public sealed class SchemaVersion2MigrationTests
             new[] { (1, "2", 1, true), (2, "3a", 2, false) },
             module.Tracks.Select(t => (t.Id, t.Designation, t.DisplayOrder, t.IsMain)).ToArray());
         Assert.IsTrue(module.Tracks.All(t => t is { Length: 0, IsScheduled: false }), "Lengths are worked out by the app.");
-        Assert.IsEmpty(drawing.TracksWithEnteredLength);
-        Assert.IsEmpty(drawing.TracksWithEnteredStub);
+        Assert.IsTrue(module.Tracks.All(t => !t.IsLengthEntered && !t.IsStubEntered));
         CollectionAssert.AreEqual(
             new int?[] { 1, 1, 2, null },
             drawing.TrackElements.Skip(generated).Select(t => t.StationTrackId).ToArray());
@@ -569,7 +574,7 @@ public sealed class SchemaVersion2MigrationTests
         Assert.AreEqual("""{"moduleId":5678}""", TestReferences.RegistryEntry(plan.Modules[0].ExternalReferences));
         Assert.AreEqual("A. Owner", plan.Modules[0].ModuleOwners);
         Assert.IsNull(plan.Modules[0].Prefix);
-        Assert.IsTrue(plan.Modules.All(m => m.Standard?.Scale is not null && m.StandardId != Guid.Empty), "Every embedded module has the standard of the shared model.");
+        Assert.IsTrue(plan.Modules.All(m => m.Standard is { Scale: not null, Id: not null }), "Every embedded module has the standard of the shared model.");
         Assert.AreEqual("""{"endProfileId":12}""", TestReferences.RegistryEntry(plan.EndProfiles[0].ExternalReferences));
         Assert.AreEqual("""{"standardId":3}""", TestReferences.RegistryEntry(plan.Standards[0].ExternalReferences));
         AssertNothingOldIsWritten(DrawingFileSerializer.Serialize(plan));

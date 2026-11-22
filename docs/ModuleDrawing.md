@@ -44,7 +44,7 @@ The user decides how the module lies, by one of:
 - **turning the drawing 180°**;
 - for a curve, laying it **symmetrically**: the line between the first Left and the first Right exit horizontal, so that the plates lean by half the angle each way (+15° and −15° on a 30° curve), or the other way round when turned 180°; or laying it **as auto-draw does**, with the first exit's plate vertical (§8.2).
 
-Turning **rotates the stored geometry** once, then moves it so that the origin is again at the first Left exit, all in one undoable step. No display rotation is stored: the drawing in the file always lies the way the module is seen, for every reader. When a turn changes the side of any exit, the **directions of the tracks** in the track list (`LeftToRight`, `RightToLeft`) are swapped in the same step, and the user is told. Turning 180° swaps Left and Right and the viewing side together.
+Turning **rotates the stored geometry** once, then moves it so that the origin is again at the first Left exit, all in one undoable step. No display rotation is stored: the drawing in the file always lies the way the module is seen, for every reader. When a turn changes the side of any exit, the **directions of the tracks** in the track list (`LeftToRight`, `RightToLeft`) are swapped in the same step, and the user is told. The sides refer to their exits by side and number, so the turn changes the exits through `ModuleDrawing.ChangeExits`, which keeps every side at its exits. Turning 180° swaps Left and Right and the viewing side together.
 
 ## 3. Topology: classification by number of exits
 
@@ -207,7 +207,7 @@ positions with snapping. Snapping a track to an exit checks it against the end p
 ### 6.5 Track list and operation location
 - **Every module has a list of its tracks** as train planning sees them (spec MD-8), with at least one track: a through
   track or a track ending. The list is `tracks` of the module; the track elements (§6.2, §6.3), `trackElements` of the drawing, refer to its tracks by their id, a whole number from 1.
-  The drawing lists the tracks whose length or stub mark the user has entered (`tracksWithEnteredLength`, `tracksWithEnteredStub`); the others follow the drawing.
+  A track whose length or stub mark the user has entered says so itself (`isLengthEntered`, `isStubEntered`); the others follow the drawing.
 - A module that is an **operation location** also has `operationLocation` (spec MD-24): name, signature, country,
   kind (station, signal controlled, industrial area, other) and what can be done there, with the centre as a distance
   in metres along the main track from the left end (missing means the middle). A module without it is plain line.

@@ -165,52 +165,34 @@ public sealed class ModuleTracksTests
     public void AnEnteredLengthStaysUntilItFollowsTheDrawingAgain()
     {
         var content = Tracks.SetLength(Track1, EnteredLength).Apply(WithTwoTracks());
-        Assert.AreEqual(EnteredLength, TracksOf(content)[0].Length);
-        CollectionAssert.AreEqual(new[] { Track1 }, Drawing(content).TracksWithEnteredLength.ToArray());
+        Assert.IsTrue(TracksOf(content)[0] is { Length: EnteredLength, IsLengthEntered: true });
+        Assert.IsFalse(TracksOf(content)[1].IsLengthEntered);
 
         content = Tracks.Set(Track1, t => t.With(c => c.Usage = "Loading")).Apply(content);
         Assert.AreEqual(EnteredLength, TracksOf(content)[0].Length);
 
         content = Tracks.SetLength(Track1, null).Apply(content);
         Assert.AreEqual(Length / MillimetresPerMetre, TracksOf(content)[0].Length);
-        Assert.IsEmpty(Drawing(content).TracksWithEnteredLength);
+        Assert.IsFalse(TracksOf(content)[0].IsLengthEntered);
     }
 
     [TestMethod]
     public void AnEnteredStubMarkStaysUntilItFollowsTheDrawingAgain()
     {
         var content = Tracks.SetStub(Track1, true).Apply(WithTwoTracks());
-        Assert.IsTrue(TracksOf(content)[0].IsStub);
-        CollectionAssert.AreEqual(new[] { Track1 }, Drawing(content).TracksWithEnteredStub.ToArray());
+        Assert.IsTrue(TracksOf(content)[0] is { IsStub: true, IsStubEntered: true });
 
         content = Tracks.SetStub(Track1, null).Apply(content);
-        Assert.IsFalse(TracksOf(content)[0].IsStub);
-        Assert.IsEmpty(Drawing(content).TracksWithEnteredStub);
+        Assert.IsTrue(TracksOf(content)[0] is { IsStub: false, IsStubEntered: false });
     }
 
     [TestMethod]
-    public void TheMarksOfBeingEnteredAreListsOfTrackIdsInOrder()
+    public void OnlyATrackOfTheListCanBeMarkedAsEntered()
     {
-        var content = Tracks.SetLength(Track2, EnteredLength).Apply(WithTwoTracks());
-        content = Tracks.SetLength(Track1, EnteredLength).Apply(content);
-        content = Tracks.SetLength(Track1, EnteredLength).Apply(content);
-        CollectionAssert.AreEqual(new[] { Track1, Track2 }, Drawing(content).TracksWithEnteredLength.ToArray());
+        var content = Tracks.SetStub(UnknownTrack, true).Apply(WithTwoTracks());
 
-        var unknown = Tracks.SetStub(UnknownTrack, true).Apply(content);
-        Assert.IsEmpty(Drawing(unknown).TracksWithEnteredStub, "Only a track of the list can be marked.");
-    }
-
-    [TestMethod]
-    public void ARemovedTrackIsRemovedFromTheMarksOfBeingEntered()
-    {
-        var content = Tracks.SetLength(Track1, EnteredLength).Apply(WithTwoTracks());
-        content = Tracks.SetStub(Track1, true).Apply(content);
-        content = Tracks.SetStub(Track2, true).Apply(content);
-
-        content = Tracks.Remove(Track1).Apply(content);
-
-        Assert.IsEmpty(Drawing(content).TracksWithEnteredLength);
-        CollectionAssert.AreEqual(new[] { Track2 }, Drawing(content).TracksWithEnteredStub.ToArray());
+        Assert.IsTrue(TracksOf(content).All(t => !t.IsStubEntered));
+        Assert.IsTrue(TracksOf(content).All(t => t.Id != UnknownTrack));
     }
 
     [TestMethod]

@@ -5,17 +5,17 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "ec243cf4-e3f8-4eae-9fc4-6f4df7c76aa5",
+      "id": "4e117dd1-393b-4b7e-9c8b-8d1158d6567a",
       "name": "Straight 1200",
       "hasFremoDesignation": false,
       "standard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "shortName": "FREMO/H0-RE",
         "scale": {
           "shortName": "H0"
         }
       },
       "tracks": [],
-      "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
       "addOns": [],
       "numberOfThroughTracks": 1,
       "hasNormalGauge": true,
@@ -81,8 +81,14 @@
         },
         "sides": [
           {
-            "fromExit": "W",
-            "toExit": "E",
+            "fromExit": {
+              "side": "Left",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Right",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -102,8 +108,14 @@
             }
           },
           {
-            "fromExit": "E",
-            "toExit": "W",
+            "fromExit": {
+              "side": "Right",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Left",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -185,13 +197,11 @@
               ],
               "isClosed": false
             },
-            "id": "4568cdff-0b39-4a55-9aff-326637fa579a",
+            "id": 1,
             "isNarrowGauge": false,
             "isGenerated": true
           }
         ],
-        "tracksWithEnteredLength": [],
-        "tracksWithEnteredStub": [],
         "operatorSpaces": [],
         "publicSides": [],
         "duckUnderAreas": [],

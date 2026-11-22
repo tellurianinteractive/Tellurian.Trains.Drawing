@@ -106,6 +106,12 @@ An exit's `direction` is `Left`, `Right`, `Up`, `Down` or `Undefined`, as seen b
 place. `Up` is the side away from the viewer and `Down` the side towards the viewer; they are for exits whose track
 leaves across the left–right direction. An exit's `label` is free text for the reader only.
 
+A side (`drawing.sides`) goes from the end plate of `fromExit` to that of `toExit`. It refers to the exits as a hall plan
+does, by `side` and `number` (see *How a hall plan refers to exits*), never by their labels:
+`{ "fromExit": { "side": "Left", "number": 1 }, "toExit": { "side": "Right", "number": 1 } }`.
+
+A track element has an `id`, a whole number unique within the drawing, from 1. Nothing in a file refers to it.
+
 #### The module of the shared layout model
 A module is the module of the shared layout model, the NuGet package `Tellurian.Trains.Schedules.Model.Layouts`, which
 the planner, the Module Registry and Dispatch use too, with what this library adds. The names, units (metres) and
@@ -114,29 +120,33 @@ meaning of the shared properties are that contract's.
 ```json
 "module": {
   "id": "32fa0819-9185-4b49-9ab2-a6cc7b19fe1f",
-  "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
   "name": "Station",
   "prefix": "SFjä",
   "number": 12,
   "hasFremoDesignation": false,
   "moduleOwners": "Module Club",
-  "standard": { "shortName": "FREMO/H0-RE", "scale": { "shortName": "H0" } },
-  "operationLocation": { "name": "Tellby", "signature": "Tby", "kind": "Station" },
-  "tracks": [ { "id": 1, "designation": "1", "isMain": true, "isScheduled": true, "length": 3, "direction": "Both" } ],
-  "drawing": { "trackElements": [ { "type": "flex", "stationTrackId": 1 } ], "tracksWithEnteredLength": [], "tracksWithEnteredStub": [] }
+  "standard": { "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01", "shortName": "FREMO/H0-RE", "scale": { "shortName": "H0" } },
+  "speedLimit": 40,
+  "operationLocation": {
+    "name": "Tellby", "signature": "Tby", "kind": "Station",
+    "tracks": [ { "id": 1, "designation": "1", "isMain": true, "isScheduled": true, "length": 3, "isLengthEntered": true, "direction": "Both" } ]
+  },
+  "drawing": { "trackElements": [ { "type": "flex", "id": 1, "stationTrackId": 1 } ] }
 }
 ```
 
 - **From the shared model:** `name`, `prefix`, `number`, `hasFremoDesignation`, `configurationLabel`, `packageLabel`,
   `moduleOwners`, `standard`, `operationLocation` and `tracks`.
-- **Added by this library:** `id` (a GUID), `standardId` (the id of the standard in this library's catalogue, a GUID),
-  `addOns`, the other properties of the module, `revision`, `revisionLog`, `externalReferences` and `drawing`.
+- **Added by this library:** `id` (a GUID), `addOns`, the other properties of the module, `revision`, `revisionLog`,
+  `externalReferences` and `drawing`.
+- `speedLimit` is the highest speed on the module, km/h of the prototype, as the owner sets it; left out when the module
+  sets no limit. It is never worked out from the drawing.
 - `prefix` and `number` form the designation, which this app writes with a space, e.g. `SFjä 0012`. A number needs
   the prefix; a module without a number needs a `name`. `name` is always written, as an empty text when not given.
 - `moduleOwners` is one text with the names of all owners, separated by commas. The Module Registry keeps who owns a
   module and sets or overwrites the text, the prefix and `hasFremoDesignation` when a drawing is uploaded.
-- `standard` names the standard by `shortName`, with its `scale` by `shortName`. Its `id` and the scale's `id` and
-  `denominator` are the Module Registry's and are not written by this library. The scale is not a property of the module.
+- `standard` names the standard by its `id` in the catalogue (a GUID), its `shortName` and its `scale` by `shortName`.
+  The scale's `id` and `denominator` are not written. The scale is not a property of the module.
 
 There are two lists about tracks:
 - `drawing.trackElements` is the geometry: the track elements of the drawing, in millimetres.
@@ -145,8 +155,9 @@ There are two lists about tracks:
   `isStub`, `length`, `platformLength`, `direction` (`Both`, `LeftToRight`, `RightToLeft`), `speedLimit` and `usage`.
   `length` and `platformLength` are in **metres**. A track element refers to its track by `stationTrackId`. `length`
   is the length a train can use, between the fouling points of the turnouts, and is written by the app at every save
-  unless the track's id is in `drawing.tracksWithEnteredLength`; a reader never has to work it out from the geometry.
-  `isStub` is likewise worked out from the drawing unless the track's id is in `drawing.tracksWithEnteredStub`.
+  unless the track has `isLengthEntered`; a reader never has to work it out from the geometry. `isStub` is likewise
+  worked out from the drawing unless the track has `isStubEntered`. The tracks are written with the operation location
+  when the module is one (`operationLocation.tracks`), else on the module (`tracks`).
 
 Every module has the list of tracks, whether it is an operation location or not, with at least one track: a through
 track or a track ending. The schema does not enforce this; the app reports a module with an empty list. Auto-draw

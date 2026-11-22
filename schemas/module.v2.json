@@ -434,6 +434,27 @@
         "gauges"
       ]
     },
+    "ExitPlace": {
+      "type": "object",
+      "properties": {
+        "side": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "number": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "required": [
+        "side"
+      ]
+    },
     "InternalJoint": {
       "type": "object",
       "properties": {
@@ -568,13 +589,6 @@
             "$ref": "#/$defs/StationTrack"
           }
         },
-        "standardId": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "format": "uuid"
-        },
         "addOns": {
           "type": "array",
           "items": {
@@ -594,6 +608,12 @@
           ]
         },
         "numberOfThroughTracks": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "speedLimit": {
           "type": [
             "integer",
             "null"
@@ -712,18 +732,6 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/TrackElement"
-          }
-        },
-        "tracksWithEnteredLength": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "tracksWithEnteredStub": {
-          "type": "array",
-          "items": {
-            "type": "integer"
           }
         },
         "operatorSpaces": {
@@ -929,10 +937,10 @@
       "type": "object",
       "properties": {
         "fromExit": {
-          "type": "string"
+          "$ref": "#/$defs/ExitPlace"
         },
         "toExit": {
-          "type": "string"
+          "$ref": "#/$defs/ExitPlace"
         },
         "mode": {
           "enum": [
@@ -1912,7 +1920,13 @@
         "length": {
           "type": "number"
         },
+        "isLengthEntered": {
+          "type": "boolean"
+        },
         "isStub": {
+          "type": "boolean"
+        },
+        "isStubEntered": {
           "type": "boolean"
         },
         "platformLength": {
@@ -1978,8 +1992,7 @@
               "type": "number"
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [
@@ -2014,8 +2027,7 @@
               "type": "number"
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [
@@ -2045,8 +2057,7 @@
               "$ref": "#/$defs/PathDrawing"
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [
@@ -2105,8 +2116,7 @@
               ]
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [
@@ -2144,8 +2154,7 @@
               "type": "number"
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [
@@ -2181,8 +2190,7 @@
               "type": "number"
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [
@@ -2212,8 +2220,7 @@
               "$ref": "#/$defs/Pose"
             },
             "id": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             },
             "stationTrackId": {
               "type": [

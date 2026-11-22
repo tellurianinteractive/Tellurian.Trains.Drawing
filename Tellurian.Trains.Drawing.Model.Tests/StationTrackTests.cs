@@ -127,7 +127,7 @@ public sealed class StationTrackTests
     [TestMethod]
     public void MeasuredValuesAreWrittenInMetresUnlessEntered()
     {
-        var entered = Station.Module.With(copy => { copy.Tracks = [.. Station.Module.Tracks.Select(t => t.Id == TestStation.Track2 ? t.With(c => { c.Length = EnteredLength; c.IsStub = true; }) : t)]; copy.Drawing = Station.Drawing.With(edited => { edited.TracksWithEnteredLength = [TestStation.Track2]; edited.TracksWithEnteredStub = [TestStation.Track2]; }); });
+        var entered = Station.Module.With(copy => { copy.Tracks = [.. Station.Module.Tracks.Select(t => t.Id == TestStation.Track2 ? t.With(c => { c.Length = EnteredLength; c.IsStub = true; c.IsLengthEntered = true; c.IsStubEntered = true; }) : t)]; });
 
         var measured = entered.WithMeasuredTracks(Clearance, TestCatalogue.Lookup);
 
@@ -185,11 +185,11 @@ public sealed class StationTrackTests
     [TestMethod]
     public void ElementsNeedATrackOfTheListOnceThereIsAList()
     {
-        var loose = new StraightTrack { Start = TestStation.At(400, 0, -100), Length = 100 };
-        var unknown = new StraightTrack { Start = TestStation.At(400, 0, -200), Length = 100, StationTrackId = UnknownTrack };
+        var loose = new StraightTrack { Id = 101, Start = TestStation.At(400, 0, -100), Length = 100 };
+        var unknown = new StraightTrack { Id = 102, Start = TestStation.At(400, 0, -200), Length = 100, StationTrackId = UnknownTrack };
         var problems = StationTrackValidation.Validate(Station.With(loose, unknown, new BufferStop { Pose = TestStation.At(400, 180, -100) }), TestCatalogue.Lookup);
         CollectionAssert.AreEqual(
-            new[] { (StationTrackProblemCode.ElementWithoutTrack, (Guid?)loose.Id), (StationTrackProblemCode.UnknownTrack, (Guid?)unknown.Id) },
+            new[] { (StationTrackProblemCode.ElementWithoutTrack, (int?)101), (StationTrackProblemCode.UnknownTrack, (int?)102) },
             problems.Select(p => (p.Code, p.ElementId)).ToArray());
     }
 
@@ -216,15 +216,15 @@ public sealed class StationTrackTests
     [TestMethod]
     public void TheStationRoundTripsAndMatchesTheSchema()
     {
-        var module = (Station.Module.With(c => c.Drawing = Station.Drawing.With(edited => { edited.TracksWithEnteredLength = [TestStation.Track2]; edited.TracksWithEnteredStub = [TestStation.Track1]; })))
+        var module = Station.Module.With(c => c.Tracks = [.. Station.Module.Tracks.Select(t => t.With(e => { e.IsLengthEntered = t.Id == TestStation.Track2; e.IsStubEntered = t.Id == TestStation.Track1; }))])
             .WithMeasuredTracks(Clearance, TestCatalogue.Lookup);
         var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, TestCatalogue.Lookup));
         SchemaValidator.AssertValid(DrawingFileKind.Module, json);
         var read = DrawingFileSerializer.DeserializeModule(json).Module;
         CollectionAssert.AreEqual(module.Tracks.ToArray(), read.Tracks.ToArray());
         CollectionAssert.AreEqual(module.Drawing.TrackElements.Select(t => t.StationTrackId).ToArray(), read.Drawing.TrackElements.Select(t => t.StationTrackId).ToArray());
-        CollectionAssert.AreEqual(new[] { TestStation.Track2 }, read.Drawing.TracksWithEnteredLength.ToArray());
-        CollectionAssert.AreEqual(new[] { TestStation.Track1 }, read.Drawing.TracksWithEnteredStub.ToArray());
+        CollectionAssert.AreEqual(new[] { TestStation.Track2 }, read.Tracks.Where(t => t.IsLengthEntered).Select(t => t.Id).ToArray());
+        CollectionAssert.AreEqual(new[] { TestStation.Track1 }, read.Tracks.Where(t => t.IsStubEntered).Select(t => t.Id).ToArray());
         StringAssert.Contains(json, "\"direction\": \"Both\"");
     }
 }

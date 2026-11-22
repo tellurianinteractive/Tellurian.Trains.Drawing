@@ -46,8 +46,8 @@
     @if (selected is { } current)
     {
         var trackId = current.Id;
-        var isLengthEntered = drawing.TracksWithEnteredLength.Contains(trackId);
-        var isStubEntered = drawing.TracksWithEnteredStub.Contains(trackId);
+        var isLengthEntered = current.IsLengthEntered;
+        var isStubEntered = current.IsStubEntered;
         <h3 id="track-title">@T.Format("TrackTitle", current.Designation)</h3>
         <div class="property-grid">
             <TextField Label="@T["TrackDesignation"]" Value="@current.Designation" ValueChanged="v => SetAsync(trackId, t => t.With(c => c.Designation = v ?? string.Empty))" />
@@ -152,7 +152,7 @@
     [Parameter] public EventCallback<IEditCommand<ModuleFileContent>> Changed { get; set; }
 
     /// <summary>Raised with the track element to show in the drawing, or null for none.</summary>
-    [Parameter] public EventCallback<Guid?> ElementHighlighted { get; set; }
+    [Parameter] public EventCallback<int?> ElementHighlighted { get; set; }
 
     private static bool Checked(ChangeEventArgs e) => e.Value is true;
 
@@ -193,7 +193,7 @@
         await SetAsync(trackId, t => t.With(c => c.SpeedLimit = limit));
     }
 
-    private Task AssignAsync(Guid elementId, ChangeEventArgs e) =>
+    private Task AssignAsync(int elementId, ChangeEventArgs e) =>
         ApplyAsync(Commands.Assign(elementId, int.TryParse(e.Value as string, NumberStyles.Integer, CultureInfo.InvariantCulture, out var trackId) ? trackId : null));
 
     /// <summary>A direction in terms of the module's ends, by their names, when it has a left and a right one.</summary>

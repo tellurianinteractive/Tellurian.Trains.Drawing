@@ -8,6 +8,18 @@ new version per file kind, and files of the older version are upgraded when they
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
 upgraded; files are written as version 2. See `docs/OperationLocationsTasks.md` for what is still to come in this version.
 
+### 2026-11-22 (the module's format in the shared model)
+Survey step 6b, Schedules packages 4.0.23. Earlier files, also version 2 files written by development builds, are read
+and upgraded.
+- **A side refers to its exits by side and number**: `fromExit` and `toExit` are `{ "side": "Left", "number": 1 }` in
+  place of exit labels, as a hall plan refers to exits. In module files and in the modules embedded in a hall plan.
+- **Track elements have whole numbers as `id`**, unique within the drawing, in place of GUIDs; earlier files are
+  numbered 1, 2 and so on in the order of the list.
+- **A track has `isLengthEntered` and `isStubEntered`** in place of the drawing's `tracksWithEnteredLength` and
+  `tracksWithEnteredStub`.
+- **The standard carries its id**: `standard.id` in place of the module's `standardId`.
+- New: the module's `speedLimit`, km/h of the prototype, set by the owner; left out when there is none.
+
 ### 2026-11-21 (the module in the shared model)
 Modules are read and written by the Schedules packages `Importers.Drawing` and `Exporters.Drawing` (4.0.22): Module
 Draw's module is the shared model's `Module`, which the planner uses too (survey step 6a).

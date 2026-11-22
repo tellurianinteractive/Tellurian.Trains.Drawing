@@ -1,3 +1,4 @@
+using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -139,6 +140,15 @@ public sealed class TrackElementTests
     }
 
     [TestMethod]
-    public void ElementsGetUniqueIds() =>
-        Assert.AreNotEqual(new BufferStop { Pose = Pose.Origin }.Id, new BufferStop { Pose = Pose.Origin }.Id);
+    public void ElementsGetUniqueIdsWhenWritten()
+    {
+        var module = TestModules.WithEverything();
+        Assert.IsTrue(module.Drawing.TrackElements.Any(e => e.Id == 0), "The test needs elements without ids.");
+
+        var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, TestCatalogue.Lookup));
+        var ids = DrawingFileSerializer.DeserializeModule(json).Module.Drawing.TrackElements.Select(e => e.Id).ToList();
+
+        Assert.IsTrue(ids.All(id => id > 0));
+        Assert.HasCount(ids.Count, ids.Distinct());
+    }
 }

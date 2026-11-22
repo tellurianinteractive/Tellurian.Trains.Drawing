@@ -39,8 +39,6 @@ public sealed class ModuleTracks(ModuleStandard? standard, Func<Guid, EndProfile
         {
             copy.Tracks = [.. module.Tracks.Where(t => t.Id != trackId)];
             foreach (var element in copy.Drawing.TrackElements.Where(e => e.StationTrackId == trackId)) element.StationTrackId = null;
-            copy.Drawing.TracksWithEnteredLength = Without(copy.Drawing.TracksWithEnteredLength, trackId);
-            copy.Drawing.TracksWithEnteredStub = Without(copy.Drawing.TracksWithEnteredStub, trackId);
         }));
 
     /// <summary>Changes the properties of a track that don't follow the drawing.</summary>
@@ -49,14 +47,22 @@ public sealed class ModuleTracks(ModuleStandard? standard, Func<Guid, EndProfile
 
     /// <summary>Sets the length of a track, in metres; null lets it follow the drawing again.</summary>
     public IEditCommand<ModuleFileContent> SetLength(int trackId, double? metres) =>
-        Change("Change track length", module => WithTrack(module, trackId, t => metres is { } length ? t.With(c => c.Length = length) : t).With(c => c.Drawing.TracksWithEnteredLength = Entered(module, module.Drawing.TracksWithEnteredLength, trackId, metres is not null)));
+        Change("Change track length", module => WithTrack(module, trackId, t => t.With(c =>
+        {
+            if (metres is { } length) c.Length = length;
+            c.IsLengthEntered = metres is not null;
+        })));
 
     /// <summary>Says whether a track is a stub; null lets it follow the drawing again.</summary>
     public IEditCommand<ModuleFileContent> SetStub(int trackId, bool? isStub) =>
-        Change("Change track", module => WithTrack(module, trackId, t => isStub is { } stub ? t.With(c => c.IsStub = stub) : t).With(c => c.Drawing.TracksWithEnteredStub = Entered(module, module.Drawing.TracksWithEnteredStub, trackId, isStub is not null)));
+        Change("Change track", module => WithTrack(module, trackId, t => t.With(c =>
+        {
+            if (isStub is { } stub) c.IsStub = stub;
+            c.IsStubEntered = isStub is not null;
+        })));
 
     /// <summary>Makes a track element part of a track of the list, or of none.</summary>
-    public IEditCommand<ModuleFileContent> Assign(Guid elementId, int? trackId) =>
+    public IEditCommand<ModuleFileContent> Assign(int elementId, int? trackId) =>
         Change("Change track of element", module =>
             trackId is { } id && module.Tracks.All(t => t.Id != id)
                 ? module
@@ -74,17 +80,6 @@ public sealed class ModuleTracks(ModuleStandard? standard, Func<Guid, EndProfile
 
     private static Module WithTrack(Module module, int trackId, Func<StationTrack, StationTrack> change) =>
         module.With(copy => copy.Tracks = [.. module.Tracks.Select(t => t.Id == trackId ? change(t).With(c => c.Id = trackId) : t)]);
-
-    /// <summary>
-    /// <paramref name="ids"/> with or without <paramref name="trackId"/>, in order; unchanged when it is as wanted
-    /// already, or when the module has no such track.
-    /// </summary>
-    private static List<int> Entered(Module module, List<int> ids, int trackId, bool isEntered) =>
-        ids.Contains(trackId) == isEntered || module.Tracks.All(t => t.Id != trackId) ? ids :
-        isEntered ? [.. ids.Append(trackId).Order()] : Without(ids, trackId);
-
-    private static List<int> Without(List<int> ids, int trackId) =>
-        ids.Contains(trackId) ? [.. ids.Where(id => id != trackId)] : ids;
 
     private EditCommand<ModuleFileContent> Change(string description, Func<Module, Module> change) =>
         new(description, content =>

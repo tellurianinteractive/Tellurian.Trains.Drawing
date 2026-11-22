@@ -5,17 +5,17 @@
   "appVersion": "0.9.1",
   "content": {
     "module": {
-      "id": "4cbb8832-f34c-44c0-87c7-6454219c879f",
+      "id": "00e255b4-6de6-473c-9207-7be26afaa325",
       "name": "Summer curve",
       "hasFremoDesignation": false,
       "standard": {
+        "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
         "shortName": "MMM-2R",
         "scale": {
           "shortName": "H0"
         }
       },
       "tracks": [],
-      "standardId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
       "addOns": [
         {
           "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4c01",
@@ -100,8 +100,14 @@
         },
         "sides": [
           {
-            "fromExit": "W",
-            "toExit": "E",
+            "fromExit": {
+              "side": "Left",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Right",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -136,8 +142,14 @@
             }
           },
           {
-            "fromExit": "E",
-            "toExit": "W",
+            "fromExit": {
+              "side": "Right",
+              "number": 1
+            },
+            "toExit": {
+              "side": "Left",
+              "number": 1
+            },
             "mode": "Auto",
             "path": {
               "start": {
@@ -279,13 +291,11 @@
               ],
               "isClosed": false
             },
-            "id": "e2a25ad7-f5d6-4a77-92e4-7c1efb62c879",
+            "id": 1,
             "isNarrowGauge": false,
             "isGenerated": true
           }
         ],
-        "tracksWithEnteredLength": [],
-        "tracksWithEnteredStub": [],
         "operatorSpaces": [],
         "publicSides": [],
         "duckUnderAreas": [],

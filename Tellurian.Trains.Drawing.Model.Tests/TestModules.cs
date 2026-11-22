@@ -50,14 +50,15 @@ internal static class TestModules
             new DoubleSlip { Center = At(1000), Length = 200, Angle = 15 },
             new BufferStop { Pose = At(1100, 180) },
         };
-        var withEverything = drawing.With(edited => { edited.TrackElements = [.. drawing.TrackElements, .. tracks]; edited.TracksWithEnteredLength = [TestStation.Track1]; edited.Labels = [new() { Kind = LabelKind.StationName, Text = "Tellby", Pose = new(new(600, 100), Angle.Zero) }, new() { Kind = LabelKind.PlatformEdge, Pose = At(400), Length = 300 }]; edited.PublicSides = [new() { Attachment = new() { SideIndex = 1, From = 100, To = 500 } }]; edited.AutoDraw = null; });
+        var withEverything = drawing.With(edited => { edited.TrackElements = [.. drawing.TrackElements, .. tracks]; edited.Labels = [new() { Kind = LabelKind.StationName, Text = "Tellby", Pose = new(new(600, 100), Angle.Zero) }, new() { Kind = LabelKind.PlatformEdge, Pose = At(400), Length = 300 }]; edited.PublicSides = [new() { Attachment = new() { SideIndex = 1, From = 100, To = 500 } }]; edited.AutoDraw = null; });
         return module.With(c =>
         {
             c.Number = 12;
             c.Prefix = "AOw";
             c.ModuleOwners = "A. Owner, Club";
             c.PackageLabel = "Box 1";
-            c.Tracks = [new() { Id = TestStation.Track1, Designation = "1", DisplayOrder = 1, IsMain = true, IsScheduled = true, Length = 0.1, PlatformLength = 0.3, Direction = TrackDirection.LeftToRight, SpeedLimit = 40, Usage = "Passenger trains" }];
+            c.Tracks = [new() { Id = TestStation.Track1, Designation = "1", DisplayOrder = 1, IsMain = true, IsScheduled = true, Length = 0.1, IsLengthEntered = true, PlatformLength = 0.3, Direction = TrackDirection.LeftToRight, SpeedLimit = 40, Usage = "Passenger trains" }];
+            c.SpeedLimit = 60;
             c.ExternalReferences = TestReferences.Registry("""{ "stationId": 1234, "moduleId": 5678 }""");
             c.RepresentsFromYear = 1965;
             c.RepresentsUptoYear = 1980;
