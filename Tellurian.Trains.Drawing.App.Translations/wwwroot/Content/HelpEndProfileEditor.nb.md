@@ -23,3 +23,14 @@ Linjen nederst i panelet forteller hva det valgte verktøyet gjør.
 ## Å bevege seg i tegningen
 
 Rull for å zoome, dra med midtknappen eller med mellomrom holdt nede for å panorere, og klikk på knappen øverst til høyre i tegningen for å se hele tegningen.
+
+## Tastatur
+
+Tastene virker overalt på siden, unntatt mens du skriver i et felt.
+
+- **1**–**4** velger et verktøy, i knappenes rekkefølge. **0** viser hele tegningen.
+- **Ctrl+Z** angrer og **Ctrl+Y** gjør om (⌘ på en Mac).
+- **Delete** eller **Backspace** sletter det merkede.
+- **Piltastene** flytter det merkede 1 mm, med **Shift** 10 mm.
+- **Escape** stopper det du holder på med: først en draging eller en figur du tegner, så verktøyet (tilbake til Merk), så merkingen.
+- **Ctrl**+klikk legger til i merkingen.

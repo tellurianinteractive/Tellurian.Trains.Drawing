@@ -1,4 +1,6 @@
 @page "/sandbox"
+@using Tellurian.Trains.Drawing.Components.Keyboard
+@using Tellurian.Trains.Drawing.Editing.Input
 @using Tellurian.Trains.Drawing.App.Sandbox
 @using Tellurian.Trains.Drawing.Components.Canvas
 @using Tellurian.Trains.Drawing.Components.Properties
@@ -20,11 +22,12 @@
 <h1>@T["Sandbox"]</h1>
 <p class="note">@T["SandboxIntro"]</p>
 
+<EditorKeyboard OnShortcut="OnShortcut" CanNudge="@(_activeTool == SandboxTool.Select && !_selection.IsEmpty)" />
 <div class="toolbar" role="toolbar">
     @foreach (var tool in Enum.GetValues<SandboxTool>())
     {
         <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"Tool_{tool}"]</button>
+                title="@EditorShortcuts.WithKey(T[$"Tool_{tool}"], (int)tool + 1)" aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"Tool_{tool}"]</button>
     }
     @if (_activeTool == SandboxTool.Path)
     {
@@ -41,8 +44,8 @@
 
 <div class="sandbox-editor">
 <div class="sandbox-canvas">
-    <DrawingCanvas FitArea="_document.Current.Bounds" FitText="@T["ZoomToFit"]" @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
-                   OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+    <DrawingCanvas FitArea="_document.Current.Bounds" FitText="@($"{T["ZoomToFit"]} (0)")" @ref="_canvas" @bind-Viewport="_view" Label="@T["Sandbox"]"
+                   OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp">
         <ChildContent>
             @foreach (var shape in _document.Current.Shapes)
             {
@@ -227,12 +230,30 @@
 
     private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(Tolerance));
 
-    private void OnKey(KeyboardEventArgs e)
+    private async Task OnShortcut(EditorShortcut shortcut)
     {
-        var command = e.CtrlKey || e.MetaKey;
-        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
-        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
-        else Active.KeyDown(e.Key);
+        switch (shortcut.Action)
+        {
+            case EditorAction.Undo: Undo(); break;
+            case EditorAction.Redo: Redo(); break;
+            case EditorAction.Fit:
+                if (_canvas is not null) await _canvas.FitAsync();
+                break;
+            case EditorAction.Tool:
+                if (Enum.GetValues<SandboxTool>() is var tools && shortcut.Tool <= tools.Length) Choose(tools[shortcut.Tool - 1]);
+                break;
+            case EditorAction.Cancel:
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool != SandboxTool.Select) Choose(SandboxTool.Select);
+                else _selection.Clear();
+                break;
+            case EditorAction.Nudge:
+                if (_activeTool == SandboxTool.Select && _select.DragOffset is null) MoveSelection(shortcut.Nudge);
+                break;
+            default:
+                Active.KeyDown(shortcut.Key);
+                break;
+        }
     }
 
     private void Undo()

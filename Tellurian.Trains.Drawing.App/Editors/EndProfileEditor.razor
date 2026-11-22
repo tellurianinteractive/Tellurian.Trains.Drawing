@@ -1,5 +1,6 @@
 @using System.Globalization
 @using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Keyboard
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Components.Views
@@ -23,10 +24,11 @@
 @* The end profile editor (Phase 5, EP-1…EP-7): end view with tools, a property panel and live derived properties. *@
 @if (_document is not null)
 {
+    <EditorKeyboard OnShortcut="OnShortcut" CanNudge="@(_activeTool == EndProfileTool.Select && !_selection.IsEmpty)" />
     <div class="editor-layout">
         <div class="editor-canvas">
-            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@T["ZoomToFit"]" Label="@_document.Current.Designation"
-                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@($"{T["ZoomToFit"]} (0)")" Label="@_document.Current.Designation"
+                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp">
                 <ChildContent>
                     <EndProfileContent Profile="Shown" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="_view.ToWorld(12)" Selected="_selection.Items"
                                        ShowPlatePoints="true" HandleSize="_view.ToWorld(8)" />
@@ -71,7 +73,7 @@
                     @foreach (var tool in Enum.GetValues<EndProfileTool>())
                     {
                         <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
+                                title="@EditorShortcuts.WithKey(T[$"EpTool_{tool}"], (int)tool + 1)" aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
                     }
                 </div>
                 @if (_activeTool == EndProfileTool.UpperEdge)
@@ -521,13 +523,36 @@
 
     private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(Tolerance));
 
-    private void OnKey(KeyboardEventArgs e)
+    private async Task OnShortcut(EditorShortcut shortcut)
     {
-        var command = e.CtrlKey || e.MetaKey;
-        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
-        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
-        else if (Active.KeyDown(e.Key)) return;
-        else if (e.Key is "Delete" or "Backspace" && _activeTool == EndProfileTool.Select) DeleteSelection();
+        switch (shortcut.Action)
+        {
+            case EditorAction.Undo: Undo(); break;
+            case EditorAction.Redo: Redo(); break;
+            case EditorAction.Fit:
+                if (_canvas is not null) await _canvas.FitAsync();
+                break;
+            case EditorAction.Tool:
+                if (Enum.GetValues<EndProfileTool>() is var tools && shortcut.Tool <= tools.Length) Choose(tools[shortcut.Tool - 1]);
+                break;
+            case EditorAction.Finish:
+                Active.KeyDown(shortcut.Key);
+                break;
+            case EditorAction.Cancel:
+                // The tool's own action first, e.g. a shape being drawn; then the tool; then the selection.
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool != EndProfileTool.Select) Choose(EndProfileTool.Select);
+                else _selection.Clear();
+                break;
+            case EditorAction.Delete:
+                // While a shape is drawn, Backspace removes its last point.
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool == EndProfileTool.Select) DeleteSelection();
+                break;
+            case EditorAction.Nudge:
+                if (_activeTool == EndProfileTool.Select && !_selection.IsEmpty && _select.DragOffset is null) Apply(EndProfileCommands.Move([.. _selection.Items], shortcut.Nudge));
+                break;
+        }
     }
 
     private void Apply(IEditCommand<EndProfile> command)

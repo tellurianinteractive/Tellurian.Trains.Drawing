@@ -107,6 +107,9 @@
     /// <summary>The fit button's tooltip and accessible name; the host passes its translation.</summary>
     [Parameter] public string FitText { get; set; } = "Fit in view";
 
+    /// <summary>Shows the whole drawing (<see cref="FitArea"/>, else <see cref="AutoFit"/>), as the fit button does, e.g. for a shortcut; nothing without either.</summary>
+    public Task FitAsync() => (FitArea ?? AutoFit) is { } area ? FitAsync(area) : Task.CompletedTask;
+
     /// <summary>Shows the whole drawing; after that, a resize fits it again until the user pans or zooms.</summary>
     private async Task FitAsync(BoundingBox area)
     {

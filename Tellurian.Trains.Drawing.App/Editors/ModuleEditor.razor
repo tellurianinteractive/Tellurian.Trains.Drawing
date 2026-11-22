@@ -1,5 +1,6 @@
 @using System.Globalization
 @using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Keyboard
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Components.Views
@@ -28,11 +29,12 @@
    module, and the module's identification. End profiles are only assigned here, never compared for fit. *@
 @if (_document is not null)
 {
+    <EditorKeyboard OnShortcut="OnShortcut" CanNudge="@(_activeTool == ModuleTool.Select && !_selection.IsEmpty)" />
     <div class="editor-layout">
         <div class="editor-canvas">
             <ModuleView @ref="_moduleView" Json="@Draft.Json" Drawing="Shown.Module.Drawing" Tracks="@([.. Shown.Module.Tracks])" Standard="@Standard" EndProfiles="FindEndProfile" PrintTitle="@Draft.Name"
-                        FitText="@T["ZoomToFit"]" Error="@T["CannotShow"]" IsEditable="true" ViewChanged="v => _view = v"
-                        OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDown="OnKey">
+                        FitText="@FitText" Error="@T["CannotShow"]" IsEditable="true" ViewChanged="v => _view = v"
+                        OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp">
                 <Overlay>
                     @{
                         var joints = Shown.Module.Drawing.InternalJoints;
@@ -87,7 +89,7 @@
                     @foreach (var tool in Enum.GetValues<ModuleTool>())
                     {
                         <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                                aria-pressed="@(tool == _activeTool)" disabled="@(tool == ModuleTool.Joint && _outline is null)" @onclick="() => Choose(tool)">@T[$"ModTool_{tool}"]</button>
+                                title="@EditorShortcuts.WithKey(T[$"ModTool_{tool}"], (int)tool + 1)" aria-pressed="@(tool == _activeTool)" disabled="@(!IsAvailable(tool))" @onclick="() => Choose(tool)">@T[$"ModTool_{tool}"]</button>
                     }
                 </div>
                 @if (Catalogue is not null && ModuleRedraw.CanRedraw(_document.Current) && ModuleRedraw.HasCurve(_document.Current))
@@ -392,14 +394,35 @@
         if (_activeTool == ModuleTool.Select) _select.PointerUp(e.ToToolPointer(SnapTolerance));
     }
 
-    private void OnKey(KeyboardEventArgs e)
+    /// <summary>The fit button's tooltip, with its key.</summary>
+    private string FitText => $"{T["ZoomToFit"]} (0)";
+
+    private bool IsAvailable(ModuleTool tool) => tool != ModuleTool.Joint || _outline is not null;
+
+    private async Task OnShortcut(EditorShortcut shortcut)
     {
-        var command = e.CtrlKey || e.MetaKey;
-        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
-        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
-        else if (e.Key == "Escape" && _activeTool == ModuleTool.Joint) Choose(ModuleTool.Select);
-        else if (_activeTool == ModuleTool.Select && _select.KeyDown(e.Key)) return;
-        else if (e.Key is "Delete" or "Backspace" && _activeTool == ModuleTool.Select) DeleteSelection();
+        switch (shortcut.Action)
+        {
+            case EditorAction.Undo: Undo(); break;
+            case EditorAction.Redo: Redo(); break;
+            case EditorAction.Fit:
+                if (_moduleView is not null) await _moduleView.FitAsync();
+                break;
+            case EditorAction.Tool:
+                if (Enum.GetValues<ModuleTool>() is var tools && shortcut.Tool <= tools.Length && IsAvailable(tools[shortcut.Tool - 1])) Choose(tools[shortcut.Tool - 1]);
+                break;
+            case EditorAction.Cancel:
+                if (_activeTool == ModuleTool.Select && _select.KeyDown(shortcut.Key)) break;
+                if (_activeTool != ModuleTool.Select) Choose(ModuleTool.Select);
+                else _selection.Clear();
+                break;
+            case EditorAction.Delete:
+                if (_activeTool == ModuleTool.Select) DeleteSelection();
+                break;
+            case EditorAction.Nudge:
+                if (_activeTool == ModuleTool.Select && !_selection.IsEmpty && _select.DragOffset is null) Apply(ModuleJoints.Move([.. _selection.Items], shortcut.Nudge));
+                break;
+        }
     }
 
     private void Apply(IEditCommand<ModuleFileContent> command)

@@ -433,4 +433,76 @@ public sealed class ModuleEditorTests
 
         Assert.HasCount(1, page.FindAll(".joint-position .number-field-input"));
     }
+
+    private static void Press(IRenderedComponent<DrawingPage> page, string key, bool ctrl = false, bool shift = false)
+    {
+        var keyboard = page.FindComponent<Tellurian.Trains.Drawing.Components.Keyboard.EditorKeyboard>().Instance;
+        page.InvokeAsync(() => keyboard.KeyDown(key, ctrl, shift, alt: false, meta: false)).Wait();
+    }
+
+    /// <summary>A straight module with a joint 700 mm from the start, selected.</summary>
+    private static IRenderedComponent<DrawingPage> WithSelectedJoint(AppTestContext context)
+    {
+        var page = OpenStraightModule(context);
+        page.Find("#tool-joint").Click();
+        Click(page, OnTrack(page, 700));
+        page.Find("#tool-select").Click();
+        Click(page, OnTrack(page, 700));
+        Assert.IsNotNull(page.Find("#joint-title"), "The joint is selected.");
+        return page;
+    }
+
+    [TestMethod]
+    public void ToolsAreChosenByTheirNumber()
+    {
+        using var context = new AppTestContext();
+        var page = OpenStraightModule(context);
+
+        Press(page, "2");
+        Assert.IsTrue(page.Find("#tool-joint").ClassList.Contains("primary"));
+        Assert.AreEqual("Section joint (2)", page.Find("#tool-joint").GetAttribute("title"));
+
+        Press(page, "1");
+        Assert.IsTrue(page.Find("#tool-select").ClassList.Contains("primary"));
+    }
+
+    [TestMethod]
+    public void EscapeLeavesTheToolThenClearsTheSelection()
+    {
+        using var context = new AppTestContext();
+        var page = WithSelectedJoint(context);
+
+        Press(page, "Escape");
+        Assert.IsEmpty(page.FindAll("#joint-title"), "Nothing is selected.");
+
+        Press(page, "2");
+        Press(page, "Escape");
+        Assert.IsTrue(page.Find("#tool-select").ClassList.Contains("primary"));
+    }
+
+    [TestMethod]
+    public void TheDeleteKeyDeletesTheSelectedJointAndCtrlZBringsItBack()
+    {
+        using var context = new AppTestContext();
+        var page = WithSelectedJoint(context);
+
+        Press(page, "Delete");
+        Assert.HasCount(1, page.FindAll(".module-sections tbody tr"));
+
+        Press(page, "z", ctrl: true);
+        Assert.HasCount(2, page.FindAll(".module-sections tbody tr"));
+    }
+
+    [TestMethod]
+    public void ArrowKeysMoveTheSelectedJoint()
+    {
+        using var context = new AppTestContext();
+        var page = WithSelectedJoint(context);
+
+        Press(page, "ArrowRight");
+        Assert.AreEqual("701 mm", page.Find("#section-length-1").TextContent);
+
+        Press(page, "ArrowLeft", shift: true);
+        Assert.AreEqual("691 mm", page.Find("#section-length-1").TextContent);
+    }
 }
