@@ -16,6 +16,18 @@ public sealed class DrawingFileTests
 
     private static JsonObject Envelope(string json) => JsonNode.Parse(json)!.AsObject();
 
+    [TestMethod]
+    public void ProblemOfTellsWhyAFileCantBeReadAndIsNullWhenItCan()
+    {
+        var json = DrawingFileSerializer.Serialize(ModuleFile(TestModules.WithEverything()));
+        Assert.IsNull(DrawingFileSerializer.ProblemOf(json));
+
+        var file = Envelope(json);
+        file["content"]!["module"]!["drawing"]!["exits"] = "W, E";
+        Assert.IsNotNull(DrawingFileSerializer.ProblemOf(file.ToJsonString()));
+        Assert.IsNotNull(DrawingFileSerializer.ProblemOf("{ nope"));
+    }
+
     // Exit criterion of Phase 2: saved to a file and loaded back identically.
     [TestMethod]
     public void EndProfileRoundTripsIdentically()

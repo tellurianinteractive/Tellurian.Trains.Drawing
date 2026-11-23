@@ -53,6 +53,20 @@ public sealed class DrawingDocumentsTests
     }
 
     [TestMethod]
+    public async Task AFileWhoseContentCantBeReadIsReportedNotOpened()
+    {
+        var file = System.Text.Json.Nodes.JsonNode.Parse(TestDrawings.Hall().Json)!;
+        file["content"]!["obstacles"] = "not a list";
+        var files = new FakeFileService { FilesToOpen = [new("odd.tdhall", file.ToJsonString())] };
+
+        var result = await Documents(files).OpenAsync();
+
+        Assert.IsEmpty(result.Drafts);
+        Assert.AreEqual("odd.tdhall", result.Problems.Single().Name);
+        Assert.IsEmpty(_workbench.Drafts);
+    }
+
+    [TestMethod]
     public async Task OpeningAFileKeepsADraftWithUnsavedChanges()
     {
         var (_, json) = TestDrawings.Hall();

@@ -24,6 +24,31 @@ public static class DrawingFileSerializer
 
     private static DrawingJsonContext Context => DrawingJsonContext.Default;
 
+    /// <summary>
+    /// Why <paramref name="json"/> can't be read as the drawing file its header says it is, or null when it can: e.g. a
+    /// version 2 file that a development build wrote in an earlier shape.
+    /// </summary>
+    public static string? ProblemOf(string json)
+    {
+        try
+        {
+            _ = ReadHeader(json).Kind switch
+            {
+                DrawingFileKind.EndProfile => DeserializeEndProfile(json),
+                DrawingFileKind.Module => DeserializeModule(json),
+                DrawingFileKind.Catalogue => DeserializeCatalogue(json),
+                DrawingFileKind.Hall => DeserializeHall(json),
+                DrawingFileKind.HallPlan => (object)DeserializeHallPlan(json),
+                var kind => throw new DrawingFileException(DrawingFileError.WrongKind, $"There is no {kind} file."),
+            };
+            return null;
+        }
+        catch (DrawingFileException ex)
+        {
+            return ex.Message;
+        }
+    }
+
     /// <summary>The end profile file of <paramref name="endProfile"/>, written by the shared <see cref="EndProfileExporter"/>.</summary>
     public static string Serialize(EndProfile endProfile, string? appVersion = null) =>
         EndProfiles.Write(endProfile, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));

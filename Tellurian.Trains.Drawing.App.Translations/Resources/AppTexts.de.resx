@@ -29,6 +29,7 @@
   <data name="Changed" xml:space="preserve"><value>Geändert</value></data>
   <data name="File" xml:space="preserve"><value>Datei</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Diese Zeichnung ist nicht mehr geöffnet.</value></data>
+  <data name="DraftUnreadable" xml:space="preserve"><value>Diese Zeichnung lässt sich nicht öffnen: {0} Vielleicht wurde sie von einer Entwicklungsversion der App gespeichert. Speichere sie in einer Datei, um sie zu behalten, oder verwirf sie.</value></data>
   <data name="EditorComing" xml:space="preserve"><value>Dies ist eine schreibgeschützte Ansicht. Der Editor für diese Art von Zeichnung kommt in einer späteren Version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Der Speicher des Browsers konnte nicht verwendet werden: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Der Dateivorgang ist fehlgeschlagen: {0}</value></data>

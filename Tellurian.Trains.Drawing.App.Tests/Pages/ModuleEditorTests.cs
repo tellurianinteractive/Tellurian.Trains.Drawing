@@ -41,6 +41,26 @@ public sealed class ModuleEditorTests
         return page;
     }
 
+    [TestMethod]
+    public void ADraftThatCantBeReadShowsWhyAndKeepsItsFileActions()
+    {
+        using var context = new AppTestContext();
+        var catalogue = SampleCatalogue.Instance;
+        AutoDrawExit west = new() { Label = "W", Direction = ExitSide.Left, EndProfile = "FREMO-H0-B96" };
+        var module = ModuleAutoDraw.Create(new() { Name = "Tellby", Standard = "FREMO/H0-RE", Straight = Length, Exits = [west, west with { Label = "E", Direction = ExitSide.Right }] }, catalogue).Module!;
+        var file = System.Text.Json.Nodes.JsonNode.Parse(DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, catalogue.FindEndProfile)))!;
+        // As a development build wrote it: the drawing's exits in another shape.
+        file["content"]!["module"]!["drawing"]!["exits"] = "W, E";
+        var draft = context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(file.ToJsonString()).Result;
+
+        var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
+
+        page.WaitForElement("#draft-unreadable");
+        Assert.IsEmpty(page.FindAll(".sections-pane"), "No editor for a drawing that can't be read.");
+        Assert.IsNotNull(page.Find("#save"));
+        Assert.IsNotNull(page.Find("#discard"));
+    }
+
     private static Tellurian.Trains.Schedules.Model.Layouts.Station Tellby => new() { Name = "Tellby", Signature = "Tby" };
 
     [TestMethod]

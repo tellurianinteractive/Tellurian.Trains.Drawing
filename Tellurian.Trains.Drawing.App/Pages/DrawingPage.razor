@@ -14,6 +14,15 @@
 {
     <p class="error">@T["DraftNotFound"]</p>
 }
+else if (draft is not null && _unreadable is not null)
+{
+    @* A draft that can't be read, e.g. saved by a development build in an earlier shape: no editor, only its file actions. *@
+    <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+        <h2>@T["ArchivePane"]</h2>
+        <p class="error" role="alert" id="draft-unreadable">@T.Format("DraftUnreadable", _unreadable)</p>
+        @ArchiveFragment(draft)
+    </section>
+}
 else if (draft is not null && draft.Kind == DrawingFileKind.EndProfile)
 {
     <EndProfileEditor @ref="_endProfileEditor" @key="draft.Id" Draft="draft" TrackColor="@_trackColor" DraftChanged="d => draft = d">
@@ -104,6 +113,8 @@ else if (draft is not null)
 
     private Draft? draft;
     private bool notFound;
+    /// <summary>Why the draft can't be read, or null when it can.</summary>
+    private string? _unreadable;
     private string? message;
 
     public static string Url(Guid id) => $"drawing/{id}";
@@ -154,6 +165,12 @@ else if (draft is not null)
         {
             // The draft is shown only when it is ready, so that an editor never starts from a module that is about to be updated.
             var loaded = await Workbench.GetDraftAsync(Id);
+            _unreadable = loaded is null ? null : DrawingFileSerializer.ProblemOf(loaded.Json);
+            if (_unreadable is not null)
+            {
+                draft = loaded;
+                return;
+            }
             _catalogue = loaded?.Kind == DrawingFileKind.Module ? await Catalogues.GetAsync() : null;
             if (loaded is not null && _catalogue is not null)
             {

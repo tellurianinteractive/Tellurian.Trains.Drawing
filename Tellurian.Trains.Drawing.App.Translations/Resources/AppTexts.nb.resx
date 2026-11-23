@@ -29,6 +29,7 @@
   <data name="Changed" xml:space="preserve"><value>Endret</value></data>
   <data name="File" xml:space="preserve"><value>Fil</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Denne tegningen er ikke lenger åpen.</value></data>
+  <data name="DraftUnreadable" xml:space="preserve"><value>Denne tegningen kan ikke åpnes: {0} Den kan være lagret av en utviklingsversjon av appen. Lagre den i en fil for å beholde den, eller forkast den.</value></data>
   <data name="EditorComing" xml:space="preserve"><value>Dette er en skrivebeskyttet visning. Redigeringsverktøyet for denne typen tegning kommer i en senere versjon.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Nettleserens lagring kunne ikke brukes: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Filoperasjonen mislyktes: {0}</value></data>

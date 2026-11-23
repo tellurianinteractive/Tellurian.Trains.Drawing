@@ -29,6 +29,7 @@
   <data name="Changed" xml:space="preserve"><value>Ändrad</value></data>
   <data name="File" xml:space="preserve"><value>Fil</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Den här ritningen är inte öppen längre.</value></data>
+  <data name="DraftUnreadable" xml:space="preserve"><value>Den här ritningen kan inte öppnas: {0} Den kan ha sparats av en utvecklingsversion av appen. Spara den i en fil för att behålla den, eller släng den.</value></data>
   <data name="EditorComing" xml:space="preserve"><value>Det här är en skrivskyddad vy. Redigeraren för den här typen av ritning kommer i en senare version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Webbläsarens lagring kunde inte användas: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Filåtgärden misslyckades: {0}</value></data>

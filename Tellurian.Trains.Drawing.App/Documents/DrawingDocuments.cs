@@ -54,6 +54,8 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
             var header = DrawingFileSerializer.ReadHeader(file.Text);
             if (!header.IsSupported)
                 return (null, new(file.Name, $"The file has {header.Kind} schema version {header.SchemaVersion}, which is newer than this version of the app reads. Update the app to open it."));
+            if (DrawingFileSerializer.ProblemOf(file.Text) is { } problem)
+                return (null, new(file.Name, problem));
         }
         catch (DrawingFileException ex)
         {
