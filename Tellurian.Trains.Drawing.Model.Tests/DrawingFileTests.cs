@@ -28,6 +28,13 @@ public sealed class DrawingFileTests
         Assert.IsNotNull(DrawingFileSerializer.ProblemOf("{ nope"));
     }
 
+    [TestMethod]
+    public void AtCurrentVersionLeavesACurrentFileAsItIs()
+    {
+        var json = DrawingFileSerializer.Serialize(ModuleFile(TestModules.WithEverything()));
+        Assert.AreSame(json, DrawingFileSerializer.AtCurrentVersion(json));
+    }
+
     // Exit criterion of Phase 2: saved to a file and loaded back identically.
     [TestMethod]
     public void EndProfileRoundTripsIdentically()

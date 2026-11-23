@@ -32,15 +32,7 @@ public static class DrawingFileSerializer
     {
         try
         {
-            _ = ReadHeader(json).Kind switch
-            {
-                DrawingFileKind.EndProfile => DeserializeEndProfile(json),
-                DrawingFileKind.Module => DeserializeModule(json),
-                DrawingFileKind.Catalogue => DeserializeCatalogue(json),
-                DrawingFileKind.Hall => DeserializeHall(json),
-                DrawingFileKind.HallPlan => (object)DeserializeHallPlan(json),
-                var kind => throw new DrawingFileException(DrawingFileError.WrongKind, $"There is no {kind} file."),
-            };
+            _ = Written(json, appVersion: null);
             return null;
         }
         catch (DrawingFileException ex)
@@ -48,6 +40,28 @@ public static class DrawingFileSerializer
             return ex.Message;
         }
     }
+
+    /// <summary>
+    /// <paramref name="json"/> at the current schema version: a file of an earlier version is read, migrated and written
+    /// again in today's shape; a file of the current version is returned as it is.
+    /// </summary>
+    /// <exception cref="DrawingFileException">The file can't be read.</exception>
+    public static string AtCurrentVersion(string json, string? appVersion = null)
+    {
+        var header = ReadHeader(json);
+        return header.SchemaVersion < DrawingFileFormat.CurrentSchemaVersion(header.Kind) ? Written(json, appVersion) : json;
+    }
+
+    /// <summary><paramref name="json"/> read as the kind its header says and written again.</summary>
+    private static string Written(string json, string? appVersion) => ReadHeader(json).Kind switch
+    {
+        DrawingFileKind.EndProfile => Serialize(DeserializeEndProfile(json), appVersion),
+        DrawingFileKind.Module => Serialize(DeserializeModule(json), appVersion),
+        DrawingFileKind.Catalogue => Serialize(DeserializeCatalogue(json), appVersion),
+        DrawingFileKind.Hall => Serialize(DeserializeHall(json), appVersion),
+        DrawingFileKind.HallPlan => Serialize(DeserializeHallPlan(json), appVersion),
+        var kind => throw new DrawingFileException(DrawingFileError.WrongKind, $"There is no {kind} file."),
+    };
 
     /// <summary>The end profile file of <paramref name="endProfile"/>, written by the shared <see cref="EndProfileExporter"/>.</summary>
     public static string Serialize(EndProfile endProfile, string? appVersion = null) =>

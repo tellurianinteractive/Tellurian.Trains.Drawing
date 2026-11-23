@@ -97,6 +97,22 @@ public sealed class DrawingDocumentsTests
     }
 
     [TestMethod]
+    public async Task AVersion1FileSavedWithoutChangesIsWrittenAsVersion2()
+    {
+        var path = Path.Combine(RepositoryPaths.Root, "Tellurian.Trains.Drawing.Model.Tests", "SchemaVersion1", "fremo-h0-b96.endprofile.json");
+        var files = new FakeFileService { FilesToOpen = [new("b96.endprofile.json", File.ReadAllText(path), "p1")] };
+        var documents = Documents(files);
+        var draft = (await documents.OpenAsync()).Drafts.Single();
+
+        var saved = await documents.SaveAsync(draft.Id, saveAs: false);
+
+        var written = files.Saves.Single().Text;
+        Assert.AreEqual(DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile), DrawingFileSerializer.ReadHeader(written).SchemaVersion);
+        Assert.AreEqual(written, saved!.Json, "The draft has what the file has.");
+        Assert.AreEqual(draft.Id, DrawingFileSerializer.DeserializeEndProfile(written).Id);
+    }
+
+    [TestMethod]
     public async Task SaveInPlaceClearsUnsavedChanges()
     {
         var (_, json) = TestDrawings.Hall();

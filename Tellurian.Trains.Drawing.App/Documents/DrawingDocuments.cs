@@ -143,7 +143,9 @@ public sealed class DrawingDocuments(IFileService files, IWorkbench workbench, T
         var draft = await workbench.GetDraftAsync(draftId, cancellationToken) ?? throw new KeyNotFoundException($"There is no draft {draftId}.");
         var now = time.GetUtcNow();
         var userName = (await settings.GetAsync(cancellationToken)).UserName;
-        var json = userName is null ? draft.Json : DrawingRevisionLog.Record(draft.Json, userName, DateOnly.FromDateTime(now.ToLocalTime().DateTime));
+        // A file opened at an earlier schema version and not edited is written at the current one too.
+        var current = DrawingFileSerializer.AtCurrentVersion(draft.Json);
+        var json = userName is null ? current : DrawingRevisionLog.Record(current, userName, DateOnly.FromDateTime(now.ToLocalTime().DateTime));
         var saved = await files.SaveAsync(json, SuggestedFileName(draft), draft.HandleId, saveAs, cancellationToken);
         if (saved is null) return null;
         var updated = draft with { Json = json, FileName = saved.Name, HandleId = saved.HandleId ?? (files.CanSaveInPlace ? draft.HandleId : null), HasUnsavedChanges = false, Modified = now };
