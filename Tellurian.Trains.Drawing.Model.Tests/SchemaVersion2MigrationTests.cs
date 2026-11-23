@@ -9,8 +9,9 @@ namespace Tellurian.Trains.Drawing.Model.Tests;
 
 /// <summary>
 /// Files of schema version 1 are upgraded on load (spec §6). The files in <c>SchemaVersion1/</c> are the
-/// published examples as release 0.9.0 wrote them; they must not be regenerated. Version 2 files written by
-/// development builds, before version 2 got the shape it has, are brought to it too.
+/// published examples as release 0.9.0 wrote them; they must not be regenerated. The step from version 1 also
+/// takes the shapes that development builds wrote before version 2 was released; such files are no longer read as
+/// version 2, so the tests mark them as version 1.
 /// </summary>
 [TestClass]
 public sealed class SchemaVersion2MigrationTests
@@ -129,6 +130,7 @@ public sealed class SchemaVersion2MigrationTests
         drawing!["id"] = Guid.NewGuid().ToString();
         module["variants"] = new JsonArray(drawing);
         file["content"]!["measures"] = new JsonArray();
+        file["schemaVersion"] = 1;
 
         var content = DrawingFileSerializer.DeserializeModule(file.ToJsonString());
 
@@ -259,6 +261,7 @@ public sealed class SchemaVersion2MigrationTests
     /// <paramref name="content"/> as a development build of version 2 wrote it before the module became that of the
     /// shared layout model: the tracks in the drawing with GUIDs as ids and their marks of being entered, the track
     /// elements in <c>tracks</c>, owners as a list, <c>fremoNumber</c>, and the standard as a reference with the scale beside it.
+    /// Marked as version 1, since version 2 is read as released.
     /// </summary>
     private static JsonObject DevelopmentVersion2(ModuleFileContent content)
     {
@@ -319,6 +322,7 @@ public sealed class SchemaVersion2MigrationTests
         var standard = module["standard"]!.AsObject();
         module["scale"] = (string)standard["scale"]!["shortName"]!;
         module["standard"] = new JsonObject { ["id"] = standard["id"]?.DeepClone(), ["name"] = (string)standard["shortName"]! };
+        file["schemaVersion"] = 1;
         return file;
     }
 
@@ -378,13 +382,7 @@ public sealed class SchemaVersion2MigrationTests
             (DrawingFileKind.EndProfile, DrawingFileSerializer.Serialize(TestProfiles.Asymmetric()), json => DrawingFileSerializer.Serialize(DrawingFileSerializer.DeserializeEndProfile(json))),
         };
         foreach (var (kind, json, readAndWrite) in files)
-        {
             Assert.AreEqual(json, readAndWrite(json), kind.ToString());
-            // The steps from version 1 are run on every version 2 file, so each must leave today's shape as it is.
-            var content = JsonNode.Parse(json)!["content"]!;
-            var again = DrawingFileMigrations.UpgradeDraft(kind, content.DeepClone(), DrawingFileFormat.CurrentSchemaVersion(kind));
-            Assert.AreEqual(content.ToJsonString(), again.ToJsonString(), $"The steps must not change a {kind} file of today.");
-        }
     }
 
     [TestMethod]

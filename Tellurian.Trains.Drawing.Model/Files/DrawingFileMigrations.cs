@@ -9,16 +9,6 @@ public static class DrawingFileMigrations
     public static IReadOnlyList<DrawingFileMigration> All { get; } = [.. SchemaVersion2.Migrations];
 
     /// <summary>
-    /// Brings a version 2 file written by a development build to the shape version 2 has now, by running the step
-    /// from version 1 again; the steps leave what is already changed as it is. Schema version 2 isn't released, and its
-    /// shape has changed while it was made. To be removed when version 2 is released.
-    /// </summary>
-    public static JsonNode UpgradeDraft(DrawingFileKind kind, JsonNode content, int version) =>
-        version == DraftVersion && All.FirstOrDefault(m => m.Kind == kind && m.FromVersion == DraftVersion - 1) is { } step ? step.Migrate(content) : content;
-
-    private const int DraftVersion = 2;
-
-    /// <summary>
     /// Upgrades <paramref name="content"/> from <paramref name="fromVersion"/> to <paramref name="toVersion"/>
     /// using <paramref name="migrations"/>.
     /// </summary>

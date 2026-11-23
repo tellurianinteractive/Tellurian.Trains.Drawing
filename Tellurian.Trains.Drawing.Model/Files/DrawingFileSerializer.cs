@@ -127,10 +127,6 @@ public static class DrawingFileSerializer
                 root[ContentProperty] = DrawingFileMigrations.Upgrade(kind, content.DeepClone(), header.SchemaVersion, current, migrations ?? DrawingFileMigrations.All);
                 root[SchemaVersionProperty] = current;
             }
-            else if (migrations is null)
-            {
-                root[ContentProperty] = DrawingFileMigrations.UpgradeDraft(kind, content.DeepClone(), header.SchemaVersion);
-            }
 
             // Operation locations of earlier files: the kind first and named as in the code, as the shared model reads it.
             Tellurian.Trains.Schedules.Model.Layouts.OperationLocationJson.Normalise(root[ContentProperty]);

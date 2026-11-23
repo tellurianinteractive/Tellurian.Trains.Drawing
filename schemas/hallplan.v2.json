@@ -3335,6 +3335,9 @@
         "speed": {
           "type": "integer"
         },
+        "isSpeedEntered": {
+          "type": "boolean"
+        },
         "time": {
           "type": "integer"
         },

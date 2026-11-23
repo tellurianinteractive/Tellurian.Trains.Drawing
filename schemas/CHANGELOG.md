@@ -4,9 +4,16 @@ Changes to the drawing file schemas (spec EX-7). Within a major schema version, 
 changes are allowed: additions that older readers can ignore. Changes that aren't additions are collected in one
 new version per file kind, and files of the older version are upgraded when they are opened.
 
-## Version 2 (not yet released; more changes will be added before it is)
+## Version 2 (complete; released with the next release of Module Draw)
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
-upgraded; files are written as version 2. See `docs/OperationLocationsTasks.md` for what is still to come in this version.
+upgraded; files are written as version 2. From here on, version 2 changes only by additions.
+
+### 2026-11-23 (version 2 is complete)
+Survey step 11, Schedules packages 4.0.27.
+- **Version 2 files are read as they are.** Files that development builds wrote as version 2 in earlier shapes are no
+  longer brought to today's shape (`UpgradeDraft` in Module Draw and the draft step of `Importers.Drawing` are gone).
+- **`isSpeedEntered`** on a track stretch of the hall plan's layout (addition): whether the planner entered the speed,
+  so that a newer hall plan doesn't change it.
 
 ### 2026-11-22 (the hall plan is a layout in a hall)
 Survey step 8, Schedules packages 4.0.26. Hall plans are read and written by `Importers.Drawing` and `Exporters.Drawing`;

@@ -7,11 +7,6 @@ namespace Tellurian.Trains.Drawing.Model.Files;
 /// file kind is read by the shared importers (<c>Importers.Drawing</c>), whose steps these call
 /// (<c>DrawingMigrations</c>). Hall plans have no step: no released version of Module Draw made a hall plan before the
 /// shape of version 2, so earlier hall plan files are refused.
-/// <para>
-/// Every step is idempotent: it finds the earlier shape by its properties and leaves a file that already has the
-/// shape of today as it is, since the steps are also run on version 2 files written by development builds
-/// (<see cref="DrawingFileMigrations.UpgradeDraft"/>).
-/// </para>
 /// </summary>
 internal static class SchemaVersion2
 {

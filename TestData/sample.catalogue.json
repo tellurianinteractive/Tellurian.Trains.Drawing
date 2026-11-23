@@ -1,6 +1,6 @@
 {
   "format": "tellurian-drawing",
-  "kind": "catalogue",
+  "kind": "Catalogue",
   "schemaVersion": 2,
   "appVersion": "0.1.0",
   "content": {
@@ -19,9 +19,15 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b01",
         "shortName": "FREMO/H0-RE",
-        "scale": "H0",
-        "railSystem": "twoRail",
-        "normalGauge": 16.5,
+        "scale": {
+          "shortName": "H0"
+        },
+        "railSystem": "TwoRail",
+        "gauges": [
+          {
+            "width": 16.5
+          }
+        ],
         "railTopHeight": 1300,
         "minimumClearance": 0,
         "operatorSpaceDepth": 800,
@@ -35,10 +41,15 @@
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b02",
         "shortName": "MMM-2R",
-        "countries": [ "SE" ],
-        "scale": "H0",
-        "railSystem": "twoRail",
-        "normalGauge": 16.5,
+        "scale": {
+          "shortName": "H0"
+        },
+        "railSystem": "TwoRail",
+        "gauges": [
+          {
+            "width": 16.5
+          }
+        ],
         "railTopHeight": 1300,
         "minimumClearance": 0,
         "operatorSpaceDepth": 800,
@@ -46,15 +57,23 @@
         "defaultSingleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
         "source": {
           "title": "M\u00E4larModulM\u00F6te module standard MMM-2R"
-        }
+        },
+        "countries": [
+          "SE"
+        ]
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b03",
         "shortName": "MMM-3R",
-        "countries": [ "SE" ],
-        "scale": "H0",
-        "railSystem": "threeRail",
-        "normalGauge": 16.5,
+        "scale": {
+          "shortName": "H0"
+        },
+        "railSystem": "ThreeRail",
+        "gauges": [
+          {
+            "width": 16.5
+          }
+        ],
         "railTopHeight": 1300,
         "minimumClearance": 0,
         "operatorSpaceDepth": 800,
@@ -62,14 +81,23 @@
         "defaultSingleTrackEndProfileId": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d04",
         "source": {
           "title": "M\u00E4larModulM\u00F6te module standard MMM-3R"
-        }
+        },
+        "countries": [
+          "SE"
+        ]
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4b04",
         "shortName": "FREMO/N-RE",
-        "scale": "N",
-        "railSystem": "twoRail",
-        "normalGauge": 9,
+        "scale": {
+          "shortName": "N"
+        },
+        "railSystem": "TwoRail",
+        "gauges": [
+          {
+            "width": 9
+          }
+        ],
         "railTopHeight": 1300,
         "minimumClearance": 0,
         "operatorSpaceDepth": 800,
@@ -334,8 +362,10 @@
         "tracks": [
           {
             "offset": 0,
-            "gauge": 16.5,
-            "railSystem": "twoRail"
+            "gauges": [
+              16.5
+            ],
+            "railSystem": "TwoRail"
           }
         ],
         "screwHoles": [
@@ -382,7 +412,8 @@
           "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
           "revision": "drawing-2026-11-14"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d06",
@@ -623,8 +654,10 @@
         "tracks": [
           {
             "offset": 0,
-            "gauge": 16.5,
-            "railSystem": "twoRail"
+            "gauges": [
+              16.5
+            ],
+            "railSystem": "TwoRail"
           }
         ],
         "screwHoles": [
@@ -657,7 +690,8 @@
           "url": "https://github.com/tellurianinteractive/Tellurian.Trains.Drawing/blob/master/end-profiles/FREMO%20H0%20B96.png",
           "revision": "drawing-2026-11-14"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d02",
@@ -726,13 +760,17 @@
         "tracks": [
           {
             "offset": -25,
-            "gauge": 16.5,
-            "railSystem": "twoRail"
+            "gauges": [
+              16.5
+            ],
+            "railSystem": "TwoRail"
           },
           {
             "offset": 25,
-            "gauge": 16.5,
-            "railSystem": "twoRail"
+            "gauges": [
+              16.5
+            ],
+            "railSystem": "TwoRail"
           }
         ],
         "screwHoles": [
@@ -771,7 +809,8 @@
           "title": "FREMO: H0 double-track end profile 2E96. Provisional values, to be drawn from the published FREMO PDF.",
           "revision": "provisional"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
@@ -839,8 +878,10 @@
         "tracks": [
           {
             "offset": 0,
-            "gauge": 16.5,
-            "railSystem": "twoRail"
+            "gauges": [
+              16.5
+            ],
+            "railSystem": "TwoRail"
           }
         ],
         "screwHoles": [
@@ -865,7 +906,8 @@
           "title": "MMM: MMM-2R end profile 480. Provisional values, to be drawn from the published MMM PDF.",
           "revision": "provisional"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d04",
@@ -933,8 +975,10 @@
         "tracks": [
           {
             "offset": 0,
-            "gauge": 16.5,
-            "railSystem": "threeRail"
+            "gauges": [
+              16.5
+            ],
+            "railSystem": "ThreeRail"
           }
         ],
         "screwHoles": [
@@ -959,7 +1003,8 @@
           "title": "MMM: MMM-3R end profile 480. Provisional values, to be drawn from the published MMM PDF.",
           "revision": "provisional"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       },
       {
         "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d05",
@@ -1027,8 +1072,10 @@
         "tracks": [
           {
             "offset": 0,
-            "gauge": 9,
-            "railSystem": "twoRail"
+            "gauges": [
+              9
+            ],
+            "railSystem": "TwoRail"
           }
         ],
         "screwHoles": [
@@ -1053,7 +1100,8 @@
           "title": "FREMO: N-RE end profile. Provisional values, to be drawn from the published FREMO PDF.",
           "revision": "provisional"
         },
-        "revision": 0
+        "revision": 0,
+        "revisionLog": []
       }
     ],
     "overrides": []
