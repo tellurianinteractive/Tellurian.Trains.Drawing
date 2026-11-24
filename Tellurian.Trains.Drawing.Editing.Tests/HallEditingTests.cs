@@ -4,7 +4,6 @@ using Tellurian.Trains.Drawing.Editing.Selection;
 using Tellurian.Trains.Drawing.Editing.Snapping;
 using Tellurian.Trains.Drawing.Editing.Tools;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.Halls;
 
 namespace Tellurian.Trains.Drawing.Editing.Tests;
 
@@ -15,7 +14,7 @@ public sealed class HallEditingTests
     private const double Depth = 8000;
     private const double Reach = 50;
 
-    private static Hall Hall() => Model.Halls.Hall.Rectangle("Hall", Width, Depth);
+    private static Hall Hall() => Tellurian.Trains.Schedules.Model.Layouts.Halls.Hall.Rectangle("Hall", Width, Depth);
 
     private static Hall WithDoor() => HallCommands.AddDoor(new(3000, 100), DoorKind.Door).Apply(Hall());
 
@@ -136,7 +135,7 @@ public sealed class HallEditingTests
     public void ChangedDoorStaysInTheWall()
     {
         var hall = WithDoor();
-        var changed = HallCommands.SetDoor(0, hall.Doors[0] with { Width = 1500, Position = new(new(3000, 500), Angle.Zero) }).Apply(hall);
+        var changed = HallCommands.SetDoor(0, hall.Doors[0].With(e => { e.Width = 1500; e.Position = new(new(3000, 500), Angle.Zero); })).Apply(hall);
         Assert.AreEqual(1500, changed.Doors[0].Width);
         Assert.IsTrue(changed.Doors[0].Position.IsCloseTo(new(new(3000, 0), new(90)), Precision));
     }
@@ -198,6 +197,18 @@ public sealed class HallEditingTests
     }
 
     [TestMethod]
+    public void ACommandThatChangesNothingAddsNoUndoStep()
+    {
+        var document = new EditorDocument<Hall>(Hall(), comparer: HallContentComparer.Comparer);
+
+        // Moving nothing still copies the hall, which is a mutable class.
+        Assert.IsFalse(document.Apply(HallCommands.Move([], new(100, 0))));
+        Assert.IsFalse(document.CanUndo);
+        Assert.IsTrue(document.Apply(HallCommands.AddRoundPillar(new(4000, 4000))));
+        Assert.IsTrue(document.CanUndo);
+    }
+
+    [TestMethod]
     public void ItemsRoundTripAsText()
     {
         Assert.IsTrue(HallItem.TryParse(HallItem.NoGoZone(2).ToString(), out var item));
@@ -208,7 +219,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void EntranceSymbolIsInFrontOfTheDoor()
     {
-        var door = WithDoor().Doors[0] with { IsModuleEntrance = true };
+        var door = WithDoor().Doors[0].With(e => e.IsModuleEntrance = true);
         var zone = door.KeepFreeZone().Tessellate();
         var symbol = HallScene.EntranceSymbol(door);
         Assert.HasCount(10, symbol);
@@ -227,7 +238,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void EmergencyExitThatIsAModuleEntranceHasSignAndArrowSideBySide()
     {
-        var exit = HallCommands.AddDoor(new(3000, 0), DoorKind.EmergencyExit).Apply(Hall()).Doors[0] with { IsModuleEntrance = true };
+        var exit = HallCommands.AddDoor(new(3000, 0), DoorKind.EmergencyExit).Apply(Hall()).Doors[0].With(e => e.IsModuleEntrance = true);
         var (center, size, _, _) = HallScene.EmergencySign(exit);
         var arrow = HallScene.EntranceSymbol(exit);
         // The door heads up (+Y), so its left is -X: the sign is to the left of the opening's centre, the arrow to the right.
@@ -289,7 +300,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void SignAndArrowAreStackedInADeepArea()
     {
-        var exit = HallCommands.AddDoor(new(3000, 0), DoorKind.EmergencyExit).Apply(Hall()).Doors[0] with { IsModuleEntrance = true, KeepFreeDepth = 3000 };
+        var exit = HallCommands.AddDoor(new(3000, 0), DoorKind.EmergencyExit).Apply(Hall()).Doors[0].With(e => { e.IsModuleEntrance = true; e.KeepFreeDepth = 3000; });
         var (center, size, _, _) = HallScene.EmergencySign(exit);
         var arrow = HallScene.EntranceSymbol(exit);
         Assert.AreEqual(3000, center.X, Precision, "Stacked on the door's centre line.");
@@ -301,7 +312,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void LabelIsBeyondTheSymbols()
     {
-        var door = WithDoor().Doors[0] with { IsModuleEntrance = true };
+        var door = WithDoor().Doors[0].With(e => e.IsModuleEntrance = true);
         var label = HallScene.LabelPosition(door, "Gate", 200);
         Assert.IsTrue(label.Y - 100 >= door.KeepFreeDepth, "The whole text is outside the area in front of the door.");
         Assert.IsTrue(HallScene.EntranceSymbol(door).All(p => p.Y <= door.KeepFreeDepth));
@@ -325,7 +336,7 @@ public sealed class HallEditingTests
     [DataRow(10000.0, 11950.0, 10000.0, 12000.0, 270.0)]
     public void DoorsGoInTheShortWallsToo(double x, double y, double expectedX, double expectedY, double heading)
     {
-        var hall = HallCommands.AddDoor(new(x, y), DoorKind.Door).Apply(Model.Halls.Hall.Rectangle("Hall", 20000, 12000));
+        var hall = HallCommands.AddDoor(new(x, y), DoorKind.Door).Apply(Tellurian.Trains.Schedules.Model.Layouts.Halls.Hall.Rectangle("Hall", 20000, 12000));
         Assert.IsTrue(hall.Doors[0].Position.IsCloseTo(new(new(expectedX, expectedY), new(heading)), Precision), hall.Doors[0].Position.ToString());
     }
 
@@ -346,7 +357,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void DraggingARotatedRectanglesCornerKeepsItsRotation()
     {
-        var hall = Hall() with { Obstacles = [Obstacle.RectangularPillar(new(4000, 4000), 400, 200, new(30))] };
+        var hall = Hall().With(h => h.Add(Obstacle.RectangularPillar(new(4000, 4000), 400, 200, new(30))));
         var corner = HallHandles.PositionOf(hall, HallItem.ObstacleHandle(0, 2))!.Value;
         var resized = HallHandles.Drag(hall, HallItem.ObstacleHandle(0, 2), corner + Vector.FromAngle(new(30), 100));
         Assert.IsTrue(resized.Obstacles[0].TryGetRectangle(out _, out var width, out var depth, out var rotation));
@@ -432,7 +443,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void PrintedHallFitsALandscapePage()
     {
-        var hall = Hall() with { Address = "Station Road 1" };
+        var hall = Hall().With(e => e.Address = "Station Road 1");
         var sheet = HallSheet.Create(hall);
         var scale = Math.Min(EndProfiles.EndProfileSheet.PageWidth / sheet.Bounds.Width, EndProfiles.EndProfileSheet.PageHeight / sheet.Bounds.Height);
         Assert.IsTrue(sheet.Bounds.Width * scale <= EndProfiles.EndProfileSheet.PageWidth + Precision);
@@ -444,7 +455,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void PrintedTitleAddressAndScaleBarAreBelowTheHall()
     {
-        var sheet = HallSheet.Create(Hall() with { Address = "Station Road 1" });
+        var sheet = HallSheet.Create(Hall().With(e => e.Address = "Station Road 1"));
         Assert.AreEqual("Hall", sheet.Title.Text);
         Assert.IsTrue(sheet.Title.Bounds.Max.Y < 0, "Under the walls.");
         Assert.IsTrue(sheet.Subtitle!.Center.Y < sheet.Title.Center.Y);
@@ -467,7 +478,7 @@ public sealed class HallEditingTests
     [TestMethod]
     public void PrintedInformationShrinksToFitANarrowHall()
     {
-        var narrow = Model.Halls.Hall.Rectangle("Corridor", 3000, 20000);
+        var narrow = Tellurian.Trains.Schedules.Model.Layouts.Halls.Hall.Rectangle("Corridor", 3000, 20000);
         var sheet = HallSheet.Create(narrow, ["Effective floor area: 59.4 m²"]);
         Assert.IsTrue(sheet.Information[0].Bounds.Width < 3000);
     }

@@ -1,5 +1,5 @@
 using Tellurian.Trains.Drawing.Editing.Tools;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 
 namespace Tellurian.Trains.Drawing.Components.Canvas;
 

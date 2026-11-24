@@ -1,6 +1,5 @@
 using Tellurian.Trains.Drawing.Editing.Commands;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 
@@ -14,7 +13,7 @@ namespace Tellurian.Trains.Drawing.Editing.Modules;
 public static class ModuleEnds
 {
     /// <summary>Gives exit <paramref name="exitLabel"/> the end profile <paramref name="profile"/>, redrawing the module.</summary>
-    public static IEditCommand<ModuleFileContent> SetEndProfile(string exitLabel, EndProfile profile, DrawingCatalogue catalogue) =>
+    public static IEditCommand<ModuleFileContent> SetEndProfile(string exitLabel, EndProfile profile, Catalogue catalogue) =>
         new EditCommand<ModuleFileContent>("Change end profile", content => ModuleRedraw.WithEndProfile(content, exitLabel, profile, catalogue) ?? content);
 
     /// <summary>Turns the end plate at exit <paramref name="exitLabel"/> the other side out.</summary>
@@ -22,6 +21,6 @@ public static class ModuleEnds
         new EditCommand<ModuleFileContent>("Flip end profile", content => ModuleRedraw.WithEndFlipped(content, exitLabel) ?? content);
 
     /// <summary>Makes the curve turn the other way, redrawing the module.</summary>
-    public static IEditCommand<ModuleFileContent> FlipCurve(DrawingCatalogue catalogue) =>
+    public static IEditCommand<ModuleFileContent> FlipCurve(Catalogue catalogue) =>
         new EditCommand<ModuleFileContent>("Flip curve", content => ModuleRedraw.WithCurveFlipped(content, catalogue) ?? content);
 }

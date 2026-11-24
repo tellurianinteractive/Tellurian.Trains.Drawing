@@ -1,6 +1,6 @@
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Editing.EndProfiles
-@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Schedules.Model.Geometry
 @using Tellurian.Trains.Drawing.Model
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 
@@ -26,12 +26,12 @@
     @for (var i = 0; i < Profile.Tracks.Count; i++)
     {
         var track = Profile.Tracks[i];
-        var railWidth = TrackCrossSection.RailWidth(track.Gauge);
-        var sleeperLength = TrackCrossSection.SleeperLength(track.Gauge);
+        var railWidth = TrackCrossSection.RailWidth(track.WidestGauge);
+        var sleeperLength = TrackCrossSection.SleeperLength(track.WidestGauge);
         <g class="@Classes("ep-track", EndProfileItem.Track(i))" style="@($"--track-color: {TrackColor}")">
             <rect class="ep-sleeper" x="@SvgPath.Number(track.Offset - sleeperLength / 2)" y="@SvgPath.Number(-TrackCrossSection.Height)" width="@SvgPath.Number(sleeperLength)" height="@SvgPath.Number(TrackCrossSection.SleeperHeight)" />
-            <rect class="ep-rail" x="@SvgPath.Number(track.Offset - track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
-            <rect class="ep-rail" x="@SvgPath.Number(track.Offset + track.Gauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+            <rect class="ep-rail" x="@SvgPath.Number(track.Offset - track.WidestGauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
+            <rect class="ep-rail" x="@SvgPath.Number(track.Offset + track.WidestGauge / 2 - railWidth / 2)" y="@SvgPath.Number(-TrackCrossSection.RailHeight)" width="@SvgPath.Number(railWidth)" height="@SvgPath.Number(TrackCrossSection.RailHeight)" />
             <line class="ep-track-centre" x1="@SvgPath.Number(track.Offset)" y1="@SvgPath.Number(-TrackCrossSection.Height)" x2="@SvgPath.Number(track.Offset)" y2="@SvgPath.Number(TrackCrossSection.RailHeight)" />
         </g>
         @if (Show(EndProfileLayers.Labels) && track.Label is { } label)
@@ -70,7 +70,7 @@
     private const double MarginPerSize = 0.05;
 
     [Parameter, EditorRequired] public EndProfile Profile { get; set; } = default!;
-    [Parameter] public string TrackColor { get; set; } = Model.Catalogue.ModuleStandard.DefaultTrackColor;
+    [Parameter] public string TrackColor { get; set; } = ModuleStandard.DefaultTrackColor;
     [Parameter] public EndProfileLayers Layers { get; set; } = EndProfileLayers.All;
     [Parameter] public string RailTopText { get; set; } = "Top of rail";
 

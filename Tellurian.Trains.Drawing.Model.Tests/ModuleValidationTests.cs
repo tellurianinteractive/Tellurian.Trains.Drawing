@@ -1,3 +1,4 @@
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -36,42 +37,68 @@ public sealed class ModuleValidationTests
         CollectionAssert.AreEqual(new[] { ModuleProblemCode.FremoNumberOutOfRange }, Codes(null, "SFjä", number));
 
     [TestMethod]
-    public void UsesTheFirstOwnersPrefix()
+    public void UsesTheModulesPrefix()
     {
-        var module = TestModules.Straight() with { Name = "", FremoNumber = 12, Owners = [new() { Name = "Club" }, new() { Prefix = "SFjä" }] };
-        CollectionAssert.AreEqual(new[] { new ModuleProblem(ModuleProblemCode.PrefixMissing, nameof(Owner.Prefix)) }, ModuleValidation.Validate(module).ToArray());
+        var module = TestModules.Straight().With(c => { c.Name = ""; c.Number = 12; c.ModuleOwners = "Club"; });
+        CollectionAssert.AreEqual(new[] { new ModuleProblem(ModuleProblemCode.PrefixMissing, nameof(Module.Prefix)) }, ModuleValidation.Validate(module).ToArray());
+        Assert.IsEmpty(ModuleValidation.Validate(module.With(c => c.Prefix = "SFjä")));
     }
 
     [TestMethod]
     [DataRow("Tellby", null, null, "Tellby")]
-    [DataRow("", "SFjä", 12, "SFjä 012")]
-    [DataRow(" Tellby ", " SFjä ", 1234, "SFjä 1234 Tellby")]
-    [DataRow("Tellby", null, 12, "Tellby", DisplayName = "No designation without prefix")]
-    public void TitleHasTheFremoDesignationAndTheName(string? name, string? prefix, int? number, string expected) =>
-        Assert.AreEqual(expected, Module.TitleOf(name, prefix, number));
+    [DataRow("", "SFjä", 12, "SFjä 0012")]
+    [DataRow(" Tellby ", " SFjä ", 1234, "SFjä 1234", DisplayName = "With a prefix the designation alone, unless an operation location")]
+    [DataRow("Tellby", null, 12, "Tellby 12", DisplayName = "Without prefix the number follows the name")]
+    public void TitleHasTheDesignationAndTheName(string? name, string? prefix, int? number, string expected) =>
+        Assert.AreEqual(expected, (TestModules.Straight().With(c => { c.Name = name ?? string.Empty; c.Prefix = prefix; c.Number = number; })).Title);
 
     [TestMethod]
-    public void OwnerIsCreatedWhenAPrefixIsGiven()
+    [DataRow("Tellby", null, "Short", "Tellby short", DisplayName = "Without a number the configuration follows the name")]
+    [DataRow("Tellby", null, "  ", "Tellby", DisplayName = "A blank configuration is left out")]
+    [DataRow("Tellby", 12, "Short", "SFjä 0012", DisplayName = "With a number the configuration is left out")]
+    public void TitleHasTheConfigurationLabelOfAModuleWithoutANumber(string name, int? number, string label, string expected)
     {
-        var module = TestModules.Straight() with { Owners = [] };
-        var changed = module.WithOwnerPrefix(" SFjä ").WithFremoNumber(12).WithName("");
-        Assert.AreEqual(new Owner { Prefix = "SFjä" }, changed.Owners.Single());
-        Assert.AreEqual("SFjä 012", changed.Title);
+        var module = TestModules.Straight().With(c => { c.Name = name; c.Prefix = "SFjä"; c.Number = number; c.ConfigurationLabel = label; });
+        Assert.AreEqual(expected, module.Title);
+        Assert.AreEqual(module.DisplayName, module.ToString(), "As the shared model names a module: with its standard.");
+    }
+
+    [TestMethod]
+    public void TheDesignationIsWrittenWithASpace()
+    {
+        var module = TestModules.Straight().With(c => { c.Prefix = "SFjä"; c.Number = 12; });
+        Assert.AreEqual("SFjä 0012", module.Designation);
+        Assert.AreEqual("12", (module.With(c => c.Prefix = null)).Designation);
+        Assert.IsNull((module.With(c => c.Number = null)).Designation);
+    }
+
+    [TestMethod]
+    public void PrefixNumberAndNameAreChangedTrimmed()
+    {
+        var changed = TestModules.Straight().WithPrefix(" SFjä ").WithNumber(12).WithName("");
+        Assert.AreEqual(("SFjä", 12, ""), (changed.Prefix, changed.Number, changed.Name));
+        Assert.AreEqual("SFjä 0012", changed.Title);
         Assert.IsEmpty(ModuleValidation.Validate(changed));
     }
 
     [TestMethod]
-    public void OwnerLeftWithNothingIsRemoved()
+    public void BlankPrefixAndOwnersAreStoredAsMissing()
     {
-        var module = TestModules.Straight() with { Owners = [new() { Prefix = "SFjä", Name = "S. F." }, new() { Name = "Club" }] };
-        var changed = module.WithOwnerPrefix(" ").WithOwnerName(null);
-        Assert.AreEqual("Club", changed.Owners.Single().Name);
+        var module = TestModules.Straight().With(c => { c.Prefix = "SFjä"; c.ModuleOwners = "S. F., Club"; });
+        Assert.AreEqual("S. F., Club", module.WithModuleOwners(" S. F., Club ").ModuleOwners);
+        var changed = module.WithPrefix(" ").WithModuleOwners(null);
+        Assert.IsNull(changed.Prefix);
+        Assert.IsNull(changed.ModuleOwners);
     }
 
     [TestMethod]
-    public void OtherOwnerPropertiesAreKept()
+    public void TheScaleIsThatOfTheStandard()
     {
-        var module = TestModules.Straight() with { Owners = [new() { Name = "A", Share = 0.5, RegistryPersonId = 17 }] };
-        Assert.AreEqual(new Owner { Name = "B", Share = 0.5, RegistryPersonId = 17 }, module.WithOwnerName("B").Owners.Single());
+        var module = TestModules.Straight();
+        var standard = TestCatalogue.Instance.FindStandard(TestCatalogue.FremoId)!;
+        Assert.AreEqual(standard.Id, module.Standard?.Id);
+        Assert.AreEqual(standard.NameOnly, module.Standard);
+        Assert.AreEqual((standard.ShortName, standard.ScaleName), (module.Standard!.ShortName, module.Scale?.ShortName));
+        Assert.IsNull((module.With(c => c.Standard = null)).Scale);
     }
 }

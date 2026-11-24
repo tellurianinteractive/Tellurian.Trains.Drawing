@@ -1,4 +1,4 @@
-global using Tellurian.Trains.Drawing.Geometry;
+global using Tellurian.Trains.Schedules.Model.Geometry;
 global using static Tellurian.Trains.Drawing.Editing.Tests.TestTolerance;
 
 namespace Tellurian.Trains.Drawing.Editing.Tests;

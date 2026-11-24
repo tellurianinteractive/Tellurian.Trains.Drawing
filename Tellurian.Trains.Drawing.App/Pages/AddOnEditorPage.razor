@@ -1,18 +1,14 @@
 @page "/catalogue/addon/new"
 @page "/catalogue/addon/{Id:guid}"
-@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
 @using Tellurian.Trains.Drawing.Model
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @inject CatalogueService Catalogues
 @inject NavigationManager Navigation
 
 <PageTitle>@Title</PageTitle>
 
 <h1>@Title</h1>
-@if (isBuiltIn)
-{
-    <p class="note">@T["EditBuiltInNote"]</p>
-}
 @if (message is not null)
 {
     <p class="error" role="alert">@message</p>
@@ -46,9 +42,8 @@
 @code {
     [Parameter] public Guid? Id { get; set; }
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
     private StandardAddOn? original;
-    private bool isBuiltIn;
     private string shortName = string.Empty;
     private Guid baseStandardId;
     private string? description;
@@ -72,7 +67,6 @@
                 catalogue = null;
                 return;
             }
-            isBuiltIn = original is not null && CatalogueService.BuiltIn.AddOns.Any(a => a.Id == original.Id) && !user.AddOns.Any(a => a.Id == original.Id);
             shortName = original?.ShortName ?? string.Empty;
             baseStandardId = original?.BaseStandardId ?? catalogue.Standards.OrderBy(s => s.ShortName).FirstOrDefault()?.Id ?? Guid.Empty;
             description = original?.Description;
@@ -87,15 +81,9 @@
 
     private async Task SaveAsync()
     {
-        var addOn = (original ?? new StandardAddOn { Id = Guid.NewGuid(), ShortName = string.Empty, BaseStandardId = baseStandardId }) with
-        {
-            ShortName = shortName.Trim(),
-            BaseStandardId = baseStandardId,
-            Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim(),
-            Source = string.IsNullOrWhiteSpace(sourceTitle) && string.IsNullOrWhiteSpace(sourceUrl)
+        var addOn = (original ?? new StandardAddOn { Id = Guid.NewGuid(), ShortName = string.Empty, BaseStandardId = baseStandardId }).With(edited => { edited.ShortName = shortName.Trim(); edited.BaseStandardId = baseStandardId; edited.Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim(); edited.Source = string.IsNullOrWhiteSpace(sourceTitle) && string.IsNullOrWhiteSpace(sourceUrl)
                 ? null
-                : (original?.Source ?? new DocumentReference()) with { Title = sourceTitle?.Trim(), Url = sourceUrl?.Trim() },
-        };
+                : (original?.Source ?? new DocumentReference()) with { Title = sourceTitle?.Trim(), Url = sourceUrl?.Trim() }; });
         try
         {
             problems = await Catalogues.SaveAddOnAsync(addOn);

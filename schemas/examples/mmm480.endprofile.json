@@ -1,8 +1,8 @@
 {
   "format": "tellurian-drawing",
-  "kind": "endProfile",
-  "schemaVersion": 1,
-  "appVersion": "0.5.0",
+  "kind": "EndProfile",
+  "schemaVersion": 2,
+  "appVersion": "0.9.1",
   "content": {
     "id": "5b6f0c1e-2a41-4d8e-9c3a-0f1d2e3a4d03",
     "designation": "MMM480",
@@ -69,8 +69,10 @@
     "tracks": [
       {
         "offset": 0,
-        "gauge": 16.5,
-        "railSystem": "twoRail"
+        "gauges": [
+          16.5
+        ],
+        "railSystem": "TwoRail"
       }
     ],
     "screwHoles": [

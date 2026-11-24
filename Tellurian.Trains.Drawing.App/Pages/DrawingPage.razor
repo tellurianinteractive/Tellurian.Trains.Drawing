@@ -3,7 +3,7 @@
 @inject DrawingDocuments Documents
 @inject NavigationManager Navigation
 @inject BrowserDialogs Dialogs
-@inject Tellurian.Trains.Drawing.App.Catalogue.CatalogueService Catalogues
+@inject Tellurian.Trains.Drawing.App.Catalogues.CatalogueService Catalogues
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Views
 @using Tellurian.Trains.Drawing.App.Editors
@@ -13,6 +13,15 @@
 @if (notFound)
 {
     <p class="error">@T["DraftNotFound"]</p>
+}
+else if (draft is not null && _unreadable is not null)
+{
+    @* A draft that can't be read, e.g. saved by a development build in an earlier shape: no editor, only its file actions. *@
+    <section class="pane archive-pane" aria-label="@T["ArchivePane"]">
+        <h2>@T["ArchivePane"]</h2>
+        <p class="error" role="alert" id="draft-unreadable">@T.Format("DraftUnreadable", _unreadable)</p>
+        @ArchiveFragment(draft)
+    </section>
 }
 else if (draft is not null && draft.Kind == DrawingFileKind.EndProfile)
 {
@@ -81,6 +90,13 @@ else if (draft is not null)
     {
         <p class="note" id="updated-end-profiles">@T.Format("EndProfilesUpdated", string.Join(", ", _updatedEndProfiles))</p>
     }
+    @if (_missingEndProfiles.Count > 0)
+    {
+        <p class="note" id="missing-end-profiles">@T.Format("EndProfilesNotInCatalogue", string.Join(", ", _missingEndProfiles.Select(p => p.Designation)))</p>
+        <div class="pane-buttons">
+            <button type="button" id="save-missing-end-profiles" @onclick="SaveMissingEndProfilesAsync">@T["SaveToCatalogue"]</button>
+        </div>
+    }
     @if (!Documents.CanSaveInPlace)
     {
         <p class="note">@T["DownloadNote"]</p>
@@ -97,18 +113,20 @@ else if (draft is not null)
 
     private Draft? draft;
     private bool notFound;
+    /// <summary>Why the draft can't be read, or null when it can.</summary>
+    private string? _unreadable;
     private string? message;
 
     public static string Url(Guid id) => $"drawing/{id}";
 
-    private Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard? _standard;
-    private Tellurian.Trains.Drawing.Model.Catalogue.DrawingCatalogue? _catalogue;
+    private ModuleStandard? _standard;
+    private Catalogue? _catalogue;
 
     /// <summary>
     /// The end profile as it is now in the catalogue, so that changes such as a new short name show; the module
     /// view falls back to the copy embedded in the module file.
     /// </summary>
-    private Tellurian.Trains.Drawing.Model.EndProfiles.EndProfile? FindEndProfile(Guid id) => _catalogue?.FindEndProfile(id);
+    private Tellurian.Trains.Schedules.Model.Layouts.EndProfiles.EndProfile? FindEndProfile(Guid id) => _catalogue?.FindEndProfile(id);
 
     /// <summary>The track colour of an end profile's first standard.</summary>
     private async Task<string?> TrackColorOfAsync(Draft? draft)
@@ -127,13 +145,13 @@ else if (draft is not null)
     }
 
     /// <summary>The standard of a module draft, for its track colour.</summary>
-    private async Task<Tellurian.Trains.Drawing.Model.Catalogue.ModuleStandard?> StandardOfAsync(Draft? draft)
+    private async Task<ModuleStandard?> StandardOfAsync(Draft? draft)
     {
         if (draft?.Kind != DrawingFileKind.Module) return null;
         try
         {
             var module = DrawingFileSerializer.DeserializeModule(draft.Json).Module;
-            return (await Catalogues.GetAsync()).FindStandard(module.Standard.Id);
+            return module.Standard?.Id is { } standardId ? (await Catalogues.GetAsync()).FindStandard(standardId) : null;
         }
         catch (DrawingFileException)
         {
@@ -147,12 +165,55 @@ else if (draft is not null)
         {
             // The draft is shown only when it is ready, so that an editor never starts from a module that is about to be updated.
             var loaded = await Workbench.GetDraftAsync(Id);
+            _unreadable = loaded is null ? null : DrawingFileSerializer.ProblemOf(loaded.Json);
+            if (_unreadable is not null)
+            {
+                draft = loaded;
+                return;
+            }
             _catalogue = loaded?.Kind == DrawingFileKind.Module ? await Catalogues.GetAsync() : null;
-            if (loaded is not null && _catalogue is not null) loaded = await WithCurrentEndProfilesAsync(loaded, _catalogue);
+            if (loaded is not null && _catalogue is not null)
+            {
+                loaded = await WithCurrentEndProfilesAsync(loaded, _catalogue);
+                _missingEndProfiles = MissingEndProfiles(loaded, _catalogue);
+            }
             _standard = await StandardOfAsync(loaded);
             _trackColor = await TrackColorOfAsync(loaded);
             draft = loaded;
             notFound = draft is null;
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
+
+    /// <summary>The end profiles the module embeds that the catalogue doesn't have, which the user can save there.</summary>
+    private IReadOnlyList<Tellurian.Trains.Schedules.Model.Layouts.EndProfiles.EndProfile> _missingEndProfiles = [];
+
+    private static IReadOnlyList<Tellurian.Trains.Schedules.Model.Layouts.EndProfiles.EndProfile> MissingEndProfiles(Draft module, Catalogue catalogue)
+    {
+        try
+        {
+            return [.. DrawingFileSerializer.DeserializeModule(module.Json).EndProfiles.Where(p => catalogue.FindEndProfile(p.Id) is null)];
+        }
+        catch (DrawingFileException)
+        {
+            return [];
+        }
+    }
+
+    /// <summary>Saves the module's end profiles that the catalogue lacks there, so other modules can use them.</summary>
+    private async Task SaveMissingEndProfilesAsync()
+    {
+        message = null;
+        try
+        {
+            var saved = _missingEndProfiles;
+            await Catalogues.AddEndProfilesAsync(saved);
+            _catalogue = await Catalogues.GetAsync();
+            _missingEndProfiles = [];
+            _status = T.Format("SavedToCatalogue", string.Join(", ", saved.Select(p => p.Designation)));
         }
         catch (StorageException ex)
         {
@@ -167,7 +228,7 @@ else if (draft is not null)
     /// The module draft with its embedded end profiles updated from <paramref name="catalogue"/> where they have
     /// changed there, so that the module's file gets them when it is saved; the draft then has unsaved changes.
     /// </summary>
-    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, Tellurian.Trains.Drawing.Model.Catalogue.DrawingCatalogue catalogue)
+    private async Task<Draft> WithCurrentEndProfilesAsync(Draft module, Catalogue catalogue)
     {
         try
         {

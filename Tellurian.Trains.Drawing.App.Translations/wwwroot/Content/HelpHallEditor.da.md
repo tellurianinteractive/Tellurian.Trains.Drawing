@@ -25,3 +25,14 @@ Punkter fastgøres til et gitter af den valgte størrelse, 0,1 m, hvis du ikke v
 ## At bevæge sig i tegningen
 
 Rul for at zoome, træk med midterknappen eller med mellemrum trykket ned for at panorere, og klik på knappen i tegningens øverste højre hjørne for at se hele tegningen.
+
+## Tastatur
+
+Tasterne virker overalt på siden, undtagen mens du skriver i et felt.
+
+- **1**–**8** vælger et værktøj i knappernes rækkefølge. **0** viser hele tegningen.
+- **Ctrl+Z** fortryder og **Ctrl+Y** gentager (⌘ på en Mac).
+- **Delete** eller **Backspace** sletter det markerede.
+- **Piletasterne** flytter det markerede 1 mm, med **Skift** 10 mm.
+- **Escape** stopper det, du er i gang med: først en trækning eller en figur, du tegner, så værktøjet (tilbage til Markér), så markeringen.
+- **Ctrl**+klik føjer til markeringen.

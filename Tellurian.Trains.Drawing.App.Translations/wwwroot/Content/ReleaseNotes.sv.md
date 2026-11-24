@@ -1,5 +1,17 @@
 # Versionsinformation
 
+## Version 0.10.0
+Utgiven 2026-11-24
+- Appen har inte längre någon egen katalog: katalogen är din. Importera en katalogfil (.catalogue.json) på sidan *Katalog*, t.ex. från din klubb; den tar med sig sina skalor, standarder, tillägg och kompatibilitetsundantag tillsammans med de ändprofiler du väljer. Alla poster kan ändras och tas bort.
+- Ändprofiler i en modul som din katalog saknar listas i panelen *Arkiv*, där du kan spara dem i katalogen.
+- Modulredigerare, panelen *Sektioner*: *Antal sektioner* delar modulen i sektioner som är lika långa längs spåret, i en kurva också med samma vinkel. *Gör lika långa* jämnar ut de sektioner modulen har. En skarv i en kurva kan också placeras med sin *Vinkel från kurvans början*.
+- Bara en driftplats har spår i panelen *Spår*; en modul med linje får inga om du inte lägger till dem. Varje spårs beteckning skrivs i ritningen.
+- Under en rubrik med prefix, som redan säger vem som äger modulen, utelämnas ägarnas namn.
+- Kortkommandon fungerar var du än är på sidan i alla redigerare, utom när du skriver i ett fält: 1–9 väljer verktyg, 0 anpassar ritningen till vyn, Ctrl+Z och Ctrl+Y ångrar och gör om, Delete tar bort, piltangenterna flyttar markeringen 1 mm (10 mm med Shift) och Escape avbryter. Hjälpen för varje redigerare listar dem.
+- En ny version av filformatet, gemensam med de andra Tellurian Trains-apparna. Filer från tidigare versioner läses som förut och sparas i den nya versionen.
+- En ritning som inte kan läsas berättar varför, i stället för att stoppa redigeraren.
+- Efter *Vänd kurvan* anpassas vyn till hela modulen igen.
+
 ## Version 0.9.0
 Utgiven 2026-11-18
 - Modulredigerare: en ny panel *Ändar*. Ge ände A eller ände B en annan ändprofil i modulens skala, så ritas modulen om med den. *Vänd* vänder en osymmetrisk ändprofils platta andra sidan ut; *Ändevändare* följer med av sig själv.

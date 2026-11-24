@@ -1,18 +1,14 @@
 @page "/catalogue/standard/new"
 @page "/catalogue/standard/{Id:guid}"
-@using Tellurian.Trains.Drawing.App.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
 @using Tellurian.Trains.Drawing.Model
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @inject CatalogueService Catalogues
 @inject NavigationManager Navigation
 
 <PageTitle>@Title</PageTitle>
 
 <h1>@Title</h1>
-@if (isBuiltIn)
-{
-    <p class="note">@T["EditBuiltInNote"]</p>
-}
 
 @if (message is not null)
 {
@@ -25,7 +21,7 @@
         <label>
             <span>@T["Field_Scale"]</span>
             <select id="scale" @bind="form.Scale">
-                @foreach (var scale in catalogue.Scales)
+                @foreach (var scale in ScaleChoices.Of(catalogue))
                 {
                     <option value="@scale.ShortName">@scale</option>
                 }
@@ -47,6 +43,7 @@
         <label><span>@T["Field_OperatorSpaceDepth"]</span><DecimalInput @bind-Value="form.OperatorSpaceDepth" InvalidText="@T["InvalidNumber"]" /></label>
         <label><span>@T["Field_DefaultCurveRadius"]</span><DecimalInput @bind-Value="form.DefaultCurveRadius" InvalidText="@T["InvalidNumber"]" /></label>
         <label><span>@T["Field_MinimumReverseCurveRadius"]</span><DecimalInput @bind-Value="form.MinimumReverseCurveRadius" InvalidText="@T["InvalidNumber"]" /></label>
+        <label><span>@T["Field_FoulingDistance"]</span><DecimalInput @bind-Value="form.FoulingDistance" InvalidText="@T["InvalidNumber"]" /></label>
         <label>
             <span>@T["Field_DefaultSingleTrackEndProfileId"]</span>
             <select @bind="form.DefaultSingleTrackEndProfileId">
@@ -93,16 +90,18 @@
 @code {
     [Parameter] public Guid? Id { get; set; }
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
+
+    /// <summary>The scale of a new standard when the catalogue has none: H0, the most common.</summary>
+    private const string DefaultScale = "H0";
     private ModuleStandard? original;
-    private bool isBuiltIn;
     private Form form = new();
     private IReadOnlyList<CatalogueProblem> problems = [];
     private string? message;
 
     private string Title => Id is null ? T["NewStandard"] : T.Format("EditEntry", original?.ShortName ?? string.Empty);
 
-    private IEnumerable<Model.EndProfiles.EndProfile> ProfilesOfStandard =>
+    private IEnumerable<EndProfile> ProfilesOfStandard =>
         catalogue is null || Id is null ? [] : catalogue.EndProfilesOf(Id.Value).OrderBy(p => p.Designation);
 
     protected override async Task OnParametersSetAsync()
@@ -118,8 +117,7 @@
                 catalogue = null;
                 return;
             }
-            isBuiltIn = Id is { } builtInId && CatalogueService.BuiltIn.FindStandard(builtInId) is not null && user.FindStandard(builtInId) is null;
-            form = original is null ? new() { Scale = catalogue.Scales.FirstOrDefault()?.ShortName ?? string.Empty } : Form.From(original);
+            form = original is null ? new() { Scale = catalogue.Scales.FirstOrDefault()?.ShortName ?? DefaultScale } : Form.From(original);
         }
         catch (StorageException ex)
         {
@@ -152,6 +150,7 @@
         public double? OperatorSpaceDepth { get; set; } = 800;
         public double? DefaultCurveRadius { get; set; }
         public double? MinimumReverseCurveRadius { get; set; }
+        public double? FoulingDistance { get; set; }
         public Guid? DefaultSingleTrackEndProfileId { get; set; }
         public Guid? DefaultDoubleTrackEndProfileId { get; set; }
         public string TrackColor { get; set; } = ModuleStandard.DefaultTrackColor;
@@ -169,18 +168,19 @@
         public static Form From(ModuleStandard s) => new()
         {
             ShortName = s.ShortName,
-            Scale = s.Scale,
-            RailSystem = s.RailSystem,
+            Scale = s.ScaleName,
+            RailSystem = s.RailSystem ?? default,
             NormalGauge = s.NormalGauge,
-            NarrowGauge = s.NarrowGauge,
+            NarrowGauge = s.Gauges?.Skip(1).FirstOrDefault()?.Width,
             RailTopHeight = s.RailTopHeight,
             MinimumClearance = s.MinimumClearance,
             OperatorSpaceDepth = s.OperatorSpaceDepth,
             DefaultCurveRadius = s.DefaultCurveRadius,
             MinimumReverseCurveRadius = s.MinimumReverseCurveRadius,
+            FoulingDistance = s.FoulingDistance,
             DefaultSingleTrackEndProfileId = s.DefaultSingleTrackEndProfileId,
             DefaultDoubleTrackEndProfileId = s.DefaultDoubleTrackEndProfileId,
-            TrackColor = s.TrackColor,
+            TrackColor = s.TrackColorOrDefault,
             TrackSystem = s.TrackSystem,
             Couplings = s.Couplings,
             Electricity = s.Electricity,
@@ -188,7 +188,7 @@
             SourceTitle = s.Source?.Title,
             SourceUrl = s.Source?.Url,
             SourceRevision = s.Source?.Revision,
-            Countries = string.Join(", ", s.Countries),
+            Countries = string.Join(", ", s.Countries ?? []),
         };
 
         /// <summary>The standard with the form's values; properties the form doesn't show are kept from <paramref name="original"/>.</summary>
@@ -198,34 +198,17 @@
             {
                 Id = original?.Id ?? Guid.NewGuid(),
                 ShortName = ShortName.Trim(),
-                Scale = Scale,
-                NormalGauge = NormalGauge ?? 0,
+                Scale = new() { ShortName = Scale },
+                Gauges = GaugesOf(original),
             };
-            return (original ?? values) with
-            {
-                ShortName = values.ShortName,
-                Scale = Scale,
-                RailSystem = RailSystem,
-                NormalGauge = values.NormalGauge,
-                NarrowGauge = NarrowGauge,
-                RailTopHeight = RailTopHeight ?? 0,
-                MinimumClearance = MinimumClearance ?? 0,
-                OperatorSpaceDepth = OperatorSpaceDepth ?? 0,
-                DefaultCurveRadius = DefaultCurveRadius,
-                MinimumReverseCurveRadius = MinimumReverseCurveRadius,
-                DefaultSingleTrackEndProfileId = DefaultSingleTrackEndProfileId,
-                DefaultDoubleTrackEndProfileId = DefaultDoubleTrackEndProfileId,
-                TrackColor = TrackColor,
-                TrackSystem = Text(TrackSystem),
-                Couplings = Text(Couplings),
-                Electricity = Text(Electricity),
-                Wheelset = Text(Wheelset),
-                Countries = [.. (Countries ?? string.Empty).Split([',', ' ', ';'], StringSplitOptions.RemoveEmptyEntries).Select(c => c.ToUpperInvariant()).Distinct()],
-                Source = Text(SourceTitle) is null && Text(SourceUrl) is null && Text(SourceRevision) is null
+            return (original ?? values).With(edited => { edited.ShortName = values.ShortName; edited.Scale = values.Scale; edited.RailSystem = RailSystem; edited.Gauges = values.Gauges; edited.RailTopHeight = RailTopHeight; edited.MinimumClearance = MinimumClearance; edited.OperatorSpaceDepth = OperatorSpaceDepth; edited.DefaultCurveRadius = DefaultCurveRadius; edited.MinimumReverseCurveRadius = MinimumReverseCurveRadius; edited.FoulingDistance = FoulingDistance is > 0 ? FoulingDistance : null; edited.DefaultSingleTrackEndProfileId = DefaultSingleTrackEndProfileId; edited.DefaultDoubleTrackEndProfileId = DefaultDoubleTrackEndProfileId; edited.TrackColor = TrackColor; edited.TrackSystem = Text(TrackSystem); edited.Couplings = Text(Couplings); edited.Electricity = Text(Electricity); edited.Wheelset = Text(Wheelset); edited.Countries = [.. (Countries ?? string.Empty).Split([',', ' ', ';'], StringSplitOptions.RemoveEmptyEntries).Select(c => c.ToUpperInvariant()).Distinct()]; edited.Source = Text(SourceTitle) is null && Text(SourceUrl) is null && Text(SourceRevision) is null
                     ? null
-                    : new DocumentReference { Title = Text(SourceTitle), Url = Text(SourceUrl), Revision = Text(SourceRevision) },
-            };
+                    : new DocumentReference { Title = Text(SourceTitle), Url = Text(SourceUrl), Revision = Text(SourceRevision) }; });
         }
+
+        /// <summary>The normal gauge, then the narrow one if given; a gauge the standard already names keeps its name and prototype.</summary>
+        private List<TrackGauge> GaugesOf(ModuleStandard? original) =>
+            [.. new[] { NormalGauge, NarrowGauge }.OfType<double>().Where(w => w > 0).Select(w => original?.GaugeOf(w) ?? new TrackGauge(w))];
 
         private static string? Text(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }

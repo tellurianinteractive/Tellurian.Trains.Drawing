@@ -1,6 +1,5 @@
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.Halls;
 
 namespace Tellurian.Trains.Drawing.Editing.Halls;
 
@@ -58,8 +57,22 @@ public static class HallHandles
     public static bool Exists(Hall hall, HallItem item) =>
         item.IsHandle ? PositionOf(hall, item) is not null : HallScene.Items(hall).Contains(item);
 
-    /// <summary>The hall with <paramref name="handle"/> dragged to <paramref name="point"/>; unchanged if that would make its item too small.</summary>
+    /// <summary>
+    /// A copy of the hall with <paramref name="handle"/> dragged to <paramref name="point"/>; the hall itself if that
+    /// would make its item too small.
+    /// </summary>
     public static Hall Drag(Hall hall, HallItem handle, Point point)
+    {
+        ArgumentNullException.ThrowIfNull(hall);
+        var dragged = hall.Copy();
+        return DragIn(dragged, handle, point) ? dragged : hall;
+    }
+
+    /// <summary>
+    /// Drags <paramref name="handle"/> to <paramref name="point"/> in <paramref name="hall"/> itself, which the caller
+    /// has copied; false, and nothing changed, if that would make its item too small.
+    /// </summary>
+    internal static bool DragIn(Hall hall, HallItem handle, Point point)
     {
         switch (handle.Kind)
         {
@@ -68,14 +81,18 @@ public static class HallHandles
                 var area = obstacle.TryGetCircle(out var center, out _)
                     ? (2 * point.DistanceTo(center) >= MinimumSize ? PathDrawing.Circle(center, 2 * point.DistanceTo(center)) : null)
                     : DragCorner(obstacle.Area, handle.Part, point);
-                return area is null ? hall : hall with { Obstacles = Replace(hall.Obstacles, handle.Index, obstacle with { Area = area }) };
+                if (area is null) return false;
+                obstacle.Area = area;
+                return true;
             case HallItemKind.NoGoZoneHandle when handle.Index < hall.NoGoZones.Count:
                 var zone = hall.NoGoZones[handle.Index];
-                return DragCorner(zone.Area, handle.Part, point) is { } zoneArea ? hall with { NoGoZones = Replace(hall.NoGoZones, handle.Index, zone with { Area = zoneArea }) } : hall;
+                if (DragCorner(zone.Area, handle.Part, point) is not { } zoneArea) return false;
+                zone.Area = zoneArea;
+                return true;
             case HallItemKind.DoorHandle when handle.Index < hall.Doors.Count:
                 return DragDoor(hall, handle, point);
             default:
-                return hall;
+                return false;
         }
     }
 
@@ -101,13 +118,15 @@ public static class HallHandles
     /// Moves an end of a door's opening along its wall, keeping the other end, or sets the depth kept free in front of
     /// it from the far edge's handle.
     /// </summary>
-    private static Hall DragDoor(Hall hall, HallItem handle, Point point)
+    private static bool DragDoor(Hall hall, HallItem handle, Point point)
     {
         var door = hall.Doors[handle.Index];
         if (handle.Part == DoorDepthHandle)
         {
             var depth = (point - door.Position.Position).Dot(door.Position.Forward);
-            return depth < MinimumSize ? hall : hall with { Doors = Replace(hall.Doors, handle.Index, door with { KeepFreeDepth = depth }) };
+            if (depth < MinimumSize) return false;
+            door.KeepFreeDepth = depth;
+            return true;
         }
         var (wall, _) = hall.WallPositionOf(door.Position.Position);
         var segment = hall.Wall(wall);
@@ -115,13 +134,12 @@ public static class HallHandles
         var kept = segment.ClosestDistance(handle.Part == 0 ? b : a);
         var dragged = segment.ClosestDistance(point);
         var width = Math.Abs(dragged - kept);
-        if (width < MinimumSize) return hall;
-        return hall with { Doors = Replace(hall.Doors, handle.Index, door with { Width = width, Position = hall.PoseOnWall(wall, (dragged + kept) / 2) }) };
+        if (width < MinimumSize) return false;
+        door.Width = width;
+        door.Position = hall.PoseOnWall(wall, (dragged + kept) / 2);
+        return true;
     }
 
     private static List<(HallItem, Point)> Corners(PathDrawing area, Func<int, HallItem> handle) =>
         [.. PathCorners.From(area).Corners.Select((corner, i) => (handle(i), corner))];
-
-    private static IReadOnlyList<T> Replace<T>(IReadOnlyList<T> items, int index, T item) =>
-        [.. items.Select((existing, i) => i == index ? item : existing)];
 }

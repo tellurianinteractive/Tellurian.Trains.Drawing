@@ -53,12 +53,26 @@ public sealed class DrawingDocumentsTests
     }
 
     [TestMethod]
+    public async Task AFileWhoseContentCantBeReadIsReportedNotOpened()
+    {
+        var file = System.Text.Json.Nodes.JsonNode.Parse(TestDrawings.Hall().Json)!;
+        file["content"]!["obstacles"] = "not a list";
+        var files = new FakeFileService { FilesToOpen = [new("odd.tdhall", file.ToJsonString())] };
+
+        var result = await Documents(files).OpenAsync();
+
+        Assert.IsEmpty(result.Drafts);
+        Assert.AreEqual("odd.tdhall", result.Problems.Single().Name);
+        Assert.IsEmpty(_workbench.Drafts);
+    }
+
+    [TestMethod]
     public async Task OpeningAFileKeepsADraftWithUnsavedChanges()
     {
         var (_, json) = TestDrawings.Hall();
         var documents = Documents(new FakeFileService { FilesToOpen = [new("club.tdhall", json)] });
         var draft = (await documents.OpenAsync()).Drafts.Single();
-        var changed = await documents.UpdateAsync(draft, DrawingFileSerializer.Serialize(TestDrawings.ReadHall(json) with { Name = "Renamed" }));
+        var changed = await documents.UpdateAsync(draft, DrawingFileSerializer.Serialize(TestDrawings.ReadHall(json).With(h => h.Name = "Renamed")));
 
         var reopened = (await documents.OpenAsync()).Drafts.Single();
 
@@ -72,7 +86,7 @@ public sealed class DrawingDocumentsTests
         var (_, json) = TestDrawings.Hall();
         var documents = Documents(new FakeFileService { FilesToOpen = [new("club.tdhall", json)] });
         var draft = (await documents.OpenAsync()).Drafts.Single();
-        var hall = TestDrawings.ReadHall(json) with { Name = "Big hall" };
+        var hall = TestDrawings.ReadHall(json).With(h => h.Name = "Big hall");
         _time.Advance(TimeSpan.FromMinutes(5));
 
         var updated = await documents.UpdateAsync(draft, DrawingFileSerializer.Serialize(hall));
@@ -80,6 +94,22 @@ public sealed class DrawingDocumentsTests
         Assert.IsTrue(updated.HasUnsavedChanges);
         Assert.AreEqual("Big hall", updated.Name);
         Assert.AreEqual(_time.GetUtcNow(), updated.Modified);
+    }
+
+    [TestMethod]
+    public async Task AVersion1FileSavedWithoutChangesIsWrittenAsVersion2()
+    {
+        var path = Path.Combine(RepositoryPaths.Root, "Tellurian.Trains.Drawing.Model.Tests", "SchemaVersion1", "fremo-h0-b96.endprofile.json");
+        var files = new FakeFileService { FilesToOpen = [new("b96.endprofile.json", File.ReadAllText(path), "p1")] };
+        var documents = Documents(files);
+        var draft = (await documents.OpenAsync()).Drafts.Single();
+
+        var saved = await documents.SaveAsync(draft.Id, saveAs: false);
+
+        var written = files.Saves.Single().Text;
+        Assert.AreEqual(DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile), DrawingFileSerializer.ReadHeader(written).SchemaVersion);
+        Assert.AreEqual(written, saved!.Json, "The draft has what the file has.");
+        Assert.AreEqual(draft.Id, DrawingFileSerializer.DeserializeEndProfile(written).Id);
     }
 
     [TestMethod]

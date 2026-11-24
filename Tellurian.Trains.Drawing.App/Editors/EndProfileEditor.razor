@@ -1,5 +1,6 @@
 @using System.Globalization
 @using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Keyboard
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Components.Views
@@ -10,7 +11,7 @@
 @using Tellurian.Trains.Drawing.Editing.Snapping
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
-@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Schedules.Model.Geometry
 @using Tellurian.Trains.Drawing.Model
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @implements IAsyncDisposable
@@ -23,10 +24,11 @@
 @* The end profile editor (Phase 5, EP-1…EP-7): end view with tools, a property panel and live derived properties. *@
 @if (_document is not null)
 {
+    <EditorKeyboard OnShortcut="OnShortcut" CanNudge="@(_activeTool == EndProfileTool.Select && !_selection.IsEmpty)" />
     <div class="editor-layout">
         <div class="editor-canvas">
-            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@T["ZoomToFit"]" Label="@_document.Current.Designation"
-                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@($"{T["ZoomToFit"]} (0)")" Label="@_document.Current.Designation"
+                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp">
                 <ChildContent>
                     <EndProfileContent Profile="Shown" TrackColor="@TrackColor" RailTopText="@T["RailTop"]" TextSize="_view.ToWorld(12)" Selected="_selection.Items"
                                        ShowPlatePoints="true" HandleSize="_view.ToWorld(8)" />
@@ -71,7 +73,7 @@
                     @foreach (var tool in Enum.GetValues<EndProfileTool>())
                     {
                         <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
+                                title="@EditorShortcuts.WithKey(T[$"EpTool_{tool}"], (int)tool + 1)" aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"EpTool_{tool}"]</button>
                     }
                 </div>
                 @if (_activeTool == EndProfileTool.UpperEdge)
@@ -186,9 +188,9 @@
                 {
                     case { Kind: EndProfileItemKind.Track } item when item.Index < _document.Current.Tracks.Count:
                         var track = _document.Current.Tracks[item.Index];
-                        <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Offset = Frame.FromDisplayX(v) }))" />
-                        <NumberField Label="@T["Gauge"]" Value="track.Gauge" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Gauge = v }))" />
-                        <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track with { Label = v }))" />
+                        <NumberField Label="@(_origin == MeasureOrigin.PlateLowerLeft ? T["OffsetFromLeft"] : T["Offset"])" Value="Frame.ToDisplayX(track.Offset)" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Offset = Frame.FromDisplayX(v); })))" />
+                        <NumberField Label="@T["Gauge"]" Value="track.Gauges.FirstOrDefault()" Unit="mm" Min="1" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Gauges = [v, .. track.Gauges.Skip(1)]; })))" />
+                        <TextField Label="@T["Label"]" Value="@track.Label" ValueChanged="v => Apply(EndProfileCommands.SetTrack(item.Index, track.With(edited => { edited.Label = v; })))" />
                         break;
                     case { Kind: EndProfileItemKind.ScrewHole } item when item.Index < _document.Current.ScrewHoles.Count:
                         var hole = _document.Current.ScrewHoles[item.Index];
@@ -204,13 +206,13 @@
                         break;
                     case null when _selection.IsEmpty:
                         var profile = _document.Current;
-                        <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p with { Designation = v })); }" />
-                        <TextField Label="@T["EndProfileShortName"]" Help="@T.Help("EndProfileShortName")" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim() }))" />
+                        <TextField Label="@T["Designation"]" Value="@profile.Designation" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.Designation = v; }))); }" />
+                        <TextField Label="@T["EndProfileShortName"]" Help="@T.Help("EndProfileShortName")" Value="@profile.ShortName" Placeholder="@profile.Designation" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.ShortName = string.IsNullOrWhiteSpace(v) ? null : v.Trim(); })))" />
                         <TextField Label="@T["Scale"]" Value="@profile.Scale" ReadOnly="true" />
                         <TextField Label="@T["Standards"]" Value="@string.Join(", ", profile.Standards.Select(s => s.Name))" ReadOnly="true" />
-                        <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { ScrewHolePattern = v }))" />
-                        <TextField Label="@T["Field_SourceTitle"]" Value="@profile.Source?.Title" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithTitle(p.Source, v) }))" />
-                        <TextField Label="@T["Field_SourceUrl"]" Value="@profile.Source?.Url" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p with { Source = WithUrl(p.Source, v) }))" />
+                        <TextField Label="@T["ScrewHolePattern"]" Value="@profile.ScrewHolePattern" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.ScrewHolePattern = v; })))" />
+                        <TextField Label="@T["Field_SourceTitle"]" Value="@profile.Source?.Title" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.Source = WithTitle(p.Source, v); })))" />
+                        <TextField Label="@T["Field_SourceUrl"]" Value="@profile.Source?.Url" ValueChanged="v => Apply(EndProfileCommands.SetProperties(p => p.With(edited => { edited.Source = WithUrl(p.Source, v); })))" />
                         <RevisionLogList Log="RevisionLog" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
                         break;
                     default:
@@ -282,10 +284,10 @@
     private Viewport _view = default!;
     private EndProfileProperties _derived = default!;
     private string? _revisionLogJson;
-    private IReadOnlyList<Model.Files.DrawingRevision> _revisionLog = [];
+    private IReadOnlyList<DrawingRevision> _revisionLog = [];
 
     /// <summary>The revision log from the draft, which saving to a file updates (EX-10); read again only when the draft changes.</summary>
-    private IReadOnlyList<Model.Files.DrawingRevision> RevisionLog
+    private IReadOnlyList<DrawingRevision> RevisionLog
     {
         get
         {
@@ -451,8 +453,8 @@
     {
         var profile = Model.Files.DrawingFileSerializer.DeserializeEndProfile(Draft.Json);
         // The stored plate is the source; its outline and ground line are generated, so they always match it.
-        if (profile.Plate is { } storedPlate) profile = profile with { Outline = storedPlate.Outline(), GroundLine = storedPlate.GroundLine() };
-        _document = new(profile);
+        if (profile.Plate is { } storedPlate) profile = profile.With(edited => { edited.Outline = storedPlate.Outline(); edited.GroundLine = storedPlate.GroundLine(); });
+        _document = new(profile, comparer: EndProfileContentComparer.Comparer);
         _view = Viewport.Fit(EndProfileSheet.Create(profile, MeasureFrame.For(profile, _origin), _detailDimensions).Bounds, 800, 400);
         _select = new(_document, _selection, _scene, _snap);
         _upperEdge = new(_document, _snap, path => EndProfileCommands.SetUpperEdge(path.Tessellate(PlateShape.ArcTolerance).Points, DefaultPlateDepth))
@@ -460,7 +462,7 @@
             AllowsClosed = false,
         };
         _screwHole = new(_document, _snap, EndProfileCommands.AddScrewHole);
-        _track = new(_document, _snap, p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauge = profile.Tracks.FirstOrDefault()?.Gauge ?? 16.5 }))
+        _track = new(_document, _snap, p => EndProfileCommands.AddTrack(p.X, new() { Offset = 0, Gauges = [profile.Tracks.FirstOrDefault()?.WidestGauge ?? 16.5] }))
         {
             Constrain = p => new(p.X, 0),
         };
@@ -521,13 +523,36 @@
 
     private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(Tolerance));
 
-    private void OnKey(KeyboardEventArgs e)
+    private async Task OnShortcut(EditorShortcut shortcut)
     {
-        var command = e.CtrlKey || e.MetaKey;
-        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
-        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
-        else if (Active.KeyDown(e.Key)) return;
-        else if (e.Key is "Delete" or "Backspace" && _activeTool == EndProfileTool.Select) DeleteSelection();
+        switch (shortcut.Action)
+        {
+            case EditorAction.Undo: Undo(); break;
+            case EditorAction.Redo: Redo(); break;
+            case EditorAction.Fit:
+                if (_canvas is not null) await _canvas.FitAsync();
+                break;
+            case EditorAction.Tool:
+                if (Enum.GetValues<EndProfileTool>() is var tools && shortcut.Tool <= tools.Length) Choose(tools[shortcut.Tool - 1]);
+                break;
+            case EditorAction.Finish:
+                Active.KeyDown(shortcut.Key);
+                break;
+            case EditorAction.Cancel:
+                // The tool's own action first, e.g. a shape being drawn; then the tool; then the selection.
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool != EndProfileTool.Select) Choose(EndProfileTool.Select);
+                else _selection.Clear();
+                break;
+            case EditorAction.Delete:
+                // While a shape is drawn, Backspace removes its last point.
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool == EndProfileTool.Select) DeleteSelection();
+                break;
+            case EditorAction.Nudge:
+                if (_activeTool == EndProfileTool.Select && !_selection.IsEmpty && _select.DragOffset is null) Apply(EndProfileCommands.Move([.. _selection.Items], shortcut.Nudge));
+                break;
+        }
     }
 
     private void Apply(IEditCommand<EndProfile> command)

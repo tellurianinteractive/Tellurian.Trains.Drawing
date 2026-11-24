@@ -50,7 +50,7 @@ public sealed class DrawingCanvasTests
     {
         using var context = Context();
         var view = View;
-        var drawing = new Geometry.BoundingBox(new(0, 0), new(20000, 12000));
+        var drawing = new Tellurian.Trains.Schedules.Model.Geometry.BoundingBox(new(0, 0), new(20000, 12000));
         var canvas = context.Render<DrawingCanvas>(p => p
             .Add(c => c.Viewport, View)
             .Add(c => c.FitArea, drawing)
@@ -79,7 +79,7 @@ public sealed class DrawingCanvasTests
         var html = await StaticRendering.RenderAsync<DrawingCanvas>(new Dictionary<string, object?>
         {
             [nameof(DrawingCanvas.Viewport)] = View,
-            [nameof(DrawingCanvas.AutoFit)] = new Geometry.BoundingBox(new(0, 0), new(1000, 1000)),
+            [nameof(DrawingCanvas.AutoFit)] = new Tellurian.Trains.Schedules.Model.Geometry.BoundingBox(new(0, 0), new(1000, 1000)),
         });
         Assert.DoesNotContain("drawing-fit", html, "It can't work without interactivity.");
     }

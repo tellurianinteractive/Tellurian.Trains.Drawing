@@ -1,40 +1,37 @@
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
+
 namespace Tellurian.Trains.Drawing.Model.Modules;
 
 /// <summary>
-/// Changes how a module is identified (MD-2): its name, FREMO number, and the first owner's FREMO prefix and full name.
-/// Blank texts are stored as empty or missing. The first owner is created when a prefix or name is given, and removed
-/// again when it is left with nothing. The result may be invalid; check it with <see cref="ModuleValidation"/>.
+/// Changes how a module is identified (MD-2): its name, number and prefix, and the names of its owners.
+/// Blank texts are stored as empty (the name) or missing. The result may be invalid; check it with <see cref="ModuleValidation"/>.
 /// </summary>
 public static class ModuleIdentification
 {
     public static Module WithName(this Module module, string? name)
     {
         ArgumentNullException.ThrowIfNull(module);
-        return module with { Name = name?.Trim() ?? string.Empty };
+        return module.With(m => m.Name = name?.Trim() ?? string.Empty);
     }
 
-    public static Module WithFremoNumber(this Module module, int? fremoNumber)
+    public static Module WithNumber(this Module module, int? number)
     {
         ArgumentNullException.ThrowIfNull(module);
-        return module with { FremoNumber = fremoNumber };
+        return module.With(m => m.Number = number);
     }
 
-    public static Module WithOwnerPrefix(this Module module, string? prefix) =>
-        module.WithFirstOwner(o => o with { Prefix = Blank(prefix) ? null : prefix!.Trim() });
-
-    public static Module WithOwnerName(this Module module, string? name) =>
-        module.WithFirstOwner(o => o with { Name = name?.Trim() ?? string.Empty });
-
-    private static Module WithFirstOwner(this Module module, Func<Owner, Owner> change)
+    public static Module WithPrefix(this Module module, string? prefix)
     {
         ArgumentNullException.ThrowIfNull(module);
-        var owner = change(module.Owners.Count > 0 ? module.Owners[0] : new Owner());
-        var others = module.Owners.Skip(1);
-        return module with { Owners = IsEmpty(owner) ? [.. others] : [owner, .. others] };
+        return module.With(m => m.Prefix = TextOrNull(prefix));
     }
 
-    private static bool IsEmpty(Owner owner) =>
-        Blank(owner.Name) && Blank(owner.Prefix) && owner.Share is null && owner.RegistryPersonId is null && owner.RegistryGroupId is null;
+    /// <summary>The names of the owners, separated by commas, as one text.</summary>
+    public static Module WithModuleOwners(this Module module, string? owners)
+    {
+        ArgumentNullException.ThrowIfNull(module);
+        return module.With(m => m.ModuleOwners = TextOrNull(owners));
+    }
 
-    private static bool Blank(string? text) => string.IsNullOrWhiteSpace(text);
+    private static string? TextOrNull(string? text) => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
 }

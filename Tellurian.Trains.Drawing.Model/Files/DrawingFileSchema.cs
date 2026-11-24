@@ -2,7 +2,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Schema;
 using System.Text.Json.Serialization.Metadata;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutSerialization;
+using SharedLayout = Tellurian.Trains.Schedules.Model.Layouts.Layout;
 
 namespace Tellurian.Trains.Drawing.Model.Files;
 
@@ -19,6 +21,8 @@ public static class DrawingFileSchema
     private const string Null = "null";
     private const string Definitions = "$defs";
     private const string ModelNamespace = "Tellurian.Trains.Drawing";
+    private const string SharedNamespace = "Tellurian.Trains.Schedules.Model";
+    private static readonly HashSet<string> SharedNamesInUse = new(StringComparer.Ordinal) { "ModuleStandard", "Scale" };
 
     /// <summary>The kinds that have a schema: all of them.</summary>
     public static IReadOnlyList<DrawingFileKind> Kinds { get; } = Enum.GetValues<DrawingFileKind>();
@@ -35,7 +39,7 @@ public static class DrawingFileSchema
         {
             DrawingFileKind.EndProfile => context.DrawingFileEndProfile,
             DrawingFileKind.Module => context.DrawingFileModuleFileContent,
-            DrawingFileKind.Catalogue => context.DrawingFileDrawingCatalogue,
+            DrawingFileKind.Catalogue => context.DrawingFileCatalogue,
             DrawingFileKind.Hall => context.DrawingFileHall,
             DrawingFileKind.HallPlan => context.DrawingFileHallPlan,
             _ => throw new NotSupportedException($"There is no schema for {kind} files."),
@@ -47,10 +51,11 @@ public static class DrawingFileSchema
             TransformSchemaNode = (exporterContext, node) => Reference(exporterContext, Transform(exporterContext, node), definitions),
         };
         var generated = typeInfo.GetJsonSchemaAsNode(exporterOptions).AsObject();
+        if (kind == DrawingFileKind.HallPlan) AddLayout(definitions, exporterOptions);
 
         var properties = generated["properties"]!.AsObject();
         properties["format"] = new JsonObject { ["const"] = DrawingFileFormat.Format };
-        properties["kind"] = new JsonObject { ["const"] = JsonNamingPolicy.CamelCase.ConvertName(kind.ToString()) };
+        properties["kind"] = new JsonObject { ["const"] = kind.ToString() };
         properties["schemaVersion"] = new JsonObject { ["const"] = DrawingFileFormat.CurrentSchemaVersion(kind) };
         properties["content"] = NonNullable(properties["content"]!);
 
@@ -58,7 +63,7 @@ public static class DrawingFileSchema
         {
             ["$schema"] = SchemaDialect,
             ["title"] = $"Tellurian Trains Drawing {kind} file",
-            ["description"] = $"A {DrawingFileFormat.Extension(kind)} file, schema version {DrawingFileFormat.CurrentSchemaVersion(kind)}. Lengths in millimetres, angles in degrees.",
+            ["description"] = $"A {DrawingFileFormat.Extension(kind)} file, schema version {DrawingFileFormat.CurrentSchemaVersion(kind)}. What is drawn in millimetres and degrees; track and platform lengths, centres and distances in metres.",
         };
         foreach (var (name, value) in generated.ToList())
         {
@@ -67,6 +72,16 @@ public static class DrawingFileSchema
         }
         schema[Definitions] = new JsonObject(definitions.Select(d => KeyValuePair.Create(d.Key, (JsonNode?)d.Value)));
         return schema;
+    }
+
+    /// <summary>
+    /// The hall plan's layout is written with the layout's own options (<c>HallPlan.Layout</c> has a converter), so its
+    /// schema comes from the layout's metadata, <c>Layout.JsonSerializerOptions</c>, with the same definitions.
+    /// </summary>
+    private static void AddLayout(IDictionary<string, JsonNode> definitions, JsonSchemaExporterOptions exporterOptions)
+    {
+        var layout = SharedLayout.JsonSerializerOptions.GetTypeInfo(typeof(SharedLayout)).GetJsonSchemaAsNode(exporterOptions);
+        definitions[nameof(HallPlan)]["properties"]!["layout"] = NonNullable(layout);
     }
 
     private static JsonNode Transform(JsonSchemaExporterContext context, JsonNode schema)
@@ -80,17 +95,21 @@ public static class DrawingFileSchema
 
     /// <summary>
     /// Moves the schema of a named model type to <c>$defs</c> and refers to it, so that shared types
-    /// are described once. The envelope and derived types of polymorphic hierarchies stay inline.
+    /// are described once. The envelope and derived types of polymorphic hierarchies stay inline. The types of the
+    /// shared layout model are moved too, since they occur in several places (a track on the module and on each kind of
+    /// location); those whose names Module Draw also uses are prefixed <c>Shared</c>.
     /// </summary>
     private static JsonNode Reference(JsonSchemaExporterContext context, JsonNode schema, IDictionary<string, JsonNode> definitions)
     {
         var type = context.TypeInfo.Type;
-        var isModelType = type.Namespace?.StartsWith(ModelNamespace, StringComparison.Ordinal) == true && !type.IsGenericType && !type.IsEnum;
+        var isShared = type.Namespace?.StartsWith(SharedNamespace, StringComparison.Ordinal) == true;
+        var isModelType = (isShared || type.Namespace?.StartsWith(ModelNamespace, StringComparison.Ordinal) == true) && !type.IsGenericType && !type.IsEnum;
         if (!isModelType || context.BaseTypeInfo is not null || schema is not JsonObject body) return schema;
 
+        var name = isShared && SharedNamesInUse.Contains(type.Name) ? $"Shared{type.Name}" : type.Name;
         var isNullable = IsNullable(body);
-        definitions.TryAdd(type.Name, NonNullable(body));
-        var reference = new JsonObject { ["$ref"] = $"#/{Definitions}/{type.Name}" };
+        definitions.TryAdd(name, NonNullable(body));
+        var reference = new JsonObject { ["$ref"] = $"#/{Definitions}/{name}" };
         return isNullable ? new JsonObject { ["anyOf"] = new JsonArray(reference, new JsonObject { ["type"] = Null }) } : reference;
     }
 

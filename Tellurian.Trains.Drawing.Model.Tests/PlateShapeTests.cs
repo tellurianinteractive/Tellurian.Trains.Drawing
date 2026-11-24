@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -35,7 +35,7 @@ public sealed class PlateShapeTests
     public void ShapeIsReadBackFromItsOutline()
     {
         var shape = new PlateShape(Ballast, -104);
-        var profile = TestProfiles.FremoSingle() with { Outline = shape.Outline() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Outline = shape.Outline(); });
         var read = PlateShape.From(profile)!;
         Assert.AreEqual(-104, read.Bottom, Precision);
         CollectionAssert.AreEqual(Ballast, read.UpperEdge.ToArray());
@@ -45,7 +45,7 @@ public sealed class PlateShapeTests
     public void ClockwiseOutlineIsReadToo()
     {
         var clockwise = PathDrawing.Polyline([new(-250, -104), new(-250, -4), new(0, 0), new(250, -4), new(250, -104)], isClosed: true);
-        var read = PlateShape.From(TestProfiles.FremoSingle() with { Outline = clockwise })!;
+        var read = PlateShape.From(TestProfiles.FremoSingle().With(edited => { edited.Outline = clockwise; }))!;
         CollectionAssert.AreEqual(new Point[] { new(-250, -4), new(0, 0), new(250, -4) }, read.UpperEdge.ToArray());
     }
 
@@ -60,7 +60,7 @@ public sealed class PlateShapeTests
     [TestMethod]
     public void BuiltInOutlineKeepsItsSize()
     {
-        var b96 = BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
+        var b96 = SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
         var read = PlateShape.From(b96);
         Assert.IsNotNull(read);
         Assert.AreEqual(b96.Outline!.ToPath().Bounds.Width, read.Width, Precision);

@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -52,25 +52,10 @@ internal static class TestProfiles
     /// Like <see cref="FremoSingle"/>, but with an embankment on the left: the ground line is 30 mm
     /// higher on the left half than on the right. Asymmetric in the ground line only.
     /// </summary>
-    public static EndProfile Asymmetric() => FremoSingle() with
-    {
-        Id = Guid.NewGuid(),
-        Designation = "TEST-ASYM",
-        GroundLine = PathDrawing.Polyline([new(-250, -10), new(-60, -10), new(-30, -40), new(250, -40)]),
-    };
+    public static EndProfile Asymmetric() => FremoSingle().With(edited => { edited.Id = Guid.NewGuid(); edited.Designation = "TEST-ASYM"; edited.GroundLine = PathDrawing.Polyline([new(-250, -10), new(-60, -10), new(-30, -40), new(250, -40)]); });
 
     /// <summary>Single track with a single screw hole to the right: asymmetric in the screw holes.</summary>
-    public static EndProfile AsymmetricHoles() => FremoSingle() with
-    {
-        Id = Guid.NewGuid(),
-        Designation = "TEST-ASYM-HOLES",
-        ScrewHoles = [new Circle(new Point(150, -70), 8)],
-    };
+    public static EndProfile AsymmetricHoles() => FremoSingle().With(edited => { edited.Id = Guid.NewGuid(); edited.Designation = "TEST-ASYM-HOLES"; edited.ScrewHoles = [new Circle(new Point(150, -70), 8)]; });
 
-    public static EndProfile WithoutScrewHoles(string? pattern) => FremoSingle() with
-    {
-        Id = Guid.NewGuid(),
-        ScrewHoles = [],
-        ScrewHolePattern = pattern,
-    };
+    public static EndProfile WithoutScrewHoles(string? pattern) => FremoSingle().With(edited => { edited.Id = Guid.NewGuid(); edited.ScrewHoles = []; edited.ScrewHolePattern = pattern; });
 }

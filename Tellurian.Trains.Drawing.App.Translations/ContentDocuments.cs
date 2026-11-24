@@ -25,7 +25,7 @@ public sealed class ContentDocuments([FromKeyedServices(ContentDocuments.Markdow
     public static readonly IReadOnlyList<string> KeepDataBrowsers = ["Chrome", "Edge", "Firefox", "Safari", "Other"];
 
     /// <summary>The pages and panes that have help (<see cref="Help"/>).</summary>
-    public static readonly IReadOnlyList<string> HelpTopics = ["Start", "Archive", "EndProfileEditor", "EndProfileOutline", "EndProfileProperties", "EndProfileDerived", "ModuleEditor", "ModuleEnds", "ModuleSections", "ModuleProperties", "HallEditor", "HallWalls", "HallProperties", "HallDerived", "Catalogue", "Settings"];
+    public static readonly IReadOnlyList<string> HelpTopics = ["Start", "Archive", "EndProfileEditor", "EndProfileOutline", "EndProfileProperties", "EndProfileDerived", "ModuleEditor", "ModuleEnds", "ModuleSections", "ModuleTracks", "ModuleLocation", "ModuleProperties", "HallEditor", "HallWalls", "HallProperties", "HallDerived", "Catalogue", "Settings"];
 
     /// <summary>The help about a page or pane, e.g. <c>HelpHallEditor</c>.</summary>
     public static string Help(string topic) => $"Help{topic}";

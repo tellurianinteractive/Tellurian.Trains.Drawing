@@ -1,9 +1,10 @@
+@using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying
 @using System.Globalization
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Model.Modules
 @inject DrawingDocuments Documents
 
-@* The properties of a module drawing (MD-2): how it is identified, the FREMO way or by a name. On its own, each change
+@* The properties of a module drawing (MD-2): how it is identified, by prefix and number or by a name, and its owners. On its own, each change
    is stored in the draft at once (autosave); in the module editor, which passes Content, each change goes to the editor
    as ModuleChanged, so it can be undone. Problems are shown but don't stop the change, so the fields can be filled in
    any order. *@
@@ -13,10 +14,11 @@
     <section class="pane module-properties" aria-label="@T["Properties"]">
         <h2>@T["Properties"] <HelpButton For="ModuleProperties" Title="@T["Properties"]" AlignEnd="true" /></h2>
         <div class="property-grid">
-            <TextField Label="@T["OwnerPrefix"]" Value="@module.Owners.FirstOrDefault()?.Prefix" ValueChanged="v => ApplyAsync(module.WithOwnerPrefix(v))" />
-            <TextField Label="@T["FremoNumber"]" Value="@module.FremoNumber?.ToString(CultureInfo.CurrentCulture)" ValueChanged="SetFremoNumberAsync" />
+            <TextField Label="@T["ModulePrefix"]" Value="@module.Prefix" ValueChanged="v => ApplyAsync(module.WithPrefix(v))" />
+            <TextField Label="@T["ModuleNumber"]" Value="@module.Number?.ToString(CultureInfo.CurrentCulture)" ValueChanged="SetNumberAsync" />
             <TextField Label="@T["Name"]" Value="@module.Name" ValueChanged="v => ApplyAsync(module.WithName(v))" />
-            <TextField Label="@T["OwnerName"]" Value="@module.Owners.FirstOrDefault()?.Name" ValueChanged="v => ApplyAsync(module.WithOwnerName(v))" />
+            <TextField Label="@T["ModuleOwners"]" Help="@T["ModuleOwnersHelp"]" Value="@module.ModuleOwners" ValueChanged="v => ApplyAsync(module.WithModuleOwners(v))" />
+            <TextField Label="@T["PackageLabel"]" Help="@T["PackageLabelHelp"]" Value="@module.PackageLabel" ValueChanged="v => ApplyAsync(module.With(c => c.PackageLabel = string.IsNullOrWhiteSpace(v) ? null : v.Trim()))" />
         </div>
         @{ var problems = Problems(module).ToList(); }
         @if (problems.Count > 0)
@@ -40,7 +42,7 @@
 @code {
     private ModuleFileContent? _content;
     private string? _shownJson;
-    private bool _fremoNumberInvalid;
+    private bool _numberInvalid;
     private string? _message;
 
     [Parameter, EditorRequired] public Draft Draft { get; set; } = default!;
@@ -73,27 +75,27 @@
 
     private IEnumerable<string> Problems(Module module)
     {
-        if (_fremoNumberInvalid) yield return T["ModuleProblem_FremoNumberOutOfRange"];
-        foreach (var problem in ModuleValidation.Validate(module).Where(p => !(_fremoNumberInvalid && p.Code == ModuleProblemCode.FremoNumberOutOfRange)))
+        if (_numberInvalid) yield return T["ModuleProblem_FremoNumberOutOfRange"];
+        foreach (var problem in ModuleValidation.Validate(module).Where(p => !(_numberInvalid && p.Code == ModuleProblemCode.FremoNumberOutOfRange)))
             yield return T[$"ModuleProblem_{problem.Code}"];
     }
 
-    private async Task SetFremoNumberAsync(string? text)
+    private async Task SetNumberAsync(string? text)
     {
         if (_content is null) return;
         if (text is null)
         {
-            _fremoNumberInvalid = false;
-            await ApplyAsync(_content.Module.WithFremoNumber(null));
+            _numberInvalid = false;
+            await ApplyAsync(_content.Module.WithNumber(null));
         }
         else if (int.TryParse(text, NumberStyles.Integer, CultureInfo.CurrentCulture, out var number))
         {
-            _fremoNumberInvalid = false;
-            await ApplyAsync(_content.Module.WithFremoNumber(number));
+            _numberInvalid = false;
+            await ApplyAsync(_content.Module.WithNumber(number));
         }
         else
         {
-            _fremoNumberInvalid = true;
+            _numberInvalid = true;
         }
     }
 

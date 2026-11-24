@@ -1,5 +1,17 @@
 # Udgivelsesnoter
 
+## Version 0.10.0
+Udgivet 2026-11-24
+- Appen har ikke længere sit eget katalog: kataloget er dit. Importér en katalogfil (.catalogue.json) på siden *Katalog*, fx fra din klub; den har sine skalaer, standarder, tilføjelser og kompatibilitetsundtagelser med sammen med de endeprofiler, du vælger. Alle poster kan ændres og slettes.
+- Endeprofiler i et modul, som dit katalog mangler, vises i panelet *Arkiv*, hvor du kan gemme dem i kataloget.
+- Moduleditor, panelet *Sektioner*: *Antal sektioner* deler modulet i sektioner, der er lige lange langs sporet, i en kurve også med samme vinkel. *Gør lige lange* udligner de sektioner, modulet har. En samling i en kurve kan også placeres med sin *Vinkel fra kurvens start*.
+- Kun et driftssted har spor i panelet *Spor*; et strækningsmodul får ingen, medmindre du tilføjer dem. Hvert spors betegnelse skrives i tegningen.
+- Under en titel med præfiks, som allerede siger, hvem der ejer modulet, udelades ejernes navne.
+- Tastaturgenveje virker overalt på siden i alle editorer, undtagen mens du skriver i et felt: 1–9 vælger et værktøj, 0 tilpasser tegningen til visningen, Ctrl+Z og Ctrl+Y fortryder og gentager, Delete sletter, piletasterne flytter markeringen 1 mm (10 mm med Shift), og Escape afbryder. Hjælpen til hver editor viser dem.
+- En ny version af filformatet, fælles med de andre Tellurian Trains-apps. Filer fra tidligere versioner læses som før og gemmes i den nye version.
+- En tegning, der ikke kan læses, fortæller hvorfor i stedet for at stoppe editoren.
+- Efter *Vend kurven* tilpasses visningen igen til hele modulet.
+
 ## Version 0.9.0
 Udgivet 2026-11-18
 - Moduleditor: et nyt panel *Ender*. Giv ende A eller ende B en anden endeprofil i modulets skala, så tegnes modulet igen med den. *Vend* vender en asymmetrisk endeprofils plade med den anden side udad; *Endevender* følger med af sig selv.

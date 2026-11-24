@@ -1,0 +1,74 @@
+@using Tellurian.Trains.Drawing.Editing.Input
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* The keyboard shortcuts of an editor (EditorShortcuts), listened for on the whole page once it is interactive, so they
+   work wherever the focus is except in a field. Renders nothing; a page without JS simply has no shortcuts. *@
+
+@code {
+    private IJSObjectReference? _module;
+    private IJSObjectReference? _instance;
+    private DotNetObjectReference<EditorKeyboard>? _self;
+    private bool _sentCanNudge;
+
+    /// <summary>Called with each shortcut pressed.</summary>
+    [Parameter] public EventCallback<EditorShortcut> OnShortcut { get; set; }
+
+    /// <summary>
+    /// Whether the arrow keys move a selection. Only then are they taken from the browser, which otherwise scrolls the
+    /// page with them.
+    /// </summary>
+    [Parameter] public bool CanNudge { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_instance is null || CanNudge == _sentCanNudge) return;
+        _sentCanNudge = CanNudge;
+        try
+        {
+            await _instance.InvokeVoidAsync("setNudge", CanNudge);
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException)
+        {
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Tellurian.Trains.Drawing.Components/Keyboard/EditorKeyboard.razor.js");
+            if (_module is null) return;
+            _self = DotNetObjectReference.Create(this);
+            _sentCanNudge = CanNudge;
+            _instance = await _module.InvokeAsync<IJSObjectReference>("attach", _self, CanNudge);
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or InvalidOperationException)
+        {
+            // No JS (prerendering, tests without a JS runtime): no shortcuts.
+        }
+    }
+
+    /// <summary>A key the script has taken as a shortcut; also the way to press one in a test.</summary>
+    [JSInvokable]
+    public Task KeyDown(string key, bool ctrl, bool shift, bool alt, bool meta) =>
+        EditorShortcuts.Map(new(key, ctrl, shift, alt, meta)) is { } shortcut ? OnShortcut.InvokeAsync(shortcut) : Task.CompletedTask;
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_instance is not null)
+            {
+                await _instance.InvokeVoidAsync("detach");
+                await _instance.DisposeAsync();
+            }
+            if (_module is not null) await _module.DisposeAsync();
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException)
+        {
+        }
+        _self?.Dispose();
+    }
+}

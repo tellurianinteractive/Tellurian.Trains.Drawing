@@ -60,7 +60,7 @@ There are no roles in the app (spec §4). The actors below are only typical situ
 2. They enter the module properties: name, standard, owners and so on.
 3. They place the exits and choose their end profiles. The end plates appear.
 4. The sides, through tracks and operator space are generated. The user draws by hand only where needed: a custom side, station track work, an operator space or a public side.
-5. If needed, they add variants.
+5. A module that can be set up in several ways, e.g. a station with or without a middle section, is drawn as several modules, each with its own file.
 6. The user **saves the module file**. Drafts are autosaved in IndexedDB.
 
 ### UC-4 Auto-draw a module from parameters
@@ -94,9 +94,9 @@ The Module Registry runs the same auto-draw on its server, without this app (MD-
 1. The planner creates a hall plan for the hall, with the accepted standards.
 2. They create a **line**: a sequence of modules joined end to end.
 3. They add modules to the line from the collection, at the end or at any position.
-4. The app computes the line: each module is joined to the previous one, at its *entry exit*, and the line continues from its *exit exit*. **The hall plan is redrawn immediately.**
+4. The app computes the line: each module's left exit is joined to the previous module, and the line continues from its right exit. **The hall plan is redrawn immediately.**
 5. The planner **moves modules up or down** in the line, or drags them in the list. The plan is redrawn after every change.
-6. If a module is turned the wrong way, for example a curve that bends the wrong way, the planner **flips** it: its other end now connects to the previous module. The plan is redrawn.
+6. If a module is turned the wrong way, for example a curve that bends the wrong way, the planner **flips** it: it is turned 180°, so its right exit now connects to the previous module. The plan is redrawn.
 7. The planner **positions the layout in the hall** by its **anchor module**. The anchor is one module for the whole layout, including its branches. By default it's the first module added, but any module can be chosen, e.g. a station that must stand in a particular place. When the anchor is moved or rotated, **the whole layout follows**; every other module just extends the layout from the anchor.
 8. The planner sets the **anchor dimensions**: a reference point on the anchor module, and its distances to two walls or obstacles (e.g. a pillar), plus the angle to a wall. They can type the distances to place the anchor exactly. These dimensions tell the people setting up where to put the first module (HP-21).
 9. A hall plan can have more than one layout, e.g. separate layouts in the same hall, each with its own anchor.
@@ -104,7 +104,7 @@ The Module Registry runs the same auto-draw on its server, without this app (MD-
 
 ### UC-9 Branch at a junction module
 Branches are a normal part of most layouts.
-1. A line contains a junction module with three or more exits. For that module the planner chooses which exit is the entry and which continues the line.
+1. A line contains a junction module with three or more exits. For that module the planner chooses which exit the line continues from.
 2. Each remaining free exit is shown as a **branch point**. With one click the planner **starts a branch line** there. The branch is anchored at that exit, so it moves with the junction module.
 3. The planner builds the branch like any line (UC-8): adding, moving up or down, and flipping modules. Branches can have branches of their own.
 4. The ordered list shows the layout as a **tree**: each branch is nested under the junction module where it starts, and can be collapsed.

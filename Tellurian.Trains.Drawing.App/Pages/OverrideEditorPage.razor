@@ -1,6 +1,6 @@
 @page "/catalogue/override"
-@using Tellurian.Trains.Drawing.App.Catalogue
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @inject CatalogueService Catalogues
 @inject NavigationManager Navigation
@@ -59,7 +59,7 @@
     [SupplyParameterFromQuery] public Guid? First { get; set; }
     [SupplyParameterFromQuery] public Guid? Second { get; set; }
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
     private EndProfileCompatibilityOverride? original;
     private Guid firstId;
     private Guid secondId;

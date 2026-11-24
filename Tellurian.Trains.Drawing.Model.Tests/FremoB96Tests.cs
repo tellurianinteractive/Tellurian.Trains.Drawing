@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -14,8 +14,8 @@ public sealed class FremoB96Tests
     private const double HighTrack = 195;
     private const double LowTrack = 104;
 
-    private static EndProfile High => BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
-    private static EndProfile Low => BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!;
+    private static EndProfile High => SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
+    private static EndProfile Low => SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!;
 
     /// <summary>A point given as on the drawing, in end profile coordinates.</summary>
     private static Point Drawing(double x, double y, double track = HighTrack) => new(x - CentreX, y - track);
@@ -25,7 +25,7 @@ public sealed class FremoB96Tests
     {
         var track = High.Tracks.Single();
         Assert.AreEqual(0, track.Offset, Precision);
-        Assert.AreEqual(16.5, track.Gauge, Precision);
+        Assert.AreEqual(16.5, track.Gauges.Single(), Precision);
     }
 
     [TestMethod]

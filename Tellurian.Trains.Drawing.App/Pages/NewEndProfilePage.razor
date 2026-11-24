@@ -1,6 +1,6 @@
 @page "/new/endprofile"
-@using Tellurian.Trains.Drawing.App.Catalogue
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Drawing.App.Catalogues
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @inject CatalogueService Catalogues
 @inject DrawingDocuments Documents
@@ -71,7 +71,7 @@
     private const double FallbackBottom = 200;
     private const double FallbackCentreDistancePerGauge = 2.75;
 
-    private DrawingCatalogue? catalogue;
+    private Catalogue? catalogue;
     private readonly Form form = new();
     private IReadOnlyList<string> errors = [];
     private string? message;
@@ -85,7 +85,7 @@
         {
             catalogue = await Catalogues.GetForChoicesAsync();
             var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
-            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id).Any()) ?? standards.FirstOrDefault();
+            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id ?? Guid.Empty).Any()) ?? standards.FirstOrDefault();
             if (standard is not null) UseStandard(standard);
         }
         catch (StorageException ex)
@@ -102,7 +102,7 @@
     /// <summary>Takes the defaults from the standard and its default end profiles.</summary>
     private void UseStandard(ModuleStandard standard)
     {
-        form.StandardId = standard.Id;
+        form.StandardId = standard.Id ?? Guid.Empty;
         form.Gauge = standard.NormalGauge;
         var single = Find(standard.DefaultSingleTrackEndProfileId) ?? ProfilesOfStandard.FirstOrDefault(p => p.Tracks.Count == 1);
         var bounds = single?.Outline?.ToPath().Bounds;
@@ -114,7 +114,7 @@
         var doubleTrack = Find(standard.DefaultDoubleTrackEndProfileId);
         form.CentreDistance = doubleTrack is not null && EndProfileAnalysis.Analyze(doubleTrack).TrackCentreDistances is [var cc, ..]
             ? Math.Round(cc, 1)
-            : Math.Round(standard.NormalGauge * FallbackCentreDistancePerGauge, 1);
+            : Math.Round((standard.NormalGauge ?? 0) * FallbackCentreDistancePerGauge, 1);
         form.ScrewHolesFrom = single?.HasScrewHoles == true ? single.Id : null;
     }
 
@@ -122,7 +122,7 @@
     /// Where the plate's top edge is at the centre line: the highest point where the outline crosses X = 0. The
     /// bounding box would include embankments beside the track, which don't belong in a rectangular template.
     /// </summary>
-    private static double? TopAtCentre(Model.PathDrawing outline)
+    private static double? TopAtCentre(PathDrawing outline)
     {
         double? top = null;
         foreach (var (a, b) in outline.Tessellate().Edges())
@@ -147,14 +147,14 @@
         var profile = EndProfileTemplate.Create(new()
         {
             Designation = form.Designation.Trim(),
-            Scale = standard.Scale,
-            Standards = [new(standard.Id, standard.ShortName)],
+            Scale = standard.ScaleName,
+            Standards = [new(standard.Id ?? Guid.Empty, standard.ShortName)],
             PlateWidth = form.PlateWidth!.Value,
             PlateTop = -form.TopBelowRailTop!.Value,
             PlateBottom = -form.BottomBelowRailTop!.Value,
             TrackOffsets = EndProfileTemplate.CentredOffsets(form.TrackCount ?? 0, form.CentreDistance ?? 0),
             Gauge = form.Gauge!.Value,
-            RailSystem = standard.RailSystem,
+            RailSystem = standard.RailSystem ?? default,
             ScrewHoles = holesFrom?.ScrewHoles.Select(h => h.Center).ToList() ?? [],
             ScrewHoleDiameter = holesFrom?.ScrewHoles.FirstOrDefault()?.Diameter ?? 8,
             ScrewHolePattern = holesFrom?.ScrewHolePattern,

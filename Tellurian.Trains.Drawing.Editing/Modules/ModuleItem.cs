@@ -11,7 +11,7 @@ public enum ModuleItemKind
 }
 
 /// <summary>
-/// An item of the module editor: a section joint by its index in the edited variant, or one of its points. Indexes
+/// An item of the module editor: a section joint by its index in the edited drawing, or one of its points. Indexes
 /// refer to the current document; a selection is cleared when items are added or removed.
 /// </summary>
 public readonly record struct ModuleItem(ModuleItemKind Kind, int Joint, int Point = 0)

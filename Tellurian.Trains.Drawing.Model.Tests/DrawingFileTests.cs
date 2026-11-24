@@ -2,11 +2,10 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Modules;
-using Module = Tellurian.Trains.Drawing.Model.Modules.Module;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
@@ -17,18 +16,30 @@ public sealed class DrawingFileTests
 
     private static JsonObject Envelope(string json) => JsonNode.Parse(json)!.AsObject();
 
+    [TestMethod]
+    public void ProblemOfTellsWhyAFileCantBeReadAndIsNullWhenItCan()
+    {
+        var json = DrawingFileSerializer.Serialize(ModuleFile(TestModules.WithEverything()));
+        Assert.IsNull(DrawingFileSerializer.ProblemOf(json));
+
+        var file = Envelope(json);
+        file["content"]!["module"]!["drawing"]!["exits"] = "W, E";
+        Assert.IsNotNull(DrawingFileSerializer.ProblemOf(file.ToJsonString()));
+        Assert.IsNotNull(DrawingFileSerializer.ProblemOf("{ nope"));
+    }
+
+    [TestMethod]
+    public void AtCurrentVersionLeavesACurrentFileAsItIs()
+    {
+        var json = DrawingFileSerializer.Serialize(ModuleFile(TestModules.WithEverything()));
+        Assert.AreSame(json, DrawingFileSerializer.AtCurrentVersion(json));
+    }
+
     // Exit criterion of Phase 2: saved to a file and loaded back identically.
     [TestMethod]
     public void EndProfileRoundTripsIdentically()
     {
-        var profile = TestProfiles.Asymmetric() with
-        {
-            Standards = [new(TestCatalogue.FremoId, "FREMO/H0-RE")],
-            Dowels = [new(new(-200, -90), 10)],
-            Source = new() { Title = "FREMO H0-RE", Url = "https://example.org/b96.pdf", Revision = "2009" },
-            RegistryId = 12,
-            Revision = 3,
-        };
+        var profile = TestProfiles.Asymmetric().With(edited => { edited.Standards = [new(TestCatalogue.FremoId, "FREMO/H0-RE")]; edited.Dowels = [new(new(-200, -90), 10)]; edited.Source = new() { Title = "FREMO H0-RE", Url = "https://example.org/b96.pdf", Revision = "2009" }; edited.ExternalReferences = TestReferences.Registry("""{ "endProfileId": 12 }"""); edited.Revision = 3; });
         var json = DrawingFileSerializer.Serialize(profile);
         var read = DrawingFileSerializer.DeserializeEndProfile(json);
         Assert.AreEqual(json, DrawingFileSerializer.Serialize(read));
@@ -60,10 +71,10 @@ public sealed class DrawingFileTests
     {
         var module = TestModules.Curve();
         var read = DrawingFileSerializer.DeserializeModule(DrawingFileSerializer.Serialize(ModuleFile(module)));
-        var exits = module.DefaultVariant.Exits.Zip(read.Module.DefaultVariant.Exits);
+        var exits = module.Drawing.Exits.Zip(read.Module.Drawing.Exits);
         Assert.IsTrue(exits.All(e => e.First.Pose.IsCloseTo(e.Second.Pose, Tolerance.Length, Tolerance.Angle)));
-        var outline = ModuleGeometry.Outline(read.Module.DefaultVariant, read.FindEndProfile)!;
-        Assert.AreEqual(ModuleGeometry.Outline(module.DefaultVariant, TestCatalogue.Lookup)!.Length, outline.Length, Precision);
+        var outline = ModuleGeometry.Outline(read.Module.Drawing, read.FindEndProfile)!;
+        Assert.AreEqual(ModuleGeometry.Outline(module.Drawing, TestCatalogue.Lookup)!.Length, outline.Length, Precision);
     }
 
     [TestMethod]
@@ -72,8 +83,8 @@ public sealed class DrawingFileTests
         var module = TestModules.WithEverything();
         var read = DrawingFileSerializer.DeserializeModule(DrawingFileSerializer.Serialize(ModuleFile(module)));
         CollectionAssert.AreEqual(
-            module.DefaultVariant.Tracks.Select(t => t.GetType()).ToArray(),
-            read.Module.DefaultVariant.Tracks.Select(t => t.GetType()).ToArray());
+            module.Drawing.TrackElements.Select(t => t.GetType()).ToArray(),
+            read.Module.Drawing.TrackElements.Select(t => t.GetType()).ToArray());
     }
 
     [TestMethod]
@@ -96,14 +107,12 @@ public sealed class DrawingFileTests
     }
 
     [TestMethod]
-    public void ModuleFileIncludesDerivedMeasuresPerVariant()
+    public void ModuleFileIncludesDerivedMeasures()
     {
-        var module = TestModules.WithEverything();
-        var content = ModuleFile(module);
-        CollectionAssert.AreEqual(module.Variants.Select(v => v.Id).ToArray(), content.Measures.Select(m => m.VariantId).ToArray());
-        Assert.AreEqual(1200, content.Measures[0].Measures.Length!.Value, Precision);
+        var content = ModuleFile(TestModules.WithEverything());
+        Assert.AreEqual(1200, content.Measures!.Length!.Value, Precision);
         var json = Envelope(DrawingFileSerializer.Serialize(content));
-        Assert.AreEqual(500, (double)json["content"]!["measures"]![0]!["measures"]!["width"]!, Precision);
+        Assert.AreEqual(500, (double)json["content"]!["measures"]!["width"]!, Precision);
     }
 
     [TestMethod]
@@ -116,8 +125,8 @@ public sealed class DrawingFileTests
         var json = Envelope(DrawingFileSerializer.Serialize(ModuleFile(TestModules.Straight()), "1.2.3"));
         CollectionAssert.AreEqual(new[] { "format", "kind", "schemaVersion", "appVersion", "content" }, json.Select(p => p.Key).ToArray());
         Assert.AreEqual(DrawingFileFormat.Format, (string?)json["format"]);
-        Assert.AreEqual("module", (string?)json["kind"]);
-        Assert.AreEqual(1, (int)json["schemaVersion"]!);
+        Assert.AreEqual("Module", (string?)json["kind"]);
+        Assert.AreEqual(2, (int)json["schemaVersion"]!);
         Assert.AreEqual("1.2.3", (string?)json["appVersion"]);
     }
 
@@ -125,39 +134,48 @@ public sealed class DrawingFileTests
     public void AppVersionDefaultsToTheLibraryVersion()
     {
         var json = Envelope(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle()));
-        Assert.AreEqual(DrawingFileFormat.LibraryVersion, (string?)json["appVersion"]);
-        Assert.DoesNotContain("+", DrawingFileFormat.LibraryVersion);
+        Assert.AreEqual(ModuleDrawVersion.Current, (string?)json["appVersion"]);
+        Assert.DoesNotContain("+", ModuleDrawVersion.Current);
     }
 
     [TestMethod]
     public void ComputedPropertiesAreNotWritten()
     {
         var json = DrawingFileSerializer.Serialize(ModuleFile(TestModules.WithEverything()));
-        foreach (var name in new[] { "\"defaultVariant\"", "\"hasScrewHoles\"", "\"slipRadius\"", "\"asVector\"", "\"isRamp\"" })
+        foreach (var name in new[] { "\"hasScrewHoles\"", "\"slipRadius\"", "\"asVector\"", "\"isRamp\"" })
             Assert.DoesNotContain(name, json);
-        Assert.DoesNotContain("\"kind\": \"passThrough\"", json);
+        Assert.DoesNotContain("\"kind\": \"PassThrough\"", json);
+        foreach (var name in new[] { "\"title\"", "\"fremoDesignation\"", "\"designation\": \"AOw", "\"displayName\"" })
+            Assert.DoesNotContain(name, json, "What a module is called is worked out, not written.");
+        Assert.IsFalse(JsonNode.Parse(json)!["content"]!["module"]!.AsObject().ContainsKey("scale"), "The scale is that of the standard.");
     }
 
     [TestMethod]
     public void PosesAndAnglesAreFlat()
     {
         var json = Envelope(DrawingFileSerializer.Serialize(ModuleFile(TestModules.Straight())));
-        var pose = json["content"]!["module"]!["variants"]![0]!["exits"]![1]!["pose"]!.AsObject();
+        var pose = json["content"]!["module"]!["drawing"]!["exits"]![1]!["pose"]!.AsObject();
         CollectionAssert.AreEqual(new[] { "x", "y", "heading" }, pose.Select(p => p.Key).ToArray());
         Assert.AreEqual(1200, (double)pose["x"]!, Precision);
     }
 
     [TestMethod]
-    public void EveryEnumInTheFilesIsWrittenInCamelCase()
+    public void EveryEnumInTheFilesIsWrittenAsInTheCodeAndReadInAnyCase()
     {
-        var enums = typeof(DrawingFileSerializer).Assembly.GetTypes().Where(t => t.IsEnum && t.GetCustomAttribute<FlagsAttribute>() is null);
+        var enums = new[] { typeof(DrawingFileSerializer).Assembly, typeof(ModuleDrawing).Assembly }.SelectMany(a => a.GetTypes()).Where(t => t.IsEnum && t.GetCustomAttribute<FlagsAttribute>() is null);
         var checkedCount = 0;
         foreach (var type in enums)
         {
-            var typeInfo = DrawingJsonContext.Default.GetTypeInfo(type);
+            var typeInfo = Files.DrawingJsonContext.Default.GetTypeInfo(type);
             if (typeInfo is null) continue;
-            var json = JsonSerializer.Serialize(Enum.GetValues(type).GetValue(0), typeInfo);
-            Assert.IsTrue(char.IsLower(json[1]), $"{type.Name} is written as {json}; add a {nameof(CamelCaseEnumConverter<>)} for it to {nameof(DrawingJsonContext)}.");
+            foreach (var value in Enum.GetValues(type))
+            {
+                var name = value.ToString()!;
+                Assert.AreEqual($"\"{name}\"", JsonSerializer.Serialize(value, typeInfo), type.Name);
+                // Version 1 files, and version 2 files of development builds, have the values in camelCase.
+                foreach (var earlier in new[] { JsonNamingPolicy.CamelCase.ConvertName(name), name.ToLowerInvariant(), name.ToUpperInvariant() })
+                    Assert.AreEqual(value, JsonSerializer.Deserialize($"\"{earlier}\"", typeInfo), $"{type.Name} {earlier}");
+            }
             checkedCount++;
         }
         Assert.IsGreaterThanOrEqualTo(10, checkedCount);
@@ -167,7 +185,7 @@ public sealed class DrawingFileTests
     public void HeaderTellsTheKind()
     {
         var header = DrawingFileSerializer.ReadHeader(DrawingFileSerializer.Serialize(TestCatalogue.Instance, "9.9"));
-        Assert.AreEqual(new DrawingFileHeader(DrawingFileKind.Catalogue, 1, "9.9"), header);
+        Assert.AreEqual(new DrawingFileHeader(DrawingFileKind.Catalogue, 2, "9.9"), header);
         Assert.IsTrue(header.IsSupported);
     }
 
@@ -202,7 +220,7 @@ public sealed class DrawingFileTests
     public void NewerSchemaVersionIsRefused()
     {
         var json = Envelope(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle()));
-        json["schemaVersion"] = 2;
+        json["schemaVersion"] = DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile) + 1;
         var exception = AssertRefused(DrawingFileError.NewerSchemaVersion, () => DrawingFileSerializer.DeserializeEndProfile(json.ToJsonString()));
         StringAssert.Contains(exception.Message, "Update the app");
         Assert.IsFalse(DrawingFileSerializer.ReadHeader(json.ToJsonString()).IsSupported);
@@ -230,6 +248,7 @@ public sealed class DrawingFileTests
     public void OlderVersionsAreMigratedStepByStep()
     {
         var json = Envelope(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle()));
+        json["schemaVersion"] = 1;
         json["content"]!.AsObject().Remove("designation", out var designation);
         json["content"]!["name"] = designation!.DeepClone();
         var applied = new List<int>();
@@ -239,7 +258,7 @@ public sealed class DrawingFileTests
             new(DrawingFileKind.EndProfile, 2, content => { applied.Add(2); return Rename(content, "title", "designation"); }),
             new(DrawingFileKind.Module, 1, _ => throw new InvalidOperationException("Wrong kind.")),
         ];
-        var profile = DrawingFileSerializer.Read(json, DrawingFileKind.EndProfile, DrawingJsonContext.Default.DrawingFileEndProfile, migrations, currentVersion: 3);
+        var profile = DrawingFileSerializer.Read(json, DrawingFileKind.EndProfile, Files.DrawingJsonContext.Default.DrawingFileEndProfile, migrations, currentVersion: 3);
         Assert.AreEqual("TEST-FREMO-1", profile.Designation);
         CollectionAssert.AreEqual(new[] { 1, 2 }, applied);
     }
@@ -248,10 +267,19 @@ public sealed class DrawingFileTests
     public void MissingMigrationIsReported() =>
         AssertRefused(DrawingFileError.InvalidContent, () => DrawingFileSerializer.Read(
             Envelope(DrawingFileSerializer.Serialize(TestProfiles.FremoSingle())), DrawingFileKind.EndProfile,
-            DrawingJsonContext.Default.DrawingFileEndProfile, [], currentVersion: 2));
+            Files.DrawingJsonContext.Default.DrawingFileEndProfile, [], currentVersion: DrawingFileFormat.CurrentSchemaVersion(DrawingFileKind.EndProfile) + 1));
 
     [TestMethod]
-    public void CurrentVersionNeedsNoMigrations() => Assert.IsEmpty(DrawingFileMigrations.All);
+    public void EveryOlderVersionHasAMigration()
+    {
+        foreach (var kind in Enum.GetValues<DrawingFileKind>())
+        {
+            // No released version made a hall plan before version 2, so earlier hall plans are refused (2026-11-22).
+            var oldest = kind == DrawingFileKind.HallPlan ? 2 : 1;
+            for (var version = oldest; version < DrawingFileFormat.CurrentSchemaVersion(kind); version++)
+                Assert.AreEqual(1, DrawingFileMigrations.All.Count(m => m.Kind == kind && m.FromVersion == version), $"{kind} from version {version}");
+        }
+    }
 
     [TestMethod]
     [DataRow(DrawingFileKind.EndProfile, ".endprofile.json", ".tdendprofile")]

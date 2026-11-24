@@ -25,3 +25,14 @@ Punkte rasten an einem Raster der gewählten Größe ein, 0,1 m, wenn du nichts 
 ## In der Zeichnung bewegen
 
 Scrolle zum Zoomen, ziehe mit der mittleren Maustaste oder mit gedrückter Leertaste zum Verschieben, und klicke auf die Schaltfläche in der oberen rechten Ecke der Zeichnung, um die ganze Zeichnung zu sehen.
+
+## Tastatur
+
+Die Tasten wirken überall auf der Seite, außer während du in einem Feld schreibst.
+
+- **1**–**8** wählen ein Werkzeug, in der Reihenfolge der Schaltflächen. **0** zeigt die ganze Zeichnung.
+- **Strg+Z** macht rückgängig und **Strg+Y** stellt wieder her (⌘ auf einem Mac).
+- **Entf** oder die **Rücktaste** löscht, was ausgewählt ist.
+- Die **Pfeiltasten** verschieben, was ausgewählt ist, um 1 mm, mit **Umschalt** um 10 mm.
+- **Escape** beendet, was du gerade tust: zuerst ein Ziehen oder eine Form, die du zeichnest, dann das Werkzeug (zurück zu Auswählen), dann die Auswahl.
+- **Strg**+Klick fügt zur Auswahl hinzu.

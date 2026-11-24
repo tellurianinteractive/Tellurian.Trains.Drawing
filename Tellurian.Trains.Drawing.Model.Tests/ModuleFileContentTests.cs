@@ -13,7 +13,7 @@ public sealed class ModuleFileContentTests
     {
         var content = StraightModule();
         var embedded = content.EndProfiles[0];
-        var changed = embedded with { ShortName = "NEW" };
+        var changed = embedded.With(edited => { edited.ShortName = "NEW"; });
 
         var (updatedContent, updated) = content.WithCurrentEndProfiles(id => id == changed.Id ? changed : TestCatalogue.Lookup(id));
 
@@ -27,7 +27,7 @@ public sealed class ModuleFileContentTests
     {
         var content = StraightModule();
 
-        var (same, updated) = content.WithCurrentEndProfiles(id => TestCatalogue.Lookup(id) is { } profile ? profile with { } : null);
+        var (same, updated) = content.WithCurrentEndProfiles(id => TestCatalogue.Lookup(id) is { } profile ? profile.With(edited => {  }) : null);
 
         Assert.IsEmpty(updated);
         Assert.AreSame(content, same);

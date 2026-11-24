@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -41,7 +41,7 @@ public sealed class PlateArcTests
     [TestMethod]
     public void MatchesTheBuiltInLowB96()
     {
-        var builtIn = BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!.GroundLine!.Tessellate(Tolerance.Chord);
+        var builtIn = SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!.GroundLine!.Tessellate(Tolerance.Chord);
         var drawn = LowB96FromTheDrawing().Edge.Tessellate(Tolerance.Chord);
         foreach (var point in builtIn.Points)
             Assert.IsLessThanOrEqualTo(DrawingRounding, Measure.PointToPolyline(point, drawn), $"{point}");
@@ -50,7 +50,7 @@ public sealed class PlateArcTests
     [TestMethod]
     public void BuiltInOutlineIsReadBackWithItsArcs()
     {
-        var b96 = BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
+        var b96 = SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96", "H0")!;
         var plate = PlateShape.From(b96)!;
         var arcs = plate.Segments.Where(s => s.Kind == PlateSegmentKind.Arc).ToList();
         CollectionAssert.AreEqual(new[] { 10.0, 547.0 }, arcs.Select(a => Math.Round(a.EffectiveRadius, 6)).ToArray());
@@ -85,11 +85,11 @@ public sealed class PlateArcTests
     public void FilletSideIsKeptThroughAFile()
     {
         var plate = LowB96FromTheDrawing().WithSegment(11, PlateSegment.Fillet(10, FilletSide.Above))!;
-        var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
         var json = Files.DrawingFileSerializer.Serialize(profile);
-        StringAssert.Contains(json, "\"side\": \"above\"");
+        StringAssert.Contains(json, "\"side\": \"Above\"");
         Assert.AreEqual(FilletSide.Above, Files.DrawingFileSerializer.DeserializeEndProfile(json).Plate!.Segments[11].Side);
-        SchemaValidator.AssertValid(Files.DrawingFileKind.EndProfile, json);
+        SchemaValidator.AssertValid(DrawingFileKind.EndProfile, json);
     }
 
     [TestMethod]
@@ -121,7 +121,7 @@ public sealed class PlateArcTests
     [TestMethod]
     public void ReadBackArcCanBeTurnedIntoAFillet()
     {
-        var plate = PlateShape.From(BuiltInCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!)!;
+        var plate = PlateShape.From(SampleCatalogue.Instance.FindEndProfile("FREMO-H0-B96f", "H0")!)!;
         var index = plate.Segments.ToList().FindIndex(s => s.Kind == PlateSegmentKind.Arc && Math.Abs(s.EffectiveRadius - 10) < 0.01);
         var filleted = plate.WithSegment(index, PlateSegment.Fillet(10));
         Assert.IsNotNull(filleted);
@@ -132,7 +132,7 @@ public sealed class PlateArcTests
     public void StoredPlateKeepsItsFilletThroughAFile()
     {
         var plate = LowB96FromTheDrawing();
-        var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
 
         var read = Files.DrawingFileSerializer.DeserializeEndProfile(Files.DrawingFileSerializer.Serialize(profile));
 
@@ -140,14 +140,14 @@ public sealed class PlateArcTests
         Assert.AreEqual(PlateSegmentKind.Fillet, segments[^2].Kind, "The fillet is stored as a fillet, not as the arc it resolves to.");
         Assert.AreEqual(10, segments[^2].Radius);
         Assert.AreEqual(Low(577, -391), segments[^1].Center);
-        Assert.AreEqual(read.Outline!.ToPath().Length, profile.Outline.ToPath().Length, Precision, "The outline is still written for other readers.");
+        Assert.AreEqual(read.Outline!.ToPath().Length, profile.Outline!.ToPath().Length, Precision, "The outline is still written for other readers.");
     }
 
     [TestMethod]
     public void MirroredProfileDropsItsPlateAndKeepsTheMirroredOutline()
     {
         var plate = LowB96FromTheDrawing();
-        var profile = TestProfiles.FremoSingle() with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
         var mirrored = profile.MirroredX();
         Assert.IsNull(mirrored.Plate);
         Assert.AreEqual(-profile.Outline!.ToPath().Bounds.Min.X, mirrored.Outline!.ToPath().Bounds.Max.X, Precision);

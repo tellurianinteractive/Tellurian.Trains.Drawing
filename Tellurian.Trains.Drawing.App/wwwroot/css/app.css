@@ -358,14 +358,6 @@ a.button {
         color: var(--app-muted);
     }
 
-.badge.builtin {
-    background: #eef1f5;
-}
-
-.badge.user, .badge.replacesbuiltin {
-    background: #e3eefb;
-}
-
 .status {
     color: #1d6b33;
 }
@@ -531,6 +523,20 @@ label.inline {
         flex: 1;
         min-width: 0;
     }
+
+/* The Tracks pane: the marks of a track, one per line, and a track chooser per track element. */
+.track-flags {
+    display: grid;
+    gap: 0.2rem;
+    margin: 0.4rem 0;
+}
+
+.track-elements select,
+.location-pane .property-grid select,
+.tracks-pane .property-grid select {
+    width: 100%;
+    min-width: 0;
+}
 
 /* The module properties pane lays out its fields itself, so that its problems stay inside the pane. */
 .module-properties .property-grid {

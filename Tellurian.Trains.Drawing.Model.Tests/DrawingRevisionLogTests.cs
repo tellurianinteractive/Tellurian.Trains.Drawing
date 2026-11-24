@@ -60,7 +60,7 @@ public sealed class DrawingRevisionLogTests
     public void AChangedDrawingKeepsTheRecordedLog()
     {
         var saved = DrawingRevisionLog.Record(DrawingFileSerializer.Serialize(TestCatalogue.FremoSingle), "Anna", Monday);
-        var edited = DrawingFileSerializer.Serialize(TestCatalogue.FremoSingle with { Designation = "Edited" });
+        var edited = DrawingFileSerializer.Serialize(TestCatalogue.FremoSingle.With(edited => { edited.Designation = "Edited"; }));
 
         var kept = DrawingRevisionLog.KeepLog(edited, saved);
 

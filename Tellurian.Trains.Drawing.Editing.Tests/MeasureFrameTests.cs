@@ -21,7 +21,7 @@ public sealed class MeasureFrameTests
             ScrewHoles = [new(-200, -40)],
         });
         var plate = new PlateShape([new(-250, -4), new(0, 0), new(250, -4)], -104);
-        return profile with { Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        return profile.With(edited => { edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
     }
 
     [TestMethod]
@@ -44,7 +44,7 @@ public sealed class MeasureFrameTests
 
     [TestMethod]
     public void ProfileWithoutAPlateMeasuresFromRailTop() =>
-        Assert.AreSame(MeasureFrame.RailTopCentre, MeasureFrame.For(Profile() with { Outline = null }, MeasureOrigin.PlateLowerLeft));
+        Assert.AreSame(MeasureFrame.RailTopCentre, MeasureFrame.For(Profile().With(edited => { edited.Outline = null; }), MeasureOrigin.PlateLowerLeft));
 
     [TestMethod]
     public void PlateDimensionsWithoutDetails()
@@ -84,7 +84,7 @@ public sealed class MeasureFrameTests
     public void PointsAtTheSameHeightShareOneHeightDimension()
     {
         var plate = new PlateShape([new(-250, -10), new(-100, -4), new(0, 0), new(100, -4), new(250, -10)], -104);
-        var profile = Profile() with { Outline = plate.Outline(), GroundLine = plate.GroundLine(), ScrewHoles = [] };
+        var profile = Profile().With(edited => { edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); edited.ScrewHoles = []; });
 
         var fromRailTop = EndProfileDimensions.Create(profile, MeasureFrame.RailTopCentre, 20, details: true);
         var heights = fromRailTop.Where(d => d.Kind == DimensionKind.Vertical && d.Line().Start.X > plate.Right + 20 + Precision).Select(d => d.Length).ToList();

@@ -11,14 +11,23 @@ public sealed class EditorDocument<TDocument> where TDocument : class
     private readonly LinkedList<HistoryEntry> _undo = new();
     private readonly Stack<HistoryEntry> _redo = new();
     private TDocument _saved;
+    private readonly IEqualityComparer<TDocument> _comparer;
 
-    public EditorDocument(TDocument document, int historyLimit = DefaultHistoryLimit)
+    /// <param name="document">The document to edit.</param>
+    /// <param name="historyLimit">How many commands can be undone.</param>
+    /// <param name="comparer">
+    /// Tells whether a command changed anything, so that one that didn't isn't recorded; by default the document's own
+    /// equality, which suits records. A document that is a mutable class of the shared model, copied by every command,
+    /// needs a comparer by content.
+    /// </param>
+    public EditorDocument(TDocument document, int historyLimit = DefaultHistoryLimit, IEqualityComparer<TDocument>? comparer = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         ArgumentOutOfRangeException.ThrowIfLessThan(historyLimit, 1);
         Current = document;
         _saved = document;
         HistoryLimit = historyLimit;
+        _comparer = comparer ?? EqualityComparer<TDocument>.Default;
     }
 
     /// <summary>Raised after every change of <see cref="Current"/>: apply, undo, redo or replace.</summary>
@@ -44,7 +53,7 @@ public sealed class EditorDocument<TDocument> where TDocument : class
     {
         ArgumentNullException.ThrowIfNull(command);
         var changed = command.Apply(Current);
-        if (ReferenceEquals(changed, Current) || changed.Equals(Current)) return false;
+        if (ReferenceEquals(changed, Current) || _comparer.Equals(changed, Current)) return false;
         _undo.AddLast(new HistoryEntry(command.Description, Current, changed));
         if (_undo.Count > HistoryLimit) _undo.RemoveFirst();
         _redo.Clear();

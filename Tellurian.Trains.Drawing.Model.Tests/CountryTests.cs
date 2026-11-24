@@ -1,11 +1,11 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
 [TestClass]
 public sealed class CountryTests
 {
-    private static DrawingCatalogue BuiltIn => BuiltInCatalogue.Instance;
+    private static Catalogue BuiltIn => SampleCatalogue.Instance;
 
     private static bool IsMmm(string shortName) => shortName.StartsWith("MMM", StringComparison.OrdinalIgnoreCase);
 
@@ -14,8 +14,8 @@ public sealed class CountryTests
     {
         foreach (var standard in BuiltIn.Standards)
         {
-            if (IsMmm(standard.ShortName)) CollectionAssert.AreEqual(new[] { "SE" }, standard.Countries.ToArray(), standard.ShortName);
-            else Assert.IsEmpty(standard.Countries, standard.ShortName);
+            if (IsMmm(standard.ShortName)) CollectionAssert.AreEqual(new[] { "SE" }, (standard.Countries ?? []).ToArray(), standard.ShortName);
+            else Assert.IsEmpty(standard.Countries ?? [], standard.ShortName);
         }
     }
 
@@ -49,7 +49,7 @@ public sealed class CountryTests
     [TestMethod]
     public void EndProfilesWithoutStandardAreAlwaysOffered()
     {
-        var loose = TestCatalogue.Mmm480 with { Id = Guid.NewGuid(), Standards = [] };
+        var loose = TestCatalogue.Mmm480.With(edited => { edited.Id = Guid.NewGuid(); edited.Standards = []; });
         Assert.IsNotNull(BuiltIn.With(loose).ForCountry(null).FindEndProfile(loose.Id));
     }
 
@@ -60,7 +60,7 @@ public sealed class CountryTests
     [TestMethod]
     public void StandardWithAnInvalidCountryIsReported()
     {
-        var standard = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "MY-H0", Scale = "H0", NormalGauge = 16.5, Countries = ["SE", "Sweden"] };
+        var standard = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "MY-H0", Scale = new() { ShortName = "H0" }, Gauges = [new(16.5)], Countries = ["SE", "Sweden"] };
         var problem = Assert.ContainsSingle(CatalogueValidation.Validate(standard, TestCatalogue.Instance));
         Assert.AreEqual(new CatalogueProblem(CatalogueProblemCode.CountryInvalid, nameof(ModuleStandard.Countries)), problem);
     }

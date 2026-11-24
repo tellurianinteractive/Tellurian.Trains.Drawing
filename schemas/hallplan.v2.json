@@ -1,0 +1,3444 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tellurian Trains Drawing HallPlan file",
+  "description": "A .hallplan.json file, schema version 2. What is drawn in millimetres and degrees; track and platform lengths, centres and distances in metres.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "tellurian-drawing"
+    },
+    "kind": {
+      "const": "HallPlan"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "appVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "content": {
+      "$ref": "#/$defs/HallPlan"
+    }
+  },
+  "required": [
+    "format",
+    "kind",
+    "schemaVersion",
+    "content"
+  ],
+  "$defs": {
+    "Acknowledgement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "findingCode": {
+          "type": "string"
+        },
+        "moduleIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "findingCode",
+        "fingerprint",
+        "time"
+      ]
+    },
+    "Anchor": {
+      "type": "object",
+      "properties": {
+        "lineId": {
+          "type": "integer"
+        },
+        "moduleId": {
+          "type": "integer"
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "isLocked": {
+          "type": "boolean"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnchorDimensions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "AnchorDimensions": {
+      "type": "object",
+      "properties": {
+        "referencePoint": {
+          "$ref": "#/$defs/AnchorReferencePoint"
+        },
+        "first": {
+          "$ref": "#/$defs/HallElementReference"
+        },
+        "second": {
+          "$ref": "#/$defs/HallElementReference"
+        },
+        "angleWall": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "referencePoint",
+        "first",
+        "second"
+      ]
+    },
+    "AnchorReferencePoint": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "ExitCentre",
+            "PlateCorner",
+            "MarkedPoint"
+          ]
+        },
+        "exit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExitPlace"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "corner": {
+          "enum": [
+            "Left",
+            "Right",
+            null
+          ]
+        },
+        "point": true
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "AutoDrawExit": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "endProfile": {
+          "type": "string"
+        },
+        "endProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "label",
+        "endProfile"
+      ]
+    },
+    "AutoDrawParameters": {
+      "type": "object",
+      "properties": {
+        "moduleId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "prefix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "moduleOwners": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "configurationLabel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "standard": {
+          "type": "string"
+        },
+        "straight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "radius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "angle": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "length": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "width": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "numberOfThroughTracks": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "numberOfSections": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "exits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AutoDrawExit"
+          }
+        },
+        "isEndOfLine": {
+          "type": "boolean"
+        },
+        "isDuckunder": {
+          "type": "boolean"
+        },
+        "isTurntable": {
+          "type": "boolean"
+        },
+        "isEndProfileSwitcher": {
+          "type": "boolean"
+        },
+        "isOperationPlace": {
+          "type": "boolean"
+        },
+        "curveDirection": {
+          "enum": [
+            "Left",
+            "Right"
+          ]
+        },
+        "straightPosition": {
+          "enum": [
+            "Before",
+            "After",
+            "Split"
+          ]
+        },
+        "wideningSide": {
+          "enum": [
+            "Left",
+            "Right"
+          ]
+        },
+        "taperAngle": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "standard"
+      ]
+    },
+    "AutoDrawRecord": {
+      "type": "object",
+      "properties": {
+        "generatorVersion": {
+          "type": "string"
+        },
+        "parameters": {
+          "$ref": "#/$defs/AutoDrawParameters"
+        }
+      },
+      "required": [
+        "generatorVersion",
+        "parameters"
+      ]
+    },
+    "CatalogueReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Circle": {
+      "type": "object",
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/Point"
+        },
+        "diameter": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "center",
+        "diameter"
+      ]
+    },
+    "Company": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "countryId": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null
+        },
+        "logo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "signature"
+      ]
+    },
+    "DispatchStretch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "fromId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "toId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stretchIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "DocumentReference": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Door": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "Door",
+            "EmergencyExit"
+          ]
+        },
+        "position": {
+          "$ref": "#/$defs/Pose"
+        },
+        "width": {
+          "type": "number"
+        },
+        "keepFreeDepth": {
+          "type": "number"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "isModuleEntrance": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "position",
+        "width"
+      ]
+    },
+    "DrawingRevision": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "name",
+        "date"
+      ]
+    },
+    "DuckUnderArea": {
+      "type": "object",
+      "properties": {
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "clearHeight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "area"
+      ]
+    },
+    "EndProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "designation": {
+          "type": "string"
+        },
+        "shortName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "type": "string"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueReference"
+          }
+        },
+        "outline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlateShape"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groundLine": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileTrack"
+          }
+        },
+        "screwHoles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Circle"
+          }
+        },
+        "dowels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Circle"
+          }
+        },
+        "screwHolePattern": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "designation",
+        "scale"
+      ]
+    },
+    "EndProfileCompatibilityOverride": {
+      "type": "object",
+      "properties": {
+        "firstEndProfileId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "secondEndProfileId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fit": {
+          "enum": [
+            "Fits",
+            "FitsWithMismatch",
+            "FitsWithClamps",
+            "Incompatible"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "firstEndProfileId",
+        "secondEndProfileId",
+        "fit"
+      ]
+    },
+    "EndProfileTrack": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "number"
+        },
+        "gauges": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "railSystem": {
+          "enum": [
+            "TwoRail",
+            "ThreeRail"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "offset",
+        "gauges"
+      ]
+    },
+    "ExitPlace": {
+      "type": "object",
+      "properties": {
+        "side": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "number": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "required": [
+        "side"
+      ]
+    },
+    "ExitReference": {
+      "type": "object",
+      "properties": {
+        "moduleId": {
+          "type": "integer"
+        },
+        "side": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "number": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "required": [
+        "moduleId",
+        "side"
+      ]
+    },
+    "FitTolerances": {
+      "type": "object",
+      "properties": {
+        "joint": {
+          "type": "number"
+        },
+        "landscape": {
+          "type": "number"
+        },
+        "minimumBoltedScrewHoles": {
+          "type": "integer"
+        }
+      }
+    },
+    "GeneralSettings": {
+      "type": "object",
+      "properties": {
+        "useDays": {
+          "type": "boolean"
+        },
+        "startDay": {
+          "enum": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ]
+        },
+        "maxSessions": {
+          "type": "integer"
+        },
+        "validFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "validTo": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "startTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": "string",
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "endTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": "string",
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "runsOverMidnight": {
+          "type": "boolean"
+        },
+        "firstSessionStartTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": "string",
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "breakTime": {
+          "$comment": "Represents a System.TimeSpan value.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+        },
+        "allowPlanTimeExtend": {
+          "type": "boolean"
+        },
+        "expectedLocoDrivers": {
+          "type": "integer"
+        },
+        "usePassengerTickets": {
+          "type": "boolean"
+        },
+        "trainsPerTicket": {
+          "type": "integer"
+        },
+        "useObjectLanguageInReports": {
+          "type": "boolean"
+        },
+        "reportFontFamily": {
+          "type": "string"
+        }
+      }
+    },
+    "GraphicTimetableSettings": {
+      "type": "object",
+      "properties": {
+        "orientation": {
+          "enum": [
+            "Horizontal",
+            "Vertical"
+          ]
+        },
+        "showArrivalMinutes": {
+          "type": "boolean"
+        },
+        "showDepartureMinutes": {
+          "type": "boolean"
+        },
+        "minuteSpacing": {
+          "type": "integer"
+        },
+        "kilometerSpacing": {
+          "type": "integer"
+        },
+        "stationSpacing": {
+          "type": "integer"
+        },
+        "trackSpacing": {
+          "type": "integer"
+        },
+        "showTrainCategory": {
+          "type": "boolean"
+        },
+        "showCompany": {
+          "type": "boolean"
+        },
+        "hideSessionsOrDays": {
+          "type": "boolean"
+        },
+        "trainLabelFontSize": {
+          "type": "integer"
+        },
+        "printHourSpacingMm": {
+          "type": "number"
+        },
+        "printKilometerSpacingMm": {
+          "type": "number"
+        },
+        "printStationSpacingMm": {
+          "type": "number"
+        },
+        "printTrackSpacingMm": {
+          "type": "number"
+        },
+        "printMonochrome": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Hall": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outline": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "minimumAisleWidth": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "obstacles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Obstacle"
+          }
+        },
+        "doors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Door"
+          }
+        },
+        "noGoZones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NoGoZone"
+          }
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "outline"
+      ]
+    },
+    "HallElementReference": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "Wall",
+            "Obstacle"
+          ]
+        },
+        "wallIndex": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "obstacleId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "HallPlan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hall": {
+          "$ref": "#/$defs/Hall"
+        },
+        "layout": {
+          "$ref": "#/$defs/Layout"
+        },
+        "anchors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Anchor"
+          }
+        },
+        "acceptedStandards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueReference"
+          }
+        },
+        "preferredAddOns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueReference"
+          }
+        },
+        "settings": {
+          "$ref": "#/$defs/HallPlanSettings"
+        },
+        "publicAreas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicArea"
+          }
+        },
+        "walkingPaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WalkingPath"
+          }
+        },
+        "acknowledgements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Acknowledgement"
+          }
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "hall",
+        "layout"
+      ]
+    },
+    "HallPlanSettings": {
+      "type": "object",
+      "properties": {
+        "jointGap": {
+          "type": "number"
+        },
+        "jointAngle": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "minimumClearance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "isClearanceChecked": {
+          "type": "boolean"
+        },
+        "walkingPathWidth": {
+          "type": "number"
+        }
+      }
+    },
+    "IdentitySettings": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "enum": [
+            "American",
+            "European"
+          ]
+        },
+        "scaleId": {
+          "type": "integer"
+        },
+        "defaultCountryId": {
+          "type": "integer"
+        }
+      }
+    },
+    "IntegrationSettings": {
+      "type": "object",
+      "properties": {
+        "moduleRegistryApiUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "moduleRegistryApiKey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "InternalJoint": {
+      "type": "object",
+      "properties": {
+        "firstSection": {
+          "type": "string"
+        },
+        "secondSection": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "end": {
+          "$ref": "#/$defs/Point"
+        },
+        "bends": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "endProfile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalogueReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "firstSection",
+        "secondSection",
+        "start",
+        "end"
+      ]
+    },
+    "Joint": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "$ref": "#/$defs/ExitReference"
+        },
+        "second": {
+          "$ref": "#/$defs/ExitReference"
+        },
+        "joinMethodOverride": {
+          "enum": [
+            "Bolted",
+            "Clamped",
+            null
+          ]
+        },
+        "numberOfClamps": {
+          "type": "integer"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "first",
+        "second"
+      ]
+    },
+    "Layout": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "$ref": "#/$defs/LayoutSettings"
+        },
+        "countries": {
+          "type": "array"
+        },
+        "companies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Company"
+          }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Region"
+          }
+        },
+        "operationLocations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OperationLocation"
+          }
+        },
+        "trackStretches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TrackStretch"
+          }
+        },
+        "timetableStretches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimetableStretch"
+          }
+        },
+        "dispatchStretches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DispatchStretch"
+          }
+        },
+        "topologyPositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TopologyPosition"
+          }
+        },
+        "sourceId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "sourceRevision": {
+          "type": "integer"
+        },
+        "preferredStandard": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SharedModuleStandard"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LayoutModule"
+          }
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Line"
+          }
+        },
+        "joints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Joint"
+          }
+        },
+        "endProfiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfile"
+          }
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SharedModuleStandard"
+          }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EndProfileCompatibilityOverride"
+          }
+        },
+        "fitTolerances": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FitTolerances"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "LayoutModule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "module": {
+          "$ref": "#/$defs/Module"
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "module"
+      ]
+    },
+    "LayoutSettings": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/IdentitySettings"
+        },
+        "general": {
+          "$ref": "#/$defs/GeneralSettings"
+        },
+        "graphicTimetable": {
+          "$ref": "#/$defs/GraphicTimetableSettings"
+        },
+        "timeAndSpeed": {
+          "$ref": "#/$defs/TimeAndSpeedSettings"
+        },
+        "validation": {
+          "$ref": "#/$defs/ValidationSettings"
+        },
+        "integration": {
+          "$ref": "#/$defs/IntegrationSettings"
+        }
+      }
+    },
+    "Line": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LineEntry"
+          }
+        },
+        "startAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExitReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExitReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "LineEntry": {
+      "type": "object",
+      "properties": {
+        "moduleId": {
+          "type": "integer"
+        },
+        "isTurned": {
+          "type": "boolean"
+        },
+        "continuesFrom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExitPlace"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "legAdjustment": {
+          "type": "number"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "LockKey": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "heldAtId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "Module": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "number": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hasFremoDesignation": {
+          "type": "boolean"
+        },
+        "configurationLabel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "packageLabel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "moduleOwners": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "standard": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SharedModuleStandard"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operationLocation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationLocation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operationLocationId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "tracks": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/StationTrack"
+          }
+        },
+        "addOns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueReference"
+          }
+        },
+        "representsFromYear": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "representsUptoYear": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "numberOfThroughTracks": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "speedLimit": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hasNormalGauge": {
+          "type": "boolean"
+        },
+        "hasNarrowGauge": {
+          "type": "boolean"
+        },
+        "isDuckunder": {
+          "type": "boolean"
+        },
+        "isTurntable": {
+          "type": "boolean"
+        },
+        "isEndOfLine": {
+          "type": "boolean"
+        },
+        "isEndProfileSwitcher": {
+          "type": "boolean"
+        },
+        "isSignalModule": {
+          "type": "boolean"
+        },
+        "isStandAlone": {
+          "type": "boolean"
+        },
+        "functionalState": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "landscapeState": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "revisionLog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DrawingRevision"
+          }
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "drawing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModuleDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ModuleDrawing": {
+      "type": "object",
+      "properties": {
+        "exits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModuleExit"
+          }
+        },
+        "mainPath": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModuleSide"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Section"
+          }
+        },
+        "internalJoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InternalJoint"
+          }
+        },
+        "trackElements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TrackElement"
+          }
+        },
+        "operatorSpaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OperatorSpace"
+          }
+        },
+        "publicSides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicSide"
+          }
+        },
+        "duckUnderAreas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DuckUnderArea"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModuleLabel"
+          }
+        },
+        "registryMeasures": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RegistryMeasures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "autoDraw": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AutoDrawRecord"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ModuleExit": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "endProfile": {
+          "$ref": "#/$defs/CatalogueReference"
+        },
+        "orientation": {
+          "enum": [
+            "Normal",
+            "Mirrored"
+          ]
+        },
+        "railTopOffset": {
+          "type": "number"
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "isPositionProvisional": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label",
+        "endProfile",
+        "pose"
+      ]
+    },
+    "ModuleLabel": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "Text",
+            "ModuleName",
+            "StationName",
+            "PlatformEdge",
+            "OperatorSide",
+            "Signal"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "length": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "pose"
+      ]
+    },
+    "ModuleSide": {
+      "type": "object",
+      "properties": {
+        "fromExit": {
+          "$ref": "#/$defs/ExitPlace"
+        },
+        "toExit": {
+          "$ref": "#/$defs/ExitPlace"
+        },
+        "mode": {
+          "enum": [
+            "Auto",
+            "Custom"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/PathDrawing"
+        }
+      },
+      "required": [
+        "fromExit",
+        "toExit",
+        "path"
+      ]
+    },
+    "NoGoZone": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "area",
+        "reason"
+      ]
+    },
+    "Obstacle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "Pillar",
+            "Furniture"
+          ]
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "area"
+      ]
+    },
+    "OperationLocation": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "Station"
+            },
+            "isShadow": {
+              "type": "boolean"
+            },
+            "isManned": {
+              "type": "boolean"
+            },
+            "staffPosts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/StaffPost"
+              }
+            },
+            "shiftCount": {
+              "type": "integer"
+            },
+            "hasTurntable": {
+              "type": "boolean"
+            },
+            "startLabels": {
+              "enum": [
+                "None",
+                "First",
+                "All"
+              ]
+            },
+            "splitDispatchByDirection": {
+              "type": "boolean"
+            },
+            "isPassengerInterchange": {
+              "type": "boolean"
+            },
+            "regionIds": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "integer"
+              }
+            },
+            "hasPassengerExchange": {
+              "type": "boolean"
+            },
+            "hasCargoExchange": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "countryCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phoneNumber": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "instructions": {
+              "type": "string"
+            },
+            "hideMeets": {
+              "type": "boolean"
+            },
+            "hidePassings": {
+              "type": "boolean"
+            },
+            "isChangingTrainDirectionPossible": {
+              "type": "boolean"
+            },
+            "isTerminus": {
+              "type": "boolean"
+            },
+            "isHarbour": {
+              "type": "boolean"
+            },
+            "isKeyRequired": {
+              "type": "boolean"
+            },
+            "centre": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cargoServedFromId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "controlledById": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "lockKey": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/LockKey"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tracks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/StationTrack"
+              }
+            },
+            "timings": {
+              "$ref": "#/$defs/StationTimings"
+            },
+            "externalReferences": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "SignalControlled"
+            },
+            "trainsCanCross": {
+              "type": "boolean"
+            },
+            "hasPassengerExchange": {
+              "type": "boolean"
+            },
+            "hasCargoExchange": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "countryCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phoneNumber": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "instructions": {
+              "type": "string"
+            },
+            "hideMeets": {
+              "type": "boolean"
+            },
+            "hidePassings": {
+              "type": "boolean"
+            },
+            "isChangingTrainDirectionPossible": {
+              "type": "boolean"
+            },
+            "isTerminus": {
+              "type": "boolean"
+            },
+            "isHarbour": {
+              "type": "boolean"
+            },
+            "isKeyRequired": {
+              "type": "boolean"
+            },
+            "centre": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cargoServedFromId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "controlledById": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "lockKey": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/LockKey"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tracks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/StationTrack"
+              }
+            },
+            "timings": {
+              "$ref": "#/$defs/StationTimings"
+            },
+            "externalReferences": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "IndustrialArea"
+            },
+            "isChangingTrainDirectionPossible": {
+              "type": "boolean"
+            },
+            "hasPassengerExchange": {
+              "type": "boolean"
+            },
+            "hasCargoExchange": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "countryCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phoneNumber": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "instructions": {
+              "type": "string"
+            },
+            "hideMeets": {
+              "type": "boolean"
+            },
+            "hidePassings": {
+              "type": "boolean"
+            },
+            "isTerminus": {
+              "type": "boolean"
+            },
+            "isHarbour": {
+              "type": "boolean"
+            },
+            "isKeyRequired": {
+              "type": "boolean"
+            },
+            "centre": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cargoServedFromId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "controlledById": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "lockKey": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/LockKey"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tracks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/StationTrack"
+              }
+            },
+            "timings": {
+              "$ref": "#/$defs/StationTimings"
+            },
+            "externalReferences": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "Other"
+            },
+            "isChangingTrainDirectionPossible": {
+              "type": "boolean"
+            },
+            "hasCargoExchange": {
+              "type": "boolean"
+            },
+            "hidePassings": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "countryCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phoneNumber": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "instructions": {
+              "type": "string"
+            },
+            "hideMeets": {
+              "type": "boolean"
+            },
+            "hasPassengerExchange": {
+              "type": "boolean"
+            },
+            "isTerminus": {
+              "type": "boolean"
+            },
+            "isHarbour": {
+              "type": "boolean"
+            },
+            "isKeyRequired": {
+              "type": "boolean"
+            },
+            "centre": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cargoServedFromId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "controlledById": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "lockKey": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/LockKey"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tracks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/StationTrack"
+              }
+            },
+            "timings": {
+              "$ref": "#/$defs/StationTimings"
+            },
+            "externalReferences": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "OperatorSpace": {
+      "type": "object",
+      "properties": {
+        "attachment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideAttachment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "depth": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "area"
+      ]
+    },
+    "PathDrawing": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PathStep"
+          }
+        },
+        "isClosed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start",
+        "steps"
+      ]
+    },
+    "PathStep": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "line"
+            },
+            "end": {
+              "$ref": "#/$defs/Point"
+            }
+          },
+          "required": [
+            "end"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "arc"
+            },
+            "center": {
+              "$ref": "#/$defs/Point"
+            },
+            "sweep": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "center",
+            "sweep"
+          ]
+        }
+      ]
+    },
+    "PlateSegment": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "Line",
+            "Arc",
+            "Fillet"
+          ]
+        },
+        "end": true,
+        "center": true,
+        "radius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "side": {
+          "enum": [
+            "Above",
+            "Below",
+            null
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "PlateShape": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlateSegment"
+          }
+        },
+        "bottom": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "start",
+        "segments",
+        "bottom"
+      ]
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
+    "Pose": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "heading": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "heading"
+      ]
+    },
+    "PublicArea": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "area": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "area"
+      ]
+    },
+    "PublicSide": {
+      "type": "object",
+      "properties": {
+        "attachment": {
+          "$ref": "#/$defs/SideAttachment"
+        }
+      },
+      "required": [
+        "attachment"
+      ]
+    },
+    "Region": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "countryId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "backgroundColor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "RegistryMeasures": {
+      "type": "object",
+      "properties": {
+        "straight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "radius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "angle": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "length": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "width": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "numberOfSections": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "Section": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "outline": {
+          "$ref": "#/$defs/PathDrawing"
+        }
+      },
+      "required": [
+        "label",
+        "outline"
+      ]
+    },
+    "SharedModuleStandard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SharedScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trackSystem": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "railSystem": {
+          "enum": [
+            "TwoRail",
+            "ThreeRail",
+            null
+          ]
+        },
+        "gauges": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/TrackGauge"
+          }
+        },
+        "couplings": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "electricity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wheelset": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "railTopHeight": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "minimumClearance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "operatorSpaceDepth": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "trackColor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "foulingDistance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "minimumReverseCurveRadius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "defaultCurveRadius": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "defaultSingleTrackEndProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "defaultDoubleTrackEndProfileId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "countries": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "shortName"
+      ]
+    },
+    "SharedScale": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "denominator": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "remark": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "shortName"
+      ]
+    },
+    "SideAttachment": {
+      "type": "object",
+      "properties": {
+        "sideIndex": {
+          "type": "integer"
+        },
+        "from": {
+          "type": "number"
+        },
+        "to": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "sideIndex"
+      ]
+    },
+    "SpeedPoint": {
+      "type": "object",
+      "properties": {
+        "scaleSpeedKmh": {
+          "type": "integer"
+        },
+        "realSpeedMetersPerSecond": {
+          "type": "number"
+        }
+      }
+    },
+    "StaffPost": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "string"
+        }
+      }
+    },
+    "StationTimings": {
+      "type": "object",
+      "properties": {
+        "minimumStopMinutes": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "locoRunaroundRealMinutes": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "trainClearanceRealMinutes": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "StationTrack": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "sourceId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "designation": {
+          "type": "string"
+        },
+        "displayOrder": {
+          "type": "integer"
+        },
+        "isScheduled": {
+          "type": "boolean"
+        },
+        "isMain": {
+          "type": "boolean"
+        },
+        "length": {
+          "type": "number"
+        },
+        "isLengthEntered": {
+          "type": "boolean"
+        },
+        "isStub": {
+          "type": "boolean"
+        },
+        "isStubEntered": {
+          "type": "boolean"
+        },
+        "platformLength": {
+          "type": "number"
+        },
+        "isLockable": {
+          "type": "boolean"
+        },
+        "keyName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "usage": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "Both",
+            "LeftToRight",
+            "RightToLeft"
+          ]
+        },
+        "speedLimit": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "previousLocationId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "nextLocationId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "appliesInBothDirections": {
+          "type": "boolean"
+        }
+      }
+    },
+    "TimeAndSpeedSettings": {
+      "type": "object",
+      "properties": {
+        "fastClockSpeed": {
+          "type": "integer"
+        },
+        "slow": {
+          "$ref": "#/$defs/SpeedPoint"
+        },
+        "normal": {
+          "$ref": "#/$defs/SpeedPoint"
+        },
+        "high": {
+          "$ref": "#/$defs/SpeedPoint"
+        },
+        "stationTimings": {
+          "$ref": "#/$defs/StationTimings"
+        },
+        "distanceFactor": {
+          "type": "number"
+        }
+      }
+    },
+    "TimetableStretch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "number": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "stretchIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "TopologyPosition": {
+      "type": "object",
+      "properties": {
+        "locationId": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "TrackElement": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "straight"
+            },
+            "start": {
+              "$ref": "#/$defs/Pose"
+            },
+            "length": {
+              "type": "number"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "start",
+            "length"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "curve"
+            },
+            "start": {
+              "$ref": "#/$defs/Pose"
+            },
+            "radius": {
+              "type": "number"
+            },
+            "angle": {
+              "type": "number"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "start",
+            "radius",
+            "angle"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "flex"
+            },
+            "path": {
+              "$ref": "#/$defs/PathDrawing"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "turnout"
+            },
+            "start": {
+              "$ref": "#/$defs/Pose"
+            },
+            "kind": {
+              "enum": [
+                "Left",
+                "Right",
+                "Wye",
+                "ThreeWay",
+                "CurvedLeft",
+                "CurvedRight"
+              ]
+            },
+            "length": {
+              "type": "number"
+            },
+            "radius": {
+              "type": "number"
+            },
+            "angle": {
+              "type": "number"
+            },
+            "innerRadius": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "innerAngle": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "start",
+            "kind",
+            "length",
+            "radius",
+            "angle"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "crossing"
+            },
+            "center": {
+              "$ref": "#/$defs/Pose"
+            },
+            "length": {
+              "type": "number"
+            },
+            "angle": {
+              "type": "number"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "center",
+            "length",
+            "angle"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "doubleSlip"
+            },
+            "center": {
+              "$ref": "#/$defs/Pose"
+            },
+            "length": {
+              "type": "number"
+            },
+            "angle": {
+              "type": "number"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "center",
+            "length",
+            "angle"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "bufferStop"
+            },
+            "pose": {
+              "$ref": "#/$defs/Pose"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "stationTrackId": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "isNarrowGauge": {
+              "type": "boolean"
+            },
+            "isGenerated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pose"
+          ]
+        }
+      ]
+    },
+    "TrackGauge": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "prototypeWidth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "width"
+      ]
+    },
+    "TrackStretch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "startId": {
+          "type": "integer"
+        },
+        "startSide": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "endId": {
+          "type": "integer"
+        },
+        "endSide": {
+          "enum": [
+            "Undefined",
+            "Left",
+            "Right",
+            "Up",
+            "Down"
+          ]
+        },
+        "distance": {
+          "type": "number"
+        },
+        "isDistanceEntered": {
+          "type": "boolean"
+        },
+        "tracksCount": {
+          "type": "integer"
+        },
+        "speed": {
+          "type": "integer"
+        },
+        "isSpeedEntered": {
+          "type": "boolean"
+        },
+        "time": {
+          "type": "integer"
+        },
+        "isTimeEntered": {
+          "type": "boolean"
+        },
+        "isElectrified": {
+          "type": "boolean"
+        },
+        "moduleIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "ValidationSettings": {
+      "type": "object",
+      "properties": {
+        "validateStationCalls": {
+          "type": "boolean"
+        },
+        "validateStationTracks": {
+          "type": "boolean"
+        },
+        "validateStretches": {
+          "type": "boolean"
+        },
+        "treatDoubleTrackAsTwoSingleTracks": {
+          "type": "boolean"
+        },
+        "validateTrainSpeed": {
+          "type": "boolean"
+        },
+        "validateRouteContinuity": {
+          "type": "boolean"
+        },
+        "validateTrainNumbers": {
+          "type": "boolean"
+        },
+        "validatePassengerExchange": {
+          "type": "boolean"
+        },
+        "validateStopPatterns": {
+          "type": "boolean"
+        },
+        "validateScheduledTracks": {
+          "type": "boolean"
+        },
+        "validateRequiredStopTimes": {
+          "type": "boolean"
+        },
+        "validateSchedules": {
+          "type": "boolean"
+        },
+        "validateLocomotiveCoverage": {
+          "type": "boolean"
+        },
+        "validateDriverDuties": {
+          "type": "boolean"
+        },
+        "minTrainSpeedMetersPerClockMinute": {
+          "type": "number"
+        },
+        "maxTrainSpeedMetersPerClockMinute": {
+          "type": "number"
+        },
+        "minMinutesBetweenTrackUsage": {
+          "type": "integer"
+        },
+        "extendTrackOccupancyByVehicleStay": {
+          "type": "boolean"
+        }
+      }
+    },
+    "WalkingPath": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "centreLine": {
+          "$ref": "#/$defs/PathDrawing"
+        },
+        "width": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "centreLine"
+      ]
+    }
+  }
+}

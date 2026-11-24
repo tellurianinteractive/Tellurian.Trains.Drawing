@@ -1,4 +1,4 @@
-@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Schedules.Model.Geometry
 
 @* An emergency exit sign in the established style (ISO 7010 E001/E002): a green square with a white figure running
    to a door. A simplified drawing of our own, in world coordinates (Y up), centred on Center and turned so the figure
@@ -41,7 +41,7 @@
     /// <summary>The direction the figure runs, from the X axis (or the opposite direction when mirrored).</summary>
     [Parameter] public Angle Rotation { get; set; }
 
-    /// <summary>True for the variant that runs to the left in its own frame, so the sign never stands upside down.</summary>
+    /// <summary>True for the drawing that runs to the left in its own frame, so the sign never stands upside down.</summary>
     [Parameter] public bool Mirrored { get; set; }
 
     private string Transform

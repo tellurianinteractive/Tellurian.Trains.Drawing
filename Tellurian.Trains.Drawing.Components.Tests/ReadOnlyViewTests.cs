@@ -1,10 +1,9 @@
+using static Tellurian.Trains.Schedules.Model.Layouts.LayoutPartCopying;
 using System.Text.RegularExpressions;
 using Tellurian.Trains.Drawing.Components.Views;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.Files;
-using Tellurian.Trains.Drawing.Model.Halls;
 using Tellurian.Trains.Drawing.Model.Modules;
 
 namespace Tellurian.Trains.Drawing.Components.Tests;
@@ -13,7 +12,7 @@ namespace Tellurian.Trains.Drawing.Components.Tests;
 [TestClass]
 public sealed partial class ReadOnlyViewTests
 {
-    private static DrawingCatalogue Catalogue => BuiltInCatalogue.Instance;
+    private static Catalogue Catalogue => SampleCatalogue.Instance;
 
     private static Module Station()
     {
@@ -28,9 +27,9 @@ public sealed partial class ReadOnlyViewTests
             Radius = 2000,
             Angle = 15,
         }.Create(Catalogue).Module!;
-        var variant = module.DefaultVariant;
+        var drawing = module.Drawing;
         var publicSide = new PublicSide { Attachment = new() { SideIndex = 0, From = 100, To = 600 } };
-        return module with { Variants = [variant with { PublicSides = [publicSide] }] };
+        return module.With(c => c.Drawing = drawing.With(edited => edited.PublicSides = [publicSide]));
     }
 
     private static int Count(string html, string cssClass) => ClassPattern(cssClass).Matches(html).Count;
@@ -86,39 +85,63 @@ public sealed partial class ReadOnlyViewTests
     public async Task ModuleView()
     {
         var module = Station();
-        var variant = module.DefaultVariant;
+        var drawing = module.Drawing;
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
             [nameof(Views.ModuleView.Standard)] = Catalogue.FindStandard("FREMO/H0-RE"),
         });
-        Assert.AreEqual(variant.Sections.Count, Count(html, "md-section"));
+        Assert.AreEqual(drawing.Sections.Count, Count(html, "md-section"));
         // The end profile's short name is drawn at each exit; exit labels aren't.
-        Assert.AreEqual(variant.Exits.Count, Count(html, "md-profile-name"));
+        Assert.AreEqual(drawing.Exits.Count, Count(html, "md-profile-name"));
         StringAssert.Contains(html, ">B96</text>");
         Assert.AreEqual(0, Count(html, "md-exit-label"));
         // Every exit's end profile is shown by shading inside the module (ModuleDrawing §9.1).
-        Assert.IsGreaterThanOrEqualTo(variant.Exits.Count, Count(html, "md-profile"));
-        Assert.AreEqual(variant.Exits.Count, Count(html, "md-end-plate"));
-        Assert.AreEqual(variant.Tracks.Sum(t => t.Routes().Count), Count(html, "md-track"));
+        Assert.IsGreaterThanOrEqualTo(drawing.Exits.Count, Count(html, "md-profile"));
+        Assert.AreEqual(drawing.Exits.Count, Count(html, "md-end-plate"));
+        Assert.AreEqual(drawing.TrackElements.Sum(t => t.Routes().Count), Count(html, "md-track"));
         Assert.AreEqual(1, Count(html, "md-public-side"));
         StringAssert.Contains(html, "aria-label=\"Station\"");
     }
 
     [TestMethod]
-    public async Task ModuleViewWritesTheFremoDesignationAndTheOwnerOnTheModule()
+    public async Task ModuleViewWritesTheDesignationsOfTheStationTracks()
     {
-        var module = Station() with { FremoNumber = 7900, Owners = [new() { Prefix = "SFjä", Name = "Stefan Fjällemark" }] };
+        var station = Station().With(c => c.OperationLocation = new Tellurian.Trains.Schedules.Model.Layouts.Station { Name = "Tellby", Signature = "Tby" });
+        station = StationTrackList.WithGeneratedTrackList(station);
+        station = station.With(c => c.Tracks = [.. station.Tracks.Select(t => t.With(r => r.Designation = "1a"))]);
+        var parameters = new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = station };
+
+        var html = await StaticRendering.RenderAsync<ModuleView>(parameters);
+        var hidden = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>(parameters) { [nameof(Views.ModuleView.Layers)] = ModuleLayers.All & ~ModuleLayers.TrackDesignations });
+
+        Assert.AreEqual(station.Tracks.Count, Count(html, "md-track-designation"));
+        StringAssert.Contains(html, ">1a</text>");
+        Assert.AreEqual(0, Count(hidden, "md-track-designation"));
+        Assert.AreEqual(0, Count(await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = Station() }), "md-track-designation"), "Plain line has no station tracks.");
+    }
+
+    [TestMethod]
+    public async Task ModuleViewWritesTheFremoDesignationWithoutTheOwnerOnTheModule()
+    {
+        var module = Station().With(c => { c.Number = 7900; c.Prefix = "SFjä"; c.ModuleOwners = "Stefan Fjällemark"; });
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
         });
         StringAssert.Contains(html, ">SFjä 7900</text>");
-        StringAssert.Contains(html, ">Stefan Fjällemark</text>");
+        Assert.DoesNotContain(">Stefan Fjällemark</text>", html, "The prefix says who owns the module.");
         Assert.AreEqual(1, Count(html, "md-module-name"));
-        Assert.AreEqual(1, Count(html, "md-module-owner"));
+        Assert.AreEqual(0, Count(html, "md-module-owner"));
+    }
+
+    [TestMethod]
+    public async Task ModuleViewWritesTheOwnersUnderANameWithoutPrefix()
+    {
+        var owned = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?> { [nameof(Views.ModuleView.Module)] = Station().With(c => c.ModuleOwners = "Module Club") });
+        StringAssert.Contains(owned, ">Module Club</text>");
     }
 
     [TestMethod]
@@ -139,7 +162,7 @@ public sealed partial class ReadOnlyViewTests
             [nameof(Views.ModuleView.Json)] = json,
             [nameof(Views.ModuleView.Layers)] = ModuleLayers.Sections | ModuleLayers.EndPlates,
         });
-        Assert.AreEqual(module.DefaultVariant.Exits.Count, Count(html, "md-end-plate"));
+        Assert.AreEqual(module.Drawing.Exits.Count, Count(html, "md-end-plate"));
         Assert.AreEqual(0, Count(html, "md-track"));
     }
 
@@ -150,21 +173,21 @@ public sealed partial class ReadOnlyViewTests
         var plain = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
         });
         Assert.AreEqual(0, Count(plain, "print-sheet"));
 
         var printable = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Module)] = module,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)Catalogue.FindEndProfile,
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)Catalogue.FindEndProfile,
             [nameof(Views.ModuleView.PrintTitle)] = "Station Nord",
         });
         Assert.AreEqual(1, Count(printable, "print-sheet"));
         Assert.AreEqual(1, Count(printable, "md-print-title"));
         StringAssert.Contains(printable, ">Station Nord</text>");
         // The drawing is in both the canvas and the sheet.
-        Assert.AreEqual(2 * module.DefaultVariant.Sections.Count, Count(printable, "md-section"));
+        Assert.AreEqual(2 * module.Drawing.Sections.Count, Count(printable, "md-section"));
     }
 
     // The app passes the current catalogue: a short name set after the module was drawn shows, although the
@@ -177,7 +200,7 @@ public sealed partial class ReadOnlyViewTests
         var html = await StaticRendering.RenderAsync<ModuleView>(new Dictionary<string, object?>
         {
             [nameof(Views.ModuleView.Json)] = json,
-            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, Model.EndProfiles.EndProfile?>)(id => Catalogue.FindEndProfile(id) is { } p ? p with { ShortName = "NEW" } : null),
+            [nameof(Views.ModuleView.EndProfiles)] = (Func<Guid, EndProfile?>)(id => Catalogue.FindEndProfile(id) is { } p ? p.With(edited => { edited.ShortName = "NEW"; }) : null),
         });
         StringAssert.Contains(html, ">NEW</text>");
     }
@@ -216,16 +239,13 @@ public sealed partial class ReadOnlyViewTests
     [TestMethod]
     public async Task HallView()
     {
-        var hall = Hall.Rectangle("Club hall", 12000, 8000) with
+        var hall = Hall.Rectangle("Club hall", 12000, 8000).With(h =>
         {
-            Obstacles = [Obstacle.RoundPillar(new(4000, 4000), 400) with { Label = "P1" }],
-            Doors =
-            [
-                new() { Position = new(new(1500, 0), new(90)), Width = 1000, Kind = DoorKind.EmergencyExit },
-                new() { Position = new(new(6000, 0), new(90)), Width = 2000, IsModuleEntrance = true },
-            ],
-            NoGoZones = [new() { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose" }],
-        };
+            h.Add(Obstacle.RoundPillar(new(4000, 4000), 400).With(o => o.Label = "P1"));
+            h.Add(new Door { Position = new(new(1500, 0), new(90)), Width = 1000, Kind = DoorKind.EmergencyExit });
+            h.Add(new Door { Position = new(new(6000, 0), new(90)), Width = 2000, IsModuleEntrance = true });
+            h.Add(new NoGoZone { Area = PathDrawing.Rectangle(new(6000, 7800), 800, 400, Angle.Zero), Reason = "Fire hose" });
+        });
         var html = await StaticRendering.RenderAsync<HallView>(new Dictionary<string, object?> { [nameof(Views.HallView.Json)] = DrawingFileSerializer.Serialize(hall) });
         Assert.AreEqual(1, Count(html, "hl-walls"));
         Assert.AreEqual(1, Count(html, "pillar"));

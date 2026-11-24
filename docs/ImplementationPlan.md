@@ -17,20 +17,19 @@ Tellurian.Trains.Drawing/
 ├── global.json                           # sdk 11.0.100, test runner = Microsoft.Testing.Platform
 ├── .github/workflows/build-and-deploy.yml
 ├── docs/                                 # Specification, ImplementationPlan, ADRs, schema/
-├── Tellurian.Trains.Drawing.Geometry/    # Pure 2D math, no domain knowledge
+├── (Geometry: moved to the Schedules repository as the package Tellurian.Trains.Schedules.Model.Geometry, 2026-11-21)
 ├── Tellurian.Trains.Drawing.Model/       # Domain model, catalogue, fit evaluator, validation, layout graph, file format
 ├── Tellurian.Trains.Drawing.Editing/     # UI-independent editor state: documents, commands, undo/redo, snapping, tools
 ├── Tellurian.Trains.Drawing.Components/  # Razor class library: ALL view and editor components + their JS modules (reused by the Module Registry)
 ├── Tellurian.Trains.Drawing.App/         # Blazor WASM standalone PWA (AOT): shell, pages, storage, files, service worker
 ├── Tellurian.Trains.Drawing.App.Translations/ # All the app's texts: RESX for UI strings, Markdown for longer texts and release notes
-├── Tellurian.Trains.Drawing.Geometry.Tests/
 ├── Tellurian.Trains.Drawing.Model.Tests/
 ├── Tellurian.Trains.Drawing.Editing.Tests/
 ├── Tellurian.Trains.Drawing.Components.Tests/ # bUnit component tests (MSTest)
 └── Tellurian.Trains.Drawing.App.Tests/   # bUnit tests of app pages
 ```
 
-Dependencies run in one direction: `App → Components → Editing → Model → Geometry`, and `App → App.Translations`. Only `Components` and `App` reference Blazor. Geometry, Model and Editing are plain `net11.0` class libraries, testable without a browser (NF-5).
+Dependencies run in one direction: `App → Components → Editing → Model → Geometry`, and `App → App.Translations`. Only `Components` and `App` reference Blazor. Geometry, Model and Editing are plain `net11.0` class libraries, testable without a browser (NF-5). `Model` also depends on the NuGet package `Tellurian.Trains.Schedules.Model.Layouts`, the shared layout model owned by the Schedules repository: a module's operation location and the properties of its tracks are its types (spec §10; since 2026-11-19).
 
 **Reuse by the Module Registry (NF-10).** Geometry, Model, Editing and Components are packable libraries (NuGet). The Registry, which runs on Blazor Server, can:
 - embed the **display components** to show end profile, module and hall plan drawings (EX-8);
@@ -111,11 +110,15 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 1. Model records:
    - Scale, ModuleStandard, **StandardAddOn** (base standard), EndProfileCompatibilityOverride;
    - **EndProfile drawing**: outline, ground line, tracks (offset, gauge, rail top), screw holes, dowels, dimensions, labels, and the fallback screw-hole pattern identifier;
-   - Owner, Module (shared properties, incl. add-ons met) → **ModuleVariant** (configuration label, default flag, optional Registry id) → **Section** (outline), **InternalJoint** (optional free internal end profile), Exit (outer ends only, with profile orientation and rail-top offset, 0 = standard height), TrackElement hierarchy (straight, arc, turnout variants, crossing, double slip, buffer stop), **OperatorSpace** (polygon), **PublicSide** (edge references), **DuckUnderArea** (polygon, optional clear height), Label;
+   - Owner, Module (shared properties, incl. add-ons met) → **ModuleDrawing** (one per module; until 2026-11-19 a list of `ModuleVariant`) → **Section** (outline), **InternalJoint** (optional free internal end profile), Exit (outer ends only, with profile orientation and rail-top offset, 0 = standard height), TrackElement hierarchy (straight, arc, turnout variants, crossing, double slip, buffer stop), **OperatorSpace** (polygon), **PublicSide** (edge references), **DuckUnderArea** (polygon, optional clear height), Label;
    - Hall, Obstacle, Door, NoGoZone;
    - HallPlan (primary + accepted standards, preferred add-ons), Placement (with leg adjustment), Joint (fit, join method Bolted/Clamped, override flag, number of clamps), **PublicArea** (polygon), **WalkingPath** (centre line + width), **Acknowledgement** (finding type, involved placements, state fingerprint, note, time).
 
-   *As built:* the stored placement properties (variant, entry/exit exit, leg adjustment, note) are on `LineEntry`, inside `Layout` → `Line`, because poses are computed from the layout's anchor (spec §3). A computed `Placement` comes with the layout engine in Phase 9. `Joint` stores only the planner's choices (join-method override, number of clamps, note); the fit is evaluated, not stored. The anchor lock is on `Layout`.
+   *As built:* the stored placement properties (turned or not, the exit the line continues from for a module with three or more exits, leg adjustment, note) are on `LineEntry`, inside `Layout` → `Line`, because poses are computed from the layout's anchor (spec §3). A computed `Placement` comes with the layout engine in Phase 9. `Joint` stores only the planner's choices (join-method override, number of clamps, note); the fit is evaluated, not stored. The anchor lock is on `Layout`.
+
+   *As built (2026-11-19, schema version 2, not yet released):* a module has one drawing, `Module.Drawing` of type `ModuleDrawing`, without id, name or default flag; `Module.Variants` and `ModuleVariant` are gone, and a version 1 file's default variant (else the first) becomes the drawing. Every module has a track list, `Module.Tracks`, and an optional `Module.OperationLocation`. `Module` derives from the module of `Tellurian.Trains.Schedules.Model.Layouts` and adds `Id`, `StandardId`, its other properties and `Drawing`; the name, prefix, number, owners (one text), standard, location and tracks are the shared model's. The `Owner` record and this app's own `StationTrack` are gone; the track elements are `ModuleDrawing.TrackElements`, and a track's id is a whole number. Enum values in files are written as in the code, and all five file kinds are at schema version 2. A hall plan refers to an exit by side and number, `ExitPlace(Side, Number)` and `ExitReference(ModuleId, Side, Number)`, never by label. Version 1 hall plans are migrated when opened. *(Changed 2026-11-22, survey step 8: the hall plan is the shared `HallPlan`, a contract `Layout` in a hall; modules are referred to by their `int` id in the layout, and hall plans in an earlier shape are refused, since no released version made one.)*
+
+   *As built (2026-11-22, survey step 6b, Schedules 4.0.23):* the module is the shared model's `Module` itself (6a); `StandardId` is gone, the module's `Standard` carrying the catalogue id. A side refers to its exits by `ExitPlace`, track elements have `int` ids numbered from 1 (given when written or read if missing), a track says whether its length and stub mark are entered (`StationTrack.IsLengthEntered`, `IsStubEntered`), and the module has `SpeedLimit` (km/h, set by the owner; not yet editable in the app).
 2. **End profile analysis**: derive plate width/height, track offsets and c/c, screw-hole positions and symmetry (drawing vs its own mirror image, listing the asymmetric elements) (EP-7 logic).
 3. **Joint fit evaluator** (spec §3.2), a pure function `(endA + orientation, endB + orientation, overrides, tolerances) → (Fit, JoinMethod, differences)`.
    - Rules are evaluated in order: mirror A → tracks → screw holes (with identifier fallback) → ground line → fits (plate outline/height is ignored; all positions relative to rail top). Overrides are applied last.
@@ -162,7 +165,7 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 4. Catalogue pages: list and edit scales, standards, standard add-ons and overrides (user layer).
 5. Localization infrastructure in place: English master resources, language selector.
 6. Update-available prompt (AP-1).
-7. **Safe reload (AP-7)**: one `SafeReload` service that is used for every reload the app starts itself (language change, update). It flushes all open drafts to IndexedDB, waits for confirmation, stores the editor state (open documents, variant, selection, view), then reloads. On start it restores the editor state. If flushing fails, it cancels the reload and offers Save. Tests cover: a language change with unsaved edits in two open drawings, an update with an unsaved hall plan, and blocked storage.
+7. **Safe reload (AP-7)**: one `SafeReload` service that is used for every reload the app starts itself (language change, update). It flushes all open drafts to IndexedDB, waits for confirmation, stores the editor state (open documents, selection, view), then reloads. On start it restores the editor state. If flushing fails, it cancels the reload and offers Save. Tests cover: a language change with unsaved edits in two open drawings, an update with an unsaved hall plan, and blocked storage.
 
 **Exit criteria:** create a module from a template via the UI and save it as a file. Close the app with unsaved changes and resume the draft. Re-open the saved file from the recent files. Import end profiles from a ZIP archive.
 
@@ -188,7 +191,7 @@ Results: 89 unit tests, 98 % line coverage. The NF-2 distance check on 300 tesse
 
 ### Phase 5 – End profile editor and compare view (≈2 weeks)
 This comes first among the editors because module exits (Phase 6) depend on end profiles.
-1. End profile properties: designation, scale, standards, PDF/URL reference, Registry id (EP-1).
+1. End profile properties: designation, scale, standards, PDF/URL reference (EP-1).
 2. Template dialog: plate size and N tracks at c/c (EP-2).
 3. Tools:
    - outline tool for the end-plate cross-section (EP-3);
@@ -207,12 +210,12 @@ This comes first among the editors because module exits (Phase 6) depend on end 
 **Milestone M1a:** a user can draw an end profile. (Whether it fits another is shown where modules meet in a hall plan, Phase 9.)
 **Requirements:** EP-1..EP-7, EP-10.
 
-### Phase 6 – Module editor: properties, sections, variants, exits (≈3 weeks)
-1. Module properties panel, including the owners list (MD-2).
+### Phase 6 – Module editor: properties, sections, exits (≈3 weeks)
+1. Module properties panel, including the owners (MD-2).
 2. Template dialogs and "New module from parameters" (auto-draw, MD-3, MD-20). Auto-drawn modules can be re-generated from changed parameters until they are edited by hand. "Copy JSON" / "Save module file" make the result available for the Module Registry.
 3. Section outline tool: add/move/delete vertices, convert an edge to an arc and back, numeric edit. Split and merge sections (MD-4).
 4. Internal joints between sections, with an optional free internal end profile (MD-4a).
-5. Variants: switcher; create, copy, rename, delete, set default (MD-13).
+5. ~~Variants: switcher; create, copy, rename, delete, set default (MD-13).~~ *Withdrawn 2026-11-19: a module has one drawing. A module that can be set up in several ways is several modules, each with its own file.*
 6. Exit tool (MD-5):
    - place on an outer section edge (perpendicular snap), with label, direction, end profile (warning if not one of the standard's profiles), profile orientation for asymmetric profiles, and numeric pose;
    - draw the end plate at the exit with the profile's width and track positions;
@@ -220,19 +223,19 @@ This comes first among the editors because module exits (Phase 6) depend on end 
 7. Exit rail-top offsets and ramp indication (MD-7a).
 8. Operator space tool ("add along edge" with depth, then polygon editing, on one or both sides), public side marking, and the duck-under area (whole module, selected sections or a polygon; kept in sync with the duck-under flag) (MD-17, MD-18, MD-19).
 9. Labels and markers (MD-9).
-10. Derived measures panel per variant with difference flags (MD-10).
+10. Derived measures panel with difference flags (MD-10).
 11. Module problems list (precursor of VA).
 
-*As built (2026-11-17, first part):* the module editor (`ModuleEditor`, `ModuleScene`, `ModuleJoints`) defines the sections of a module by **section joints**: polylines across the module with their ends on the outline (schema: `bends` on internal joints). A new joint is straight, at right angles to the track where the user clicks; its distance along the track and its points' X/Y are typed exactly, points are added, moved and deleted, and the sections are cut again from the whole outline (`ModuleSections` in Model) and numbered along the track. Internal joints always fit; nothing compares end profiles in the module editor. The editor works on the default variant; the identification is edited in it as undoable changes.
+*As built (2026-11-17, first part):* the module editor (`ModuleEditor`, `ModuleScene`, `ModuleJoints`) defines the sections of a module by **section joints**: polylines across the module with their ends on the outline (schema: `bends` on internal joints). A new joint is straight, at right angles to the track where the user clicks; its distance along the track and its points' X/Y are typed exactly, points are added, moved and deleted, and the sections are cut again from the whole outline (`ModuleSections` in Model) and numbered along the track. Internal joints always fit; nothing compares end profiles in the module editor. The editor works on the module's one drawing (`Module.Drawing`, since 2026-11-19); the identification is edited in it as undoable changes.
 
-**Milestone M1b:** a user can draw a multi-section module with variants and exits, and save, export and import it, with its end profiles embedded.
-**Requirements:** MD-2, MD-3, MD-4, MD-4a, MD-5, MD-7a, MD-9, MD-10, MD-13, MD-17, MD-18, MD-19.
+**Milestone M1b:** a user can draw a multi-section module with exits, and save, export and import it, with its end profiles embedded.
+**Requirements:** MD-2, MD-3, MD-4, MD-4a, MD-5, MD-7a, MD-9, MD-10, MD-17, MD-18, MD-19. (MD-13 withdrawn 2026-11-19.)
 
 ### Phase 7 – Track plan (≈2–3 weeks)
 1. Track element palette and placement. Connection-point snapping between elements and to exit track positions (MD-6).
 2. Parametric editing (length, radius, angle, turnout type/hand/angle) and rotate/flip of elements within the module. (Mirroring a track *element* is allowed; mirroring a *module* is not.)
 3. Exit/profile track checks with tolerance (MD-7).
-4. Track attributes and station track data (MD-8).
+4. Track attributes and station track data (MD-8). — ✅ done 2026-11-18 ahead of the rest of the phase: the list of tracks per module (per variant until 2026-11-19), its *Tracks* pane, length to the fouling points, stub suggestion and validation (`docs/OperationLocationsTasks.md`, group C). Tracks can be given to the elements that auto-draw makes; drawing track elements is items 1 and 2.
 5. Total track length in derived measures.
 
 **Exit criteria:** a two-track station module with turnouts can be drawn whose tracks land exactly on the end-profile positions.
@@ -253,10 +256,10 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 1. Create a hall plan (hall + primary standard + additional accepted standards, editable later). Settings for tolerances and clearance (HP-1).
 2. **Module collection** (HP-2, UC-7): import from a ZIP archive, a shared folder (re-read for changes) or single files. A list with filters (standard, add-ons, owner, not used yet) and flags (unaccepted standard, missing end profiles). Cached in IndexedDB.
 3. **Line model and layout engine** in `Model`, unit-tested without UI:
-   - `Layout` (anchor module, anchor pose, anchor dimensions, lines), `Line` (ordered entries, optional start at the free exit of another line's module, optional end at a free exit elsewhere) and `LineEntry` (module, variant, entry exit, exit exit);
-   - `LayoutEngine.Compute(layout, …) → poses`: starts at the **anchor module** and works outwards through all lines (in both directions along the anchor's line, then into branches from their parent exits), joining each entry's entry exit to its neighbour's exit exit with the join math (§1.3). Rejoining lines and loops report their closure gap (VA-5);
+   - `Layout` (anchor module, anchor pose, anchor dimensions, lines), `Line` (ordered entries, optional start at the free exit of another line's module, optional end at a free exit elsewhere) and `LineEntry` (module, turned or not, and for a module with three or more exits the exit the line continues from);
+   - `LayoutEngine.Compute(layout, …) → poses`: starts at the **anchor module** and works outwards through all lines (in both directions along the anchor's line, then into branches from their parent exits), joining each entry to its neighbour with the join math (§1.3): not turned, a module's left exit joins the previous module and its right exit the next; turned 180°, the other way round. Rejoining lines and loops report their closure gap (VA-5);
    - tests: straight and curve chains, flips, anchors in the middle, branches (including branches of branches, swapping the main line and a branch, and moving or flipping a junction module with its branches), loops that close and loops that don't.
-4. **Ordered list UI** (HP-3, HP-4, HP-19): a **tree**, with branch lines nested under their junction module and collapsible. Add from the collection, remove, move up/down, drag in the list, flip (2 exits), choose entry/exit exits (≥ 3 exits), start a branch at a branch point, switch variant (HP-7). The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
+4. **Ordered list UI** (HP-3, HP-4, HP-19): a **tree**, with branch lines nested under their junction module and collapsible. Add from the collection, remove, move up/down, drag in the list, flip, choose the exit the line continues from (≥ 3 exits), start a branch at a branch point. The plan is redrawn immediately (NF-2: < 100 ms). Selecting in the list and selecting in the drawing are kept in sync.
 5. **Anchor and anchor dimensions** (HP-5, HP-21): choose the anchor module; drag or rotate it in the drawing (step rotation) or enter its pose, and the whole layout follows; lock. **Anchor dimension tool**: pick a reference point on the anchor and two walls or obstacles. It shows the distances and the angle as dimension lines, and typing a distance or angle moves the anchor. Uses the minimum-distance functions from Phase 1. Several layouts per plan. Check dimensions (HP-22, should). Branch lines (HP-19). **Joining a line's end to another exit** (HP-20): rejoining branches and closed loops, with the closure gap (VA-5).
 6. Leg adjustment per placement with a marker in the drawing (HP-13).
 7. **Joint fit feedback (HP-11):**
@@ -269,7 +272,7 @@ Hall plans are built by **ordering modules into lines** (UseCases.md UC-7…UC-1
 8. Embedding of module drawings (with revision), end profiles and catalogue entries in the hall plan file. Difference resolution on open (EX-5).
    **Lean hall plan drafts.** The embedded modules are read-only, so autosave must not rewrite them on every change (a 300-module plan is several MB):
    - module drawings and their end profiles are stored once in IndexedDB, keyed by module id and revision, when a module is added to the plan or updated to a newer revision (HP-16);
-   - the hall plan draft holds only the plan's own data (layouts, lines, entries with flips and leg adjustments, joints, public areas, walking paths, acknowledgements, settings), referring to modules by id and revision;
+   - the hall plan draft holds only the plan's own data (anchors, lines, entries with flips and leg adjustments, joints, public areas, walking paths, acknowledgements, settings), referring to modules by id and revision;
    - the complete, self-contained file is assembled only when saving to a file, and split again when a file is opened as a draft;
    - `AutosaveScheduler` and `EditorSession` need no change: the hall plan editor passes a save function that writes the lean draft. `DrawingDocuments` learns the two-part draft for save and open;
    - tests: autosave after a move writes only the lean draft; adding or updating a module writes its snapshot once; save to file and reopen round-trips identically.
@@ -301,12 +304,12 @@ Validation logic lives in `Model` and is unit-tested without UI. Parts of it can
    - VA-10 height at joints, with suggested leg adjustment;
    - VA-11 operator space conflicts (overlap with other operator spaces, baseboards, walls, obstacles, door and no-go zones, public areas);
    - VA-13 walking paths: the corridor (centre line buffered by half the width) against baseboards minus duck-under areas (error), obstacles and zones (warning); duck-under passages as info; VA-7 clearance measured from operator space edges (switchable).
-3. **Acknowledgements (HP-15)**: findings carry a stable key (type + involved placement ids). "Mark as OK" stores an acknowledgement with a fingerprint (hash of pose, variant, leg adjustment and module revision of each involved placement). On each validation run:
+3. **Acknowledgements (HP-15)**: findings carry a stable key (type + involved placement ids). "Mark as OK" stores an acknowledgement with a fingerprint (hash of pose, leg adjustment and module revision of each involved placement). On each validation run:
    - finding present and fingerprint equal → acknowledged;
    - finding present and fingerprint differs → invalidated, shown again as "previously acknowledged";
    - finding gone → the acknowledgement is removed.
 
-   Unit tests cover move-but-still-overlapping, move-apart, variant switch and module revision change.
+   Unit tests cover move-but-still-overlapping, move-apart and module revision change.
 4. Problems list UI with severity filter, zoom-to and "Mark as OK". Markers in the canvas (joint badges, gap arrows, clearance dimensions, overlap hatching, acknowledged state).
 4. A test suite of small hall plan fixtures, one or more per rule.
 
@@ -349,7 +352,10 @@ In priority order (to be confirmed):
 
 ### Planned next (decided 2026-11-15)
 - **Help system (decided 2026-11-17)**, as in the Schedules (timetable planning) app: a "?" button on each page and editor pane opens an "About this …" popover with a localised Markdown document (`Content/Help/<Name>.md` and its translations in the Translations project, loaded on first open and cached), and field labels get a "?" with a tooltip from an optional `<Field>Help` resource (no icon when there is none). Every help document exists in all five languages. *Built 2026-11-17:* `HelpButton` (App) on Start, Settings, Catalogue and in the Edit pane of the end profile, module and hall editors, documents `Content/Help<Topic>.md`; `FieldHelp` (Components) on `NumberField` and `TextField` through their `Help` parameter, texts from `Texts.Help(key)`.
-- **Empty catalogue (CA-1)**: the built-in catalogue is interim, as hard-coded entries may be wrong. It stays until Registry import (CA-5) works; then the catalogue starts empty and is filled manually (CA-2) or by import.
+- **Draggable divider in the editors (before the next release; asked 2026-11-21)**: the divider between the drawing and the property panes can be dragged, so the property panes become a row that wraps; the divider's position, counted from the right edge, is stored in IndexedDB (per viewer, like other settings of the workbench).
+- *Built 2026-11-21:* **A track list only for operation locations (decided 2026-11-21, replaces "every module has a track list" of 2026-11-19)**: the "no track" problem is reported only for a module that is an operation location; auto-draw and the module editor make no list for a module of plain line, where the user can still add tracks in the Tracks pane; existing files keep the lists they have. Update MD-8, `CLAUDE.md` and `OperationLocationsTasks.md` with it. To be built with the track designations below.
+- *Built 2026-11-21:* **Track designations in the module drawing (asked 2026-11-21)**: a track element that belongs to a track of the list shows the track's designation (1a, 1b, 2, 10 …). Derived, not stored: written once per track, at the middle of its longest element, so a renamed or reassigned track is shown at once; a layer that can be turned off. To be built right after the catalogue step is committed.
+- *Built 2026-11-22 (survey step 7):* **No built-in catalogue (CA-1)**: the catalogue is the user's, filled by importing a catalogue file (CA-3, which now brings standards, add-ons and overrides too), later from the Registry (CA-5), or by hand. The former built-in entries are test data (`TestData/sample.catalogue.json`). Existing users re-import; a module's embedded end profiles that the catalogue lacks can be saved there from its Archive pane. Scales are chosen from the suite's list (`Scale.Scales` in the shared model), also with an empty catalogue. `DrawingCatalogue` is `Catalogue`, and the namespaces `…Catalogue` are `…Catalogues`.
 
 ### Later (separate plan)
 - **Upload from this app (EX-11)**: upload end profile and module drawings to the Module Registry through its API, with the API key from Settings (AP-8), when the Registry's API supports it.
@@ -375,10 +381,12 @@ In priority order (to be confirmed):
 | EP-10 | 4 (tool), 5 |
 | EP-11 | 13 |
 | MD-1 | 3 |
-| MD-2, MD-4, MD-4a, MD-5, MD-9, MD-13, MD-17, MD-18, MD-19 | 6 |
+| MD-2, MD-4, MD-4a, MD-5, MD-9, MD-17, MD-18, MD-19 | 6 |
+| MD-13 | withdrawn 2026-11-19 |
 | MD-3, MD-10, MD-20, MD-22, MD-23 | 2 (logic), 6 (UI) |
 | MD-21 | 2 (standard colour), 4 (rendering) |
 | MD-6, MD-7, MD-8 | 7 |
+| MD-24 | model and file format as built 2026-11-19; UI not planned yet |
 | MD-7a | 2 (logic), 6 (UI) |
 | MD-11, MD-12 | 4 |
 | MD-14 | 13 |

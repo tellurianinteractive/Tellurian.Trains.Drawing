@@ -29,6 +29,7 @@
   <data name="Changed" xml:space="preserve"><value>Ændret</value></data>
   <data name="File" xml:space="preserve"><value>Fil</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Denne tegning er ikke længere åben.</value></data>
+  <data name="DraftUnreadable" xml:space="preserve"><value>Denne tegning kan ikke åbnes: {0} Den er måske gemt af en udviklingsversion af appen. Gem den i en fil for at beholde den, eller kassér den.</value></data>
   <data name="EditorComing" xml:space="preserve"><value>Dette er en skrivebeskyttet visning. Editoren til denne type tegning kommer i en senere version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Browserens lager kunne ikke bruges: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Filhandlingen mislykkedes: {0}</value></data>
@@ -71,19 +72,23 @@
   <data name="DrawnWithNotes" xml:space="preserve"><value>Modulet blev tegnet. Kontrollér disse bemærkninger:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Åbn tegningen</value></data>
   <data name="ModuleIdentification" xml:space="preserve"><value>Identifikation</value></data>
-  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-moduler identificeres med ejerens præfiks og et nummer, f.eks. SFjä 012. Andre moduler har et navn. Angiv et FREMO-nummer med præfiks, et navn eller begge dele.</value></data>
-  <data name="OwnerPrefix" xml:space="preserve"><value>Ejerens FREMO-præfiks</value></data>
-  <data name="FremoNumber" xml:space="preserve"><value>FREMO-modulnummer</value></data>
-  <data name="OwnerName" xml:space="preserve"><value>Ejerens fulde navn</value></data>
-  <data name="OwnerNameHelp" xml:space="preserve"><value>Valgfrit; ejeren kan være en anden end dig. Ved upload til Modulregistret udfyldes det, der mangler.</value></data>
-  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Angiv et navn eller et FREMO-nummer med ejerens præfiks.</value></data>
-  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Angiv ejerens FREMO-præfiks til FREMO-nummeret.</value></data>
-  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>FREMO-nummeret skal være 1–9999.</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>Moduler identificeres med ejerens præfiks og et nummer, f.eks. SFjä 0012, som i FREMO, eller med et navn. Angiv et nummer med præfiks, et navn eller begge dele.</value></data>
+  <data name="ModulePrefix" xml:space="preserve"><value>Præfiks</value></data>
+  <data name="ModuleNumber" xml:space="preserve"><value>Nummer</value></data>
+  <data name="PackageLabel" xml:space="preserve"><value>Pakke</value></data>
+  <data name="PackageLabelHelp" xml:space="preserve"><value>Kassen, som modulet transporteres i. Giv modulerne i samme kasse den samme betegnelse.</value></data>
+  <data name="ModuleOwners" xml:space="preserve"><value>Ejere</value></data>
+  <data name="ModuleOwnersHelp" xml:space="preserve"><value>Valgfrit: ejernes navne, adskilt med kommaer. Ved upload til Modulregistret udfyldes eller erstattes de.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Angiv et navn eller et nummer med præfiks.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Angiv præfikset til nummeret.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>Nummeret skal være 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Vælg en endeprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} skal være større end 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} skal være større end 0 og højst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tilføjelser og endeprofiler. De indbyggede poster følger med appen; dine egne poster gemmes i denne browser og kan eksporteres som en fil.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tilføjelser og endeprofiler. Dit katalog gemmes i denne browser: importér katalogfiler for at fylde det, tilføj dine egne poster, og eksportér det som en fil.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Dit katalog er tomt. Importér en katalogfil (.catalogue.json) med Importér filer, fx fra din klub eller din standard, for at få standarder og endeprofiler.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>Filerne har også {0} standarder, {1} tilføjelser og {2} kompatibilitetsundtagelser. De tilføjes sammen med de endeprofiler, du vælger; en post med id'et for en post i dit katalog erstatter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importér filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importér ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importér mappe…</value></data>
@@ -113,17 +118,11 @@
   <data name="Scale" xml:space="preserve"><value>Skala</value></data>
   <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
   <data name="Tracks" xml:space="preserve"><value>Spor</value></data>
-  <data name="Origin" xml:space="preserve"><value>Oprindelse</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Indbygget</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, erstatter indbygget</value></data>
   <data name="Copy" xml:space="preserve"><value>Kopiér</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>kopi</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopieret som {0}.</value></data>
   <data name="Delete" xml:space="preserve"><value>Slet</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Gendan indbygget</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>Slet {0} fra dit katalog?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Fjern din version af {0} og brug den indbyggede igen?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Sporvidde (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>Skinneoverkant (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Tilføjelser</value></data>
@@ -140,7 +139,6 @@
   <data name="Overrides" xml:space="preserve"><value>Undtagelser for pasning</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>Der er ingen undtagelser. Samlinger vurderes kun efter reglerne.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>En undtagelse erstatter reglernes resultat for et par endeprofiler, for kendte særtilfælde. Brug den kun, hvor reglerne giver forkert svar.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>Denne post er indbygget. Når du gemmer, oprettes din egen version, som erstatter den indbyggede, indtil du gendanner den.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>Katalogposten findes ikke.</value></data>
   <data name="None" xml:space="preserve"><value>(ingen)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Toskinne</value></data>
@@ -257,8 +255,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Klik hvor et spor skal ligge; dets skinneoverkant ligger altid på referencelinjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klik for at markere, træk for at flytte (Skift: lige, Alt: uden fastgørelse), Delete for at slette. Set udefra modulet.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Gem i mit katalog</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} er gemt i dit katalog.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>Gemt i dit katalog: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Opdateret fra dit katalog: {0}. Gem modulet for at beholde ændringen i dets fil.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>Endeprofiler i dette modul, som ikke er i dit katalog: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Redigér</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Redigér</value></data>
@@ -310,6 +309,8 @@
   <data name="Field_Countries" xml:space="preserve"><value>Lande</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Landekoder på to bogstaver, for eksempel SE, adskilt med komma. Tomt: standarden gælder i alle lande.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: brug landekoder på to bogstaver, for eksempel SE.</value></data>
+  <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: en standard skal have mindst én sporvidde.</value></data>
+  <data name="Problem_GaugeRepeated" xml:space="preserve"><value>{0}: smalsporvidden skal være forskellig fra normalsporvidden.</value></data>
   <data name="RevisionLog" xml:space="preserve"><value>Ændringslog</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Endnu ikke gemt af nogen med brugernavn.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Intet brugernavn i indstillingerne: når du gemmer en tegning, registreres det ikke i ændringsloggen.</value></data>
@@ -419,6 +420,11 @@
   <data name="RotationHelp" xml:space="preserve"><value>Hvor meget søjlen er drejet mod uret, i grader.</value></data>
   <data name="WallLengthHelp" xml:space="preserve"><value>En ny længde flytter hjørnet, hvor væggen slutter.</value></data>
   <data name="JointDistanceHelp" xml:space="preserve"><value>Hvor samlingen krydser sporet, målt langs sporet fra modulets første ende.</value></data>
+  <data name="SectionCount" xml:space="preserve"><value>Antal sektioner</value></data>
+  <data name="SectionCountHelp" xml:space="preserve"><value>Deler modulet i så mange lige lange sektioner langs sporet. De samlinger, der er nu, erstattes.</value></data>
+  <data name="EqualSections" xml:space="preserve"><value>Gør lige lange</value></data>
+  <data name="JointAngle" xml:space="preserve"><value>Vinkel fra kurvens start</value></data>
+  <data name="JointAngleHelp" xml:space="preserve"><value>Hvor samlingen krydser sporet, som vinklen fra der, hvor kurven starter. Samlingen står vinkelret på sporet, så vinklen er den samme ved sporet og ved begge kanter.</value></data>
   <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Skrives langs modulets ende i modultegninger, f.eks. B96. Uden det bruges betegnelsen.</value></data>
   <data name="EndsPane" xml:space="preserve"><value>Ender</value></data>
   <data name="ExitEnd" xml:space="preserve"><value>Ende {0}</value></data>
@@ -427,4 +433,93 @@
   <data name="FlipCurve" xml:space="preserve"><value>Vend kurven</value></data>
   <data name="CannotRedraw" xml:space="preserve"><value>Dette modul er ikke tegnet ud fra en skabelon, så dets endeprofiler og kurve kan ikke ændres her; enderne kan stadig vendes.</value></data>
   <data name="BendsWillChange" xml:space="preserve"><value>Sporene i en endeprofil ligger ikke midt på endepladen, så sektionssamlingernes knæk flyttes i forhold til sporene. Kontrollér samlingerne bagefter. Fortsæt?</value></data>
+  <data name="Track" xml:space="preserve"><value>Spor</value></data>
+  <data name="TrackLength" xml:space="preserve"><value>Længde</value></data>
+  <data name="TrackPlatform" xml:space="preserve"><value>Perron</value></data>
+  <data name="AddTrack" xml:space="preserve"><value>Tilføj spor</value></data>
+  <data name="RemoveTrack" xml:space="preserve"><value>Fjern spor</value></data>
+  <data name="TrackTitle" xml:space="preserve"><value>Spor {0}</value></data>
+  <data name="TrackDesignation" xml:space="preserve"><value>Betegnelse</value></data>
+  <data name="TrackLengthHelp" xml:space="preserve"><value>Den længde et tog kan bruge. Ved et sporskifte slutter sporet, hvor et tog på det andet spor stadig kan passere, ikke ved tungespidsen.</value></data>
+  <data name="TrackLengthFromDrawing" xml:space="preserve"><value>Længde fra tegningen</value></data>
+  <data name="TrackPlatformLength" xml:space="preserve"><value>Perronlængde</value></data>
+  <data name="TrackDirectionLabel" xml:space="preserve"><value>Retning</value></data>
+  <data name="TrackDirection_Both" xml:space="preserve"><value>Begge retninger</value></data>
+  <data name="TrackDirection_LeftToRight" xml:space="preserve"><value>Venstre mod højre</value></data>
+  <data name="TrackDirection_RightToLeft" xml:space="preserve"><value>Højre mod venstre</value></data>
+  <data name="TrackDirectionFromTo" xml:space="preserve"><value>Fra {0} til {1}</value></data>
+  <data name="TrackSpeedLimit" xml:space="preserve"><value>Hastighedsgrænse (km/t)</value></data>
+  <data name="TrackUsage" xml:space="preserve"><value>Anvendelse</value></data>
+  <data name="TrackIsMain" xml:space="preserve"><value>Hovedspor</value></data>
+  <data name="TrackIsScheduled" xml:space="preserve"><value>I køreplanen</value></data>
+  <data name="TrackIsLockable" xml:space="preserve"><value>Kan aflåses</value></data>
+  <data name="TrackIsStub" xml:space="preserve"><value>Blindspor</value></data>
+  <data name="TrackStubFromDrawing" xml:space="preserve"><value>Blindspor fra tegningen</value></data>
+  <data name="TrackElements" xml:space="preserve"><value>Sporelementer</value></data>
+  <data name="TrackElement" xml:space="preserve"><value>Sporelement</value></data>
+  <data name="TrackElementOf" xml:space="preserve"><value>Del af spor</value></data>
+  <data name="NoTrack" xml:space="preserve"><value>Intet spor</value></data>
+  <data name="TrackElementText" xml:space="preserve"><value>{0}. {1}, {2} mm</value></data>
+  <data name="TrackElement_StraightTrack" xml:space="preserve"><value>Lige spor</value></data>
+  <data name="TrackElement_CurvedTrack" xml:space="preserve"><value>Kurve</value></data>
+  <data name="TrackElement_FlexTrack" xml:space="preserve"><value>Spor</value></data>
+  <data name="TrackElement_Turnout" xml:space="preserve"><value>Sporskifte</value></data>
+  <data name="TrackElement_Crossing" xml:space="preserve"><value>Sporkrydsning</value></data>
+  <data name="TrackElement_DoubleSlip" xml:space="preserve"><value>Dobbelt krydsningssporskifte</value></data>
+  <data name="TracksHelp" xml:space="preserve"><value>Tilføj de spor, som tog planlægges på, og angiv, hvilket spor hvert sporelement er en del af. Hvert modul har mindst ét spor: et gennemgående spor eller et spor, der ender.</value></data>
+  <data name="NoTrackElements" xml:space="preserve"><value>Dette modul har ingen sporelementer.</value></data>
+  <data name="OperationLocation" xml:space="preserve"><value>Driftssted</value></data>
+  <data name="LocationNone" xml:space="preserve"><value>Dette modul er fri bane: det har intet navn i køreplanen, og togene kører forbi.</value></data>
+  <data name="LocationAdd" xml:space="preserve"><value>Gør til driftssted</value></data>
+  <data name="LocationRemove" xml:space="preserve"><value>Fjern driftsstedet</value></data>
+  <data name="LocationRemoveConfirm" xml:space="preserve"><value>Fjern driftsstedet med dets navn, signatur og egenskaber? Sporene bliver.</value></data>
+  <data name="LocationHelp" xml:space="preserve"><value>Driftsstedet er det, en køreplanlægger ser af modulet: hvor tog standser, krydser eller ledes. Dets spor står i ruden Spor.</value></data>
+  <data name="LocationSignature" xml:space="preserve"><value>Signatur</value></data>
+  <data name="LocationSignatureHelp" xml:space="preserve"><value>Det korte navn, der bruges i køreplaner, f.eks. Tby. Den er unik inden for landet.</value></data>
+  <data name="LocationCountry" xml:space="preserve"><value>Land</value></data>
+  <data name="LocationCountryHelp" xml:space="preserve"><value>Det land, driftsstedet drives som en del af, som en kode på to bogstaver, f.eks. SE.</value></data>
+  <data name="LocationKind" xml:space="preserve"><value>Type</value></data>
+  <data name="LocationKind_Station" xml:space="preserve"><value>Station</value></data>
+  <data name="LocationKind_SignalControlled" xml:space="preserve"><value>Signalstyret sted</value></data>
+  <data name="LocationKind_IndustrialArea" xml:space="preserve"><value>Industriområde</value></data>
+  <data name="LocationKind_Other" xml:space="preserve"><value>Andet sted, f.eks. et trinbræt</value></data>
+  <data name="LocationPassengers" xml:space="preserve"><value>Passagerer stiger på og af</value></data>
+  <data name="LocationCargo" xml:space="preserve"><value>Gods læsses og losses</value></data>
+  <data name="LocationTrainsCanCross" xml:space="preserve"><value>Tog kan krydse</value></data>
+  <data name="LocationDirectionChange" xml:space="preserve"><value>Tog kan skifte retning</value></data>
+  <data name="LocationHasTurntable" xml:space="preserve"><value>Drejeskive</value></data>
+  <data name="LocationIsShadow" xml:space="preserve"><value>Skyggebanegård</value></data>
+  <data name="LocationIsTerminus" xml:space="preserve"><value>Banen ender her</value></data>
+  <data name="LocationIsHarbour" xml:space="preserve"><value>Havn</value></data>
+  <data name="LocationKeyRequired" xml:space="preserve"><value>Der kræves nøgle til sporskifterne</value></data>
+  <data name="LocationCentreMiddle" xml:space="preserve"><value>Midtpunkt midt på modulet</value></data>
+  <data name="LocationCentre" xml:space="preserve"><value>Midtpunkt fra venstre ende</value></data>
+  <data name="LocationCentreHelp" xml:space="preserve"><value>Afstande til andre driftssteder måles fra midtpunktet, f.eks. stationsbygningen, langs hovedsporet.</value></data>
+  <data name="LocationKindChangeConfirm" xml:space="preserve"><value>{0} kan ikke have: {1}. Skift type og fjern det?</value></data>
+  <data name="LocationProperty_IsShadow" xml:space="preserve"><value>skyggebanegård</value></data>
+  <data name="LocationProperty_HasTurntable" xml:space="preserve"><value>drejeskive</value></data>
+  <data name="LocationProperty_HasPassengerExchange" xml:space="preserve"><value>passagerer</value></data>
+  <data name="LocationProperty_HasCargoExchange" xml:space="preserve"><value>gods</value></data>
+  <data name="LocationProperty_IsChangingTrainDirectionPossible" xml:space="preserve"><value>tog kan skifte retning</value></data>
+  <data name="LocationProperty_TrainsCanCross" xml:space="preserve"><value>tog kan krydse</value></data>
+  <data name="LocationProblem_NameMissing" xml:space="preserve"><value>Driftsstedet har intet navn.</value></data>
+  <data name="LocationProblem_SignatureMissing" xml:space="preserve"><value>Driftsstedet har ingen signatur.</value></data>
+  <data name="LocationProblem_CountryCodeInvalid" xml:space="preserve"><value>Landet er en kode på to store bogstaver, f.eks. SE.</value></data>
+  <data name="LocationProblem_CentreNegative" xml:space="preserve"><value>Midtpunktet kan ikke ligge før venstre ende.</value></data>
+  <data name="LocationProblem_ShadowNotAllowed" xml:space="preserve"><value>Kun en station kan være skyggebanegård.</value></data>
+  <data name="LocationProblem_TurntableNotAllowed" xml:space="preserve"><value>Kun en station kan have drejeskive.</value></data>
+  <data name="LocationProblem_PassengerExchangeNotAllowed" xml:space="preserve"><value>Der kan ikke udveksles passagerer på denne type sted.</value></data>
+  <data name="LocationProblem_CargoExchangeNotAllowed" xml:space="preserve"><value>Der kan ikke udveksles gods på denne type sted.</value></data>
+  <data name="LocationProblem_CargoExchangeRequired" xml:space="preserve"><value>Her udveksles der altid gods.</value></data>
+  <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>På en skyggebanegård udveksles der altid passagerer.</value></data>
+  <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Tog kan ikke skifte retning på denne type sted.</value></data>
+  <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Tog kan ikke krydse på denne type sted.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Driftsstedet har intet spor i listen. Et driftssted har mindst ét: et gennemgående spor eller et spor, der ender.</value></data>
+  <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Et spor mangler betegnelse.</value></data>
+  <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mere end ét spor hedder {0}.</value></data>
+  <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Sporelement {0} er en del af et spor, som ikke er i listen.</value></data>
+  <data name="TrackProblem_ElementWithoutTrack" xml:space="preserve"><value>Sporelement {0} er ikke en del af noget spor.</value></data>
+  <data name="TrackProblem_TrackWithoutElements" xml:space="preserve"><value>Spor {0} har ingen sporelementer, så dets længde kendes ikke.</value></data>
+  <data name="TrackProblem_ScheduledTrackReachesNoExit" xml:space="preserve"><value>Spor {0} er i køreplanen, men ingen af modulets ender kan nås fra det.</value></data>
+  <data name="Field_FoulingDistance" xml:space="preserve"><value>Sporafstand, hvor tog passerer frit (mm)</value></data>
 </root>

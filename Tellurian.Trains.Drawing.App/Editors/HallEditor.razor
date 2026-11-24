@@ -1,5 +1,6 @@
 @using System.Globalization
 @using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Keyboard
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Components.Views
@@ -10,9 +11,8 @@
 @using Tellurian.Trains.Drawing.Editing.Snapping
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
-@using Tellurian.Trains.Drawing.Geometry
+@using Tellurian.Trains.Schedules.Model.Geometry
 @using Tellurian.Trains.Drawing.Model
-@using Tellurian.Trains.Drawing.Model.Halls
 @implements IAsyncDisposable
 @inject DrawingDocuments Documents
 @inject IWorkbench Workbench
@@ -23,10 +23,11 @@
 @* The hall editor (Phase 8, HA-1…HA-3): plan view with tools, the walls as a table of corners, a property panel and derived measures. *@
 @if (_document is not null)
 {
+    <EditorKeyboard OnShortcut="OnShortcut" CanNudge="@(_activeTool == HallTool.Select && !_selection.IsEmpty)" />
     <div class="editor-layout">
         <div class="editor-canvas">
-            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@T["ZoomToFit"]" Label="@_document.Current.Name"
-                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDownCallback="OnKey">
+            <DrawingCanvas @ref="_canvas" @bind-Viewport="_view" FitArea="ZoomBounds" FitText="@($"{T["ZoomToFit"]} (0)")" Label="@_document.Current.Name"
+                           OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp">
                 <ChildContent>
                     <HallContent Hall="Shown" TextSize="_view.ToWorld(12)" Selected="_selection.Items" ShowCorners="true" HandleSize="_view.ToWorld(8)" />
                     @if (SingleSelected is { Kind: HallItemKind.Door } selectedDoor)
@@ -82,7 +83,7 @@
                     @foreach (var tool in Enum.GetValues<HallTool>())
                     {
                         <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                                aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"HallTool_{tool}"]</button>
+                                title="@EditorShortcuts.WithKey(T[$"HallTool_{tool}"], (int)tool + 1)" aria-pressed="@(tool == _activeTool)" @onclick="() => Choose(tool)">@T[$"HallTool_{tool}"]</button>
                     }
                 </div>
                 @if (ActivePathOrNull is { } path)
@@ -153,41 +154,41 @@
                     case { Kind: HallItemKind.Obstacle } item when item.Index < hall.Obstacles.Count:
                         var obstacle = hall.Obstacles[item.Index];
                         <label class="property-label" for="obstacle-kind">@T["ObstacleKind"]</label>
-                        <select id="obstacle-kind" value="@obstacle.Kind" @onchange="e => { if (Enum.TryParse<ObstacleKind>(e.Value as string, out var kind)) Apply(HallCommands.SetObstacle(item.Index, obstacle with { Kind = kind })); }">
+                        <select id="obstacle-kind" value="@obstacle.Kind" @onchange="e => { if (Enum.TryParse<ObstacleKind>(e.Value as string, out var kind)) Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Kind = kind))); }">
                             @foreach (var kind in Enum.GetValues<ObstacleKind>())
                             {
                                 <option value="@kind">@T[$"ObstacleKind_{kind}"]</option>
                             }
                         </select>
-                        <TextField Label="@T["Label"]" Value="@obstacle.Label" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Label = Trimmed(v) }))" />
+                        <TextField Label="@T["Label"]" Value="@obstacle.Label" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Label = Trimmed(v))))" />
                         @if (obstacle.TryGetCircle(out var circleCenter, out var diameter))
                         {
-                            <NumberField Label="@T["CentreX"]" Value="circleCenter.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Circle(new(v, circleCenter.Y), diameter) }))" />
-                            <NumberField Label="@T["CentreY"]" Value="circleCenter.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Circle(new(circleCenter.X, v), diameter) }))" />
-                            <NumberField Label="@T["HallDiameter"]" Value="diameter" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Circle(circleCenter, v) }))" />
+                            <NumberField Label="@T["CentreX"]" Value="circleCenter.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Circle(new(v, circleCenter.Y), diameter))))" />
+                            <NumberField Label="@T["CentreY"]" Value="circleCenter.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Circle(new(circleCenter.X, v), diameter))))" />
+                            <NumberField Label="@T["HallDiameter"]" Value="diameter" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Circle(circleCenter, v))))" />
                         }
                         else if (obstacle.TryGetRectangle(out var center, out var width, out var depth, out var turn))
                         {
-                            <NumberField Label="@T["CentreX"]" Value="center.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(new(v, center.Y), width, depth, turn) }))" />
-                            <NumberField Label="@T["CentreY"]" Value="center.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(new(center.X, v), width, depth, turn) }))" />
-                            <NumberField Label="@T["HallWidth"]" Value="width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, v, depth, turn) }))" />
-                            <NumberField Label="@T["HallDepth"]" Value="depth" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, v, turn) }))" />
-                            <NumberField Label="@T["Rotation"]" Help="@T.Help("Rotation")" Value="turn.Signed.Degrees" Unit="°" Quantity="Quantity.Angle" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle with { Area = PathDrawing.Rectangle(center, width, depth, new(v)) }))" />
+                            <NumberField Label="@T["CentreX"]" Value="center.X" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Rectangle(new(v, center.Y), width, depth, turn))))" />
+                            <NumberField Label="@T["CentreY"]" Value="center.Y" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Rectangle(new(center.X, v), width, depth, turn))))" />
+                            <NumberField Label="@T["HallWidth"]" Value="width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Rectangle(center, v, depth, turn))))" />
+                            <NumberField Label="@T["HallDepth"]" Value="depth" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Rectangle(center, width, v, turn))))" />
+                            <NumberField Label="@T["Rotation"]" Help="@T.Help("Rotation")" Value="turn.Signed.Degrees" Unit="°" Quantity="Quantity.Angle" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetObstacle(item.Index, obstacle.With(edited => edited.Area = PathDrawing.Rectangle(center, width, depth, new(v)))))" />
                         }
                         break;
                     case { Kind: HallItemKind.Door } item when item.Index < hall.Doors.Count:
                         var door = hall.Doors[item.Index];
                         <label class="property-label" for="door-kind">@T["DoorKind"]</label>
-                        <select id="door-kind" value="@door.Kind" @onchange="e => { if (Enum.TryParse<DoorKind>(e.Value as string, out var kind)) Apply(HallCommands.SetDoor(item.Index, door with { Kind = kind })); }">
+                        <select id="door-kind" value="@door.Kind" @onchange="e => { if (Enum.TryParse<DoorKind>(e.Value as string, out var kind)) Apply(HallCommands.SetDoor(item.Index, door.With(edited => edited.Kind = kind))); }">
                             @foreach (var kind in Enum.GetValues<DoorKind>())
                             {
                                 <option value="@kind">@T[$"DoorKind_{kind}"]</option>
                             }
                         </select>
-                        <TextField Label="@T["Label"]" Value="@door.Label" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { Label = Trimmed(v) }))" />
-                        <NumberField Label="@T["HallWidth"]" Value="door.Width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { Width = v }))" />
+                        <TextField Label="@T["Label"]" Value="@door.Label" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door.With(edited => edited.Label = Trimmed(v))))" />
+                        <NumberField Label="@T["HallWidth"]" Value="door.Width" Min="1" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door.With(edited => edited.Width = v)))" />
                         <label class="inline"><input type="checkbox" id="module-entrance" checked="@door.IsModuleEntrance"
-                               @onchange="e => Apply(HallCommands.SetDoor(item.Index, door with { IsModuleEntrance = e.Value is true }))" /> @T["IsModuleEntrance"]</label>
+                               @onchange="e => Apply(HallCommands.SetDoor(item.Index, door.With(edited => edited.IsModuleEntrance = e.Value is true)))" /> @T["IsModuleEntrance"]</label>
                         var (doorWall, along) = hall.WallPositionOf(door.Position.Position);
                         var wallLength = hall.Wall(doorWall).Length;
                         var endCorner = (doorWall + 1) % hall.WallCount;
@@ -204,11 +205,11 @@
                         <NumberField Label="@T.Format("DoorToCorner", endCorner + 1)" Value="wallLength - along - door.Width / 2" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
                                      ValueChanged="v => Apply(HallCommands.SetDoorPosition(item.Index, doorWall, wallLength - v - door.Width / 2))" />
                         <p class="pane-help">@T["DoorPositionHelp"]</p>
-                        <NumberField Label="@T["KeepFreeDepth"]" Help="@T.Help("KeepFreeDepth")" Value="door.KeepFreeDepth" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door with { KeepFreeDepth = v }))" />
+                        <NumberField Label="@T["KeepFreeDepth"]" Help="@T.Help("KeepFreeDepth")" Value="door.KeepFreeDepth" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetDoor(item.Index, door.With(edited => edited.KeepFreeDepth = v)))" />
                         break;
                     case { Kind: HallItemKind.NoGoZone } item when item.Index < hall.NoGoZones.Count:
                         var zone = hall.NoGoZones[item.Index];
-                        <TextField Label="@T["NoGoReason"]" Value="@zone.Reason" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetNoGoZone(item.Index, zone with { Reason = v.Trim() })); }" />
+                        <TextField Label="@T["NoGoReason"]" Value="@zone.Reason" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetNoGoZone(item.Index, zone.With(edited => edited.Reason = v.Trim()))); }" />
                         break;
                     case { Kind: HallItemKind.Corner } item when item.Index < Corners.Corners.Count:
                         var point = Corners.Corners[item.Index];
@@ -220,11 +221,11 @@
                         <NumberField Label="@T["WallArc"]" Value="Corners.Sweeps[item.Index]" Unit="°" Quantity="Quantity.Angle" Min="-359" Max="359" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(HallCommands.SetWallSweep(item.Index, v))" />
                         break;
                     case null when _selection.IsEmpty:
-                        <TextField Label="@T["Name"]" Value="@hall.Name" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetProperties(h => h with { Name = v.Trim() })); }" />
-                        <TextField Label="@T["HallAddress"]" Value="@hall.Address" ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { Address = Trimmed(v) }))" />
-                        <TextField Label="@T["Field_Note"]" Value="@hall.Note" ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { Note = Trimmed(v) }))" />
+                        <TextField Label="@T["Name"]" Value="@hall.Name" ValueChanged="v => { if (!string.IsNullOrWhiteSpace(v)) Apply(HallCommands.SetProperties(h => h.With(edited => edited.Name = v.Trim()))); }" />
+                        <TextField Label="@T["HallAddress"]" Value="@hall.Address" ValueChanged="v => Apply(HallCommands.SetProperties(h => h.With(edited => edited.Address = Trimmed(v))))" />
+                        <TextField Label="@T["Field_Note"]" Value="@hall.Note" ValueChanged="v => Apply(HallCommands.SetProperties(h => h.With(edited => edited.Note = Trimmed(v))))" />
                         <NumberField Label="@T["MinimumAisleWidth"]" Help="@T.Help("MinimumAisleWidth")" Value="hall.MinimumAisleWidth ?? 0" Min="0" Decimals="3" LengthUnit="LengthUnit.Metre" InvalidText="@T["InvalidNumber"]"
-                                     ValueChanged="v => Apply(HallCommands.SetProperties(h => h with { MinimumAisleWidth = v > 0 ? v : null }))" />
+                                     ValueChanged="v => Apply(HallCommands.SetProperties(h => h.With(edited => edited.MinimumAisleWidth = v > 0 ? v : null)))" />
                         <RevisionLogList Log="RevisionLog" Title="@T["RevisionLog"]" EmptyText="@T["NoRevisions"]" />
                         break;
                     default:
@@ -319,7 +320,7 @@
     private Viewport _view = default!;
     private string? _storageError;
     private string? _revisionLogJson;
-    private IReadOnlyList<Model.Files.DrawingRevision> _revisionLog = [];
+    private IReadOnlyList<DrawingRevision> _revisionLog = [];
     private PathCorners? _corners;
     private Hall? _cornersOf;
 
@@ -339,7 +340,7 @@
     public async Task<bool> FlushAsync() => _session is null || await _session.FlushAsync();
 
     /// <summary>The revision log from the draft, which saving to a file updates (EX-10); read again only when the draft changes.</summary>
-    private IReadOnlyList<Model.Files.DrawingRevision> RevisionLog
+    private IReadOnlyList<DrawingRevision> RevisionLog
     {
         get
         {
@@ -432,7 +433,7 @@
     protected override async Task OnInitializedAsync()
     {
         var hall = Model.Files.DrawingFileSerializer.DeserializeHall(Draft.Json);
-        _document = new(hall);
+        _document = new(hall, comparer: HallContentComparer.Comparer);
         var bounds = hall.Outline.ToPath().Bounds;
         _view = Viewport.Fit(bounds.Inflated(Math.Max(bounds.Width, bounds.Height) * MarginPerExtent), 800, 500);
         _select = new(_document, _selection, _scene, _snap);
@@ -503,13 +504,36 @@
 
     private void OnUp(CanvasPointerEventArgs e) => Active.PointerUp(e.ToToolPointer(SnapTolerance));
 
-    private void OnKey(KeyboardEventArgs e)
+    private async Task OnShortcut(EditorShortcut shortcut)
     {
-        var command = e.CtrlKey || e.MetaKey;
-        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
-        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
-        else if (Active.KeyDown(e.Key)) return;
-        else if (e.Key is "Delete" or "Backspace" && _activeTool == HallTool.Select) DeleteSelection();
+        switch (shortcut.Action)
+        {
+            case EditorAction.Undo: Undo(); break;
+            case EditorAction.Redo: Redo(); break;
+            case EditorAction.Fit:
+                if (_canvas is not null) await _canvas.FitAsync();
+                break;
+            case EditorAction.Tool:
+                if (Enum.GetValues<HallTool>() is var tools && shortcut.Tool <= tools.Length) Choose(tools[shortcut.Tool - 1]);
+                break;
+            case EditorAction.Finish:
+                Active.KeyDown(shortcut.Key);
+                break;
+            case EditorAction.Cancel:
+                // The tool's own action first, e.g. a shape being drawn; then the tool; then the selection.
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool != HallTool.Select) Choose(HallTool.Select);
+                else _selection.Clear();
+                break;
+            case EditorAction.Delete:
+                // While a shape is drawn, Backspace removes its last point.
+                if (Active.KeyDown(shortcut.Key)) break;
+                if (_activeTool == HallTool.Select) DeleteSelection();
+                break;
+            case EditorAction.Nudge:
+                if (_activeTool == HallTool.Select && !_selection.IsEmpty && _select.DragOffset is null) Apply(HallCommands.Move([.. _selection.Items], shortcut.Nudge));
+                break;
+        }
     }
 
     private void Apply(IEditCommand<Hall> command)

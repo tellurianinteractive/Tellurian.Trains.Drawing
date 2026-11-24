@@ -29,6 +29,7 @@
   <data name="Changed" xml:space="preserve"><value>Ändrad</value></data>
   <data name="File" xml:space="preserve"><value>Fil</value></data>
   <data name="DraftNotFound" xml:space="preserve"><value>Den här ritningen är inte öppen längre.</value></data>
+  <data name="DraftUnreadable" xml:space="preserve"><value>Den här ritningen kan inte öppnas: {0} Den kan ha sparats av en utvecklingsversion av appen. Spara den i en fil för att behålla den, eller släng den.</value></data>
   <data name="EditorComing" xml:space="preserve"><value>Det här är en skrivskyddad vy. Redigeraren för den här typen av ritning kommer i en senare version.</value></data>
   <data name="StorageError" xml:space="preserve"><value>Webbläsarens lagring kunde inte användas: {0}</value></data>
   <data name="FileError" xml:space="preserve"><value>Filåtgärden misslyckades: {0}</value></data>
@@ -71,19 +72,23 @@
   <data name="DrawnWithNotes" xml:space="preserve"><value>Modulen ritades. Kontrollera de här anmärkningarna:</value></data>
   <data name="OpenDrawing" xml:space="preserve"><value>Öppna ritningen</value></data>
   <data name="ModuleIdentification" xml:space="preserve"><value>Identifiering</value></data>
-  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>FREMO-moduler identifieras med ägarens prefix och ett nummer, t.ex. SFjä 012. Andra moduler har ett namn. Ange ett FREMO-nummer med prefix, ett namn eller båda.</value></data>
-  <data name="OwnerPrefix" xml:space="preserve"><value>Ägarens FREMO-prefix</value></data>
-  <data name="FremoNumber" xml:space="preserve"><value>FREMO-modulnummer</value></data>
-  <data name="OwnerName" xml:space="preserve"><value>Ägarens fullständiga namn</value></data>
-  <data name="OwnerNameHelp" xml:space="preserve"><value>Valfritt; ägaren kan vara någon annan än du. Uppladdning till Modulregistret fyller i det som saknas.</value></data>
-  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Ange ett namn, eller ett FREMO-nummer med ägarens prefix.</value></data>
-  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Ange ägarens FREMO-prefix till FREMO-numret.</value></data>
-  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>FREMO-numret måste vara 1–9999.</value></data>
+  <data name="ModuleIdentificationHelp" xml:space="preserve"><value>Moduler identifieras med ägarens prefix och ett nummer, t.ex. SFjä 0012, som i FREMO, eller med ett namn. Ange ett nummer med prefix, ett namn eller båda.</value></data>
+  <data name="ModulePrefix" xml:space="preserve"><value>Prefix</value></data>
+  <data name="ModuleNumber" xml:space="preserve"><value>Nummer</value></data>
+  <data name="PackageLabel" xml:space="preserve"><value>Paket</value></data>
+  <data name="PackageLabelHelp" xml:space="preserve"><value>Lådan som modulen transporteras i. Ge modulerna i samma låda samma beteckning.</value></data>
+  <data name="ModuleOwners" xml:space="preserve"><value>Ägare</value></data>
+  <data name="ModuleOwnersHelp" xml:space="preserve"><value>Valfritt: ägarnas namn, åtskilda med kommatecken. Uppladdning till Modulregistret fyller i eller ersätter dem.</value></data>
+  <data name="ModuleProblem_NameMissing" xml:space="preserve"><value>Ange ett namn, eller ett nummer med prefix.</value></data>
+  <data name="ModuleProblem_PrefixMissing" xml:space="preserve"><value>Ange prefixet till numret.</value></data>
+  <data name="ModuleProblem_FremoNumberOutOfRange" xml:space="preserve"><value>Numret måste vara 1–9999.</value></data>
   <data name="EndProfileRequired" xml:space="preserve"><value>Välj en ändprofil.</value></data>
   <data name="MustBePositive" xml:space="preserve"><value>{0} måste vara större än 0.</value></data>
   <data name="AngleRange" xml:space="preserve"><value>{0} måste vara större än 0 och högst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
-  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillägg och ändprofiler. De inbyggda posterna följer med appen; dina egna poster sparas i den här webbläsaren och kan exporteras som en fil.</value></data>
+  <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillägg och ändprofiler. Din katalog sparas i den här webbläsaren: importera katalogfiler för att fylla den, lägg till egna poster och exportera den som en fil.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Din katalog är tom. Importera en katalogfil (.catalogue.json) med Importera filer, t.ex. från din klubb eller din standard, för att få standarder och ändprofiler.</value></data>
+  <data name="ImportEntries" xml:space="preserve"><value>Filerna har också {0} standarder, {1} tillägg och {2} kompatibilitetsundantag. De läggs till med de ändprofiler du väljer; en post med samma id som en post i din katalog ersätter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importera filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importera ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importera mapp…</value></data>
@@ -113,17 +118,11 @@
   <data name="Scale" xml:space="preserve"><value>Skala</value></data>
   <data name="Standards" xml:space="preserve"><value>Standarder</value></data>
   <data name="Tracks" xml:space="preserve"><value>Spår</value></data>
-  <data name="Origin" xml:space="preserve"><value>Ursprung</value></data>
-  <data name="Origin_BuiltIn" xml:space="preserve"><value>Inbyggd</value></data>
-  <data name="Origin_User" xml:space="preserve"><value>Din</value></data>
-  <data name="Origin_ReplacesBuiltIn" xml:space="preserve"><value>Din, ersätter inbyggd</value></data>
   <data name="Copy" xml:space="preserve"><value>Kopiera</value></data>
   <data name="CopySuffix" xml:space="preserve"><value>kopia</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopierad som {0}.</value></data>
   <data name="Delete" xml:space="preserve"><value>Ta bort</value></data>
-  <data name="RestoreBuiltIn" xml:space="preserve"><value>Återställ inbyggd</value></data>
   <data name="ConfirmDelete" xml:space="preserve"><value>Ta bort {0} från din katalog?</value></data>
-  <data name="ConfirmRestoreBuiltIn" xml:space="preserve"><value>Ta bort din version av {0} och använda den inbyggda igen?</value></data>
   <data name="Gauge" xml:space="preserve"><value>Spårvidd (mm)</value></data>
   <data name="RailTopHeight" xml:space="preserve"><value>RÖK (mm)</value></data>
   <data name="AddOns" xml:space="preserve"><value>Tillägg</value></data>
@@ -140,7 +139,6 @@
   <data name="Overrides" xml:space="preserve"><value>Undantag för passning</value></data>
   <data name="NoOverrides" xml:space="preserve"><value>Det finns inga undantag. Skarvar bedöms enbart enligt reglerna.</value></data>
   <data name="OverrideIntro" xml:space="preserve"><value>Ett undantag ersätter regelns resultat för ett par ändprofiler, för kända undantagsfall. Använd det bara där reglerna ger fel svar.</value></data>
-  <data name="EditBuiltInNote" xml:space="preserve"><value>Den här posten är inbyggd. När du sparar skapas din egen version, som ersätter den inbyggda tills du återställer den.</value></data>
   <data name="EntryNotFound" xml:space="preserve"><value>Katalogposten finns inte.</value></data>
   <data name="None" xml:space="preserve"><value>(ingen)</value></data>
   <data name="RailSystem_TwoRail" xml:space="preserve"><value>Tvåräls</value></data>
@@ -257,8 +255,9 @@
   <data name="TrackHelp" xml:space="preserve"><value>Klicka där ett spår ska ligga; dess RÖK ligger alltid på RÖK-linjen.</value></data>
   <data name="EndProfileSelectHelp" xml:space="preserve"><value>Klicka för att markera, dra för att flytta (Skift: rakt, Alt: utan fästning), Delete för att ta bort. Sett utifrån modulen.</value></data>
   <data name="SaveToCatalogue" xml:space="preserve"><value>Spara i min katalog</value></data>
-  <data name="SavedToCatalogue" xml:space="preserve"><value>{0} är sparad i din katalog.</value></data>
+  <data name="SavedToCatalogue" xml:space="preserve"><value>Sparat i din katalog: {0}.</value></data>
   <data name="EndProfilesUpdated" xml:space="preserve"><value>Uppdaterad från din katalog: {0}. Spara modulen för att behålla ändringen i dess fil.</value></data>
+  <data name="EndProfilesNotInCatalogue" xml:space="preserve"><value>Ändprofiler i den här modulen som inte finns i din katalog: {0}.</value></data>
   <data name="EditAsDraft" xml:space="preserve"><value>Redigera</value></data>
   <data name="ArchivePane" xml:space="preserve"><value>Arkiv</value></data>
   <data name="EditPane" xml:space="preserve"><value>Redigera</value></data>
@@ -310,6 +309,8 @@
   <data name="Field_Countries" xml:space="preserve"><value>Länder</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Landskoder med två bokstäver, till exempel SE, åtskilda med kommatecken. Tomt: standarden gäller i alla länder.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: använd landskoder med två bokstäver, till exempel SE.</value></data>
+  <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: en standard behöver minst en spårvidd.</value></data>
+  <data name="Problem_GaugeRepeated" xml:space="preserve"><value>{0}: smalspårvidden måste skilja sig från normalspårvidden.</value></data>
   <data name="RevisionLog" xml:space="preserve"><value>Ändringslogg</value></data>
   <data name="NoRevisions" xml:space="preserve"><value>Inte sparad av någon med användarnamn än.</value></data>
   <data name="Warning_NoUserName" xml:space="preserve"><value>Inget användarnamn i inställningarna: när du sparar en ritning registreras det inte i ändringsloggen.</value></data>
@@ -419,6 +420,11 @@
   <data name="RotationHelp" xml:space="preserve"><value>Hur mycket pelaren är vriden moturs, i grader.</value></data>
   <data name="WallLengthHelp" xml:space="preserve"><value>En ny längd flyttar hörnet där väggen slutar.</value></data>
   <data name="JointDistanceHelp" xml:space="preserve"><value>Där skarven korsar spåret, mätt längs spåret från modulens första ände.</value></data>
+  <data name="SectionCount" xml:space="preserve"><value>Antal sektioner</value></data>
+  <data name="SectionCountHelp" xml:space="preserve"><value>Delar modulen i så många lika långa sektioner längs spåret. De skarvar som finns nu ersätts.</value></data>
+  <data name="EqualSections" xml:space="preserve"><value>Gör lika långa</value></data>
+  <data name="JointAngle" xml:space="preserve"><value>Vinkel från kurvans början</value></data>
+  <data name="JointAngleHelp" xml:space="preserve"><value>Där skarven korsar spåret, som vinkeln från där kurvan börjar. Skarven går vinkelrätt mot spåret, så vinkeln är densamma vid spåret och vid båda kanterna.</value></data>
   <data name="EndProfileShortNameHelp" xml:space="preserve"><value>Skrivs längs modulens ände i modulritningar, t.ex. B96. Utan det används beteckningen.</value></data>
   <data name="EndsPane" xml:space="preserve"><value>Ändar</value></data>
   <data name="ExitEnd" xml:space="preserve"><value>Ände {0}</value></data>
@@ -427,4 +433,93 @@
   <data name="FlipCurve" xml:space="preserve"><value>Vänd kurvan</value></data>
   <data name="CannotRedraw" xml:space="preserve"><value>Den här modulen ritades inte från en mall, så dess ändprofiler och kurva kan inte ändras här; ändarna kan ändå vändas.</value></data>
   <data name="BendsWillChange" xml:space="preserve"><value>Spåren i en ändprofil ligger inte mitt på ändplattan, så sektionsskarvarnas brytpunkter flyttas i förhållande till spåren. Kontrollera skarvarna efteråt. Fortsätta?</value></data>
+  <data name="Track" xml:space="preserve"><value>Spår</value></data>
+  <data name="TrackLength" xml:space="preserve"><value>Längd</value></data>
+  <data name="TrackPlatform" xml:space="preserve"><value>Plattform</value></data>
+  <data name="AddTrack" xml:space="preserve"><value>Lägg till spår</value></data>
+  <data name="RemoveTrack" xml:space="preserve"><value>Ta bort spår</value></data>
+  <data name="TrackTitle" xml:space="preserve"><value>Spår {0}</value></data>
+  <data name="TrackDesignation" xml:space="preserve"><value>Beteckning</value></data>
+  <data name="TrackLengthHelp" xml:space="preserve"><value>Den längd ett tåg kan använda. Vid en växel slutar spåret där ett tåg på det andra spåret fortfarande kan passera, inte vid växeltungorna.</value></data>
+  <data name="TrackLengthFromDrawing" xml:space="preserve"><value>Längd från ritningen</value></data>
+  <data name="TrackPlatformLength" xml:space="preserve"><value>Plattformslängd</value></data>
+  <data name="TrackDirectionLabel" xml:space="preserve"><value>Riktning</value></data>
+  <data name="TrackDirection_Both" xml:space="preserve"><value>Båda riktningarna</value></data>
+  <data name="TrackDirection_LeftToRight" xml:space="preserve"><value>Vänster till höger</value></data>
+  <data name="TrackDirection_RightToLeft" xml:space="preserve"><value>Höger till vänster</value></data>
+  <data name="TrackDirectionFromTo" xml:space="preserve"><value>Från {0} till {1}</value></data>
+  <data name="TrackSpeedLimit" xml:space="preserve"><value>Hastighetsgräns (km/h)</value></data>
+  <data name="TrackUsage" xml:space="preserve"><value>Användning</value></data>
+  <data name="TrackIsMain" xml:space="preserve"><value>Huvudspår</value></data>
+  <data name="TrackIsScheduled" xml:space="preserve"><value>Tidtabellslagt</value></data>
+  <data name="TrackIsLockable" xml:space="preserve"><value>Låsbart</value></data>
+  <data name="TrackIsStub" xml:space="preserve"><value>Stickspår</value></data>
+  <data name="TrackStubFromDrawing" xml:space="preserve"><value>Stickspår från ritningen</value></data>
+  <data name="TrackElements" xml:space="preserve"><value>Spårelement</value></data>
+  <data name="TrackElement" xml:space="preserve"><value>Spårelement</value></data>
+  <data name="TrackElementOf" xml:space="preserve"><value>Del av spår</value></data>
+  <data name="NoTrack" xml:space="preserve"><value>Inget spår</value></data>
+  <data name="TrackElementText" xml:space="preserve"><value>{0}. {1}, {2} mm</value></data>
+  <data name="TrackElement_StraightTrack" xml:space="preserve"><value>Rakspår</value></data>
+  <data name="TrackElement_CurvedTrack" xml:space="preserve"><value>Kurva</value></data>
+  <data name="TrackElement_FlexTrack" xml:space="preserve"><value>Spår</value></data>
+  <data name="TrackElement_Turnout" xml:space="preserve"><value>Växel</value></data>
+  <data name="TrackElement_Crossing" xml:space="preserve"><value>Spårkors</value></data>
+  <data name="TrackElement_DoubleSlip" xml:space="preserve"><value>Dubbel korsningsväxel</value></data>
+  <data name="TracksHelp" xml:space="preserve"><value>Lägg till de spår som tåg planeras på, och ange vilket spår varje spårelement är en del av. Varje modul har minst ett spår: ett genomgående spår eller ett spår som slutar.</value></data>
+  <data name="NoTrackElements" xml:space="preserve"><value>Den här modulen har inga spårelement.</value></data>
+  <data name="OperationLocation" xml:space="preserve"><value>Driftplats</value></data>
+  <data name="LocationNone" xml:space="preserve"><value>Den här modulen är linje: den har inget namn i tidtabellen, och tågen passerar den.</value></data>
+  <data name="LocationAdd" xml:space="preserve"><value>Gör till driftplats</value></data>
+  <data name="LocationRemove" xml:space="preserve"><value>Ta bort driftplatsen</value></data>
+  <data name="LocationRemoveConfirm" xml:space="preserve"><value>Ta bort driftplatsen, med dess namn, signatur och egenskaper? Spåren blir kvar.</value></data>
+  <data name="LocationHelp" xml:space="preserve"><value>Driftplatsen är det som en tidtabellsplanerare ser av modulen: där tåg stannar, möts eller leds om. Dess spår finns i rutan Spår.</value></data>
+  <data name="LocationSignature" xml:space="preserve"><value>Signatur</value></data>
+  <data name="LocationSignatureHelp" xml:space="preserve"><value>Det korta namn som används i tidtabeller, t.ex. Tby. Den är unik inom landet.</value></data>
+  <data name="LocationCountry" xml:space="preserve"><value>Land</value></data>
+  <data name="LocationCountryHelp" xml:space="preserve"><value>Det land som driftplatsen trafikeras som en del av, som en kod med två bokstäver, t.ex. SE.</value></data>
+  <data name="LocationKind" xml:space="preserve"><value>Typ</value></data>
+  <data name="LocationKind_Station" xml:space="preserve"><value>Station</value></data>
+  <data name="LocationKind_SignalControlled" xml:space="preserve"><value>Signalreglerad plats</value></data>
+  <data name="LocationKind_IndustrialArea" xml:space="preserve"><value>Industriområde</value></data>
+  <data name="LocationKind_Other" xml:space="preserve"><value>Annan plats, t.ex. en hållplats</value></data>
+  <data name="LocationPassengers" xml:space="preserve"><value>Resande stiger på och av</value></data>
+  <data name="LocationCargo" xml:space="preserve"><value>Gods lastas och lossas</value></data>
+  <data name="LocationTrainsCanCross" xml:space="preserve"><value>Tåg kan mötas</value></data>
+  <data name="LocationDirectionChange" xml:space="preserve"><value>Tåg kan byta riktning</value></data>
+  <data name="LocationHasTurntable" xml:space="preserve"><value>Vändskiva</value></data>
+  <data name="LocationIsShadow" xml:space="preserve"><value>Magasin</value></data>
+  <data name="LocationIsTerminus" xml:space="preserve"><value>Linjen slutar här</value></data>
+  <data name="LocationIsHarbour" xml:space="preserve"><value>Hamn</value></data>
+  <data name="LocationKeyRequired" xml:space="preserve"><value>Nyckel krävs för växlarna</value></data>
+  <data name="LocationCentreMiddle" xml:space="preserve"><value>Mittpunkt mitt på modulen</value></data>
+  <data name="LocationCentre" xml:space="preserve"><value>Mittpunkt från vänster ände</value></data>
+  <data name="LocationCentreHelp" xml:space="preserve"><value>Avstånd till andra driftplatser mäts från mittpunkten, t.ex. stationshuset, längs huvudspåret.</value></data>
+  <data name="LocationKindChangeConfirm" xml:space="preserve"><value>{0} kan inte ha: {1}. Byta typ och ta bort det?</value></data>
+  <data name="LocationProperty_IsShadow" xml:space="preserve"><value>magasin</value></data>
+  <data name="LocationProperty_HasTurntable" xml:space="preserve"><value>vändskiva</value></data>
+  <data name="LocationProperty_HasPassengerExchange" xml:space="preserve"><value>resande</value></data>
+  <data name="LocationProperty_HasCargoExchange" xml:space="preserve"><value>gods</value></data>
+  <data name="LocationProperty_IsChangingTrainDirectionPossible" xml:space="preserve"><value>tåg kan byta riktning</value></data>
+  <data name="LocationProperty_TrainsCanCross" xml:space="preserve"><value>tåg kan mötas</value></data>
+  <data name="LocationProblem_NameMissing" xml:space="preserve"><value>Driftplatsen saknar namn.</value></data>
+  <data name="LocationProblem_SignatureMissing" xml:space="preserve"><value>Driftplatsen saknar signatur.</value></data>
+  <data name="LocationProblem_CountryCodeInvalid" xml:space="preserve"><value>Landet anges som en kod med två versaler, t.ex. SE.</value></data>
+  <data name="LocationProblem_CentreNegative" xml:space="preserve"><value>Mittpunkten kan inte ligga före vänster ände.</value></data>
+  <data name="LocationProblem_ShadowNotAllowed" xml:space="preserve"><value>Bara en station kan vara magasin.</value></data>
+  <data name="LocationProblem_TurntableNotAllowed" xml:space="preserve"><value>Bara en station kan ha vändskiva.</value></data>
+  <data name="LocationProblem_PassengerExchangeNotAllowed" xml:space="preserve"><value>Resandeutbyte kan inte ske på den här typen av plats.</value></data>
+  <data name="LocationProblem_CargoExchangeNotAllowed" xml:space="preserve"><value>Godsutbyte kan inte ske på den här typen av plats.</value></data>
+  <data name="LocationProblem_CargoExchangeRequired" xml:space="preserve"><value>Här sker alltid godsutbyte.</value></data>
+  <data name="LocationProblem_PassengerExchangeRequired" xml:space="preserve"><value>På ett magasin sker alltid resandeutbyte.</value></data>
+  <data name="LocationProblem_DirectionChangeNotAllowed" xml:space="preserve"><value>Tåg kan inte byta riktning på den här typen av plats.</value></data>
+  <data name="LocationProblem_TrainsCrossingNotAllowed" xml:space="preserve"><value>Tåg kan inte mötas på den här typen av plats.</value></data>
+  <data name="TrackProblem_NoTracks" xml:space="preserve"><value>Driftplatsen har inget spår i listan. En driftplats har minst ett: ett genomgående spår eller ett spår som slutar.</value></data>
+  <data name="TrackProblem_DesignationMissing" xml:space="preserve"><value>Ett spår saknar beteckning.</value></data>
+  <data name="TrackProblem_DesignationNotUnique" xml:space="preserve"><value>Mer än ett spår heter {0}.</value></data>
+  <data name="TrackProblem_UnknownTrack" xml:space="preserve"><value>Spårelement {0} är en del av ett spår som inte finns i listan.</value></data>
+  <data name="TrackProblem_ElementWithoutTrack" xml:space="preserve"><value>Spårelement {0} är inte en del av något spår.</value></data>
+  <data name="TrackProblem_TrackWithoutElements" xml:space="preserve"><value>Spår {0} har inga spårelement, så dess längd är inte känd.</value></data>
+  <data name="TrackProblem_ScheduledTrackReachesNoExit" xml:space="preserve"><value>Spår {0} är tidtabellslagt, men ingen av modulens ändar kan nås från det.</value></data>
+  <data name="Field_FoulingDistance" xml:space="preserve"><value>Spåravstånd där tåg passerar fritt (mm)</value></data>
 </root>

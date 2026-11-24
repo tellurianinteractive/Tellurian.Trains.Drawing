@@ -6,7 +6,7 @@ for module meetings, such as those of FREMO and MMM.
 - **End profiles**: draw the cross-section of a module end and see whether and how two ends fit:
   bolted, clamped or not at all.
 - **Modules**: draw the baseboard sections, the track plan, the exits with their end profiles,
-  operator spaces, public sides and duck-under areas. A module can have several variants.
+  operator spaces, public sides and duck-under areas.
 - **Hall plans**: draw the hall, then drag modules into it, join them end to end, and check
   joints, clearances, walking paths and operator spaces.
 

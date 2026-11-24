@@ -4,7 +4,7 @@ using Microsoft.Extensions.Time.Testing;
 using Tellurian.Localization;
 using Tellurian.Localization.DependencyInjection;
 using Tellurian.Localization.Implementatioms;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Documents;
 using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Storage;
@@ -14,16 +14,20 @@ using Tellurian.Trains.Drawing.App.Translations.Resources;
 
 namespace Tellurian.Trains.Drawing.App.Tests;
 
-/// <summary>A bUnit context with the app's services, an in-memory workbench and a fake file service.</summary>
+/// <summary>
+/// A bUnit context with the app's services, an in-memory workbench and a fake file service. The user's catalogue is the
+/// sample catalogue, as if imported, unless <c>withCatalogue</c> is false: the app has no catalogue of its own.
+/// </summary>
 internal sealed class AppTestContext : BunitContext
 {
     // Pages that load Markdown documents render again when the document is read; the first read in a test run
     // can take more than bUnit's default second when all test projects run in parallel. A wait that passes returns at once.
     static AppTestContext() => DefaultWaitTimeout = TimeSpan.FromSeconds(10);
 
-    public AppTestContext(bool canSaveInPlace = true)
+    public AppTestContext(bool canSaveInPlace = true, bool withCatalogue = true)
     {
         Files = new(canSaveInPlace);
+        if (withCatalogue) Workbench.Values[CatalogueService.UserCatalogueKey] = SampleCatalogue.Json;
         Services.AddLanguageService(AppLanguages.All);
         Services.AddResxResourceProviders([typeof(AppTexts)]);
         Services.AddSingleton<Texts>();

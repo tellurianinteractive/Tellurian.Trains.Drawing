@@ -1,8 +1,12 @@
 using Tellurian.Trains.Drawing.Model.Files;
-using Tellurian.Trains.Drawing.Model.HallPlans;
+using Tellurian.Trains.Schedules.Model.Layouts;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
 
+/// <summary>
+/// Halls and hall plans through this app's serializer. The hall plan is the shared model's, a layout in a hall; its
+/// lines, placement and file format are tested where they are, in the Schedules repository.
+/// </summary>
 [TestClass]
 public sealed class HallPlanTests
 {
@@ -24,8 +28,10 @@ public sealed class HallPlanTests
         var json = DrawingFileSerializer.Serialize(plan);
         var read = DrawingFileSerializer.DeserializeHallPlan(json);
         Assert.AreEqual(json, DrawingFileSerializer.Serialize(read));
-        Assert.AreEqual(plan.Layouts[0].AnchorPose, read.Layouts[0].AnchorPose);
+        Assert.AreEqual(plan.Anchors[0].Pose, read.Anchors[0].Pose);
         Assert.AreEqual(plan.Acknowledgements[0].Time, read.Acknowledgements[0].Time);
+        Assert.AreEqual(plan.Id, read.Layout.SourceId, "the layout has the hall plan's identity");
+        Assert.AreEqual("Club meeting", HallPlanFile.ReadLayout(json).Name, "the planner reads the layout as written");
     }
 
     [TestMethod]
@@ -34,81 +40,26 @@ public sealed class HallPlanTests
             Assert.ThrowsExactly<DrawingFileException>(() => DrawingFileSerializer.DeserializeHall(DrawingFileSerializer.Serialize(Plan()))).Error);
 
     [TestMethod]
-    public void FlipSwapsTheExits()
+    public void TheModulesArePlacedInLinesWithIdsOfTheLayouts()
     {
-        var entry = new LineEntry { ModuleId = Guid.NewGuid(), EntryExit = "W", ExitExit = "E" };
-        var flipped = entry.Flipped();
-        Assert.AreEqual("E", flipped.EntryExit);
-        Assert.AreEqual("W", flipped.ExitExit);
-        Assert.AreEqual(entry, flipped.Flipped());
+        var layout = Plan().Layout;
+        CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, layout.Modules.Select(m => m.Id).ToArray());
+        Assert.AreEqual(4, layout.Entries.Count());
+        Assert.IsTrue(layout.FindEntry(2)!.IsTurned);
+        Assert.AreSame(layout.Lines.Last(), layout.LineOf(4));
+        Assert.IsTrue(layout.Lines.Last().IsBranch);
+        CollectionAssert.AreEqual(layout.Lines.ToArray(), layout.GroupOf(layout.MainLines.Single()).ToArray());
     }
 
     [TestMethod]
-    public void EndOfLineEntryHasOneExit()
+    public void AnExitIsFoundBySideAndNumberWhateverItsLabel()
     {
-        var entry = new LineEntry { ModuleId = Guid.NewGuid(), EntryExit = "W" };
-        Assert.AreEqual(new ExitReference(entry.ModuleId, "W"), entry.Entry);
-        Assert.IsNull(entry.Exit);
-    }
-
-    [TestMethod]
-    public void FindsEntriesInAllLines()
-    {
-        var plan = Plan();
-        var terminus = plan.Modules[3];
-        Assert.AreEqual(4, plan.Entries().Count());
-        Assert.AreEqual("W", plan.FindEntry(terminus.Id)?.EntryExit);
-        Assert.IsTrue(plan.Layouts[0].Lines[1].IsBranch);
-        Assert.IsFalse(plan.Layouts[0].Lines[0].IsBranch);
-        Assert.IsEmpty(plan.ModulesPlacedMoreThanOnce());
-    }
-
-    [TestMethod]
-    public void ModulePlacedTwiceIsFound()
-    {
-        var plan = Plan();
-        var layout = plan.Layouts[0];
-        var main = layout.Lines[0];
-        var twice = plan with { Layouts = [layout with { Lines = [main with { Entries = [.. main.Entries, main.Entries[0]] }, layout.Lines[1]] }] };
-        CollectionAssert.AreEqual(new[] { main.Entries[0].ModuleId }, twice.ModulesPlacedMoreThanOnce().ToArray());
-    }
-
-    [TestMethod]
-    public void JointsAreFoundInEitherOrder()
-    {
-        var plan = Plan();
-        var joint = plan.Joints[0];
-        Assert.AreSame(joint, plan.FindJoint(joint.First, joint.Second));
-        Assert.AreSame(joint, plan.FindJoint(joint.Second, joint.First));
-        Assert.IsNull(plan.FindJoint(joint.First, joint.First));
-    }
-
-    [TestMethod]
-    public void PrimaryStandardIsAccepted()
-    {
-        var plan = Plan();
-        var withDuplicate = plan with { AcceptedStandards = [plan.PrimaryStandard, new(TestCatalogue.MmmId, "MMM-2R")] };
-        Assert.AreEqual(2, withDuplicate.AllAcceptedStandards().Count());
-        Assert.IsTrue(plan.IsAccepted(TestCatalogue.FremoId));
-        Assert.IsFalse(plan.IsAccepted(TestCatalogue.MmmId));
-        Assert.IsTrue(withDuplicate.IsAccepted(TestCatalogue.MmmId));
-    }
-
-    [TestMethod]
-    public void EmbeddedDataIsFound()
-    {
-        var plan = Plan();
-        Assert.AreSame(plan.Modules[0], plan.FindModule(plan.Modules[0].Id));
-        Assert.IsNotNull(plan.FindEndProfile(TestCatalogue.FremoDouble.Id));
-        Assert.IsNotNull(plan.FindStandard(TestCatalogue.FremoId));
-    }
-
-    [TestMethod]
-    public void WalkingPathWidthDefaultsToThePlan()
-    {
-        var settings = new HallPlanSettings();
-        var path = new WalkingPath { CentreLine = PathDrawing.Polyline([new(0, 0), new(1000, 0)]) };
-        Assert.AreEqual(HallPlanSettings.DefaultWalkingPathWidth, path.EffectiveWidth(settings));
-        Assert.AreEqual(800, (path with { Width = 800 }).EffectiveWidth(settings));
+        var junction = Plan().Layout.FindModule(3)!.Module.Drawing;
+        var second = new ExitPlace(ExitSide.Right, 2).In(junction)!;
+        Assert.AreEqual("E2", second.Label);
+        Assert.AreEqual(new ExitPlace(ExitSide.Right, 2), ExitPlace.Of(junction, second));
+        var relabelled = junction.With(edited => edited.Exits = [.. junction.Exits.Select(e => e.With(edited => edited.Label = $"x{e.Label}"))]);
+        Assert.AreEqual("xE2", new ExitPlace(ExitSide.Right, 2).In(relabelled)!.Label);
+        Assert.IsNull(new ExitPlace(ExitSide.Right, 3).In(junction));
     }
 }

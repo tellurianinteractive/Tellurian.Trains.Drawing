@@ -1,5 +1,6 @@
 @using System.Globalization
 @using Tellurian.Trains.Drawing.Components.Canvas
+@using Tellurian.Trains.Drawing.Components.Keyboard
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Rendering
 @using Tellurian.Trains.Drawing.Components.Views
@@ -10,11 +11,12 @@
 @using Tellurian.Trains.Drawing.Editing.Snapping
 @using Tellurian.Trains.Drawing.Editing.Tools
 @using Tellurian.Trains.Drawing.Editing.Viewing
-@using Tellurian.Trains.Drawing.Geometry
-@using Tellurian.Trains.Drawing.Model.AutoDraw
-@using Tellurian.Trains.Drawing.Model.Catalogue
+@using Tellurian.Trains.Schedules.Model.Geometry
+@using Tellurian.Trains.Drawing.Model.Catalogues
 @using Tellurian.Trains.Drawing.Model.EndProfiles
 @using Tellurian.Trains.Drawing.Model.Modules
+@using Tellurian.Trains.Drawing.Model.Tracks
+@using static Tellurian.Trains.Schedules.Model.Layouts.ModuleExtensions
 @implements IAsyncDisposable
 @inject DrawingDocuments Documents
 @inject IWorkbench Workbench
@@ -27,15 +29,23 @@
    module, and the module's identification. End profiles are only assigned here, never compared for fit. *@
 @if (_document is not null)
 {
+    <EditorKeyboard OnShortcut="OnShortcut" CanNudge="@(_activeTool == ModuleTool.Select && !_selection.IsEmpty)" />
     <div class="editor-layout">
         <div class="editor-canvas">
-            <ModuleView Json="@Draft.Json" Variant="Shown.Module.DefaultVariant" Standard="@Standard" EndProfiles="FindEndProfile" PrintTitle="@Draft.Name"
-                        FitText="@T["ZoomToFit"]" Error="@T["CannotShow"]" IsEditable="true" ViewChanged="v => _view = v"
-                        OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp" OnKeyDown="OnKey">
+            <ModuleView @ref="_moduleView" Json="@Draft.Json" Drawing="Shown.Module.Drawing" Tracks="@([.. Shown.Module.Tracks])" Standard="@Standard" EndProfiles="FindEndProfile" PrintTitle="@Draft.Name"
+                        FitText="@FitText" Error="@T["CannotShow"]" IsEditable="true" ViewChanged="v => _view = v"
+                        OnPointerDown="OnDown" OnPointerMove="OnMove" OnPointerUp="OnUp">
                 <Overlay>
                     @{
-                        var joints = Shown.Module.DefaultVariant.InternalJoints;
+                        var joints = Shown.Module.Drawing.InternalJoints;
                         var half = _view.ToWorld(HandlePixels) / 2;
+                    }
+                    @if (_highlightedElement is { } highlighted && Shown.Module.Drawing.TrackElements.FirstOrDefault(t => t.Id == highlighted) is { } element)
+                    {
+                        foreach (var route in element.Routes())
+                        {
+                            <path class="editor-selected-joint editor-highlighted-track" d="@SvgPath.From(route)" />
+                        }
                     }
                     @for (var j = 0; j < joints.Count; j++)
                     {
@@ -79,7 +89,7 @@
                     @foreach (var tool in Enum.GetValues<ModuleTool>())
                     {
                         <button type="button" id="@($"tool-{tool.ToString().ToLowerInvariant()}")" class="@(tool == _activeTool ? "primary" : null)"
-                                aria-pressed="@(tool == _activeTool)" disabled="@(tool == ModuleTool.Joint && _outline is null)" @onclick="() => Choose(tool)">@T[$"ModTool_{tool}"]</button>
+                                title="@EditorShortcuts.WithKey(T[$"ModTool_{tool}"], (int)tool + 1)" aria-pressed="@(tool == _activeTool)" disabled="@(!IsAvailable(tool))" @onclick="() => Choose(tool)">@T[$"ModTool_{tool}"]</button>
                     }
                 </div>
                 @if (Catalogue is not null && ModuleRedraw.CanRedraw(_document.Current) && ModuleRedraw.HasCurve(_document.Current))
@@ -100,7 +110,7 @@
                 <h2>@T["EndsPane"] <HelpButton For="ModuleEnds" Title="@T["EndsPane"]" AlignEnd="true" /></h2>
                 @{
                     var current = _document.Current;
-                    var exits = current.Module.DefaultVariant.Exits;
+                    var exits = current.Module.Drawing.Exits;
                     var canRedraw = Catalogue is not null && ModuleRedraw.CanRedraw(current);
                 }
                 <div class="property-grid">
@@ -137,13 +147,23 @@
             <section class="pane sections-pane" aria-label="@T["SectionsPane"]">
                 <h2>@T["SectionsPane"] <HelpButton For="ModuleSections" Title="@T["SectionsPane"]" AlignEnd="true" /></h2>
                 @{
-                    var variant = _document.Current.Module.DefaultVariant;
-                    var main = variant.MainPath;
+                    var drawing = _document.Current.Module.Drawing;
+                    var main = drawing.MainPath;
+                }
+                @if (main is not null && _outline is not null)
+                {
+                    <div class="property-grid section-count">
+                        <NumberField Label="@T["SectionCount"]" Help="@T.Help("SectionCount")" Quantity="Quantity.Number" Unit="@null" Decimals="0" Min="1" Max="@MaxSections"
+                                     Value="drawing.Sections.Count" InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(ModuleJoints.Divide((int)v))" />
+                    </div>
+                    <div class="pane-buttons">
+                        <button type="button" id="equal-sections" disabled="@(drawing.Sections.Count < 2)" @onclick="() => Apply(ModuleJoints.Divide(drawing.Sections.Count))">@T["EqualSections"]</button>
+                    </div>
                 }
                 <table class="plate-points module-sections">
                     <thead><tr><th>@T["Section"]</th>@if (main is not null) { <th>@T["SectionLength"]</th> }</tr></thead>
                     <tbody>
-                        @foreach (var section in variant.Sections)
+                        @foreach (var section in drawing.Sections)
                         {
                             <tr>
                                 <td>@section.Label</td>
@@ -155,15 +175,22 @@
                         }
                     </tbody>
                 </table>
-                @if (SelectedJoint is { } j && j < variant.InternalJoints.Count)
+                @if (SelectedJoint is { } j && j < drawing.InternalJoints.Count)
                 {
-                    var joint = variant.InternalJoints[j];
+                    var joint = drawing.InternalJoints[j];
                     var points = joint.Points;
                     <h3 id="joint-title">@T.Format("JointBetween", joint.FirstSection, joint.SecondSection)</h3>
                     @if (main is not null)
                     {
-                        <NumberField Label="@T["JointDistance"]" Help="@T.Help("JointDistance")" Value="ModuleSections.DistanceAlongTrack(joint, main)" Min="0" InvalidText="@T["InvalidNumber"]"
-                                     ValueChanged="v => Apply(ModuleJoints.SetDistance(j, v))" />
+                        <div class="property-grid joint-position">
+                            <NumberField Label="@T["JointDistance"]" Help="@T.Help("JointDistance")" Value="ModuleSections.DistanceAlongTrack(joint, main)" Min="0" InvalidText="@T["InvalidNumber"]"
+                                         ValueChanged="v => Apply(ModuleJoints.SetDistance(j, v))" />
+                            @if (ModuleSections.AngleAlongTrack(joint, main) is { } angle)
+                            {
+                                <NumberField Label="@T["JointAngle"]" Help="@T.Help("JointAngle")" Value="angle" Unit="°" Quantity="Quantity.Angle" Decimals="2" Min="0" Max="@main.ToPath().Turning"
+                                             InvalidText="@T["InvalidNumber"]" ValueChanged="v => Apply(ModuleJoints.SetAngle(j, v))" />
+                            }
+                        </div>
                     }
                     <table class="plate-points joint-points">
                         <thead><tr><th>#</th><th>X (mm)</th><th>Y (mm)</th></tr></thead>
@@ -195,6 +222,8 @@
                     <p class="pane-help">@T["SectionsHelp"]</p>
                 }
             </section>
+            <ModuleTracksPane Content="_document.Current" Commands="TrackCommands" EndProfiles="FindEndProfile" Changed="Apply" ElementHighlighted="id => _highlightedElement = id" />
+            <ModuleLocationPane Content="_document.Current" ModuleChanged="ChangeModule" />
             <ModulePropertiesPane Draft="Draft" Content="_document.Current" ModuleChanged="ChangeModule" />
         </aside>
     </div>
@@ -207,14 +236,20 @@
     private readonly SelectionSet<ModuleItem> _selection = new();
     private readonly ModuleScene _scene = new();
     private readonly SnapEngine _snap = new(ModuleScene.IndexCellSize);
-    private EditorDocument<Model.Files.ModuleFileContent>? _document;
-    private EditorSession<Model.Files.ModuleFileContent>? _session;
-    private SelectMoveTool<Model.Files.ModuleFileContent, ModuleItem> _select = default!;
+    private EditorDocument<ModuleFileContent>? _document;
+    private EditorSession<ModuleFileContent>? _session;
+    private SelectMoveTool<ModuleFileContent, ModuleItem> _select = default!;
     private ModuleTool _activeTool = ModuleTool.Select;
     private Viewport _view = Viewport.Fit(new BoundingBox(new(0, 0), new(1000, 1000)), 800, 500);
     private SegmentPath? _outline;
     private InternalJoint? _jointPreview;
+
+    /// <summary>The most sections a module can be divided into in the Sections pane: more would be shorter than any real baseboard.</summary>
+    private const int MaxSections = 20;
     private string? _storageError;
+
+    /// <summary>The track element that the Tracks pane points at, shown in the drawing.</summary>
+    private int? _highlightedElement;
 
     /// <summary>The draft being edited.</summary>
     [Parameter, EditorRequired] public Draft Draft { get; set; } = default!;
@@ -226,7 +261,7 @@
     [Parameter] public Func<Guid, EndProfile?>? EndProfiles { get; set; }
 
     /// <summary>The catalogue, for choosing other end profiles and redrawing the module; without it, its ends can only be flipped.</summary>
-    [Parameter] public DrawingCatalogue? Catalogue { get; set; }
+    [Parameter] public Catalogue? Catalogue { get; set; }
 
     /// <summary>The host's file actions and status, shown in the Archive pane.</summary>
     [Parameter] public RenderFragment? ArchiveContent { get; set; }
@@ -235,7 +270,7 @@
     [Parameter] public EventCallback<Draft> DraftChanged { get; set; }
 
     /// <summary>The module as edited now.</summary>
-    public Model.Files.ModuleFileContent? Current => _document?.Current;
+    public ModuleFileContent? Current => _document?.Current;
 
     /// <summary>Saves unsaved edits to the draft at once, e.g. before saving to a file.</summary>
     public async Task<bool> FlushAsync() => _session is null || await _session.FlushAsync();
@@ -244,8 +279,15 @@
 
     private double SnapTolerance => _view.ToWorld(SnapPixels);
 
+    /// <summary>The commands of the Tracks pane; they measure the tracks with the standard's fouling distance.</summary>
+    private ModuleTracks TrackCommands => new(Standard, FindEndProfile);
+
+    /// <summary>A command that changes the module's shape, with its tracks measured again afterwards.</summary>
+    private IEditCommand<ModuleFileContent> WithTracksMeasured(IEditCommand<ModuleFileContent> command) =>
+        new EditCommand<ModuleFileContent>(command.Description, content => TrackCommands.Measured(command.Apply(content)));
+
     /// <summary>The module with a dragged selection shown where it is being moved.</summary>
-    private Model.Files.ModuleFileContent Shown =>
+    private ModuleFileContent Shown =>
         _select.DragOffset is { } offset ? ModuleJoints.Move([.. _selection.Items], offset).Apply(_document!.Current) : _document!.Current;
 
     private bool IsSelected(int joint) => _selection.Items.Any(i => i.Joint == joint);
@@ -256,7 +298,7 @@
     /// <summary>The selected bend of a joint, if one is selected; its ends aren't bends.</summary>
     private int? SelectedBend(int joint)
     {
-        var count = _document!.Current.Module.DefaultVariant.InternalJoints[joint].Points.Count;
+        var count = _document!.Current.Module.Drawing.InternalJoints[joint].Points.Count;
         return _selection.Items.Where(i => i.Kind == ModuleItemKind.JointPoint && i.Joint == joint && i.Point > 0 && i.Point < count - 1)
             .Select(i => (int?)i.Point).FirstOrDefault();
     }
@@ -272,6 +314,9 @@
     protected override async Task OnInitializedAsync()
     {
         var content = Model.Files.DrawingFileSerializer.DeserializeModule(Draft.Json);
+        // A module drawn before every module had a list of tracks gets one for its generated tracks.
+        if (content.Module.WithGeneratedTrackList() is var listed && !ReferenceEquals(listed, content.Module))
+            content = TrackCommands.Measured(content with { Module = listed });
         _document = new(content);
         _select = new(_document, _selection, _scene, _snap);
         _document.Changed += OnDocumentChanged;
@@ -279,7 +324,7 @@
         var key = Draft.Id.ToString();
         try
         {
-            if (await EditorSession<Model.Files.ModuleFileContent>.LoadStateAsync(Workbench, key) is { } state)
+            if (await EditorSession<ModuleFileContent>.LoadStateAsync(Workbench, key) is { } state)
             {
                 var items = ModuleScene.Items(content).ToHashSet();
                 _selection.Set(state.Selection.Select(s => ModuleItem.TryParse(s, out var item) ? (ModuleItem?)item : null).OfType<ModuleItem>().Where(items.Contains));
@@ -298,12 +343,12 @@
     }
 
     /// <summary>Stores the module with its end profiles and its measures derived again, e.g. its sections' lengths.</summary>
-    private async Task SaveDraftAsync(Model.Files.ModuleFileContent content, CancellationToken cancellationToken)
+    private async Task SaveDraftAsync(ModuleFileContent content, CancellationToken cancellationToken)
     {
-        Model.Files.ModuleFileContent file;
+        ModuleFileContent file;
         try
         {
-            file = Model.Files.ModuleFileContent.Create(content.Module, FindEndProfile);
+            file = ModuleFileContent.Create(content.Module, FindEndProfile).WithMeasuredTracks(Standard, FindEndProfile);
         }
         catch (KeyNotFoundException)
         {
@@ -338,7 +383,7 @@
     {
         if (_activeTool == ModuleTool.Joint)
         {
-            _jointPreview = _outline is { } outline ? ModuleSections.Across(outline, _document!.Current.Module.DefaultVariant.MainPath, e.World) : null;
+            _jointPreview = _outline is { } outline ? ModuleSections.Across(outline, _document!.Current.Module.Drawing.MainPath, e.World) : null;
             return;
         }
         _select.PointerMove(e.ToToolPointer(SnapTolerance));
@@ -349,17 +394,38 @@
         if (_activeTool == ModuleTool.Select) _select.PointerUp(e.ToToolPointer(SnapTolerance));
     }
 
-    private void OnKey(KeyboardEventArgs e)
+    /// <summary>The fit button's tooltip, with its key.</summary>
+    private string FitText => $"{T["ZoomToFit"]} (0)";
+
+    private bool IsAvailable(ModuleTool tool) => tool != ModuleTool.Joint || _outline is not null;
+
+    private async Task OnShortcut(EditorShortcut shortcut)
     {
-        var command = e.CtrlKey || e.MetaKey;
-        if (command && e.Key is "z" or "Z" && !e.ShiftKey) Undo();
-        else if (command && (e.Key is "y" or "Y" || (e.Key is "z" or "Z" && e.ShiftKey))) Redo();
-        else if (e.Key == "Escape" && _activeTool == ModuleTool.Joint) Choose(ModuleTool.Select);
-        else if (_activeTool == ModuleTool.Select && _select.KeyDown(e.Key)) return;
-        else if (e.Key is "Delete" or "Backspace" && _activeTool == ModuleTool.Select) DeleteSelection();
+        switch (shortcut.Action)
+        {
+            case EditorAction.Undo: Undo(); break;
+            case EditorAction.Redo: Redo(); break;
+            case EditorAction.Fit:
+                if (_moduleView is not null) await _moduleView.FitAsync();
+                break;
+            case EditorAction.Tool:
+                if (Enum.GetValues<ModuleTool>() is var tools && shortcut.Tool <= tools.Length && IsAvailable(tools[shortcut.Tool - 1])) Choose(tools[shortcut.Tool - 1]);
+                break;
+            case EditorAction.Cancel:
+                if (_activeTool == ModuleTool.Select && _select.KeyDown(shortcut.Key)) break;
+                if (_activeTool != ModuleTool.Select) Choose(ModuleTool.Select);
+                else _selection.Clear();
+                break;
+            case EditorAction.Delete:
+                if (_activeTool == ModuleTool.Select) DeleteSelection();
+                break;
+            case EditorAction.Nudge:
+                if (_activeTool == ModuleTool.Select && !_selection.IsEmpty && _select.DragOffset is null) Apply(ModuleJoints.Move([.. _selection.Items], shortcut.Nudge));
+                break;
+        }
     }
 
-    private void Apply(IEditCommand<Model.Files.ModuleFileContent> command)
+    private void Apply(IEditCommand<ModuleFileContent> command)
     {
         _select.Cancel();
         _document!.Apply(command);
@@ -389,7 +455,7 @@
     private void AddPoint(int joint)
     {
         var after = _selection.Items.Where(i => i.Kind == ModuleItemKind.JointPoint && i.Joint == joint).Select(i => i.Point).DefaultIfEmpty(0).Max();
-        var count = _document!.Current.Module.DefaultVariant.InternalJoints[joint].Points.Count;
+        var count = _document!.Current.Module.Drawing.InternalJoints[joint].Points.Count;
         after = Math.Min(after, count - 2);
         Apply(ModuleJoints.InsertPoint(joint, after));
         _selection.Select(ModuleItem.OfPoint(joint, after + 1));
@@ -398,7 +464,7 @@
     /// <summary>A change from the Properties pane, as an undoable command.</summary>
     /// <summary>The end profiles an exit can have: those of the module's scale, of any standard (MD-5).</summary>
     private IEnumerable<EndProfile> EndProfileChoices =>
-        Catalogue is null ? [] : Catalogue.EndProfiles.Where(p => p.Scale == _document!.Current.Module.Scale).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
+        Catalogue is null ? [] : Catalogue.EndProfiles.Where(p => p.Scale == _document!.Current.Module.Scale?.ShortName).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
 
     private string ProfileText(EndProfile profile) =>
         $"{profile.Designation} ({(profile.Tracks.Count == 1 ? T["OneTrack"] : T.Format("TrackCount", profile.Tracks.Count))})";
@@ -406,14 +472,14 @@
     private async Task ChangeEndProfileAsync(string exitLabel, ChangeEventArgs e)
     {
         if (Catalogue is null || !Guid.TryParse(e.Value as string, out var id) || Catalogue.FindEndProfile(id) is not { } profile) return;
-        if (_document!.Current.Module.DefaultVariant.Exit(exitLabel)?.EndProfile.Id == id) return;
+        if (_document!.Current.Module.Drawing.Exit(exitLabel)?.EndProfile.Id == id) return;
         if (ModuleRedraw.BendsWillChange(_document.Current, profile) && !await Dialogs.ConfirmAsync(T["BendsWillChange"]))
         {
             StateHasChanged();
             return;
         }
         _selection.Clear();
-        Apply(ModuleEnds.SetEndProfile(exitLabel, profile, Catalogue));
+        Apply(WithTracksMeasured(ModuleEnds.SetEndProfile(exitLabel, profile, Catalogue)));
     }
 
     private async Task FlipCurveAsync()
@@ -421,13 +487,26 @@
         if (Catalogue is null) return;
         if (ModuleRedraw.BendsWillChange(_document!.Current) && !await Dialogs.ConfirmAsync(T["BendsWillChange"])) return;
         _selection.Clear();
-        Apply(ModuleEnds.FlipCurve(Catalogue));
+        Apply(WithTracksMeasured(ModuleEnds.FlipCurve(Catalogue)));
+        _fitAfterRender = true;
+    }
+
+    private ModuleView? _moduleView;
+
+    /// <summary>True when the module has been drawn in another shape, so the view is fitted to it once it is rendered.</summary>
+    private bool _fitAfterRender;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_fitAfterRender || _moduleView is null) return;
+        _fitAfterRender = false;
+        await _moduleView.FitAsync();
     }
 
     private void FlipEnd(string exitLabel) => Apply(ModuleEnds.FlipEnd(exitLabel));
 
     private void ChangeModule(Module module) =>
-        Apply(new EditCommand<Model.Files.ModuleFileContent>("Change properties", content => content with { Module = module }));
+        Apply(new EditCommand<ModuleFileContent>("Change properties", content => content with { Module = module }));
 
     private async Task PrintAsync()
     {

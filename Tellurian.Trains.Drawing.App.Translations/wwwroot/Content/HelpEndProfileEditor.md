@@ -23,3 +23,14 @@ The line at the bottom of the pane tells what the chosen tool does.
 ## Moving around
 
 Scroll to zoom, drag with the middle mouse button or with Space held down to pan, and click the button in the drawing's upper right corner to see the whole drawing.
+
+## Keyboard
+
+The keys work wherever you are on the page, except while you type in a field.
+
+- **1**–**4** choose a tool, in the order of the buttons. **0** shows the whole drawing.
+- **Ctrl+Z** undoes and **Ctrl+Y** redoes (⌘ on a Mac).
+- **Delete** or **Backspace** deletes what is selected.
+- **Arrow keys** move what is selected 1 mm, with **Shift** 10 mm.
+- **Escape** stops what you are doing: first a drag or a shape you draw, then the tool (back to Select), then the selection.
+- **Ctrl**+click adds to the selection.

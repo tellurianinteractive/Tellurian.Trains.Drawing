@@ -1,5 +1,5 @@
 using Tellurian.Trains.Drawing.Editing.Commands;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
@@ -18,15 +18,9 @@ public static class EndProfileCommands
     public static IEditCommand<EndProfile> Move(IReadOnlyList<EndProfileItem> ids, Vector offset) =>
         new EditCommand<EndProfile>("Move", profile =>
         {
-            var moved = profile with
-            {
-                Tracks = Map(profile.Tracks, EndProfileItemKind.Track, ids, t => t with { Offset = t.Offset + offset.X }),
-                ScrewHoles = Map(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids, h => h with { Center = h.Center + offset }),
-                Dowels = Map(profile.Dowels, EndProfileItemKind.Dowel, ids, d => d with { Center = d.Center + offset }),
-                GroundLine = ids.Contains(EndProfileItem.GroundLine) ? Moved(profile.GroundLine, offset) : profile.GroundLine,
-            };
+            var moved = profile.With(edited => { edited.Tracks = Map(profile.Tracks, EndProfileItemKind.Track, ids, t => t.With(edited => { edited.Offset = t.Offset + offset.X; })); edited.ScrewHoles = Map(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids, h => h with { Center = h.Center + offset }); edited.Dowels = Map(profile.Dowels, EndProfileItemKind.Dowel, ids, d => d with { Center = d.Center + offset }); edited.GroundLine = ids.Contains(EndProfileItem.GroundLine) ? Moved(profile.GroundLine, offset) : profile.GroundLine; });
             if (PlateShape.From(profile) is not { } plate)
-                return moved with { Outline = ids.Contains(EndProfileItem.Outline) ? Moved(profile.Outline, offset) : profile.Outline };
+                return moved.With(edited => { edited.Outline = ids.Contains(EndProfileItem.Outline) ? Moved(profile.Outline, offset) : profile.Outline; });
             if (ids.Contains(EndProfileItem.Outline)) return plate.Moved(offset) is { } whole ? WithPlate(moved, whole) : moved;
             var shape = plate;
             foreach (var index in ids.Where(i => i.Kind == EndProfileItemKind.PlatePoint).Select(i => i.Index).Order())
@@ -89,49 +83,35 @@ public static class EndProfileCommands
             PlateShape.From(profile) is { } plate && change(plate) is { } changed ? WithPlate(profile, changed) : profile);
 
     private static EndProfile WithPlate(EndProfile profile, PlateShape plate) =>
-        profile with { Plate = plate, Outline = plate.Outline(), GroundLine = plate.GroundLine() };
+        profile.With(edited => { edited.Plate = plate; edited.Outline = plate.Outline(); edited.GroundLine = plate.GroundLine(); });
 
     public static IEditCommand<EndProfile> SetOutline(PathDrawing outline) =>
         // A drawn outline replaces the entered plate; the plate is read from the outline again when needed.
-        new EditCommand<EndProfile>("Draw outline", profile => profile with { Outline = outline, Plate = null });
+        new EditCommand<EndProfile>("Draw outline", profile => profile.With(edited => { edited.Outline = outline; edited.Plate = null; }));
 
     public static IEditCommand<EndProfile> SetGroundLine(PathDrawing groundLine) =>
-        new EditCommand<EndProfile>("Draw ground line", profile => profile with { GroundLine = groundLine });
+        new EditCommand<EndProfile>("Draw ground line", profile => profile.With(edited => { edited.GroundLine = groundLine; }));
 
     /// <summary>Adds a screw hole with the diameter of the existing ones, or the default.</summary>
     public static IEditCommand<EndProfile> AddScrewHole(Point center) =>
-        new EditCommand<EndProfile>("Add screw hole", profile => profile with
-        {
-            ScrewHoles = [.. profile.ScrewHoles, new(center, profile.ScrewHoles.LastOrDefault()?.Diameter ?? DefaultScrewHoleDiameter)],
-        });
+        new EditCommand<EndProfile>("Add screw hole", profile => profile.With(edited => { edited.ScrewHoles = [.. profile.ScrewHoles, new(center, profile.ScrewHoles.LastOrDefault()?.Diameter ?? DefaultScrewHoleDiameter)]; }));
 
     public static IEditCommand<EndProfile> AddDowel(Point center) =>
-        new EditCommand<EndProfile>("Add dowel", profile => profile with
-        {
-            Dowels = [.. profile.Dowels, new(center, profile.Dowels.LastOrDefault()?.Diameter ?? DefaultDowelDiameter)],
-        });
+        new EditCommand<EndProfile>("Add dowel", profile => profile.With(edited => { edited.Dowels = [.. profile.Dowels, new(center, profile.Dowels.LastOrDefault()?.Diameter ?? DefaultDowelDiameter)]; }));
 
     /// <summary>Adds a track at <paramref name="offset"/> with the gauge and rail system of the existing ones, or of <paramref name="defaults"/>.</summary>
     public static IEditCommand<EndProfile> AddTrack(double offset, EndProfileTrack defaults) =>
         new EditCommand<EndProfile>("Add track", profile =>
         {
             var template = profile.Tracks.LastOrDefault() ?? defaults;
-            return profile with { Tracks = [.. profile.Tracks, template with { Offset = offset, Label = null }] };
+            return profile.With(edited => { edited.Tracks = [.. profile.Tracks, template.With(edited => { edited.Offset = offset; edited.Label = null; })]; });
         });
 
     /// <summary>Deletes items; the outline and ground line are removed, tracks and holes dropped from their lists.</summary>
     public static IEditCommand<EndProfile> Delete(IReadOnlyList<EndProfileItem> ids) =>
         new EditCommand<EndProfile>("Delete", profile =>
         {
-            var deleted = profile with
-            {
-                Tracks = Keep(profile.Tracks, EndProfileItemKind.Track, ids),
-                ScrewHoles = Keep(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids),
-                Dowels = Keep(profile.Dowels, EndProfileItemKind.Dowel, ids),
-                Outline = ids.Contains(EndProfileItem.Outline) ? null : profile.Outline,
-                Plate = ids.Contains(EndProfileItem.Outline) ? null : profile.Plate,
-                GroundLine = ids.Contains(EndProfileItem.GroundLine) || ids.Contains(EndProfileItem.Outline) ? null : profile.GroundLine,
-            };
+            var deleted = profile.With(edited => { edited.Tracks = Keep(profile.Tracks, EndProfileItemKind.Track, ids); edited.ScrewHoles = Keep(profile.ScrewHoles, EndProfileItemKind.ScrewHole, ids); edited.Dowels = Keep(profile.Dowels, EndProfileItemKind.Dowel, ids); edited.Outline = ids.Contains(EndProfileItem.Outline) ? null : profile.Outline; edited.Plate = ids.Contains(EndProfileItem.Outline) ? null : profile.Plate; edited.GroundLine = ids.Contains(EndProfileItem.GroundLine) || ids.Contains(EndProfileItem.Outline) ? null : profile.GroundLine; });
             // Plate points can be deleted as long as the upper edge keeps two points.
             if (deleted.Outline is not null && ids.Any(i => i.Kind == EndProfileItemKind.PlatePoint) && PlateShape.From(profile) is { } plate)
             {
@@ -150,13 +130,13 @@ public static class EndProfileCommands
         });
 
     public static IEditCommand<EndProfile> SetTrack(int index, EndProfileTrack track) =>
-        new EditCommand<EndProfile>("Change track", profile => profile with { Tracks = Replace(profile.Tracks, index, track) });
+        new EditCommand<EndProfile>("Change track", profile => profile.With(edited => { edited.Tracks = Replace(profile.Tracks, index, track); }));
 
     public static IEditCommand<EndProfile> SetScrewHole(int index, Circle hole) =>
-        new EditCommand<EndProfile>("Change screw hole", profile => profile with { ScrewHoles = Replace(profile.ScrewHoles, index, hole) });
+        new EditCommand<EndProfile>("Change screw hole", profile => profile.With(edited => { edited.ScrewHoles = Replace(profile.ScrewHoles, index, hole); }));
 
     public static IEditCommand<EndProfile> SetDowel(int index, Circle dowel) =>
-        new EditCommand<EndProfile>("Change dowel", profile => profile with { Dowels = Replace(profile.Dowels, index, dowel) });
+        new EditCommand<EndProfile>("Change dowel", profile => profile.With(edited => { edited.Dowels = Replace(profile.Dowels, index, dowel); }));
 
     /// <summary>Changes the profile's own properties: designation, pattern, source.</summary>
     public static IEditCommand<EndProfile> SetProperties(Func<EndProfile, EndProfile> change) =>
@@ -172,16 +152,17 @@ public static class EndProfileCommands
                 var mirrored = hole.MirroredX();
                 if (!holes.Any(h => h.Center.IsCloseTo(mirrored.Center, tolerance))) holes.Add(mirrored);
             }
-            return profile with { ScrewHoles = holes };
+            return profile.With(edited => { edited.ScrewHoles = holes; });
         });
 
-    private static IReadOnlyList<T> Map<T>(IReadOnlyList<T> items, EndProfileItemKind kind, IReadOnlyList<EndProfileItem> ids, Func<T, T> change) =>
-        ids.Any(i => i.Kind == kind) ? [.. items.Select((item, i) => ids.Contains(new(kind, i)) ? change(item) : item)] : items;
+    // New lists every time: an edited end profile must not share a list with the one it was copied from.
+    private static List<T> Map<T>(IEnumerable<T> items, EndProfileItemKind kind, IReadOnlyList<EndProfileItem> ids, Func<T, T> change) =>
+        ids.Any(i => i.Kind == kind) ? [.. items.Select((item, i) => ids.Contains(new(kind, i)) ? change(item) : item)] : [.. items];
 
-    private static IReadOnlyList<T> Keep<T>(IReadOnlyList<T> items, EndProfileItemKind kind, IReadOnlyList<EndProfileItem> ids) =>
-        ids.Any(i => i.Kind == kind) ? [.. items.Where((_, i) => !ids.Contains(new(kind, i)))] : items;
+    private static List<T> Keep<T>(IEnumerable<T> items, EndProfileItemKind kind, IReadOnlyList<EndProfileItem> ids) =>
+        ids.Any(i => i.Kind == kind) ? [.. items.Where((_, i) => !ids.Contains(new(kind, i)))] : [.. items];
 
-    private static IReadOnlyList<T> Replace<T>(IReadOnlyList<T> items, int index, T item) =>
+    private static List<T> Replace<T>(IEnumerable<T> items, int index, T item) =>
         [.. items.Select((existing, i) => i == index ? item : existing)];
 
     private static PathDrawing? Moved(PathDrawing? path, Vector offset) =>

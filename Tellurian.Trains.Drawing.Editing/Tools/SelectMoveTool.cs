@@ -1,7 +1,7 @@
 using Tellurian.Trains.Drawing.Editing.Commands;
 using Tellurian.Trains.Drawing.Editing.Selection;
 using Tellurian.Trains.Drawing.Editing.Snapping;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 
 namespace Tellurian.Trains.Drawing.Editing.Tools;
 

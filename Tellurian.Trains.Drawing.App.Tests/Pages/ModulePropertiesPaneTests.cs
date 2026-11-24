@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Drawing.App.Tests.Pages;
 [TestClass]
 public sealed class ModulePropertiesPaneTests
 {
-    private const int Prefix = 0, FremoNumber = 1, Name = 2, OwnerName = 3;
+    private const int Prefix = 0, Number = 1, Name = 2, Owners = 3, Package = 4;
 
     private static (IRenderedComponent<DrawingPage> Page, Guid DraftId) OpenNewModule(AppTestContext context)
     {
@@ -21,6 +21,16 @@ public sealed class ModulePropertiesPaneTests
         return (page, id);
     }
 
+    [TestMethod]
+    public void TheFieldsArePrefixNumberNameOwnersAndPackage()
+    {
+        using var context = new AppTestContext();
+        var (page, _) = OpenNewModule(context);
+        CollectionAssert.AreEqual(
+            new[] { "Prefix", "Number", "Name", "Owners", "Package" },
+            page.FindAll(".module-properties label.property-label").Select(l => l.ChildNodes[0].TextContent.Trim()).ToArray());
+    }
+
     private static void Enter(IRenderedComponent<DrawingPage> page, int field, string value) =>
         page.FindAll(".module-properties input")[field].Change(value);
 
@@ -31,17 +41,31 @@ public sealed class ModulePropertiesPaneTests
         var (page, id) = OpenNewModule(context);
 
         Enter(page, Prefix, "SFjä");
-        Enter(page, FremoNumber, "12");
-        Enter(page, OwnerName, "Stefan Fjällemark");
+        Enter(page, Number, "12");
+        Enter(page, Owners, " Stefan Fjällemark, Module Club ");
 
         // In the module editor, changes are autosaved to the draft a moment later.
-        context.Time.Advance(Editing.Commands.AutosaveScheduler<Model.Files.ModuleFileContent>.DefaultDelay);
-        page.WaitForAssertion(() => Assert.AreEqual("SFjä 012 Tellby", context.Workbench.Drafts[id].Name));
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<ModuleFileContent>.DefaultDelay);
+        page.WaitForAssertion(() => Assert.AreEqual("SFjä 0012", context.Workbench.Drafts[id].Name, "A module that is no operation location is named by its designation."));
         var module = DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module;
-        Assert.AreEqual(12, module.FremoNumber);
-        Assert.AreEqual(new Model.Modules.Owner { Name = "Stefan Fjällemark", Prefix = "SFjä" }, module.Owners.Single());
+        Assert.AreEqual(("SFjä", 12, "Stefan Fjällemark, Module Club"), (module.Prefix, module.Number, module.ModuleOwners));
         Assert.IsTrue(context.Workbench.Drafts[id].HasUnsavedChanges);
         Assert.IsEmpty(page.FindAll(".module-problems"));
+    }
+
+    [TestMethod]
+    public void ThePackageIsTheBoxTheModuleIsTransportedIn()
+    {
+        using var context = new AppTestContext();
+        var (page, id) = OpenNewModule(context);
+
+        Enter(page, Package, " Box 3 ");
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<ModuleFileContent>.DefaultDelay);
+        page.WaitForAssertion(() => Assert.AreEqual("Box 3", DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module.PackageLabel));
+
+        Enter(page, Package, "");
+        context.Time.Advance(Editing.Commands.AutosaveScheduler<ModuleFileContent>.DefaultDelay);
+        page.WaitForAssertion(() => Assert.IsNull(DrawingFileSerializer.DeserializeModule(context.Workbench.Drafts[id].Json).Module.PackageLabel));
     }
 
     [TestMethod]
@@ -50,14 +74,14 @@ public sealed class ModulePropertiesPaneTests
         using var context = new AppTestContext();
         var (page, _) = OpenNewModule(context);
 
-        Enter(page, FremoNumber, "12");
-        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".module-problems").TextContent, "Enter the owner's FREMO prefix with the FREMO number."));
+        Enter(page, Number, "12");
+        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".module-problems").TextContent, "Enter the prefix with the number."));
 
-        Enter(page, FremoNumber, "twelve");
-        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".module-problems").TextContent, "The FREMO number must be 1–9999."));
+        Enter(page, Number, "twelve");
+        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".module-problems").TextContent, "The number must be 1–9999."));
 
-        Enter(page, FremoNumber, "");
+        Enter(page, Number, "");
         Enter(page, Name, "");
-        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".module-problems").TextContent, "Enter a name, or a FREMO number with the owner's prefix."));
+        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".module-problems").TextContent, "Enter a name, or a number with the prefix."));
     }
 }

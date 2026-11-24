@@ -1,10 +1,10 @@
 {
   "format": "tellurian-drawing",
-  "kind": "hall",
-  "schemaVersion": 1,
-  "appVersion": "0.6.0",
+  "kind": "Hall",
+  "schemaVersion": 2,
+  "appVersion": "0.9.1",
   "content": {
-    "id": "94f0c58a-70bf-4d38-910c-8d07b99a5116",
+    "id": "60884f02-8f23-43f6-9b9d-2e695ffe9491",
     "name": "Club hall",
     "address": "Station Road 1",
     "outline": {
@@ -47,8 +47,8 @@
     "minimumAisleWidth": 1200,
     "obstacles": [
       {
-        "id": "d063d654-209f-4551-8b3f-0edbc07c567d",
-        "kind": "pillar",
+        "id": 1,
+        "kind": "Pillar",
         "area": {
           "start": {
             "x": 4200,
@@ -77,8 +77,8 @@
         "label": "P1"
       },
       {
-        "id": "19b735b5-0ad9-4afa-aaac-4284f87ff337",
-        "kind": "pillar",
+        "id": 2,
+        "kind": "Pillar",
         "area": {
           "start": {
             "x": 7919.81588733227,
@@ -118,8 +118,8 @@
         }
       },
       {
-        "id": "6bc1efa9-356f-451f-b92a-c2aa36bf2a3a",
-        "kind": "furniture",
+        "id": 3,
+        "kind": "Furniture",
         "area": {
           "start": {
             "x": 10000,
@@ -162,8 +162,8 @@
     ],
     "doors": [
       {
-        "id": "3b023a1f-ef9a-4de4-9248-b586db19628d",
-        "kind": "door",
+        "id": 1,
+        "kind": "Door",
         "position": {
           "x": 1500,
           "y": 0,
@@ -175,8 +175,8 @@
         "isModuleEntrance": true
       },
       {
-        "id": "5cec67d2-51d1-4beb-a284-9d71af8e4dc3",
-        "kind": "emergencyExit",
+        "id": 2,
+        "kind": "EmergencyExit",
         "position": {
           "x": 12000,
           "y": 4000,
@@ -189,7 +189,7 @@
     ],
     "noGoZones": [
       {
-        "id": "4d880031-277e-48d8-a8ec-cee1d2ec19f7",
+        "id": 1,
         "area": {
           "start": {
             "x": 5600,

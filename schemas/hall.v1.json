@@ -140,6 +140,12 @@
           "items": {
             "$ref": "#/$defs/DrawingRevision"
           }
+        },
+        "externalReferences": {
+          "type": [
+            "object",
+            "null"
+          ]
         }
       },
       "required": [

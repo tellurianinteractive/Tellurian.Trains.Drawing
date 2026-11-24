@@ -1,16 +1,16 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
-    <Version>0.9.0</Version>
+    <Version>0.10.0</Version>
     <NeutralLanguage>en</NeutralLanguage>
-    <Company>Tellurian Interactive AB</Company>
-    <Copyright>Copyright © Tellurian Interactive AB</Copyright>
+    <Company>Stefan Fjällemark</Company>
+    <Copyright>© Stefan Fjällemark 2026</Copyright>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <!-- NuGet metadata for the packable libraries (Geometry, Model, Editing, Components), reused by the Module Registry. -->
+  <!-- NuGet metadata for the packable libraries (Model, Editing, Components), reused by the Module Registry. -->
   <PropertyGroup>
     <Authors>Stefan Fjällemark</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Drawing</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Drawing</RepositoryUrl>
     <PackageTags>model railway;FREMO;module;drawing;blazor</PackageTags>

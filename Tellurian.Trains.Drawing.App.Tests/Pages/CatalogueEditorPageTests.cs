@@ -1,9 +1,9 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Pages;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.App.Tests.Pages;
@@ -11,13 +11,13 @@ namespace Tellurian.Trains.Drawing.App.Tests.Pages;
 [TestClass]
 public sealed class CatalogueEditorPageTests
 {
-    private static DrawingCatalogue User(AppTestContext context) =>
+    private static Catalogue User(AppTestContext context) =>
         context.Services.GetRequiredService<CatalogueService>().GetUserAsync().Result;
 
     private static string Uri(AppTestContext context) => context.Services.GetRequiredService<NavigationManager>().Uri;
 
     [TestMethod]
-    public void NewStandardIsSavedAsAUserEntry()
+    public void NewStandardIsSavedInTheCatalogue()
     {
         using var context = new AppTestContext();
         var page = context.Render<StandardEditorPage>();
@@ -26,8 +26,8 @@ public sealed class CatalogueEditorPageTests
         page.Find("#normalGauge").Change("16.5");
         page.Find("form").Submit();
 
-        var standard = User(context).Standards.Single();
-        Assert.AreEqual(("MY-H0", "H0", 16.5), (standard.ShortName, standard.Scale, standard.NormalGauge));
+        var standard = User(context).Standards.Single(s => s.ShortName == "MY-H0");
+        Assert.AreEqual(("MY-H0", "H0", (double?)16.5), (standard.ShortName, standard.ScaleName, standard.NormalGauge));
         Assert.EndsWith("catalogue", Uri(context));
     }
 
@@ -42,24 +42,24 @@ public sealed class CatalogueEditorPageTests
 
         var problems = page.FindAll(".problems li").Select(e => e.TextContent).ToList();
         CollectionAssert.Contains(problems, "Short name: the name is already used.");
-        CollectionAssert.Contains(problems, "Normal gauge (mm) must be greater than 0.");
-        Assert.IsEmpty(User(context).Standards);
+        CollectionAssert.Contains(problems, "Normal gauge (mm): a standard needs at least one gauge.");
+        Assert.HasCount(SampleCatalogue.Instance.Standards.Count, User(context).Standards, "Nothing is saved.");
     }
 
     [TestMethod]
-    public void EditingABuiltInStandardCreatesAReplacement()
+    public void AnEditedStandardIsSavedInItsPlace()
     {
         using var context = new AppTestContext();
-        var builtIn = BuiltInCatalogue.Instance.Standards[0];
-        var page = context.Render<StandardEditorPage>(p => p.Add(x => x.Id, builtIn.Id));
-        Assert.IsNotNull(page.Find(".note"));
-        Assert.AreEqual(builtIn.ShortName, page.Find("#shortName").GetAttribute("value"));
+        var standard = SampleCatalogue.Instance.Standards[0];
+        var page = context.Render<StandardEditorPage>(p => p.Add(x => x.Id, standard.Id));
+        Assert.AreEqual(standard.ShortName, page.Find("#shortName").GetAttribute("value"));
 
         page.Find("#railTopHeight").Change("1250");
         page.Find("form").Submit();
 
-        var replacement = User(context).Standards.Single();
-        Assert.AreEqual((builtIn.Id, 1250.0, builtIn.DefaultSingleTrackEndProfileId), (replacement.Id, replacement.RailTopHeight, replacement.DefaultSingleTrackEndProfileId));
+        var saved = User(context).FindStandard(standard.Id!.Value)!;
+        Assert.AreEqual((1250.0, standard.DefaultSingleTrackEndProfileId), (saved.RailTopHeight, saved.DefaultSingleTrackEndProfileId));
+        Assert.HasCount(SampleCatalogue.Instance.Standards.Count, User(context).Standards);
     }
 
     [TestMethod]
@@ -80,7 +80,7 @@ public sealed class CatalogueEditorPageTests
         page.Find("#shortName").Change("MY-ADDON");
         page.Find("form").Submit();
 
-        Assert.AreEqual("MY-ADDON", User(context).AddOns.Single().ShortName);
+        Assert.IsTrue(User(context).AddOns.Any(a => a.ShortName == "MY-ADDON"));
     }
 
     [TestMethod]
@@ -112,7 +112,7 @@ public sealed class CatalogueEditorPageTests
         context.UseCountry("SE");
         var page = context.Render<CataloguePage>();
         Assert.AreEqual("catalogue/standard/new", page.Find("#new-standard").GetAttribute("href"));
-        Assert.HasCount(BuiltInCatalogue.Instance.AddOns.Count, page.FindAll(".add-ons tbody tr"));
+        Assert.HasCount(SampleCatalogue.Instance.AddOns.Count, page.FindAll(".add-ons tbody tr"));
         Assert.IsTrue(page.FindAll(".standards .actions a").All(a => a.GetAttribute("href")!.StartsWith("catalogue/standard/", StringComparison.Ordinal)));
     }
 }

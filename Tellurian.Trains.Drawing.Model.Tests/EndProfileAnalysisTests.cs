@@ -36,18 +36,14 @@ public sealed class EndProfileAnalysisTests
     [TestMethod]
     public void OffCentreTrackIsAsymmetric()
     {
-        var profile = TestProfiles.FremoSingle() with { Tracks = [new() { Offset = 20, Gauge = TestProfiles.H0Gauge }] };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 20, Gauges = [TestProfiles.H0Gauge] }]; });
         Assert.AreEqual(FitDifferences.TrackPositions, EndProfileAnalysis.AsymmetricElements(profile));
     }
 
     [TestMethod]
     public void AsymmetricOutlineAndDowelsDoNotMakeTheProfileAsymmetric()
     {
-        var profile = TestProfiles.FremoSingle() with
-        {
-            Outline = PathDrawing.Polyline([new(-250, -140), new(270, -140), new(270, -40), new(-250, -40)], isClosed: true),
-            Dowels = [new Circle(new Point(100, -90), 6)],
-        };
+        var profile = TestProfiles.FremoSingle().With(edited => { edited.Outline = PathDrawing.Polyline([new(-250, -140), new(270, -140), new(270, -40), new(-250, -40)], isClosed: true); edited.Dowels = [new Circle(new Point(100, -90), 6)]; });
         var properties = EndProfileAnalysis.Analyze(profile);
         Assert.AreEqual(FitDifferences.Outline | FitDifferences.Dowels, properties.AsymmetricElements);
         Assert.IsTrue(properties.IsSymmetric);
@@ -56,7 +52,7 @@ public sealed class EndProfileAnalysisTests
     [TestMethod]
     public void ProfileWithoutOutlineHasEmptyPlate()
     {
-        var properties = EndProfileAnalysis.Analyze(TestProfiles.FremoSingle() with { Outline = null, Tracks = [] });
+        var properties = EndProfileAnalysis.Analyze(TestProfiles.FremoSingle().With(edited => { edited.Outline = null; edited.Tracks = []; }));
         Assert.IsTrue(properties.PlateBounds.IsEmpty);
         Assert.AreEqual(0, properties.PlateWidth);
         Assert.AreEqual(0, properties.TrackCount);

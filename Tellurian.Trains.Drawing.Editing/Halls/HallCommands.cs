@@ -1,13 +1,13 @@
 using Tellurian.Trains.Drawing.Editing.Commands;
-using Tellurian.Trains.Drawing.Geometry;
+using Tellurian.Trains.Schedules.Model.Geometry;
 using Tellurian.Trains.Drawing.Model;
-using Tellurian.Trains.Drawing.Model.Halls;
 
 namespace Tellurian.Trains.Drawing.Editing.Halls;
 
 /// <summary>
-/// The commands of the hall editor (Phase 8, HA-1…HA-3); each is one undoable change. Whenever the walls change,
-/// doors move to the closest point on the new walls, so a door is always in a wall.
+/// The commands of the hall editor (Phase 8, HA-1…HA-3); each is one undoable change, made to a copy of the hall
+/// (<c>With</c>), so the earlier state is kept for undo. Whenever the walls change, doors move to the closest point on
+/// the new walls, so a door is always in a wall.
 /// </summary>
 public static class HallCommands
 {
@@ -18,7 +18,7 @@ public static class HallCommands
 
     /// <summary>Replaces the walls, e.g. with a newly drawn outline; refused unless the path is closed.</summary>
     public static IEditCommand<Hall> SetOutline(PathDrawing outline) =>
-        new EditCommand<Hall>("Draw walls", hall => outline.IsClosed && outline.Steps.Count >= 3 ? hall.WithOutline(outline) : hall);
+        new EditCommand<Hall>("Draw walls", hall => outline.IsClosed && outline.Steps.Count >= 3 ? hall.With(h => h.SetOutline(outline)) : hall);
 
     /// <summary>Makes the walls a rectangle of <paramref name="width"/> × <paramref name="depth"/> at the current lower left corner.</summary>
     public static IEditCommand<Hall> SetRectangle(double width, double depth) =>
@@ -26,7 +26,7 @@ public static class HallCommands
         {
             if (width <= 0 || depth <= 0) return hall;
             var corner = hall.Outline.ToPath().Bounds.Min;
-            return hall.WithOutline(PathDrawing.Rectangle(width, depth, new Transform(Angle.Zero, corner.AsVector)));
+            return hall.With(h => h.SetOutline(PathDrawing.Rectangle(width, depth, new Transform(Angle.Zero, corner.AsVector))));
         });
 
     public static IEditCommand<Hall> SetCorner(int index, Point point) =>
@@ -49,72 +49,76 @@ public static class HallCommands
     /// move, doors slide to the closest point on the walls, and handles resize their items (<see cref="HallHandles"/>).
     /// </summary>
     public static IEditCommand<Hall> Move(IReadOnlyList<HallItem> ids, Vector offset) =>
-        new EditCommand<Hall>("Move", hall =>
+        new EditCommand<Hall>("Move", hall => hall.With(moved =>
         {
-            var corners = PathCorners.From(hall.Outline);
+            var corners = PathCorners.From(moved.Outline);
             var movedCorners = ids.Where(i => i.Kind == HallItemKind.Corner && i.Index < corners.Corners.Count).Select(i => i.Index)
                 .Concat(ids.Where(i => i.Kind == HallItemKind.Wall && i.Index < corners.StepCount).SelectMany(i => new[] { i.Index, corners.EndOf(i.Index) }))
                 .ToList();
-            var moved = movedCorners.Count == 0 ? hall : hall.WithOutline(corners.WithCornersMoved(movedCorners, offset).ToDrawing());
-            moved = moved with
-            {
-                Obstacles = Map(moved.Obstacles, HallItemKind.Obstacle, ids, o => o with { Area = Moved(o.Area, offset) }),
-                NoGoZones = Map(moved.NoGoZones, HallItemKind.NoGoZone, ids, z => z with { Area = Moved(z.Area, offset) }),
-                Doors = Map(moved.Doors, HallItemKind.Door, ids, d => d with { Position = moved.PoseOnWall(d.Position.Position + offset) }),
-            };
+            if (movedCorners.Count > 0) moved.SetOutline(corners.WithCornersMoved(movedCorners, offset).ToDrawing());
+            foreach (var obstacle in Selected(moved.Obstacles, HallItemKind.Obstacle, ids)) obstacle.Area = Moved(obstacle.Area, offset);
+            foreach (var zone in Selected(moved.NoGoZones, HallItemKind.NoGoZone, ids)) zone.Area = Moved(zone.Area, offset);
+            foreach (var door in Selected(moved.Doors, HallItemKind.Door, ids)) door.Position = moved.PoseOnWall(door.Position.Position + offset);
             foreach (var handle in ids.Where(i => i.IsHandle))
-                if (HallHandles.PositionOf(moved, handle) is { } position) moved = HallHandles.Drag(moved, handle, position + offset);
-            return moved;
-        });
+                if (HallHandles.PositionOf(moved, handle) is { } position) HallHandles.DragIn(moved, handle, position + offset);
+        }));
 
     /// <summary>
     /// Deletes obstacles, doors, no-go zones and corners; a handle deletes its item. The walls keep at least three
     /// corners. Walls aren't deleted.
     /// </summary>
     public static IEditCommand<Hall> Delete(IReadOnlyList<HallItem> items) =>
-        new EditCommand<Hall>("Delete", hall =>
+        new EditCommand<Hall>("Delete", hall => hall.With(deleted =>
         {
             var ids = items.Select(i => i.Owner).Distinct().ToList();
-            var deleted = hall with
-            {
-                Obstacles = Keep(hall.Obstacles, HallItemKind.Obstacle, ids),
-                Doors = Keep(hall.Doors, HallItemKind.Door, ids),
-                NoGoZones = Keep(hall.NoGoZones, HallItemKind.NoGoZone, ids),
-            };
-            var corners = PathCorners.From(hall.Outline);
+            deleted.Obstacles = Keep(deleted.Obstacles, HallItemKind.Obstacle, ids);
+            deleted.Doors = Keep(deleted.Doors, HallItemKind.Door, ids);
+            deleted.NoGoZones = Keep(deleted.NoGoZones, HallItemKind.NoGoZone, ids);
+            var corners = PathCorners.From(deleted.Outline);
             var changed = corners;
             // From the last corner backwards, so the indexes of the remaining ones stay valid.
             foreach (var index in ids.Where(i => i.Kind == HallItemKind.Corner).Select(i => i.Index).Distinct().OrderDescending())
                 if (changed.WithoutCorner(index) is { } without) changed = without;
-            return ReferenceEquals(changed, corners) ? deleted : deleted.WithOutline(changed.ToDrawing());
-        });
+            if (!ReferenceEquals(changed, corners)) deleted.SetOutline(changed.ToDrawing());
+        }));
 
     public static IEditCommand<Hall> AddRoundPillar(Point center, double diameter = DefaultPillarDiameter) =>
-        new EditCommand<Hall>("Add pillar", hall => hall with { Obstacles = [.. hall.Obstacles, Obstacle.RoundPillar(center, diameter)] });
+        new EditCommand<Hall>("Add pillar", hall => hall.With(h => h.Add(Obstacle.RoundPillar(center, diameter))));
 
     public static IEditCommand<Hall> AddRectangularPillar(Point center, double width = DefaultPillarSide, double depth = DefaultPillarSide) =>
-        new EditCommand<Hall>("Add pillar", hall => hall with { Obstacles = [.. hall.Obstacles, Obstacle.RectangularPillar(center, width, depth)] });
+        new EditCommand<Hall>("Add pillar", hall => hall.With(h => h.Add(Obstacle.RectangularPillar(center, width, depth))));
 
     /// <summary>Adds fixed furniture with the drawn closed outline.</summary>
     public static IEditCommand<Hall> AddFurniture(PathDrawing area) =>
-        new EditCommand<Hall>("Add furniture", hall => area.IsClosed ? hall with { Obstacles = [.. hall.Obstacles, new() { Kind = ObstacleKind.Furniture, Area = area }] } : hall);
+        new EditCommand<Hall>("Add furniture", hall => area.IsClosed ? hall.With(h => h.Add(new Obstacle { Kind = ObstacleKind.Furniture, Area = area })) : hall);
 
     public static IEditCommand<Hall> AddNoGoZone(PathDrawing area, string reason) =>
-        new EditCommand<Hall>("Add no-go zone", hall => area.IsClosed ? hall with { NoGoZones = [.. hall.NoGoZones, new() { Area = area, Reason = reason }] } : hall);
+        new EditCommand<Hall>("Add no-go zone", hall => area.IsClosed ? hall.With(h => h.Add(new NoGoZone { Area = area, Reason = reason })) : hall);
 
     /// <summary>Adds a door or emergency exit in the wall closest to <paramref name="point"/>, heading into the hall.</summary>
     public static IEditCommand<Hall> AddDoor(Point point, DoorKind kind) =>
-        new EditCommand<Hall>(kind == DoorKind.EmergencyExit ? "Add emergency exit" : "Add door", hall => hall with
+        new EditCommand<Hall>(kind == DoorKind.EmergencyExit ? "Add emergency exit" : "Add door", hall => hall.With(h => h.Add(new Door
         {
-            Doors = [.. hall.Doors, new() { Kind = kind, Position = hall.PoseOnWall(point), Width = kind == DoorKind.EmergencyExit ? DefaultEmergencyExitWidth : DefaultDoorWidth }],
-        });
+            Kind = kind,
+            Position = h.PoseOnWall(point),
+            Width = kind == DoorKind.EmergencyExit ? DefaultEmergencyExitWidth : DefaultDoorWidth,
+        })));
 
+    /// <summary>Replaces obstacle <paramref name="index"/> with <paramref name="obstacle"/>, which keeps the id of the one it replaces.</summary>
     public static IEditCommand<Hall> SetObstacle(int index, Obstacle obstacle) =>
-        new EditCommand<Hall>("Change obstacle", hall => hall with { Obstacles = Replace(hall.Obstacles, index, obstacle) });
+        new EditCommand<Hall>("Change obstacle", hall => index < hall.Obstacles.Count
+            ? hall.With(h => h.Obstacles[index] = obstacle.With(o => o.Id = hall.Obstacles[index].Id))
+            : hall);
 
-    /// <summary>Changes a door; its position is kept in the wall.</summary>
+    /// <summary>Replaces door <paramref name="index"/> with <paramref name="door"/>, which keeps the id of the one it replaces and its place in the wall.</summary>
     public static IEditCommand<Hall> SetDoor(int index, Door door) =>
-        new EditCommand<Hall>("Change door", hall => hall with { Doors = Replace(hall.Doors, index, door with { Position = hall.PoseOnWall(door.Position.Position) }) });
+        new EditCommand<Hall>("Change door", hall => index < hall.Doors.Count
+            ? hall.With(h => h.Doors[index] = door.With(d =>
+            {
+                d.Id = hall.Doors[index].Id;
+                d.Position = hall.PoseOnWall(door.Position.Position);
+            }))
+            : hall);
 
     /// <summary>
     /// Moves door <paramref name="index"/> to wall <paramref name="wall"/>, with its centre <paramref name="distance"/>
@@ -124,30 +128,31 @@ public static class HallCommands
         new EditCommand<Hall>("Move door", hall =>
         {
             if (index >= hall.Doors.Count || wall < 0 || wall >= hall.WallCount) return hall;
-            var door = hall.Doors[index];
+            var width = hall.Doors[index].Width;
             var length = hall.Wall(wall).Length;
-            var centre = length >= door.Width ? Math.Clamp(distance, door.Width / 2, length - door.Width / 2) : length / 2;
-            return hall with { Doors = Replace(hall.Doors, index, door with { Position = hall.PoseOnWall(wall, centre) }) };
+            var centre = length >= width ? Math.Clamp(distance, width / 2, length - width / 2) : length / 2;
+            return hall.With(h => h.Doors[index].Position = h.PoseOnWall(wall, centre));
         });
 
+    /// <summary>Replaces no-go zone <paramref name="index"/> with <paramref name="zone"/>, which keeps the id of the one it replaces.</summary>
     public static IEditCommand<Hall> SetNoGoZone(int index, NoGoZone zone) =>
-        new EditCommand<Hall>("Change no-go zone", hall => hall with { NoGoZones = Replace(hall.NoGoZones, index, zone) });
+        new EditCommand<Hall>("Change no-go zone", hall => index < hall.NoGoZones.Count
+            ? hall.With(h => h.NoGoZones[index] = zone.With(z => z.Id = hall.NoGoZones[index].Id))
+            : hall);
 
-    /// <summary>Changes the hall's own properties: name, address, note, aisle width.</summary>
+    /// <summary>Changes the hall's own properties: name, address, note, aisle width; <paramref name="change"/> returns a changed copy (<c>With</c>).</summary>
     public static IEditCommand<Hall> SetProperties(Func<Hall, Hall> change) =>
         new EditCommand<Hall>("Change properties", change);
 
     private static EditCommand<Hall> ChangeCorners(string description, Func<PathCorners, PathCorners?> change) =>
-        new(description, hall => change(PathCorners.From(hall.Outline)) is { } changed ? hall.WithOutline(changed.ToDrawing()) : hall);
+        new(description, hall => change(PathCorners.From(hall.Outline)) is { } changed ? hall.With(h => h.SetOutline(changed.ToDrawing())) : hall);
 
-    private static IReadOnlyList<T> Map<T>(IReadOnlyList<T> items, HallItemKind kind, IReadOnlyList<HallItem> ids, Func<T, T> change) =>
-        ids.Any(i => i.Kind == kind) ? [.. items.Select((item, i) => ids.Contains(new(kind, i)) ? change(item) : item)] : items;
+    /// <summary>The items of <paramref name="kind"/> in <paramref name="items"/> that <paramref name="ids"/> select.</summary>
+    private static IEnumerable<T> Selected<T>(List<T> items, HallItemKind kind, IReadOnlyList<HallItem> ids) =>
+        items.Where((_, i) => ids.Contains(new(kind, i)));
 
-    private static IReadOnlyList<T> Keep<T>(IReadOnlyList<T> items, HallItemKind kind, IReadOnlyList<HallItem> ids) =>
+    private static List<T> Keep<T>(List<T> items, HallItemKind kind, IReadOnlyList<HallItem> ids) =>
         ids.Any(i => i.Kind == kind) ? [.. items.Where((_, i) => !ids.Contains(new(kind, i)))] : items;
-
-    private static IReadOnlyList<T> Replace<T>(IReadOnlyList<T> items, int index, T item) =>
-        [.. items.Select((existing, i) => i == index ? item : existing)];
 
     private static PathDrawing Moved(PathDrawing path, Vector offset) =>
         PathDrawing.From(path.ToPath().Transformed(new Transform(Angle.Zero, offset)));

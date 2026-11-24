@@ -1,10 +1,9 @@
 using System.Globalization;
 using System.Resources;
 using System.Text.RegularExpressions;
-using Tellurian.Trains.Drawing.App.Catalogue;
+using Tellurian.Trains.Drawing.App.Catalogues;
 using Tellurian.Trains.Drawing.App.Translations.Resources;
-using Tellurian.Trains.Drawing.Model.AutoDraw;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 using Tellurian.Trains.Drawing.Model.Files;
 
@@ -30,15 +29,14 @@ public sealed partial class AppTextsTests
     }
 
     [TestMethod]
-    [DataRow("RestoreBuiltIn"), DataRow("Delete"), DataRow("ConfirmRestoreBuiltIn"), DataRow("ConfirmDelete")]
+    [DataRow("Delete"), DataRow("ConfirmDelete"), DataRow("CatalogueEmpty"), DataRow("ImportEntries")]
     public void TextsChosenInCodeExist(string key) =>
         Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
 
     [TestMethod]
     public void EveryEnumValueShownInTheUiHasAText()
     {
-        var keys = Keys<CatalogueOrigin>("Origin")
-            .Concat(Keys<EndProfileImportStatus>("ImportStatus"))
+        var keys = Keys<EndProfileImportStatus>("ImportStatus")
             .Concat(Keys<EndProfileChanges>("Change").Where(k => k != "Change_None"))
             .Concat(Keys<ModuleTemplateKind>("Template"))
             .Concat(Keys<CurveDirection>("CurveDirection"))
@@ -47,21 +45,47 @@ public sealed partial class AppTextsTests
             .Concat(Keys<RailSystem>("RailSystem"))
             .Concat(Keys<CatalogueProblemCode>("Problem"))
             .Concat(Keys<Editing.EndProfiles.MeasureOrigin>("MeasureOrigin"))
-            .Concat(Keys<Model.EndProfiles.PlateSegmentKind>("SegmentKind"))
-            .Concat(Keys<Model.EndProfiles.FilletSide>("FilletSide"));
+            .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.TrackDirection>("TrackDirection"))
+            .Concat(Keys<StationTrackProblemCode>("TrackProblem"))
+            .Concat(Keys<Tellurian.Trains.Schedules.Model.Layouts.OperationLocationKind>("LocationKind"))
+            .Concat(LocationProblemsShown.Select(code => $"LocationProblem_{code}"))
+            .Concat(new[] { "StraightTrack", "CurvedTrack", "FlexTrack", "Turnout", "Crossing", "DoubleSlip" }.Select(n => $"TrackElement_{n}"))
+            .Concat(Keys<PlateSegmentKind>("SegmentKind"))
+            .Concat(Keys<FilletSide>("FilletSide"));
         foreach (var key in keys) Assert.IsNotNull(Resources.GetString(key, CultureInfo.InvariantCulture), key);
     }
 
     [TestMethod]
     public void EveryCatalogueFieldHasALabel()
     {
-        string[] notShown = ["Id", "Source", "RegistryId"];
+        // The gauges are edited as the normal and the narrow gauge, which have labels of their own.
+        string[] notShown = ["Id", "Source", "ExternalReferences", "ExtensionData", "Gauges"];
         var properties = new[] { typeof(ModuleStandard), typeof(StandardAddOn), typeof(EndProfileCompatibilityOverride) }
             .SelectMany(t => t.GetProperties().Where(p => p.CanWrite).Select(p => p.Name))
             .Except(notShown);
         foreach (var property in properties)
             Assert.IsNotNull(Resources.GetString(string.Join("_", "Field", property), CultureInfo.InvariantCulture), property);
     }
+
+    /// <summary>
+    /// The rules of the shared layout model that the app checks: those of an operation location itself. The rules of
+    /// its tracks have the app's own texts (<c>TrackProblem</c>), and what is decided for a location in a layout
+    /// (manned, controlled by, instructions) isn't entered in the app.
+    /// </summary>
+    private static IEnumerable<Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode> LocationProblemsShown =>
+        Enum.GetValues<Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode>().Except(
+        [
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackDesignationMissing,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackDesignationNotUnique,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackLengthNegative,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.KeyNameWithoutLock,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.TrackUnknown,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.MannedNotAllowed,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.ControlledByNotAllowed,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.ControlledByNotManned,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.InstructionsNotAllowed,
+            Tellurian.Trains.Schedules.Model.Layouts.LocationProblemCode.OperationLocationMissing,
+        ]);
 
     private static IEnumerable<string> Keys<TEnum>(string prefix) where TEnum : struct, Enum =>
         Enum.GetNames<TEnum>().Select(n => string.Join("_", prefix, n));

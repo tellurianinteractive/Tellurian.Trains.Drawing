@@ -1,4 +1,4 @@
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -74,8 +74,8 @@ public sealed class JointFitEvaluatorTests
     public void EnoughCommonScrewHolesAreBolted(int commonHoles, JointFit expected)
     {
         Point[] holes = [new(-150, -70), new(150, -70), new(-150, -110), new(150, -110)];
-        var a = TestProfiles.FremoSingle() with { ScrewHoles = [.. holes.Take(commonHoles).Select(p => new Circle(p, 8)), new Circle(new(0, -60), 8)] };
-        var b = TestProfiles.FremoSingle() with { ScrewHoles = [.. holes.Select(p => new Circle(p, 8))] };
+        var a = TestProfiles.FremoSingle().With(edited => { edited.ScrewHoles = [.. holes.Take(commonHoles).Select(p => new Circle(p, 8)), new Circle(new(0, -60), 8)]; });
+        var b = TestProfiles.FremoSingle().With(edited => { edited.ScrewHoles = [.. holes.Select(p => new Circle(p, 8))]; });
         var result = Evaluate(a, b);
         Assert.AreEqual(expected, result.Fit);
         Assert.HasCount(1, result.UnmatchedScrewHolesA, "The extra hole is reported even when the ends are bolted.");
@@ -85,7 +85,7 @@ public sealed class JointFitEvaluatorTests
     [TestMethod]
     public void MinimumNumberOfBoltedHolesIsConfigurable()
     {
-        var a = TestProfiles.FremoSingle() with { ScrewHoles = [.. TestProfiles.FremoSingle().ScrewHoles.Take(3)] };
+        var a = TestProfiles.FremoSingle().With(edited => { edited.ScrewHoles = [.. TestProfiles.FremoSingle().ScrewHoles.Take(3)]; });
         var b = TestProfiles.FremoSingle();
         Assert.AreEqual(JointFit.Fits, JointFitEvaluator.Evaluate(a, Normal, b, Normal).Fit);
         Assert.AreEqual(JointFit.FitsWithClamps, JointFitEvaluator.Evaluate(a, Normal, b, Normal, tolerances: new() { MinimumBoltedScrewHoles = 4 }).Fit);
@@ -144,7 +144,7 @@ public sealed class JointFitEvaluatorTests
     [TestMethod]
     public void DifferentGaugeIsIncompatible()
     {
-        var narrow = TestProfiles.FremoSingle() with { Tracks = [new() { Offset = 0, Gauge = 12 }] };
+        var narrow = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 0, Gauges = [12] }]; });
         var result = Evaluate(TestProfiles.FremoSingle(), narrow);
         Assert.AreEqual(JointFit.Incompatible, result.Fit);
         Assert.IsTrue(result.Differences.HasFlag(FitDifferences.Gauge));
@@ -154,8 +154,8 @@ public sealed class JointFitEvaluatorTests
     public void OffCentreTrackMustMeetMirroredPosition()
     {
         // A track 20 mm right of centre on A meets a track 20 mm left of centre on B.
-        var right = TestProfiles.FremoSingle() with { Tracks = [new() { Offset = 20, Gauge = TestProfiles.H0Gauge }] };
-        var left = TestProfiles.FremoSingle() with { Tracks = [new() { Offset = -20, Gauge = TestProfiles.H0Gauge }] };
+        var right = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = 20, Gauges = [TestProfiles.H0Gauge] }]; });
+        var left = TestProfiles.FremoSingle().With(edited => { edited.Tracks = [new() { Offset = -20, Gauges = [TestProfiles.H0Gauge] }]; });
         Assert.AreEqual(JointFit.Fits, Evaluate(right, left).Fit);
         Assert.AreEqual(JointFit.Incompatible, Evaluate(right, right).Fit);
         Assert.AreEqual(JointFit.Fits, Evaluate(right, right, Normal, Mirrored).Fit);
@@ -193,7 +193,7 @@ public sealed class JointFitEvaluatorTests
     [TestMethod]
     public void MissingGroundLineIsNotAMismatch()
     {
-        var result = Evaluate(TestProfiles.FremoSingle() with { GroundLine = null }, TestProfiles.Asymmetric());
+        var result = Evaluate(TestProfiles.FremoSingle().With(edited => { edited.GroundLine = null; }), TestProfiles.Asymmetric());
         Assert.AreEqual(JointFit.Fits, result.Fit);
         Assert.IsTrue(result.Differences.HasFlag(FitDifferences.GroundLineUnknown));
         Assert.IsNull(result.GroundLineDeviation);
@@ -202,7 +202,7 @@ public sealed class JointFitEvaluatorTests
     [TestMethod]
     public void GroundLinesWithoutCommonRangeMismatch()
     {
-        var left = TestProfiles.FremoSingle() with { GroundLine = PathDrawing.Polyline([new(-250, -40), new(-100, -40)]) };
+        var left = TestProfiles.FremoSingle().With(edited => { edited.GroundLine = PathDrawing.Polyline([new(-250, -40), new(-100, -40)]); });
         var result = Evaluate(left, left);
         // Mirrored A covers 100…250 and B covers −250…−100: nothing in common.
         Assert.AreEqual(JointFit.FitsWithMismatch, result.Fit);

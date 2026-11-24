@@ -1,3 +1,4 @@
+using Tellurian.Trains.Drawing.Model.Files;
 using Tellurian.Trains.Drawing.Model.Tracks;
 
 namespace Tellurian.Trains.Drawing.Model.Tests;
@@ -54,7 +55,7 @@ public sealed class TrackElementTests
     public void RightTurnoutMirrorsLeft()
     {
         var left = new Turnout { Start = Pose.Origin, Kind = TurnoutKind.Left, Length = 230, Radius = 900, Angle = 12 };
-        var right = left with { Kind = TurnoutKind.Right };
+        var right = left.With(edited => edited.Kind = TurnoutKind.Right);
         var l = left.Routes()[1].End;
         var r = right.Routes()[1].End;
         Assert.AreEqual(l.X, r.X, Precision);
@@ -139,6 +140,15 @@ public sealed class TrackElementTests
     }
 
     [TestMethod]
-    public void ElementsGetUniqueIds() =>
-        Assert.AreNotEqual(new BufferStop { Pose = Pose.Origin }.Id, new BufferStop { Pose = Pose.Origin }.Id);
+    public void ElementsGetUniqueIdsWhenWritten()
+    {
+        var module = TestModules.WithEverything();
+        Assert.IsTrue(module.Drawing.TrackElements.Any(e => e.Id == 0), "The test needs elements without ids.");
+
+        var json = DrawingFileSerializer.Serialize(ModuleFileContent.Create(module, TestCatalogue.Lookup));
+        var ids = DrawingFileSerializer.DeserializeModule(json).Module.Drawing.TrackElements.Select(e => e.Id).ToList();
+
+        Assert.IsTrue(ids.All(id => id > 0));
+        Assert.HasCount(ids.Count, ids.Distinct());
+    }
 }

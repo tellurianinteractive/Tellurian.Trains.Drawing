@@ -1,5 +1,17 @@
 # Versionshinweise
 
+## Version 0.10.0
+Veröffentlicht am 2026-11-24
+- Die App hat keinen eigenen Katalog mehr: Der Katalog gehört dir. Importiere auf der Seite *Katalog* eine Katalogdatei (.catalogue.json), z. B. von deinem Verein; sie bringt ihre Maßstäbe, Normen, Zusätze und Kompatibilitätsausnahmen mit den Endprofilen mit, die du wählst. Jeder Eintrag kann geändert und gelöscht werden.
+- Endprofile in einem Modul, die deinem Katalog fehlen, werden im Bereich *Archiv* aufgelistet, wo du sie im Katalog speichern kannst.
+- Moduleditor, Bereich *Segmente*: *Anzahl Segmente* teilt das Modul in Segmente gleicher Länge entlang des Gleises, in einer Kurve auch mit gleichem Winkel. *Gleich lang machen* gleicht die Segmente an, die das Modul hat. Ein Stoß in einer Kurve kann auch über seinen *Winkel vom Anfang der Kurve* platziert werden.
+- Nur eine Betriebsstelle hat Gleise im Bereich *Gleise*; ein Streckenmodul bekommt keine, außer du fügst sie hinzu. Die Bezeichnung jedes Gleises steht in der Zeichnung.
+- Unter einem Titel mit Präfix, der schon sagt, wem das Modul gehört, werden die Namen der Besitzer weggelassen.
+- Tastenkürzel funktionieren in jedem Editor überall auf der Seite, außer während du in ein Feld schreibst: 1–9 wählen ein Werkzeug, 0 passt die Zeichnung in die Ansicht ein, Strg+Z und Strg+Y machen rückgängig und wiederholen, Entf löscht, die Pfeiltasten verschieben die Auswahl um 1 mm (10 mm mit Umschalt) und Esc bricht ab. Die Hilfe jedes Editors listet sie auf.
+- Eine neue Version des Dateiformats, gemeinsam mit den anderen Tellurian-Trains-Apps. Dateien früherer Versionen werden wie bisher gelesen und in der neuen Version gespeichert.
+- Eine Zeichnung, die nicht gelesen werden kann, sagt warum, statt den Editor anzuhalten.
+- Nach *Kurve spiegeln* wird die Ansicht wieder an das ganze Modul angepasst.
+
 ## Version 0.9.0
 Veröffentlicht am 2026-11-18
 - Moduleditor: ein neuer Bereich *Enden*. Gib Ende A oder Ende B ein anderes Endprofil im Maßstab des Moduls, und das Modul wird damit neu gezeichnet. *Wenden* dreht das Kopfstück eines asymmetrischen Endprofils mit der anderen Seite nach außen; *Endewender* folgt von selbst.

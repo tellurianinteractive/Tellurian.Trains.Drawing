@@ -1,10 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
-using Tellurian.Trains.Drawing.Model.Catalogue;
+using Tellurian.Trains.Drawing.Model.Catalogues;
 using Tellurian.Trains.Drawing.Model.EndProfiles;
-using Tellurian.Trains.Drawing.Model.HallPlans;
-using Tellurian.Trains.Drawing.Model.Halls;
+using Tellurian.Trains.Schedules.Exporters.Drawing;
+using Tellurian.Trains.Schedules.Exporters.Interfaces;
+using Tellurian.Trains.Schedules.Importers.Drawing;
+using Tellurian.Trains.Schedules.Importers.Interfaces;
 
 namespace Tellurian.Trains.Drawing.Model.Files;
 
@@ -22,20 +24,64 @@ public static class DrawingFileSerializer
 
     private static DrawingJsonContext Context => DrawingJsonContext.Default;
 
+    /// <summary>
+    /// Why <paramref name="json"/> can't be read as the drawing file its header says it is, or null when it can: e.g. a
+    /// version 2 file that a development build wrote in an earlier shape.
+    /// </summary>
+    public static string? ProblemOf(string json)
+    {
+        try
+        {
+            _ = Written(json, appVersion: null);
+            return null;
+        }
+        catch (DrawingFileException ex)
+        {
+            return ex.Message;
+        }
+    }
+
+    /// <summary>
+    /// <paramref name="json"/> at the current schema version: a file of an earlier version is read, migrated and written
+    /// again in today's shape; a file of the current version is returned as it is.
+    /// </summary>
+    /// <exception cref="DrawingFileException">The file can't be read.</exception>
+    public static string AtCurrentVersion(string json, string? appVersion = null)
+    {
+        var header = ReadHeader(json);
+        return header.SchemaVersion < DrawingFileFormat.CurrentSchemaVersion(header.Kind) ? Written(json, appVersion) : json;
+    }
+
+    /// <summary><paramref name="json"/> read as the kind its header says and written again.</summary>
+    private static string Written(string json, string? appVersion) => ReadHeader(json).Kind switch
+    {
+        DrawingFileKind.EndProfile => Serialize(DeserializeEndProfile(json), appVersion),
+        DrawingFileKind.Module => Serialize(DeserializeModule(json), appVersion),
+        DrawingFileKind.Catalogue => Serialize(DeserializeCatalogue(json), appVersion),
+        DrawingFileKind.Hall => Serialize(DeserializeHall(json), appVersion),
+        DrawingFileKind.HallPlan => Serialize(DeserializeHallPlan(json), appVersion),
+        var kind => throw new DrawingFileException(DrawingFileError.WrongKind, $"There is no {kind} file."),
+    };
+
+    /// <summary>The end profile file of <paramref name="endProfile"/>, written by the shared <see cref="EndProfileExporter"/>.</summary>
     public static string Serialize(EndProfile endProfile, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.EndProfile, endProfile, appVersion), Context.DrawingFileEndProfile);
+        EndProfiles.Write(endProfile, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
+    /// <summary>The module file of <paramref name="module"/>, written by the shared <see cref="ModuleExporter"/>.</summary>
     public static string Serialize(ModuleFileContent module, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.Module, module, appVersion), Context.DrawingFileModuleFileContent);
+        new ModuleExporter().Write(module, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
-    public static string Serialize(DrawingCatalogue catalogue, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.Catalogue, catalogue, appVersion), Context.DrawingFileDrawingCatalogue);
+    /// <summary>The catalogue file of <paramref name="catalogue"/>, written by the shared <see cref="CatalogueExporter"/>.</summary>
+    public static string Serialize(Catalogue catalogue, string? appVersion = null) =>
+        new CatalogueExporter().Write(catalogue, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
+    /// <summary>The hall file of <paramref name="hall"/>, written by the shared <see cref="HallExporter"/>.</summary>
     public static string Serialize(Hall hall, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.Hall, hall, appVersion), Context.DrawingFileHall);
+        new HallExporter().Write(hall, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
+    /// <summary>The hall plan file of <paramref name="hallPlan"/>, written by the shared <see cref="HallPlanExporter"/>.</summary>
     public static string Serialize(HallPlan hallPlan, string? appVersion = null) =>
-        JsonSerializer.Serialize(Envelope(DrawingFileKind.HallPlan, hallPlan, appVersion), Context.DrawingFileHallPlan);
+        new HallPlanExporter().Write(hallPlan, new ExportOptions(appVersion ?? ModuleDrawVersion.Current));
 
     /// <exception cref="DrawingFileException">The file isn't a drawing file.</exception>
     public static DrawingFileHeader ReadHeader(string json) => Header(Parse(json));
@@ -44,34 +90,59 @@ public static class DrawingFileSerializer
     public static DrawingFileHeader ReadHeader(Stream stream) => Header(Parse(stream));
 
     /// <exception cref="DrawingFileException">The file can't be read as an end profile file.</exception>
-    public static EndProfile DeserializeEndProfile(string json) => Read(Parse(json), DrawingFileKind.EndProfile, Context.DrawingFileEndProfile);
+    public static EndProfile DeserializeEndProfile(string json) => Imported(new EndProfileImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as an end profile file.</exception>
-    public static EndProfile DeserializeEndProfile(Stream stream) => Read(Parse(stream), DrawingFileKind.EndProfile, Context.DrawingFileEndProfile);
+    public static EndProfile DeserializeEndProfile(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeEndProfile(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a module file.</exception>
-    public static ModuleFileContent DeserializeModule(string json) => Read(Parse(json), DrawingFileKind.Module, Context.DrawingFileModuleFileContent);
+    public static ModuleFileContent DeserializeModule(string json) => Imported(new ModuleImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a module file.</exception>
-    public static ModuleFileContent DeserializeModule(Stream stream) => Read(Parse(stream), DrawingFileKind.Module, Context.DrawingFileModuleFileContent);
+    public static ModuleFileContent DeserializeModule(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeModule(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
-    public static DrawingCatalogue DeserializeCatalogue(string json) => Read(Parse(json), DrawingFileKind.Catalogue, Context.DrawingFileDrawingCatalogue);
+    public static Catalogue DeserializeCatalogue(string json) => Imported(new CatalogueImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a catalogue file.</exception>
-    public static DrawingCatalogue DeserializeCatalogue(Stream stream) => Read(Parse(stream), DrawingFileKind.Catalogue, Context.DrawingFileDrawingCatalogue);
+    public static Catalogue DeserializeCatalogue(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeCatalogue(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall file.</exception>
-    public static Hall DeserializeHall(string json) => Read(Parse(json), DrawingFileKind.Hall, Context.DrawingFileHall);
+    public static Hall DeserializeHall(string json) => Imported(new HallImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall file.</exception>
-    public static Hall DeserializeHall(Stream stream) => Read(Parse(stream), DrawingFileKind.Hall, Context.DrawingFileHall);
+    public static Hall DeserializeHall(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeHall(reader.ReadToEnd());
+    }
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall plan file.</exception>
-    public static HallPlan DeserializeHallPlan(string json) => Read(Parse(json), DrawingFileKind.HallPlan, Context.DrawingFileHallPlan);
+    public static HallPlan DeserializeHallPlan(string json) => Imported(new HallPlanImporter().Import(json));
 
     /// <exception cref="DrawingFileException">The file can't be read as a hall plan file.</exception>
-    public static HallPlan DeserializeHallPlan(Stream stream) => Read(Parse(stream), DrawingFileKind.HallPlan, Context.DrawingFileHallPlan);
+    public static HallPlan DeserializeHallPlan(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        using var reader = new StreamReader(stream, leaveOpen: true);
+        return DeserializeHallPlan(reader.ReadToEnd());
+    }
 
     /// <summary>
     /// Reads <paramref name="root"/> as a <paramref name="kind"/> file, migrating with <paramref name="migrations"/>
@@ -88,21 +159,40 @@ public static class DrawingFileSerializer
                 $"The file has {kind} schema version {header.SchemaVersion}, but this version of the app reads up to version {current}. Update the app to open it.");
 
         var content = root[ContentProperty] ?? throw new DrawingFileException(DrawingFileError.NotADrawingFile, "The file has no content.");
-        if (header.SchemaVersion < current)
-        {
-            root[ContentProperty] = DrawingFileMigrations.Upgrade(kind, content.DeepClone(), header.SchemaVersion, current, migrations ?? DrawingFileMigrations.All);
-            root[SchemaVersionProperty] = current;
-        }
-
         try
         {
+            if (header.SchemaVersion < current)
+            {
+                root[ContentProperty] = DrawingFileMigrations.Upgrade(kind, content.DeepClone(), header.SchemaVersion, current, migrations ?? DrawingFileMigrations.All);
+                root[SchemaVersionProperty] = current;
+            }
+
+            // Operation locations of earlier files: the kind first and named as in the code, as the shared model reads it.
+            Tellurian.Trains.Schedules.Model.Layouts.OperationLocationJson.Normalise(root[ContentProperty]);
             var file = root.Deserialize(typeInfo) ?? throw new DrawingFileException(DrawingFileError.InvalidContent, "The file is empty.");
             return file.Content;
         }
-        catch (JsonException ex)
+        catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException)
         {
             throw new DrawingFileException(DrawingFileError.InvalidContent, $"The {kind} file content is invalid: {ex.Message}", ex);
         }
+    }
+
+    private static readonly EndProfileExporter EndProfiles = new();
+
+    /// <summary>The item of a successful import, or the failure as a <see cref="DrawingFileException"/>, as callers here expect.</summary>
+    private static T Imported<T>(ImportResult<T> result)
+    {
+        if (result.IsSuccess) return result.Item;
+        var message = result.Messages.FirstOrDefault();
+        throw new DrawingFileException(message?.Code switch
+        {
+            FileErrorCode.InvalidJson => DrawingFileError.InvalidJson,
+            FileErrorCode.WrongKind => DrawingFileError.WrongKind,
+            FileErrorCode.NewerVersion => DrawingFileError.NewerSchemaVersion,
+            FileErrorCode.InvalidContent or FileErrorCode.MigrationMissing => DrawingFileError.InvalidContent,
+            _ => DrawingFileError.NotADrawingFile,
+        }, message?.Text ?? "The file can't be read.");
     }
 
     private static DrawingFile<T> Envelope<T>(DrawingFileKind kind, T content, string? appVersion)
@@ -113,7 +203,7 @@ public static class DrawingFileSerializer
             Format = DrawingFileFormat.Format,
             Kind = kind,
             SchemaVersion = DrawingFileFormat.CurrentSchemaVersion(kind),
-            AppVersion = appVersion ?? DrawingFileFormat.LibraryVersion,
+            AppVersion = appVersion ?? ModuleDrawVersion.Current,
             Content = content,
         };
     }
