@@ -1,7 +1,15 @@
 # Versjonsmerknader
 
-## Versjon 0.9.1
-Utgitt 2026-11-18
+## Versjon 0.10.0
+Utgitt 2026-11-24
+- Appen har ikke lenger en egen katalog: katalogen er din. Importer en katalogfil (.catalogue.json) på siden *Katalog*, f.eks. fra klubben din; den tar med seg skalaene, standardene, tilleggene og kompatibilitetsunntakene sine sammen med endeprofilene du velger. Alle oppføringer kan endres og slettes.
+- Endeprofiler i en modul som katalogen din mangler, vises i panelet *Arkiv*, der du kan lagre dem i katalogen.
+- Modulredigering, panelet *Seksjoner*: *Antall seksjoner* deler modulen i seksjoner som er like lange langs sporet, i en kurve også med samme vinkel. *Gjør like lange* jevner ut seksjonene modulen har. En skjøt i en kurve kan også plasseres med *Vinkel fra starten av kurven*.
+- Bare et driftssted har spor i panelet *Spor*; en linjemodul får ingen med mindre du legger dem til. Betegnelsen til hvert spor skrives i tegningen.
+- Under en tittel med prefiks, som allerede sier hvem som eier modulen, utelates eiernes navn.
+- Hurtigtaster virker hvor som helst på siden i alle redigeringsvinduer, unntatt mens du skriver i et felt: 1–9 velger et verktøy, 0 tilpasser tegningen til visningen, Ctrl+Z og Ctrl+Y angrer og gjør om, Delete sletter, piltastene flytter markeringen 1 mm (10 mm med Shift) og Escape avbryter. Hjelpen til hver redigering viser dem.
+- En ny versjon av filformatet, felles med de andre Tellurian Trains-appene. Filer fra tidligere versjoner leses som før og lagres i den nye versjonen.
+- En tegning som ikke kan leses, forteller hvorfor i stedet for å stoppe redigeringen.
 - Etter *Snu kurven* tilpasses visningen til hele modulen igjen.
 
 ## Versjon 0.9.0

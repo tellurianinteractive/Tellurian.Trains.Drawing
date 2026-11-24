@@ -1,7 +1,15 @@
 # Release Notes
 
-## Release 0.9.1
-Released 2026-11-18
+## Release 0.10.0
+Released 2026-11-24
+- The app has no catalogue of its own any more: the catalogue is yours. Import a catalogue file (.catalogue.json) on the *Catalogue* page, e.g. one from your club; it brings its scales, standards, add-ons and compatibility overrides with the end profiles you choose. Every entry can be edited and deleted.
+- End profiles in a module that your catalogue lacks are listed in the *Archive* pane, where you can save them to the catalogue.
+- Module editor, *Sections* pane: *Number of sections* divides the module into sections of the same length along the track, on a curve also of the same angle. *Make equal* evens out the sections the module has. A joint on a curve can also be placed by its *Angle from the start of the curve*.
+- Only an operation location has tracks in the *Tracks* pane; a module of plain line gets none unless you add them. The designation of each track is written in the drawing.
+- Under a title with a prefix, which already tells who owns the module, the owners' names are left out.
+- Keyboard shortcuts work wherever you are on the page in every editor, except while you type in a field: 1–9 choose a tool, 0 fits the drawing, Ctrl+Z and Ctrl+Y undo and redo, Delete deletes, the arrow keys move the selection 1 mm (10 mm with Shift) and Escape stops. The help of each editor lists them.
+- A new version of the file format, shared with the other Tellurian Trains apps. Files from earlier versions are read as before and saved in the new version.
+- A drawing that can't be read tells why, instead of stopping the editor.
 - After *Flip curve*, the view is fitted to the whole module again.
 
 ## Release 0.9.0
