@@ -10,7 +10,7 @@
 <p>@T["AppDescription"]</p>
 
 <div class="toolbar">
-    <button type="button" class="primary" @onclick="OpenAsync">@T["Open"]</button>
+    <BusyButton Busy="busy" Key="open" Class="primary" OnClick="OpenAsync">@T["Open"]</BusyButton>
     <a class="button" href="new/module">@T["NewModule"]</a>
     <a class="button" href="new/endprofile">@T["NewEndProfile"]</a>
     <a class="button" href="@NewHallPage.Url">@T["NewHall"]</a>
@@ -63,10 +63,10 @@
                     <span class="actions">
                         @if (draft.HasUnsavedChanges)
                         {
-                            <button type="button" class="primary save" @onclick="() => SaveAsync(draft)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
+                            <BusyButton Busy="busy" Key="@($"save-{draft.Id}")" Class="primary save" OnClick="() => SaveAsync(draft)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</BusyButton>
                         }
                         <a class="button primary edit" href="@DrawingPage.Url(draft.Id)">@T["Edit"]</a>
-                        <button type="button" class="danger discard" @onclick="() => DiscardAsync(draft)">@T["Discard"]</button>
+                        <BusyButton Busy="busy" Key="@($"discard-{draft.Id}")" Class="danger discard" OnClick="() => DiscardAsync(draft)">@T["Discard"]</BusyButton>
                     </span>
                 </li>
             }
@@ -89,7 +89,7 @@
             @foreach (var file in recent)
             {
                 <li>
-                    <button type="button" class="link" @onclick="() => ReopenAsync(file)">@file.FileName</button>
+                    <BusyButton Busy="busy" Key="@($"reopen-{file.Id}")" Class="link" OnClick="() => ReopenAsync(file)">@file.FileName</BusyButton>
                     <span class="kind">@T[$"Kind_{file.Kind}"]</span>
                     <span class="detail">@file.Name</span>
                     <time class="detail" datetime="@file.Used.ToString("o")">@file.Used.ToLocalTime().ToString("g")</time>
@@ -100,6 +100,9 @@
 </section>
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     public const string Url = "start";
 
     private IReadOnlyList<Draft>? drafts;

@@ -1,5 +1,13 @@
 # Udgivelsesnoter
 
+## Version 0.11.1
+Udgivet 2026-11-26
+- Knapper, der læser eller gemmer data, viser en snurre, mens de arbejder, og sidens øvrige af den slags knapper venter, til de er færdige.
+- Standarder fra Modulregistret flettes med dine med samme navn, så kataloget aldrig har to standarder med samme navn. Registrets oplysninger går forud.
+- En standard, der udvider en anden, fx fra Modulregistret, tilbyder endeprofilerne for den standard, den udvider.
+- En standard i dit katalog har kun et kortnavn, en skala og lande; sporvidden angives for hvert spor i endeprofilerne. Efter hentning fra Modulregistret vises dets standarder ikke længere som problemer.
+- En ny endeprofil foreslår sporvidden fra standardens eksisterende endeprofiler.
+
 ## Version 0.11.0
 Udgivet 2026-11-26
 - *Hent fra Modulregistret* på siden *Katalog* henter registrets standarder og endeprofiler for din skala og dit land ind, at vælge imellem som når du importerer en katalogfil.

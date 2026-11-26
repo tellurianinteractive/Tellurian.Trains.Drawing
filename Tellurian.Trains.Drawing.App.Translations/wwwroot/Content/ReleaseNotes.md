@@ -1,5 +1,13 @@
 # Release Notes
 
+## Release 0.11.1
+Released 2026-11-26
+- Buttons that read or save data show a spinner while they work, and the page's other such buttons wait until they are done.
+- Standards from the Module Registry merge with yours of the same name, so the catalogue never has two standards with the same name. The Registry's data takes precedence.
+- A standard that extends another, e.g. from the Module Registry, offers the end profiles of the standard it extends.
+- A standard in your catalogue has only a short name, a scale and countries; the gauge is given for each track in the end profiles. After fetching from the Module Registry, its standards are no longer listed as problems.
+- A new end profile suggests the gauge of the standard's existing end profiles.
+
 ## Release 0.11.0
 Released 2026-11-26
 - *Fetch from the Module Registry* on the *Catalogue* page brings in the Registry's standards and end profiles for your scale and country, to choose from as when you import a catalogue file.

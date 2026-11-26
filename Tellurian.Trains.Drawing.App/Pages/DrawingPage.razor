@@ -59,6 +59,9 @@ else if (draft is not null)
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     [Parameter] public Guid Id { get; set; }
 
     /// <summary>The file actions and status in the editors' Archive pane.</summary>
@@ -66,20 +69,20 @@ else if (draft is not null)
     <p class="archive-name"><b>@current.Name</b> <span class="kind">@T[$"Kind_{current.Kind}"]</span></p>
     <p class="detail">@(current.FileName ?? T["NotSavedToFile"])</p>
     <div class="pane-buttons">
-        <button type="button" class="primary" id="save" @onclick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</button>
+        <BusyButton Busy="busy" Key="save" Class="primary" id="save" OnClick="() => SaveAsync(saveAs: false)">@(Documents.CanSaveInPlace ? T["Save"] : T["SaveDownload"])</BusyButton>
         @if (Documents.CanSaveInPlace)
         {
-            <button type="button" id="save-as" @onclick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</button>
+            <BusyButton Busy="busy" Key="save-as" id="save-as" OnClick="() => SaveAsync(saveAs: true)">@T["SaveAs"]</BusyButton>
         }
         @if (current.Kind == DrawingFileKind.EndProfile)
         {
-            <button type="button" id="save-to-catalogue" @onclick="SaveToCatalogueAsync">@T["SaveToCatalogue"]</button>
+            <BusyButton Busy="busy" Key="save-to-catalogue" id="save-to-catalogue" OnClick="SaveToCatalogueAsync">@T["SaveToCatalogue"]</BusyButton>
             @if (_endProfileEditor?.Current is { } shown && Tellurian.Trains.Drawing.App.Catalogues.CatalogueService.ModuleRegistryId(shown) is not null)
             {
-                <button type="button" id="upload-to-registry" @onclick="UploadToRegistryAsync">@T["UploadToRegistry"]</button>
+                <BusyButton Busy="busy" Key="upload" id="upload-to-registry" OnClick="UploadToRegistryAsync">@T["UploadToRegistry"]</BusyButton>
             }
         }
-        <button type="button" id="discard" @onclick="DiscardAsync">@T["Discard"]</button>
+        <BusyButton Busy="busy" Key="discard" id="discard" OnClick="DiscardAsync">@T["Discard"]</BusyButton>
     </div>
     <p>
         @if (current.HasUnsavedChanges)
@@ -99,7 +102,7 @@ else if (draft is not null)
     {
         <p class="note" id="missing-end-profiles">@T.Format("EndProfilesNotInCatalogue", string.Join(", ", _missingEndProfiles.Select(p => p.Designation)))</p>
         <div class="pane-buttons">
-            <button type="button" id="save-missing-end-profiles" @onclick="SaveMissingEndProfilesAsync">@T["SaveToCatalogue"]</button>
+            <BusyButton Busy="busy" Key="save-missing" id="save-missing-end-profiles" OnClick="SaveMissingEndProfilesAsync">@T["SaveToCatalogue"]</BusyButton>
         </div>
     }
     @if (!Documents.CanSaveInPlace)
@@ -156,7 +159,11 @@ else if (draft is not null)
         try
         {
             var module = DrawingFileSerializer.DeserializeModule(draft.Json).Module;
-            return module.Standard?.Id is { } standardId ? (await Catalogues.GetAsync()).FindStandard(standardId) : null;
+            if (module.Standard is not { } standard) return null;
+            var catalogue = await Catalogues.GetAsync();
+            // By name when the id is gone: the module was drawn before its standard merged with the Registry's (StandardMerge).
+            return (standard.Id is { } standardId ? catalogue.FindStandard(standardId) : null)
+                ?? catalogue.Standards.FirstOrDefault(s => string.Equals(s.ShortName.Trim(), standard.ShortName.Trim(), StringComparison.OrdinalIgnoreCase));
         }
         catch (DrawingFileException)
         {

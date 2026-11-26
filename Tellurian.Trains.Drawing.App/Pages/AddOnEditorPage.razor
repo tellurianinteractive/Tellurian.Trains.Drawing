@@ -15,7 +15,7 @@
 }
 @if (catalogue is not null)
 {
-    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+    <form class="form" @onsubmit="@(() => busy.RunAsync("save", SaveAsync))" @onsubmit:preventDefault>
         <label><span>@T["Field_ShortName"]</span><input id="shortName" @bind="shortName" /></label>
         <label>
             <span>@T["Field_BaseStandardId"]</span>
@@ -33,13 +33,16 @@
         <ProblemList Problems="problems" />
 
         <div class="toolbar">
-            <button type="submit" class="primary">@T["Save"]</button>
+            <BusyButton Busy="busy" Key="save" Type="submit" Class="primary">@T["Save"]</BusyButton>
             <a class="button" href="catalogue">@T["Cancel"]</a>
         </div>
     </form>
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     [Parameter] public Guid? Id { get; set; }
 
     private Catalogue? catalogue;

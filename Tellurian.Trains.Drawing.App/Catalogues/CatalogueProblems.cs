@@ -33,7 +33,7 @@ public sealed class CatalogueProblems : IDisposable
         try
         {
             var user = await _catalogue.GetUserAsync(cancellationToken);
-            Problems = CatalogueValidation.ValidateUserEntries(user, user);
+            Problems = StandardFields.OfShown(CatalogueValidation.ValidateUserEntries(user, user));
             Catalogue = user;
             IsChecked = true;
         }

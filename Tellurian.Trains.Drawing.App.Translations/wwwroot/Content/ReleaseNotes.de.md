@@ -1,5 +1,13 @@
 # Versionshinweise
 
+## Version 0.11.1
+Veröffentlicht am 2026-11-26
+- Schaltflächen, die Daten lesen oder speichern, zeigen während der Arbeit ein Drehsymbol, und die übrigen solchen Schaltflächen der Seite warten, bis sie fertig sind.
+- Normen aus dem Modulregister werden mit deinen gleichnamigen zusammengeführt, sodass der Katalog nie zwei Normen mit demselben Namen hat. Die Angaben des Registers haben Vorrang.
+- Eine Norm, die eine andere erweitert, z. B. aus dem Modulregister, bietet die Endprofile der erweiterten Norm an.
+- Eine Norm in deinem Katalog hat nur einen Kurznamen, einen Maßstab und Länder; die Spurweite wird für jedes Gleis in den Endprofilen angegeben. Nach dem Holen aus dem Modulregister werden dessen Normen nicht mehr als Probleme aufgeführt.
+- Ein neues Endprofil schlägt die Spurweite der vorhandenen Endprofile der Norm vor.
+
 ## Version 0.11.0
 Veröffentlicht am 2026-11-26
 - *Aus dem Modulregister holen* auf der Seite *Katalog* holt die Normen und Endprofile des Registers für deinen Maßstab und dein Land herein, zur Auswahl wie beim Import einer Katalogdatei.

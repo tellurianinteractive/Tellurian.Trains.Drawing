@@ -15,7 +15,7 @@
 }
 @if (catalogue is not null)
 {
-    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+    <form class="form" @onsubmit="@(() => busy.RunAsync("save", SaveAsync))" @onsubmit:preventDefault>
         <label>
             <span>@T["Field_FirstEndProfileId"]</span>
             <select id="first" @bind="firstId">
@@ -48,13 +48,16 @@
         <ProblemList Problems="problems" />
 
         <div class="toolbar">
-            <button type="submit" class="primary">@T["Save"]</button>
+            <BusyButton Busy="busy" Key="save" Type="submit" Class="primary">@T["Save"]</BusyButton>
             <a class="button" href="catalogue">@T["Cancel"]</a>
         </div>
     </form>
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     /// <summary>The pair of the override to edit; both null for a new override.</summary>
     [SupplyParameterFromQuery] public Guid? First { get; set; }
     [SupplyParameterFromQuery] public Guid? Second { get; set; }

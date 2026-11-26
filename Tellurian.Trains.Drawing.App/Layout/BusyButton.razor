@@ -1,0 +1,58 @@
+@implements IDisposable
+
+@* A button for an action that does IO (files, browser storage, the Module Registry). While any action of the page's
+   BusyState runs, it is disabled; the one running shows a spinner. A submit button shows the state of the action
+   that the form's submit handler runs with the same key. *@
+<button type="@Type" class="@Classes" disabled="@(Busy.IsBusy || Disabled)" aria-busy="@(IsRunning ? "true" : null)"
+        @onclick="ClickAsync" @attributes="Attributes">
+    @if (IsRunning)
+    {
+        <span class="busy-spinner" aria-hidden="true"></span>
+    }
+    @ChildContent
+</button>
+
+@code {
+    private BusyState? _subscribed;
+
+    /// <summary>The page's busy state.</summary>
+    [Parameter, EditorRequired] public BusyState Busy { get; set; } = default!;
+
+    /// <summary>The action's key, unique on the page.</summary>
+    [Parameter, EditorRequired] public string Key { get; set; } = string.Empty;
+
+    /// <summary>The action; none for a submit button, whose form runs it.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    /// <summary>Disabled also when the page isn't busy.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter] public string Type { get; set; } = "button";
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? Attributes { get; set; }
+
+    private bool IsRunning => Busy.Is(Key);
+    private string? Classes => IsRunning ? $"{Class} busy".Trim() : Class;
+
+    protected override void OnParametersSet()
+    {
+        if (ReferenceEquals(_subscribed, Busy)) return;
+        if (_subscribed is not null) _subscribed.Changed -= Refresh;
+        _subscribed = Busy;
+        Busy.Changed += Refresh;
+    }
+
+    private async Task ClickAsync()
+    {
+        // An EventCallback, so the page shows what the action did (its messages) when it ends.
+        if (OnClick.HasDelegate) await Busy.RunAsync(Key, () => OnClick.InvokeAsync());
+    }
+
+    private void Refresh() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        if (_subscribed is not null) _subscribed.Changed -= Refresh;
+    }
+}

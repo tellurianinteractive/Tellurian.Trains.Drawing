@@ -381,6 +381,18 @@
             "string",
             "null"
           ]
+        },
+        "operatesFromYear": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "operatesToYear": {
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       },
       "required": [
@@ -2640,6 +2652,13 @@
             }
           ]
         },
+        "extendsStandardId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
         "trackSystem": {
           "type": [
             "string",
@@ -3362,6 +3381,9 @@
           "type": "boolean"
         },
         "validateStationTracks": {
+          "type": "boolean"
+        },
+        "excludeShadowYardsFromStationTracks": {
           "type": "boolean"
         },
         "validateStretches": {

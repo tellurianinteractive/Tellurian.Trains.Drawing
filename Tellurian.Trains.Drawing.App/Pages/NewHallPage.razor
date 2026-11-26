@@ -7,7 +7,7 @@
 <h1>@T["NewHallTitle"]</h1>
 <p class="note">@T["NewHallIntro"]</p>
 
-<form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
+<form class="form" @onsubmit="@(() => busy.RunAsync("create", CreateAsync))" @onsubmit:preventDefault>
     <label><span>@T["Name"]</span><input id="hall-name" @bind="form.Name" /></label>
     <label><span>@T["HallWidthMetres"]</span><DecimalInput id="hall-width" @bind-Value="form.Width" LengthUnit="Tellurian.Trains.Drawing.Editing.Input.LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" /></label>
     <label><span>@T["HallDepthMetres"]</span><DecimalInput id="hall-depth" @bind-Value="form.Depth" LengthUnit="Tellurian.Trains.Drawing.Editing.Input.LengthUnit.Metre" InvalidText="@T["InvalidNumber"]" /></label>
@@ -23,12 +23,15 @@
     }
 
     <div class="toolbar">
-        <button type="submit" class="primary">@T["Create"]</button>
+        <BusyButton Busy="busy" Key="create" Type="submit" Class="primary">@T["Create"]</BusyButton>
         <a class="button" href="@Home.Url">@T["Cancel"]</a>
     </div>
 </form>
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     public const string Url = "new/hall";
 
     private const double DefaultWidth = 20000;

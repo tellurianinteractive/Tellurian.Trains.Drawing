@@ -176,7 +176,7 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
     /// <summary>Saves a standard in the user's catalogue, replacing one with the same id; returns the problems if it isn't valid.</summary>
     public async Task<IReadOnlyList<CatalogueProblem>> SaveStandardAsync(ModuleStandard standard, CancellationToken cancellationToken = default)
     {
-        var problems = CatalogueValidation.Validate(standard, await GetAsync(cancellationToken));
+        var problems = StandardFields.OfShown(CatalogueValidation.Validate(standard, await GetAsync(cancellationToken)));
         if (problems.Count == 0) await SaveUserAsync((await GetUserAsync(cancellationToken)).With(standard), cancellationToken);
         return problems;
     }

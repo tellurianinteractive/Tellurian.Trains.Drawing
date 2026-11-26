@@ -21,7 +21,7 @@
 }
 @if (catalogue is not null)
 {
-    <form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
+    <form class="form" @onsubmit="@(() => busy.RunAsync("create", CreateAsync))" @onsubmit:preventDefault>
         <label><span>@T["Designation"]</span><input id="designation" @bind="form.Designation" readonly="@(drawingFor is not null)" /></label>
         <label>
             <span>@T["Standard"]</span>
@@ -63,17 +63,22 @@
         }
 
         <div class="toolbar">
-            <button type="submit" class="primary">@T["Create"]</button>
+            <BusyButton Busy="busy" Key="create" Type="submit" Class="primary">@T["Create"]</BusyButton>
             <a class="button" href="@Home.Url">@T["Cancel"]</a>
         </div>
     </form>
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     private const double FallbackPlateWidth = 500;
     private const double FallbackTop = 10;
     private const double FallbackBottom = 200;
     private const double FallbackCentreDistancePerGauge = 2.75;
+    /// <summary>The prototype's standard gauge, mm.</summary>
+    private const double StandardGauge = 1435;
 
     /// <summary>The address of the form for drawing the end profile <paramref name="endProfileId"/> of the catalogue, which has no shape yet.</summary>
     public static string Url(Guid endProfileId) => $"new/endprofile?from={endProfileId}";
@@ -114,23 +119,35 @@
         if (Guid.TryParse(e.Value as string, out var id) && catalogue?.FindStandard(id) is { } standard) UseStandard(standard);
     }
 
-    /// <summary>Takes the defaults from the standard and its default end profiles.</summary>
+    /// <summary>
+    /// Takes the defaults from the standard's end profiles: the gauge is that of their tracks, which is where Module Draw
+    /// gives gauges, and the scale's standard gauge when the standard has no drawn profiles yet.
+    /// </summary>
     private void UseStandard(ModuleStandard standard)
     {
         form.StandardId = standard.Id ?? Guid.Empty;
-        form.Gauge = standard.NormalGauge;
         var single = Find(standard.DefaultSingleTrackEndProfileId) ?? ProfilesOfStandard.WithOutline().FirstOrDefault(p => p.Tracks.Count == 1);
+        var gauge = (single?.Tracks ?? []).Concat(ProfilesOfStandard.SelectMany(p => p.Tracks)).SelectMany(t => t.Gauges).FirstOrDefault(w => w > 0);
+        form.Gauge = gauge > 0 ? gauge : ScaleGauge(standard);
         var bounds = single?.Outline?.ToPath().Bounds;
         form.PlateWidth = bounds is { IsEmpty: false } b1 ? Math.Round(b1.Width, 1) : FallbackPlateWidth;
         // The track stands on the plate: rails on sleepers, so the top edge is at least that far below rail top.
         var topBelowRailTop = single?.Outline is { } outline && TopAtCentre(outline) is { } top ? Rounded(-top) : FallbackTop;
         form.TopBelowRailTop = Math.Max(topBelowRailTop, TrackCrossSection.Height);
         form.BottomBelowRailTop = bounds is { IsEmpty: false } b3 ? Math.Round(-b3.Min.Y, 1) : FallbackBottom;
-        var doubleTrack = Find(standard.DefaultDoubleTrackEndProfileId);
+        var doubleTrack = Find(standard.DefaultDoubleTrackEndProfileId) ?? ProfilesOfStandard.FirstOrDefault(p => p.Tracks.Count >= 2);
         form.CentreDistance = doubleTrack is not null && EndProfileAnalysis.Analyze(doubleTrack).TrackCentreDistances is [var cc, ..]
             ? Math.Round(cc, 1)
-            : Math.Round((standard.NormalGauge ?? 0) * FallbackCentreDistancePerGauge, 1);
+            : Math.Round((form.Gauge ?? 0) * FallbackCentreDistancePerGauge, 1);
         form.ScrewHolesFrom = single?.HasScrewHoles == true ? single.Id : null;
+    }
+
+    /// <summary>The prototype's standard gauge, 1435 mm, in the standard's scale; none when the scale's ratio is unknown.</summary>
+    private double? ScaleGauge(ModuleStandard standard)
+    {
+        var denominator = standard.Scale?.Denominator ?? catalogue?.FindScale(standard.ScaleName)?.Denominator
+            ?? (catalogue is null ? null : ScaleChoices.Of(catalogue).FirstOrDefault(s => string.Equals(s.ShortName, standard.ScaleName, StringComparison.OrdinalIgnoreCase))?.Denominator);
+        return denominator is > 0 ? Math.Round(StandardGauge / (double)denominator.Value, 1) : null;
     }
 
     /// <summary>

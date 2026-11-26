@@ -8,6 +8,15 @@ new version per file kind, and files of the older version are upgraded when they
 All five file kinds: end profile, module, catalogue, hall and hall plan files. Version 1 files are read and
 upgraded; files are written as version 2. From here on, version 2 changes only by additions.
 
+### 2026-11-26 (Schedules packages 4.4.0)
+Additions only.
+- **`extendsStandardId`** on a module standard (module, catalogue and hall plan files): the id of the standard it
+  extends, if any. The Module Registry's catalogue states it, and an extension is offered the end profiles of the
+  standards it extends.
+- **`operatesFromYear`** and **`operatesToYear`** on a company in the hall plan's layout (Schedules 4.1–4.3): the years the company operates.
+- **`excludeShadowYardsFromStationTracks`** in the validation settings of the hall plan's layout (Schedules 4.2.0): shadow yards can be
+  left out of the track check.
+
 ### 2026-11-23 (version 2 is complete)
 Survey step 11, Schedules packages 4.0.27.
 - **Version 2 files are read as they are.** Files that development builds wrote as version 2 in earlier shapes are no

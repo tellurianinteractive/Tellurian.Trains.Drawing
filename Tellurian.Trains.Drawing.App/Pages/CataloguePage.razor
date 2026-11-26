@@ -13,11 +13,11 @@
 <p>@T["CatalogueIntro"]</p>
 
 <div class="toolbar">
-    <button type="button" id="fetch-registry" @onclick="FetchFromRegistryAsync">@T["FetchFromRegistry"]</button>
-    <button type="button" id="import-files" @onclick="() => ImportAsync(ImportSourceKind.Files)">@T["ImportFiles"]</button>
-    <button type="button" id="import-archive" @onclick="() => ImportAsync(ImportSourceKind.Archive)">@T["ImportArchive"]</button>
-    <button type="button" id="import-folder" @onclick="() => ImportAsync(ImportSourceKind.Folder)">@T["ImportFolder"]</button>
-    <button type="button" id="export" @onclick="ExportAsync">@T["ExportCatalogue"]</button>
+    <BusyButton Busy="busy" Key="fetch" id="fetch-registry" OnClick="FetchFromRegistryAsync">@T["FetchFromRegistry"]</BusyButton>
+    <BusyButton Busy="busy" Key="import-files" id="import-files" OnClick="() => ImportAsync(ImportSourceKind.Files)">@T["ImportFiles"]</BusyButton>
+    <BusyButton Busy="busy" Key="import-archive" id="import-archive" OnClick="() => ImportAsync(ImportSourceKind.Archive)">@T["ImportArchive"]</BusyButton>
+    <BusyButton Busy="busy" Key="import-folder" id="import-folder" OnClick="() => ImportAsync(ImportSourceKind.Folder)">@T["ImportFolder"]</BusyButton>
+    <BusyButton Busy="busy" Key="export" id="export" OnClick="ExportAsync">@T["ExportCatalogue"]</BusyButton>
 </div>
 
 @if (message is not null)
@@ -82,7 +82,7 @@
             <p class="note">@T["ImportChoiceNote"]</p>
         }
         <div class="toolbar">
-            <button type="button" class="primary" id="apply-import" disabled="@(chosen.Count == 0 && !preview.HasEntries)" @onclick="ApplyImportAsync">@T.Format("ImportSelected", chosen.Count)</button>
+            <BusyButton Busy="busy" Key="apply-import" Class="primary" id="apply-import" Disabled="@(chosen.Count == 0 && !preview.HasEntries)" OnClick="ApplyImportAsync">@T.Format("ImportSelected", chosen.Count)</BusyButton>
             <button type="button" @onclick="() => preview = null">@T["Cancel"]</button>
         </div>
     </section>
@@ -108,14 +108,14 @@
                         <td class="actions">
                             @if (isDrawn)
                             {
-                                <button type="button" class="link" @onclick="() => CopyAsync(profile)">@T["Copy"]</button>
-                                <button type="button" class="link edit-profile" @onclick="() => EditAsync(profile)">@T["EditAsDraft"]</button>
+                                <BusyButton Busy="busy" Key="@($"copy-{profile.Id}")" Class="link" OnClick="() => CopyAsync(profile)">@T["Copy"]</BusyButton>
+                                <BusyButton Busy="busy" Key="@($"edit-{profile.Id}")" Class="link edit-profile" OnClick="() => EditAsync(profile)">@T["EditAsDraft"]</BusyButton>
                             }
                             else
                             {
                                 <a class="create-drawing" href="@NewEndProfilePage.Url(profile.Id)">@T["CreateDrawing"]</a>
                             }
-                            <button type="button" class="link" @onclick="() => RemoveAsync(profile.Designation, () => Catalogues.DeleteEndProfileAsync(profile.Id))">@T["Delete"]</button>
+                            <BusyButton Busy="busy" Key="@($"delete-{profile.Id}")" Class="link" OnClick="() => RemoveAsync(profile.Designation, () => Catalogues.DeleteEndProfileAsync(profile.Id))">@T["Delete"]</BusyButton>
                         </td>
                     </tr>
                 }
@@ -128,7 +128,7 @@
         <div class="toolbar"><a class="button" id="new-standard" href="catalogue/standard/new">@T["NewStandard"]</a></div>
         <table class="table">
             <thead>
-                <tr><th>@T["Standard"]</th><th>@T["Scale"]</th><th>@T["Gauge"]</th><th>@T["RailTopHeight"]</th><th></th></tr>
+                <tr><th>@T["Standard"]</th><th>@T["Scale"]</th><th>@T["Field_Countries"]</th><th></th></tr>
             </thead>
             <tbody>
                 @foreach (var standard in catalogue.Standards.OrderBy(s => s.ScaleName).ThenBy(s => s.ShortName))
@@ -136,11 +136,10 @@
                     <tr>
                         <td>@standard.ShortName</td>
                         <td>@standard.ScaleName</td>
-                        <td>@(standard.NormalGauge?.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture))</td>
-                        <td>@standard.RailTopHeightOrDefault.ToString("0", System.Globalization.CultureInfo.CurrentCulture)</td>
+                        <td>@string.Join(", ", standard.Countries ?? [])</td>
                         <td class="actions">
                             <a href="catalogue/standard/@standard.Id">@T["Edit"]</a>
-                            <button type="button" class="link" @onclick="() => RemoveAsync(standard.ShortName, () => Catalogues.DeleteStandardAsync(standard.Id ?? Guid.Empty))">@T["Delete"]</button>
+                            <BusyButton Busy="busy" Key="@($"delete-{standard.Id}")" Class="link" OnClick="() => RemoveAsync(standard.ShortName, () => Catalogues.DeleteStandardAsync(standard.Id ?? Guid.Empty))">@T["Delete"]</BusyButton>
                         </td>
                     </tr>
                 }
@@ -164,7 +163,7 @@
                         <td>@addOn.Description</td>
                         <td class="actions">
                             <a href="catalogue/addon/@addOn.Id">@T["Edit"]</a>
-                            <button type="button" class="link" @onclick="() => RemoveAsync(addOn.ShortName, () => Catalogues.DeleteAddOnAsync(addOn.Id))">@T["Delete"]</button>
+                            <BusyButton Busy="busy" Key="@($"delete-{addOn.Id}")" Class="link" OnClick="() => RemoveAsync(addOn.ShortName, () => Catalogues.DeleteAddOnAsync(addOn.Id))">@T["Delete"]</BusyButton>
                         </td>
                     </tr>
                 }
@@ -196,7 +195,7 @@
                             <td>@entry.Note</td>
                             <td class="actions">
                                 <a href="@OverrideEditorPage.Url(entry)">@T["Edit"]</a>
-                                <button type="button" class="link" @onclick="() => RemoveAsync(name, () => Catalogues.DeleteOverrideAsync(entry))">@T["Delete"]</button>
+                                <BusyButton Busy="busy" Key="@($"delete-{entry.FirstEndProfileId}-{entry.SecondEndProfileId}")" Class="link" OnClick="() => RemoveAsync(name, () => Catalogues.DeleteOverrideAsync(entry))">@T["Delete"]</BusyButton>
                             </td>
                         </tr>
                     }
@@ -207,6 +206,9 @@
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     private Catalogue? catalogue;
     private Catalogue? user;
     private CatalogueImportPreview? preview;

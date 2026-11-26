@@ -36,6 +36,20 @@ public sealed class CatalogueServiceTests
     }
 
     [TestMethod]
+    public async Task AStandardNeedsOnlyANameAndAScale()
+    {
+        WithSampleCatalogue();
+        var standard = new ModuleStandard { Id = Guid.NewGuid(), ShortName = "REGISTRY-STANDARD", Scale = new() { ShortName = "H0" }, OperatorSpaceDepth = -1 };
+
+        var problems = await Service().SaveStandardAsync(standard);
+
+        Assert.IsEmpty(problems, "No gauge, and values Module Draw doesn't use, are no problem.");
+        var checker = new CatalogueProblems(Service());
+        await checker.CheckAsync();
+        Assert.IsFalse(checker.Problems.Any(p => p.Id == standard.Id));
+    }
+
+    [TestMethod]
     public async Task TheCatalogueIsTheUsersOwn()
     {
         var standard = SampleCatalogue.Instance.Standards[0];

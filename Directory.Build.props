@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
-    <Version>0.11.0</Version>
+    <Version>0.11.1</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <Company>Stefan Fjällemark</Company>
     <Copyright>© Stefan Fjällemark 2026</Copyright>
