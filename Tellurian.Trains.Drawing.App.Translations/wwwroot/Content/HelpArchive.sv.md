@@ -7,6 +7,7 @@ Panelen *Arkiv* visar ritningens namn och typ, filen den öppnades från eller s
 - **Spara** sparar ritningen i dess fil; första gången väljer du var. Webbläsare som inte kan spara direkt i filen, som Firefox och Safari, visar i stället **Spara (ladda ner)**: en ny fil laddas ner, och du väljer den gamla filen för att ersätta den.
 - **Spara som…** sparar ritningen i en annan fil, och du fortsätter i den filen.
 - **Spara i min katalog**, för ändprofiler, lägger till ändprofilen i din katalog, så att dina moduler kan använda den.
+- **Ladda upp till Modulregistret**, för en ändprofil som är registrets, sparar ritningen där som en ny revision, och i din katalog. Det kräver din API-nyckel i *Inställningar*, och registret måste tillåta dig att hantera ändprofiler. Om någon har laddat upp en nyare ritning avvisar registret din: hämta katalogen från registret och jämför först.
 - **Släng utkastet** tar bort utkastet från den här webbläsaren och går tillbaka till startsidan. Filen påverkas inte. Finns det osparade ändringar får du frågan först.
 
 ## Utkast och filer

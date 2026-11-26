@@ -39,6 +39,7 @@ internal sealed class AppTestContext : BunitContext
         Services.AddSingleton<IFileService>(Files);
         Services.AddSingleton<DrawingDocuments>();
         Services.AddSingleton<global::Tellurian.Trains.Drawing.App.Settings.SettingsService>();
+        Services.AddSingleton(new ModuleRegistryClient(new HttpClient(Registry)));
         Services.AddSingleton<CatalogueService>();
         Services.AddSingleton<SafeReload>();
         // An instance, which the container doesn't dispose: the interop it uses can only be disposed asynchronously.
@@ -54,5 +55,6 @@ internal sealed class AppTestContext : BunitContext
 
     public InMemoryWorkbench Workbench { get; } = new();
     public FakeFileService Files { get; }
+    public FakeRegistryHandler Registry { get; } = new();
     public FakeTimeProvider Time { get; } = new(new DateTimeOffset(2026, 11, 14, 12, 0, 0, TimeSpan.Zero));
 }

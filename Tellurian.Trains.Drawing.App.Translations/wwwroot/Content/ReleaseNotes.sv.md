@@ -1,5 +1,12 @@
 # Versionsinformation
 
+## Version 0.11.0
+Utgiven 2026-11-26
+- *Hämta från Modulregistret* på sidan *Katalog* hämtar in registrets standarder och ändprofiler för din skala och ditt land, att välja bland som när du importerar en katalogfil.
+- Ändprofiler som registret saknar ritning av märks *ingen ritning*. *Skapa ritning* ritar en från mallen och behåller dess beteckning och referens i registret; till dess kan den inte användas på en modul.
+- En ändprofil som du har ritat själv, med samma beteckning, standard och skala som en som registret saknar ritning av, blir registrets när du hämtar: den behåller din ritning, och moduler som använder den flyttas till den när du öppnar dem.
+- *Ladda upp till Modulregistret* i panelen *Arkiv* sparar en ändprofilsritning i registret som en ny revision. Det kräver din API-nyckel i *Inställningar*, och registret måste tillåta dig att hantera ändprofiler.
+
 ## Version 0.10.0
 Utgiven 2026-11-24
 - Appen har inte längre någon egen katalog: katalogen är din. Importera en katalogfil (.catalogue.json) på sidan *Katalog*, t.ex. från din klubb; den tar med sig sina skalor, standarder, tillägg och kompatibilitetsundantag tillsammans med de ändprofiler du väljer. Alla poster kan ändras och tas bort.

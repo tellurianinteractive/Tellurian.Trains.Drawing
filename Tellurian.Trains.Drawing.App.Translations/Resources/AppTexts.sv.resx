@@ -87,11 +87,22 @@
   <data name="AngleRange" xml:space="preserve"><value>{0} måste vara större än 0 och högst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
   <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillägg och ändprofiler. Din katalog sparas i den här webbläsaren: importera katalogfiler för att fylla den, lägg till egna poster och exportera den som en fil.</value></data>
-  <data name="CatalogueEmpty" xml:space="preserve"><value>Din katalog är tom. Importera en katalogfil (.catalogue.json) med Importera filer, t.ex. från din klubb eller din standard, för att få standarder och ändprofiler.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Din katalog är tom. Hämta standarder och ändprofiler från Modulregistret, eller importera en katalogfil (.catalogue.json) med Importera filer, t.ex. från din klubb eller din standard.</value></data>
   <data name="ImportEntries" xml:space="preserve"><value>Filerna har också {0} standarder, {1} tillägg och {2} kompatibilitetsundantag. De läggs till med de ändprofiler du väljer; en post med samma id som en post i din katalog ersätter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importera filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importera ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importera mapp…</value></data>
+  <data name="FetchFromRegistry" xml:space="preserve"><value>Hämta från Modulregistret</value></data>
+  <data name="RegistryError" xml:space="preserve"><value>Modulregistret kunde inte nås: {0}</value></data>
+  <data name="UploadToRegistry" xml:space="preserve"><value>Ladda upp till Modulregistret</value></data>
+  <data name="UploadedToRegistry" xml:space="preserve"><value>{0} är sparad i Modulregistret och i din katalog, som revision {1}.</value></data>
+  <data name="UploadNeedsApiKey" xml:space="preserve"><value>Ange din API-nyckel till Modulregistret i Inställningar för att ladda upp ritningar.</value></data>
+  <data name="UploadNotAllowed" xml:space="preserve"><value>Modulregistret tillät inte uppladdningen ({0}). Kontrollera din API-nyckel; du måste få hantera ändprofiler där.</value></data>
+  <data name="UploadConflict" xml:space="preserve"><value>Modulregistret har en nyare ritning av den här ändprofilen, kanske sparad av någon annan ({0}). Hämta från Modulregistret på sidan Katalog och jämför först.</value></data>
+  <data name="UploadRefused" xml:space="preserve"><value>Modulregistret sparade inte ritningen: {0}</value></data>
+  <data name="NoDrawing" xml:space="preserve"><value>ingen ritning</value></data>
+  <data name="CreateDrawing" xml:space="preserve"><value>Skapa ritning</value></data>
+  <data name="NewEndProfileFrom" xml:space="preserve"><value>Ritningen görs för ändprofilen {0} i din katalog: dess beteckning, skala, standard och referens i Modulregistret behålls.</value></data>
   <data name="ExportCatalogue" xml:space="preserve"><value>Exportera din katalog…</value></data>
   <data name="ImportPreview" xml:space="preserve"><value>Ändprofiler att importera</value></data>
   <data name="NoEndProfilesFound" xml:space="preserve"><value>Filerna innehåller inga ändprofiler.</value></data>
@@ -101,6 +112,7 @@
   <data name="ImportStatus_New" xml:space="preserve"><value>Ny</value></data>
   <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Finns redan i katalogen</value></data>
   <data name="ImportStatus_Changed" xml:space="preserve"><value>Skiljer sig från katalogen</value></data>
+  <data name="ImportStatus_Merged" xml:space="preserve"><value>Blir Modulregistrets, med din ritning</value></data>
   <data name="ImportChoiceNote" xml:space="preserve"><value>Markerade profiler läggs till i din katalog. En profil som skiljer sig ersätter den i katalogen och behåller dess id, så moduler som använder den får den importerade ritningen.</value></data>
   <data name="ImportSelected" xml:space="preserve"><value>Importera {0} markerade</value></data>
   <data name="Imported" xml:space="preserve"><value>{0} ändprofil(er) importerades.</value></data>

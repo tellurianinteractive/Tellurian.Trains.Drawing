@@ -464,7 +464,7 @@
     /// <summary>A change from the Properties pane, as an undoable command.</summary>
     /// <summary>The end profiles an exit can have: those of the module's scale, of any standard (MD-5).</summary>
     private IEnumerable<EndProfile> EndProfileChoices =>
-        Catalogue is null ? [] : Catalogue.EndProfiles.Where(p => p.Scale == _document!.Current.Module.Scale?.ShortName).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
+        Catalogue is null ? [] : Catalogue.EndProfiles.WithOutline().Where(p => p.Scale == _document!.Current.Module.Scale?.ShortName).OrderBy(p => p.Tracks.Count).ThenBy(p => p.Designation);
 
     private string ProfileText(EndProfile profile) =>
         $"{profile.Designation} ({(profile.Tracks.Count == 1 ? T["OneTrack"] : T.Format("TrackCount", profile.Tracks.Count))})";

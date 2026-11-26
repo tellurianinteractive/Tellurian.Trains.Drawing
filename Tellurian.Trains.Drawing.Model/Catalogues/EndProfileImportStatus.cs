@@ -11,4 +11,10 @@ public enum EndProfileImportStatus
 
     /// <summary>The catalogue has the profile, but its drawing or properties differ.</summary>
     Changed,
+
+    /// <summary>
+    /// The catalogue has a drawing with the same designation, scale and standard, but another id, and the import has no
+    /// drawing of it, e.g. from the Module Registry: they become one end profile, the imported one with the drawing.
+    /// </summary>
+    Merged,
 }

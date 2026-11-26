@@ -87,11 +87,22 @@
   <data name="AngleRange" xml:space="preserve"><value>{0} must be greater than 0 and at most 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Catalogue</value></data>
   <data name="CatalogueIntro" xml:space="preserve"><value>Standards, add-ons and end profiles. Your catalogue is kept in this browser: import catalogue files to fill it, add your own entries, and export it as a file.</value></data>
-  <data name="CatalogueEmpty" xml:space="preserve"><value>Your catalogue is empty. Import a catalogue file (.catalogue.json) with Import files, e.g. one from your club or your standard, to get standards and end profiles.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Your catalogue is empty. Fetch the standards and end profiles from the Module Registry, or import a catalogue file (.catalogue.json) with Import files, e.g. one from your club or your standard.</value></data>
   <data name="ImportEntries" xml:space="preserve"><value>The files also have {0} standards, {1} add-ons and {2} compatibility overrides. They are added with the end profiles you choose; one that has the id of an entry in your catalogue replaces it.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Import files…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Import ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Import folder…</value></data>
+  <data name="FetchFromRegistry" xml:space="preserve"><value>Fetch from the Module Registry</value></data>
+  <data name="RegistryError" xml:space="preserve"><value>The Module Registry couldn't be reached: {0}</value></data>
+  <data name="UploadToRegistry" xml:space="preserve"><value>Upload to the Module Registry</value></data>
+  <data name="UploadedToRegistry" xml:space="preserve"><value>{0} is saved in the Module Registry and in your catalogue, as revision {1}.</value></data>
+  <data name="UploadNeedsApiKey" xml:space="preserve"><value>Enter your Module Registry API key in Settings to upload drawings.</value></data>
+  <data name="UploadNotAllowed" xml:space="preserve"><value>The Module Registry didn't allow the upload ({0}). Check your API key; you must be allowed to manage end profiles there.</value></data>
+  <data name="UploadConflict" xml:space="preserve"><value>The Module Registry has a newer drawing of this end profile, perhaps saved by someone else ({0}). Fetch from the Module Registry on the Catalogue page and compare first.</value></data>
+  <data name="UploadRefused" xml:space="preserve"><value>The Module Registry didn't save the drawing: {0}</value></data>
+  <data name="NoDrawing" xml:space="preserve"><value>no drawing</value></data>
+  <data name="CreateDrawing" xml:space="preserve"><value>Create drawing</value></data>
+  <data name="NewEndProfileFrom" xml:space="preserve"><value>The drawing is made for the end profile {0} in your catalogue: its designation, scale, standard and Module Registry reference are kept.</value></data>
   <data name="ExportCatalogue" xml:space="preserve"><value>Export your catalogue…</value></data>
   <data name="ImportPreview" xml:space="preserve"><value>End profiles to import</value></data>
   <data name="NoEndProfilesFound" xml:space="preserve"><value>The files contain no end profiles.</value></data>
@@ -101,6 +112,7 @@
   <data name="ImportStatus_New" xml:space="preserve"><value>New</value></data>
   <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Already in the catalogue</value></data>
   <data name="ImportStatus_Changed" xml:space="preserve"><value>Differs from the catalogue</value></data>
+  <data name="ImportStatus_Merged" xml:space="preserve"><value>Becomes the Module Registry's, with your drawing</value></data>
   <data name="ImportChoiceNote" xml:space="preserve"><value>Ticked profiles are added to your catalogue. A profile that differs replaces the one in the catalogue, keeping its id, so modules that use it get the imported drawing.</value></data>
   <data name="ImportSelected" xml:space="preserve"><value>Import {0} selected</value></data>
   <data name="Imported" xml:space="preserve"><value>{0} end profile(s) imported.</value></data>

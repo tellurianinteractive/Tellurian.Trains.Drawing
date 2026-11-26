@@ -11,6 +11,130 @@ public sealed class EndProfileImportTests
 
     private static EndProfileImportItem CompareOne(EndProfile profile) => EndProfileImport.Compare([profile], Catalogue).Single();
 
+    /// <summary>An end profile as the Module Registry gives one it has no drawing of: designation, scale, standards and its id.</summary>
+    private static EndProfile Shapeless(EndProfile like) => new()
+    {
+        Id = Guid.NewGuid(),
+        Designation = like.Designation,
+        Scale = like.Scale,
+        Standards = [.. like.Standards],
+        ExternalReferences = Schedules.Model.Layouts.ExternalReferences.WithModuleRegistryId(null, Schedules.Model.Layouts.ExternalReferences.EndProfileId, 42),
+    };
+
+    private static EndProfile OfFremo(EndProfile profile) => profile.With(p => p.Standards = [new(TestCatalogue.FremoId, "FREMO/H0-RE")]);
+
+    [TestMethod]
+    public void AProfileWithoutAnOutlineHasNoOutline()
+    {
+        Assert.IsFalse(Shapeless(TestCatalogue.FremoSingle).HasOutline());
+        Assert.IsTrue(TestCatalogue.FremoSingle.HasOutline());
+    }
+
+    [TestMethod]
+    public void AProfileWithoutAShapeWithTheSameIdKeepsTheDrawingAndTakesTheRegistryReference()
+    {
+        var existing = TestCatalogue.FremoSingle;
+        var item = CompareOne(Shapeless(existing).With(p => p.Id = existing.Id));
+
+        Assert.AreEqual(EndProfileImportStatus.Changed, item.Status);
+        Assert.AreEqual(EndProfileChanges.Source, item.Changes);
+        var applied = EndProfileImport.Apply(Catalogue, [item]).FindEndProfile(existing.Id)!;
+        Assert.IsTrue(applied.HasOutline());
+        Assert.HasCount(existing.Tracks.Count, applied.Tracks);
+        Assert.IsTrue(applied.ExternalReferences!.ContainsKey(Schedules.Model.Layouts.ExternalReferences.ModuleRegistry));
+    }
+
+    [TestMethod]
+    public void ADrawingWithTheSameDesignationStandardAndScaleIsMergedWithTheRegistrysProfile()
+    {
+        var existing = TestCatalogue.FremoSingle;
+        var registry = Shapeless(existing);
+        var item = CompareOne(registry);
+
+        Assert.AreEqual(EndProfileImportStatus.Merged, item.Status);
+        Assert.AreSame(existing, item.Existing);
+        Assert.AreEqual(registry.Id, item.Imported.Id);
+        Assert.IsTrue(item.Imported.HasOutline());
+        Assert.AreEqual(registry.Id, EndProfileImport.Merges([item])[existing.Id]);
+    }
+
+    [TestMethod]
+    public void AMergedProfileTakesTheRegistrysIdInTheWholeCatalogue()
+    {
+        var existing = TestCatalogue.FremoSingle;
+        var registry = Shapeless(existing);
+        var catalogue = Catalogue with { Overrides = [new() { FirstEndProfileId = existing.Id, SecondEndProfileId = TestCatalogue.Mmm480.Id, Fit = JointFit.FitsWithClamps }] };
+
+        var applied = EndProfileImport.Apply(catalogue, EndProfileImport.Compare([registry], catalogue));
+
+        Assert.IsNull(applied.FindEndProfile(existing.Id));
+        var merged = applied.FindEndProfile(registry.Id)!;
+        Assert.IsTrue(merged.HasOutline());
+        Assert.HasCount(1, applied.EndProfiles.Where(p => p.Designation == existing.Designation));
+        Assert.AreEqual(registry.Id, applied.FindStandard(TestCatalogue.FremoId)!.DefaultSingleTrackEndProfileId);
+        Assert.AreEqual(registry.Id, applied.Overrides.Single().FirstEndProfileId);
+        Assert.IsTrue(merged.ExternalReferences!.ContainsKey(Schedules.Model.Layouts.ExternalReferences.ModuleRegistry));
+    }
+
+    [TestMethod]
+    public void AProfileOfAnotherStandardIsNotMerged()
+    {
+        var existing = OfFremo(TestCatalogue.FremoSingle);
+        var other = Shapeless(existing).With(p => p.Standards = [new(Guid.NewGuid(), "SOMETHING-ELSE")]);
+
+        var item = EndProfileImport.Compare([other], Catalogue.With(existing)).Single();
+
+        Assert.AreEqual(EndProfileImportStatus.New, item.Status);
+        Assert.IsNull(item.Existing);
+    }
+
+    [TestMethod]
+    public void TheStandardIsMatchedByNameWhenTheIdsDiffer()
+    {
+        var existing = OfFremo(TestCatalogue.FremoSingle);
+        var registry = Shapeless(existing).With(p => p.Standards = [new(Guid.NewGuid(), "fremo/h0-re")]);
+
+        Assert.AreEqual(EndProfileImportStatus.Merged, EndProfileImport.Compare([registry], Catalogue.With(existing)).Single().Status);
+    }
+
+    [TestMethod]
+    public void AModuleDrawnBeforeTheMergeIsMovedToTheMergedProfile()
+    {
+        var existing = TestCatalogue.FremoSingle;
+        var registry = Shapeless(existing);
+        var catalogue = EndProfileImport.Apply(Catalogue, EndProfileImport.Compare([registry], Catalogue));
+        var module = ModuleFileContent.Create(TestModules.Straight(), TestCatalogue.Lookup);
+        Assert.IsTrue(module.Module.Drawing.Exits.Any(e => e.EndProfile.Id == existing.Id));
+
+        var (moved, profiles) = module.WithMergedEndProfiles(new Dictionary<Guid, Guid> { [existing.Id] = registry.Id }, catalogue.FindEndProfile);
+
+        Assert.AreEqual(registry.Id, profiles.Single().Id);
+        Assert.IsFalse(moved.Module.Drawing.Exits.Any(e => e.EndProfile.Id == existing.Id));
+        Assert.IsNotNull(moved.FindEndProfile(registry.Id));
+        Assert.IsNull(moved.FindEndProfile(existing.Id));
+        Assert.IsTrue(module.Module.Drawing.Exits.Any(e => e.EndProfile.Id == existing.Id), "The original is unchanged.");
+    }
+
+    [TestMethod]
+    public void AModuleWithoutMergedProfilesIsUnchanged()
+    {
+        var module = ModuleFileContent.Create(TestModules.Straight(), TestCatalogue.Lookup);
+
+        var (same, profiles) = module.WithMergedEndProfiles(new Dictionary<Guid, Guid> { [Guid.NewGuid()] = Guid.NewGuid() }, TestCatalogue.Lookup);
+
+        Assert.AreSame(module, same);
+        Assert.IsEmpty(profiles);
+    }
+
+    [TestMethod]
+    public void ANewProfileWithoutAShapeIsImportedAsItIs()
+    {
+        var item = CompareOne(Shapeless(TestCatalogue.FremoSingle).With(p => p.Designation = "REGISTRY-ONLY"));
+
+        Assert.AreEqual(EndProfileImportStatus.New, item.Status);
+        Assert.IsFalse(EndProfileImport.Apply(Catalogue, [item]).FindEndProfile(item.Imported.Id)!.HasOutline());
+    }
+
     [TestMethod]
     public void UnknownProfileIsNew()
     {

@@ -23,4 +23,5 @@ namespace Tellurian.Trains.Drawing.App.Storage;
 [JsonSerializable(typeof(Settings.UserSettings))]
 [JsonSerializable(typeof(Settings.SettingsFile))]
 [JsonSerializable(typeof(List<Settings.Country>))]
+[JsonSerializable(typeof(Dictionary<Guid, Guid>))]
 internal sealed partial class WorkbenchJsonContext : JsonSerializerContext;

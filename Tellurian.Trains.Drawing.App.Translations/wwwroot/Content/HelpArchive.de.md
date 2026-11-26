@@ -7,6 +7,7 @@ Der Bereich *Archiv* zeigt Name und Art der Zeichnung, die Datei, aus der sie ge
 - **Speichern** speichert die Zeichnung in ihrer Datei; beim ersten Mal wählst du, wo. Browser, die nicht direkt in die Datei speichern können, wie Firefox und Safari, zeigen stattdessen **Speichern (herunterladen)**: Eine neue Datei wird heruntergeladen, und du wählst die alte Datei, um sie zu ersetzen.
 - **Speichern unter…** speichert die Zeichnung in einer anderen Datei, und du arbeitest in dieser Datei weiter.
 - **In meinem Katalog speichern** fügt bei Endprofilen das Endprofil deinem Katalog hinzu, damit deine Module es verwenden können.
+- **Ins Modulregister hochladen**, für ein Endprofil des Registers, speichert die Zeichnung dort als neue Revision, und in deinem Katalog. Dafür braucht es deinen API-Schlüssel in den *Einstellungen*, und das Register muss dir erlauben, Endprofile zu verwalten. Hat jemand eine neuere Zeichnung hochgeladen, lehnt das Register deine ab: Hole zuerst den Katalog aus dem Register und vergleiche.
 - **Entwurf verwerfen** entfernt den Entwurf aus diesem Browser und kehrt zur Startseite zurück. Die Datei bleibt unverändert. Gibt es ungespeicherte Änderungen, wirst du vorher gefragt.
 
 ## Entwürfe und Dateien

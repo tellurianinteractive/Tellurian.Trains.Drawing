@@ -1,5 +1,12 @@
 # Release Notes
 
+## Release 0.11.0
+Released 2026-11-26
+- *Fetch from the Module Registry* on the *Catalogue* page brings in the Registry's standards and end profiles for your scale and country, to choose from as when you import a catalogue file.
+- End profiles the Registry has no drawing of are marked *no drawing*. *Create drawing* draws one from the template, keeping its designation and Registry reference; until then it can't be used on a module.
+- An end profile you have drawn yourself, with the same designation, standard and scale as one the Registry has no drawing of, becomes the Registry's when you fetch: it keeps your drawing, and modules that use it are moved to it when you open them.
+- *Upload to the Module Registry* in the *Archive* pane saves an end profile drawing in the Registry as a new revision. It needs your API key in *Settings*, and the Registry must allow you to manage end profiles.
+
 ## Release 0.10.0
 Released 2026-11-24
 - The app has no catalogue of its own any more: the catalogue is yours. Import a catalogue file (.catalogue.json) on the *Catalogue* page, e.g. one from your club; it brings its scales, standards, add-ons and compatibility overrides with the end profiles you choose. Every entry can be edited and deleted.

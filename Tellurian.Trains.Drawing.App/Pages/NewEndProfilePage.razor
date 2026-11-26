@@ -10,6 +10,10 @@
 
 <h1>@T["NewEndProfileTitle"]</h1>
 <p class="note">@T["NewEndProfileIntro"]</p>
+@if (drawingFor is not null)
+{
+    <p class="note" id="drawing-for">@T.Format("NewEndProfileFrom", drawingFor.Designation)</p>
+}
 
 @if (message is not null)
 {
@@ -18,7 +22,7 @@
 @if (catalogue is not null)
 {
     <form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
-        <label><span>@T["Designation"]</span><input id="designation" @bind="form.Designation" /></label>
+        <label><span>@T["Designation"]</span><input id="designation" @bind="form.Designation" readonly="@(drawingFor is not null)" /></label>
         <label>
             <span>@T["Standard"]</span>
             <select id="standard" value="@form.StandardId" @onchange="SelectStandard">
@@ -71,13 +75,20 @@
     private const double FallbackBottom = 200;
     private const double FallbackCentreDistancePerGauge = 2.75;
 
+    /// <summary>The address of the form for drawing the end profile <paramref name="endProfileId"/> of the catalogue, which has no shape yet.</summary>
+    public static string Url(Guid endProfileId) => $"new/endprofile?from={endProfileId}";
+
+    /// <summary>An end profile of the catalogue without a shape, e.g. from the Module Registry, that the drawing is made for.</summary>
+    [SupplyParameterFromQuery(Name = "from")] public Guid? From { get; set; }
+
     private Catalogue? catalogue;
+    private EndProfile? drawingFor;
     private readonly Form form = new();
     private IReadOnlyList<string> errors = [];
     private string? message;
 
     private IEnumerable<EndProfile> ProfilesOfStandard =>
-        catalogue is null ? [] : catalogue.EndProfilesOf(form.StandardId).OrderBy(p => p.Designation);
+        catalogue is null ? [] : catalogue.EndProfilesOf(form.StandardId).WithOutline().OrderBy(p => p.Designation);
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,8 +96,12 @@
         {
             catalogue = await Catalogues.GetForChoicesAsync();
             var standards = catalogue.Standards.OrderBy(s => s.ShortName).ToList();
-            var standard = standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id ?? Guid.Empty).Any()) ?? standards.FirstOrDefault();
+            drawingFor = From is { } id ? (await Catalogues.GetAsync()).FindEndProfile(id) : null;
+            var standard = drawingFor?.Standards.Select(s => catalogue.FindStandard(s.Id)).FirstOrDefault(s => s is not null)
+                ?? standards.FirstOrDefault(s => catalogue.EndProfilesOf(s.Id ?? Guid.Empty).Any(p => p.HasOutline()))
+                ?? standards.FirstOrDefault();
             if (standard is not null) UseStandard(standard);
+            if (drawingFor is not null) form.Designation = drawingFor.Designation;
         }
         catch (StorageException ex)
         {
@@ -104,7 +119,7 @@
     {
         form.StandardId = standard.Id ?? Guid.Empty;
         form.Gauge = standard.NormalGauge;
-        var single = Find(standard.DefaultSingleTrackEndProfileId) ?? ProfilesOfStandard.FirstOrDefault(p => p.Tracks.Count == 1);
+        var single = Find(standard.DefaultSingleTrackEndProfileId) ?? ProfilesOfStandard.WithOutline().FirstOrDefault(p => p.Tracks.Count == 1);
         var bounds = single?.Outline?.ToPath().Bounds;
         form.PlateWidth = bounds is { IsEmpty: false } b1 ? Math.Round(b1.Width, 1) : FallbackPlateWidth;
         // The track stands on the plate: rails on sleepers, so the top edge is at least that far below rail top.
@@ -159,6 +174,7 @@
             ScrewHoleDiameter = holesFrom?.ScrewHoles.FirstOrDefault()?.Diameter ?? 8,
             ScrewHolePattern = holesFrom?.ScrewHolePattern,
         });
+        if (drawingFor is { } existing) profile = Drawn(existing, profile);
         try
         {
             var draft = await Documents.CreateAsync(Model.Files.DrawingFileSerializer.Serialize(profile));
@@ -169,6 +185,22 @@
             errors = [T.Format("StorageError", ex.Message)];
         }
     }
+
+    /// <summary>
+    /// The drawing as the end profile <paramref name="existing"/>: its id, names, scale, standards, source and external
+    /// references, so saving it in the catalogue replaces the profile without a shape, and the Module Registry knows it.
+    /// </summary>
+    private static EndProfile Drawn(EndProfile existing, EndProfile drawing) => drawing.With(p =>
+    {
+        p.Id = existing.Id;
+        p.Designation = existing.Designation;
+        p.ShortName = existing.ShortName;
+        p.Scale = existing.Scale;
+        if (existing.Standards.Count > 0) p.Standards = [.. existing.Standards];
+        p.Source = existing.Source ?? drawing.Source;
+        p.ExternalReferences = existing.ExternalReferences is null ? null : new(existing.ExternalReferences);
+        p.Revision = existing.Revision;
+    });
 
     private IEnumerable<string> Validate()
     {

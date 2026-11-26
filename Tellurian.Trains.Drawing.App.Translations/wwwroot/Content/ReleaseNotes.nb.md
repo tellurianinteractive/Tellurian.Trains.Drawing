@@ -1,5 +1,12 @@
 # Versjonsmerknader
 
+## Versjon 0.11.0
+Utgitt 2026-11-26
+- *Hent fra Modulregisteret* på siden *Katalog* henter inn registerets standarder og endeprofiler for skalaen og landet ditt, å velge blant som når du importerer en katalogfil.
+- Endeprofiler som registeret ikke har tegning av, er merket *ingen tegning*. *Lag tegning* tegner en fra malen og beholder betegnelsen og referansen i registeret; inntil da kan den ikke brukes på en modul.
+- En endeprofil du har tegnet selv, med samme betegnelse, standard og skala som en registeret ikke har tegning av, blir registerets når du henter: den beholder tegningen din, og moduler som bruker den, flyttes til den når du åpner dem.
+- *Last opp til Modulregisteret* i panelet *Arkiv* lagrer en endeprofiltegning i registeret som en ny revisjon. Det krever API-nøkkelen din i *Innstillinger*, og registeret må tillate deg å administrere endeprofiler.
+
 ## Versjon 0.10.0
 Utgitt 2026-11-24
 - Appen har ikke lenger en egen katalog: katalogen er din. Importer en katalogfil (.catalogue.json) på siden *Katalog*, f.eks. fra klubben din; den tar med seg skalaene, standardene, tilleggene og kompatibilitetsunntakene sine sammen med endeprofilene du velger. Alle oppføringer kan endres og slettes.

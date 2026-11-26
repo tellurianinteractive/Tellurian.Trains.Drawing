@@ -1,5 +1,12 @@
 # Versionshinweise
 
+## Version 0.11.0
+Veröffentlicht am 2026-11-26
+- *Aus dem Modulregister holen* auf der Seite *Katalog* holt die Normen und Endprofile des Registers für deinen Maßstab und dein Land herein, zur Auswahl wie beim Import einer Katalogdatei.
+- Endprofile, von denen das Register keine Zeichnung hat, sind mit *keine Zeichnung* markiert. *Zeichnung erstellen* zeichnet eine aus der Vorlage und behält Bezeichnung und Verweis ins Register; bis dahin kann es nicht an einem Modul verwendet werden.
+- Ein Endprofil, das du selbst gezeichnet hast, mit derselben Bezeichnung, Norm und demselben Maßstab wie eines, von dem das Register keine Zeichnung hat, wird beim Holen das des Registers: Es behält deine Zeichnung, und Module, die es verwenden, werden beim Öffnen darauf umgestellt.
+- *Ins Modulregister hochladen* im Bereich *Archiv* speichert eine Endprofilzeichnung als neue Revision im Register. Dafür braucht es deinen API-Schlüssel in den *Einstellungen*, und das Register muss dir erlauben, Endprofile zu verwalten.
+
 ## Version 0.10.0
 Veröffentlicht am 2026-11-24
 - Die App hat keinen eigenen Katalog mehr: Der Katalog gehört dir. Importiere auf der Seite *Katalog* eine Katalogdatei (.catalogue.json), z. B. von deinem Verein; sie bringt ihre Maßstäbe, Normen, Zusätze und Kompatibilitätsausnahmen mit den Endprofilen mit, die du wählst. Jeder Eintrag kann geändert und gelöscht werden.

@@ -35,6 +35,8 @@ builder.Services.AddSingleton<IFileService>(sp => sp.GetRequiredService<BrowserE
 builder.Services.AddSingleton<IWorkbench, IndexedDbWorkbench>();
 builder.Services.AddSingleton<DrawingDocuments>();
 builder.Services.AddSingleton<Tellurian.Trains.Drawing.App.Settings.SettingsService>();
+// The Registry is on another origin, so it has an HttpClient of its own; the app's is scoped and has the app's base address.
+builder.Services.AddSingleton(new ModuleRegistryClient(new HttpClient()));
 builder.Services.AddSingleton<CatalogueService>();
 builder.Services.AddSingleton<SafeReload>();
 builder.Services.AddSingleton<BrowserDialogs>();

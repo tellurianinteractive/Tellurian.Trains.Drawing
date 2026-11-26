@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Tellurian.Trains.Drawing.App.Files;
 using Tellurian.Trains.Drawing.App.Settings;
 using Tellurian.Trains.Drawing.App.Storage;
@@ -11,10 +12,16 @@ namespace Tellurian.Trains.Drawing.App.Catalogues;
 /// app has no catalogue of its own (survey step 7); a new user imports a catalogue file (CA-3), and later one from the
 /// Module Registry (CA-5). It is kept in the workbench as a catalogue file, and can be exported.
 /// </summary>
-public sealed class CatalogueService(IWorkbench workbench, IFileService files, SettingsService settings)
+public sealed class CatalogueService(IWorkbench workbench, IFileService files, SettingsService settings, ModuleRegistryClient registry)
 {
     public const string UserCatalogueKey = "user-catalogue";
     public const string ExportFileName = "my-catalogue.catalogue.json";
+
+    /// <summary>
+    /// Where the merged end profiles' former ids are kept, with the id each has now, so modules drawn before a merge
+    /// are moved to the merged profile when they are opened (<see cref="EndProfileMerges"/>).
+    /// </summary>
+    public const string EndProfileMergesKey = "end-profile-merges";
 
     private Catalogue? _user;
 
@@ -70,7 +77,22 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
                 result = folder is null ? null : DrawingImport.FromFiles(folder.Files.Select(f => ImportSource.FromText(f.Name, f.Text)), EndProfileImport.Kinds);
                 break;
         }
-        if (result is null) return null;
+        return result is null ? null : await PreviewAsync(result, cancellationToken);
+    }
+
+    /// <summary>
+    /// Fetches the Module Registry's catalogue for the scale (AP-9) and country (CA-6) in the settings and compares it
+    /// with the catalogue, as an imported catalogue file (CA-3, CA-5).
+    /// </summary>
+    /// <exception cref="ModuleRegistryException">The Registry couldn't be reached.</exception>
+    public async Task<CatalogueImportPreview> FetchFromModuleRegistryAsync(CancellationToken cancellationToken = default)
+    {
+        var json = await registry.FetchAsync(await settings.ScaleAsync(cancellationToken), await settings.CountryCodeAsync(cancellationToken), cancellationToken);
+        return await PreviewAsync(DrawingImport.FromFiles([ImportSource.FromText(ModuleRegistryClient.SourceName, json)], EndProfileImport.Kinds), cancellationToken);
+    }
+
+    private async Task<CatalogueImportPreview> PreviewAsync(DrawingImportResult result, CancellationToken cancellationToken)
+    {
         var (profiles, problems) = EndProfileImport.Read(result.Files);
         return new(EndProfileImport.Compare(profiles, await GetAsync(cancellationToken)), [.. result.Problems, .. problems], result.Skipped, EndProfileImport.Entries(result.Files));
     }
@@ -79,8 +101,25 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
     /// Takes the imported catalogue entries and the chosen end profiles into the user's catalogue; an entry with the id
     /// of one of the user's replaces it.
     /// </summary>
-    public async Task ApplyImportAsync(IEnumerable<EndProfileImportItem> chosen, Catalogue? entries = null, CancellationToken cancellationToken = default) =>
-        await SaveUserAsync(EndProfileImport.Apply(await GetUserAsync(cancellationToken), entries ?? Catalogue.Empty, chosen), cancellationToken);
+    public async Task ApplyImportAsync(IEnumerable<EndProfileImportItem> chosen, Catalogue? entries = null, CancellationToken cancellationToken = default)
+    {
+        var items = chosen.ToList();
+        if (EndProfileImport.Merges(items) is { Count: > 0 } merges)
+        {
+            var all = new Dictionary<Guid, Guid>(await GetEndProfileMergesAsync(cancellationToken));
+            // A profile merged before and merged again goes straight to its latest id.
+            foreach (var (from, to) in all) if (merges.TryGetValue(to, out var latest)) all[from] = latest;
+            foreach (var (from, to) in merges) all[from] = to;
+            await workbench.SetValueAsync(EndProfileMergesKey, JsonSerializer.Serialize(all, WorkbenchJsonContext.Default.DictionaryGuidGuid), cancellationToken);
+        }
+        await SaveUserAsync(EndProfileImport.Apply(await GetUserAsync(cancellationToken), entries ?? Catalogue.Empty, items), cancellationToken);
+    }
+
+    /// <summary>The former ids of merged end profiles, with the id each has now.</summary>
+    public async Task<IReadOnlyDictionary<Guid, Guid>> GetEndProfileMergesAsync(CancellationToken cancellationToken = default) =>
+        await workbench.GetValueAsync(EndProfileMergesKey, cancellationToken) is { } json
+            ? JsonSerializer.Deserialize(json, WorkbenchJsonContext.Default.DictionaryGuidGuid) ?? []
+            : new Dictionary<Guid, Guid>();
 
     /// <summary>Adds end profiles to the user's catalogue, e.g. those a module embeds and the catalogue lacks; one with a known id replaces it.</summary>
     public async Task AddEndProfilesAsync(IEnumerable<EndProfile> profiles, CancellationToken cancellationToken = default)
@@ -97,6 +136,30 @@ public sealed class CatalogueService(IWorkbench workbench, IFileService files, S
         var user = await GetUserAsync(cancellationToken);
         await SaveUserAsync(user with { EndProfiles = [.. user.EndProfiles, copy] }, cancellationToken);
         return copy;
+    }
+
+    /// <summary>The Registry's id of an end profile, from its external references; null when it isn't the Registry's.</summary>
+    public static int? ModuleRegistryId(EndProfile profile) =>
+        Tellurian.Trains.Schedules.Model.Layouts.ExternalReferences.ModuleRegistryId(profile.ExternalReferences, Tellurian.Trains.Schedules.Model.Layouts.ExternalReferences.EndProfileId);
+
+    /// <summary>
+    /// Saves the drawing <paramref name="profile"/> in the Module Registry as a new revision (EX-11), with the API key in
+    /// the settings: its revision is one higher than that of the drawing and of the catalogue's copy, which is the
+    /// Registry's when it was fetched from there. When the Registry has saved it, the catalogue gets it too.
+    /// </summary>
+    /// <returns>How it went, and the uploaded drawing with its revision when it was saved.</returns>
+    /// <exception cref="ModuleRegistryException">The Registry couldn't be reached.</exception>
+    public async Task<(EndProfileUploadResult Result, EndProfile? Uploaded)> UploadToModuleRegistryAsync(EndProfile profile, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+        if (ModuleRegistryId(profile) is not int registryId) return (new(EndProfileUploadStatus.NotInRegistry), null);
+        if ((await settings.GetAsync(cancellationToken)).ApiKey is not { Length: > 0 } apiKey) return (new(EndProfileUploadStatus.NoApiKey), null);
+        var known = (await GetUserAsync(cancellationToken)).FindEndProfile(profile.Id)?.Revision ?? 0;
+        var uploaded = profile.With(p => p.Revision = Math.Max(profile.Revision, known) + 1);
+        var result = await registry.UploadEndProfileDrawingAsync(registryId, DrawingFileSerializer.Serialize(uploaded), apiKey, cancellationToken);
+        if (result.Status != EndProfileUploadStatus.Saved) return (result, null);
+        await SaveEndProfileAsync(uploaded, cancellationToken);
+        return (result, uploaded);
     }
 
     /// <summary>Saves an end profile in the user's catalogue, replacing one with the same id (EP-1, CA-2).</summary>
