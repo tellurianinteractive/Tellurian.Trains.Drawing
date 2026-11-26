@@ -87,11 +87,22 @@
   <data name="AngleRange" xml:space="preserve"><value>{0} muss größer als 0 und höchstens 360 sein.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
   <data name="CatalogueIntro" xml:space="preserve"><value>Normen, Zusätze und Endprofile. Dein Katalog wird in diesem Browser gespeichert: Importiere Katalogdateien, um ihn zu füllen, füge eigene Einträge hinzu und exportiere ihn als Datei.</value></data>
-  <data name="CatalogueEmpty" xml:space="preserve"><value>Dein Katalog ist leer. Importiere mit „Dateien importieren“ eine Katalogdatei (.catalogue.json), z. B. von deinem Verein oder deiner Norm, um Normen und Endprofile zu bekommen.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Dein Katalog ist leer. Hole die Normen und Endprofile aus dem Modulregister, oder importiere mit „Dateien importieren“ eine Katalogdatei (.catalogue.json), z. B. von deinem Verein oder deiner Norm.</value></data>
   <data name="ImportEntries" xml:space="preserve"><value>Die Dateien enthalten außerdem {0} Normen, {1} Zusätze und {2} Kompatibilitätsausnahmen. Sie werden mit den gewählten Endprofilen hinzugefügt; ein Eintrag mit der Id eines Eintrags in deinem Katalog ersetzt diesen.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Dateien importieren…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>ZIP importieren…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Ordner importieren…</value></data>
+  <data name="FetchFromRegistry" xml:space="preserve"><value>Aus dem Modulregister holen</value></data>
+  <data name="RegistryError" xml:space="preserve"><value>Das Modulregister ist nicht erreichbar: {0}</value></data>
+  <data name="UploadToRegistry" xml:space="preserve"><value>Ins Modulregister hochladen</value></data>
+  <data name="UploadedToRegistry" xml:space="preserve"><value>{0} ist im Modulregister und in deinem Katalog gespeichert, als Revision {1}.</value></data>
+  <data name="UploadNeedsApiKey" xml:space="preserve"><value>Gib deinen API-Schlüssel für das Modulregister in den Einstellungen ein, um Zeichnungen hochzuladen.</value></data>
+  <data name="UploadNotAllowed" xml:space="preserve"><value>Das Modulregister hat das Hochladen nicht erlaubt ({0}). Prüfe deinen API-Schlüssel; du musst dort Endprofile verwalten dürfen.</value></data>
+  <data name="UploadConflict" xml:space="preserve"><value>Das Modulregister hat eine neuere Zeichnung dieses Endprofils, vielleicht von jemand anderem gespeichert ({0}). Hole sie zuerst auf der Seite Katalog aus dem Modulregister und vergleiche.</value></data>
+  <data name="UploadRefused" xml:space="preserve"><value>Das Modulregister hat die Zeichnung nicht gespeichert: {0}</value></data>
+  <data name="NoDrawing" xml:space="preserve"><value>keine Zeichnung</value></data>
+  <data name="CreateDrawing" xml:space="preserve"><value>Zeichnung erstellen</value></data>
+  <data name="NewEndProfileFrom" xml:space="preserve"><value>Die Zeichnung wird für das Endprofil {0} in deinem Katalog erstellt: Bezeichnung, Maßstab, Norm und Verweis ins Modulregister bleiben erhalten.</value></data>
   <data name="ExportCatalogue" xml:space="preserve"><value>Deinen Katalog exportieren…</value></data>
   <data name="ImportPreview" xml:space="preserve"><value>Zu importierende Endprofile</value></data>
   <data name="NoEndProfilesFound" xml:space="preserve"><value>Die Dateien enthalten keine Endprofile.</value></data>
@@ -101,6 +112,7 @@
   <data name="ImportStatus_New" xml:space="preserve"><value>Neu</value></data>
   <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Bereits im Katalog</value></data>
   <data name="ImportStatus_Changed" xml:space="preserve"><value>Weicht vom Katalog ab</value></data>
+  <data name="ImportStatus_Merged" xml:space="preserve"><value>Wird das des Modulregisters, mit deiner Zeichnung</value></data>
   <data name="ImportChoiceNote" xml:space="preserve"><value>Markierte Profile werden deinem Katalog hinzugefügt. Ein abweichendes Profil ersetzt das im Katalog und behält dessen Id, sodass Module, die es verwenden, die importierte Zeichnung erhalten.</value></data>
   <data name="ImportSelected" xml:space="preserve"><value>{0} markierte importieren</value></data>
   <data name="Imported" xml:space="preserve"><value>{0} Endprofil(e) importiert.</value></data>

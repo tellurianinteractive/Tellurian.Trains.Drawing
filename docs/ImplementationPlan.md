@@ -371,7 +371,7 @@ In priority order (to be confirmed):
 | CA-1 | 2 |
 | CA-2, CA-3 | 2 (logic), 3 (UI) |
 | CA-4 | replaced by EP-* |
-| CA-5 | Later |
+| CA-5 | as built, 2026-11-26 (`ModuleRegistryClient`, Registry 1.19.0; merge of drawn profiles, `EndProfileImport.Merged`, `EndProfileMerges`) |
 | CA-6 | as built, 0.4.0 |
 | EP-1 | 3 (library), 5 |
 | EP-2, EP-7 | 2 (logic), 5 (UI) |
@@ -412,7 +412,7 @@ In priority order (to be confirmed):
 | EX-5 | 9 |
 | EX-7 | 2 (schemas), 12 (freeze v1) |
 | EX-10 | as built, 0.4.0 |
-| EX-11 | Later |
+| EX-11 | end profiles as built, 2026-11-26 (`ModuleRegistryClient`, Registry 1.19.1); modules later |
 | EX-8 | 4 (framework), 5, 6, 9 (per drawing kind) |
 | AP-1 | 0 (skeleton), 3 |
 | AP-2 | 3 (infrastructure), 12 |

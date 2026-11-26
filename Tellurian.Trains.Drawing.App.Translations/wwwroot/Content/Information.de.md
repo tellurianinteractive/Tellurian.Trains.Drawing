@@ -9,7 +9,7 @@ Dies ist eine Vorabversion zum Ausprobieren. Das Dateiformat kann sich vor Versi
 - **Endprofile**: nach einer bemaßten Zeichnung zeichnen, mit Gleisen und Schraubenlöchern, und ausdrucken.
 - **Module**: ein gerades oder gebogenes Modul erstellen, oder eines mit beidem, mit einem Endprofil an jedem Ende. Es mit FREMO-Bezeichnung oder Namen kennzeichnen, in Segmente teilen und ausdrucken.
 - **Hallen**: Wände, Säulen, Einbauten, Türen, Notausgänge und Sperrflächen zeichnen, die Bodenfläche sehen und die Halle ausdrucken.
-- **Katalog**: die Normen FREMO und MMM mit ihren Endprofilen, deine eigenen Normen und Zusätze, und aus Dateien importierte Endprofile.
+- **Katalog**: die FREMO-Normen mit ihren Endprofilen, deine eigenen Normen und Zusätze, und aus Dateien importierte Endprofile.
 
 Noch nicht fertig: das Gleis auf einem Modul zeichnen, und Hallenpläne, in denen Module in einer Halle aufgestellt und auf Passung geprüft werden.
 

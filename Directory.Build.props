@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
-    <Version>0.10.0</Version>
+    <Version>0.11.0</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <Company>Stefan Fjällemark</Company>
     <Copyright>© Stefan Fjällemark 2026</Copyright>
@@ -15,6 +15,11 @@
     <RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Drawing</RepositoryUrl>
     <PackageTags>model railway;FREMO;module;drawing;blazor</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Symbol packages (.snupkg) beside the .nupkg; dotnet nuget push sends both. Source Link is built into the SDK. -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsPackable)' == 'true'">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />

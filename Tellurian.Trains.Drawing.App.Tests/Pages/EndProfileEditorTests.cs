@@ -88,6 +88,33 @@ public sealed class EndProfileEditorTests
     }
 
     [TestMethod]
+    public async Task ARegistryProfileIsUploadedToTheRegistry()
+    {
+        using var context = new AppTestContext();
+        await context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Settings.SettingsService>().SaveAsync(new() { ApiKey = "secret-key" });
+        var profile = SampleCatalogue.Instance.EndProfiles[0].Copy("REGISTRY-42").With(p =>
+            p.ExternalReferences = Schedules.Model.Layouts.ExternalReferences.WithModuleRegistryId(null, Schedules.Model.Layouts.ExternalReferences.EndProfileId, 42));
+        var draft = await context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(profile));
+        var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
+
+        page.WaitForElement("#upload-to-registry").Click();
+
+        page.WaitForAssertion(() => StringAssert.Contains(page.Find(".status").TextContent, "REGISTRY-42"));
+        Assert.AreEqual(ModuleRegistryClient.EndProfileDrawingAddress(42), context.Registry.Requests.Single().Address);
+    }
+
+    [TestMethod]
+    public async Task AProfileThatIsntTheRegistrysHasNoUpload()
+    {
+        using var context = new AppTestContext();
+        var draft = await context.Services.GetRequiredService<DrawingDocuments>().CreateAsync(DrawingFileSerializer.Serialize(SampleCatalogue.Instance.EndProfiles[0].Copy("MINE")));
+        var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
+
+        page.WaitForElement("#save-to-catalogue");
+        Assert.IsEmpty(page.FindAll("#upload-to-registry"));
+    }
+
+    [TestMethod]
     public async Task EditingACatalogueProfileReusesItsDraft()
     {
         using var context = new AppTestContext();

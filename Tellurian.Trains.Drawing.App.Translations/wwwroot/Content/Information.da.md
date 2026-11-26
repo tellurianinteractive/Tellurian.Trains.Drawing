@@ -9,7 +9,7 @@ Dette er en forhåndsversion til afprøvning. Filformatet kan stadig ændres fø
 - **Endeprofiler**: tegn dem efter en måltegning, med spor og skruehuller, og udskriv dem.
 - **Moduler**: opret et lige eller kurvet modul, eller et med begge dele, med en endeprofil i hver ende. Identificer det med FREMO-betegnelse eller navn, opdel det i sektioner, og udskriv det.
 - **Haller**: tegn vægge, søjler, inventar, døre, nødudgange og spærrede områder, se gulvarealet, og udskriv hallen.
-- **Katalog**: standarderne FREMO og MMM med deres endeprofiler, dine egne standarder og tilføjelser, og endeprofiler importeret fra filer.
+- **Katalog**: FREMO-standarderne med deres endeprofiler, dine egne standarder og tilføjelser, og endeprofiler importeret fra filer.
 
 Ikke klar endnu: at tegne sporet på et modul, og hal-planer, hvor moduler placeres i en hal og kontrolleres for, om de passer sammen.
 

@@ -87,11 +87,22 @@
   <data name="AngleRange" xml:space="preserve"><value>{0} må være større enn 0 og høyst 360.</value></data>
   <data name="Catalogue" xml:space="preserve"><value>Katalog</value></data>
   <data name="CatalogueIntro" xml:space="preserve"><value>Standarder, tillegg og endeprofiler. Katalogen din lagres i denne nettleseren: importer katalogfiler for å fylle den, legg til egne oppføringer, og eksporter den som en fil.</value></data>
-  <data name="CatalogueEmpty" xml:space="preserve"><value>Katalogen din er tom. Importer en katalogfil (.catalogue.json) med Importer filer, f.eks. fra klubben din eller standarden din, for å få standarder og endeprofiler.</value></data>
+  <data name="CatalogueEmpty" xml:space="preserve"><value>Katalogen din er tom. Hent standarder og endeprofiler fra Modulregisteret, eller importer en katalogfil (.catalogue.json) med Importer filer, f.eks. fra klubben din eller standarden din.</value></data>
   <data name="ImportEntries" xml:space="preserve"><value>Filene har også {0} standarder, {1} tillegg og {2} kompatibilitetsunntak. De legges til sammen med endeprofilene du velger; en oppføring med samme id som en i katalogen din erstatter den.</value></data>
   <data name="ImportFiles" xml:space="preserve"><value>Importer filer…</value></data>
   <data name="ImportArchive" xml:space="preserve"><value>Importer ZIP…</value></data>
   <data name="ImportFolder" xml:space="preserve"><value>Importer mappe…</value></data>
+  <data name="FetchFromRegistry" xml:space="preserve"><value>Hent fra Modulregisteret</value></data>
+  <data name="RegistryError" xml:space="preserve"><value>Modulregisteret kunne ikke nås: {0}</value></data>
+  <data name="UploadToRegistry" xml:space="preserve"><value>Last opp til Modulregisteret</value></data>
+  <data name="UploadedToRegistry" xml:space="preserve"><value>{0} er lagret i Modulregisteret og i katalogen din, som revisjon {1}.</value></data>
+  <data name="UploadNeedsApiKey" xml:space="preserve"><value>Skriv inn API-nøkkelen din til Modulregisteret i Innstillinger for å laste opp tegninger.</value></data>
+  <data name="UploadNotAllowed" xml:space="preserve"><value>Modulregisteret tillot ikke opplastingen ({0}). Sjekk API-nøkkelen din; du må ha lov til å administrere endeprofiler der.</value></data>
+  <data name="UploadConflict" xml:space="preserve"><value>Modulregisteret har en nyere tegning av denne endeprofilen, kanskje lagret av noen andre ({0}). Hent fra Modulregisteret på siden Katalog og sammenlign først.</value></data>
+  <data name="UploadRefused" xml:space="preserve"><value>Modulregisteret lagret ikke tegningen: {0}</value></data>
+  <data name="NoDrawing" xml:space="preserve"><value>ingen tegning</value></data>
+  <data name="CreateDrawing" xml:space="preserve"><value>Lag tegning</value></data>
+  <data name="NewEndProfileFrom" xml:space="preserve"><value>Tegningen lages for endeprofilen {0} i katalogen din: betegnelse, skala, standard og referanse i Modulregisteret beholdes.</value></data>
   <data name="ExportCatalogue" xml:space="preserve"><value>Eksporter katalogen din…</value></data>
   <data name="ImportPreview" xml:space="preserve"><value>Endeprofiler som skal importeres</value></data>
   <data name="NoEndProfilesFound" xml:space="preserve"><value>Filene inneholder ingen endeprofiler.</value></data>
@@ -101,6 +112,7 @@
   <data name="ImportStatus_New" xml:space="preserve"><value>Ny</value></data>
   <data name="ImportStatus_Unchanged" xml:space="preserve"><value>Finnes allerede i katalogen</value></data>
   <data name="ImportStatus_Changed" xml:space="preserve"><value>Avviker fra katalogen</value></data>
+  <data name="ImportStatus_Merged" xml:space="preserve"><value>Blir Modulregisterets, med tegningen din</value></data>
   <data name="ImportChoiceNote" xml:space="preserve"><value>Avkryssede profiler legges til i katalogen din. En profil som avviker, erstatter den i katalogen og beholder dens id, slik at moduler som bruker den, får den importerte tegningen.</value></data>
   <data name="ImportSelected" xml:space="preserve"><value>Importer {0} avkryssede</value></data>
   <data name="Imported" xml:space="preserve"><value>{0} endeprofil(er) importert.</value></data>

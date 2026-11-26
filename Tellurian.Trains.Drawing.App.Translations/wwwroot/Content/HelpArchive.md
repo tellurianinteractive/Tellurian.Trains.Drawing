@@ -7,6 +7,7 @@ The *Archive* pane shows the drawing's name and kind, the file it was opened fro
 - **Save** saves the drawing to its file; the first time, you choose where. Browsers that can't save in place, such as Firefox and Safari, show **Save (download)** instead: a new file is downloaded, and you choose the old file to replace it.
 - **Save as…** saves the drawing to another file, and you continue in that file.
 - **Save to my catalogue**, for end profiles, adds the end profile to your catalogue, so that your modules can use it.
+- **Upload to the Module Registry**, for an end profile that is the Registry's, saves the drawing there as a new revision, and in your catalogue. It needs your API key in *Settings*, and the Registry must allow you to manage end profiles. If someone has uploaded a newer drawing, the Registry refuses yours: fetch the catalogue from the Registry and compare first.
 - **Discard draft** removes the draft from this browser and goes back to the start page. The file is not affected. If there are unsaved changes, you are asked first.
 
 ## Drafts and files

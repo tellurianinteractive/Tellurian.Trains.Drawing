@@ -7,6 +7,7 @@
 @using Tellurian.Trains.Drawing.Components.Properties
 @using Tellurian.Trains.Drawing.Components.Views
 @using Tellurian.Trains.Drawing.App.Editors
+@using Tellurian.Trains.Drawing.Model.Catalogues
 
 <PageTitle>@(draft?.Name ?? T["AppName"])</PageTitle>
 
@@ -73,6 +74,10 @@ else if (draft is not null)
         @if (current.Kind == DrawingFileKind.EndProfile)
         {
             <button type="button" id="save-to-catalogue" @onclick="SaveToCatalogueAsync">@T["SaveToCatalogue"]</button>
+            @if (_endProfileEditor?.Current is { } shown && Tellurian.Trains.Drawing.App.Catalogues.CatalogueService.ModuleRegistryId(shown) is not null)
+            {
+                <button type="button" id="upload-to-registry" @onclick="UploadToRegistryAsync">@T["UploadToRegistry"]</button>
+            }
         }
         <button type="button" id="discard" @onclick="DiscardAsync">@T["Discard"]</button>
     </div>
@@ -232,9 +237,10 @@ else if (draft is not null)
     {
         try
         {
-            var (content, updated) = DrawingFileSerializer.DeserializeModule(module.Json).WithCurrentEndProfiles(catalogue.FindEndProfile);
-            if (updated.Count == 0) return module;
-            _updatedEndProfiles = [.. updated.Select(p => p.Designation)];
+            var (merged, moved) = DrawingFileSerializer.DeserializeModule(module.Json).WithMergedEndProfiles(await Catalogues.GetEndProfileMergesAsync(), catalogue.FindEndProfile);
+            var (content, updated) = merged.WithCurrentEndProfiles(catalogue.FindEndProfile);
+            if (moved.Count == 0 && updated.Count == 0) return module;
+            _updatedEndProfiles = [.. moved.Concat(updated).DistinctBy(p => p.Id).Select(p => p.Designation)];
             return await Documents.UpdateAsync(module.Id, DrawingFileSerializer.Serialize(content));
         }
         catch (DrawingFileException)
@@ -267,6 +273,43 @@ else if (draft is not null)
     }
 
     private string? _status;
+
+    /// <summary>
+    /// Saves the profile being edited in the Module Registry as a new revision (EX-11), and in the catalogue; for users
+    /// whose API key may manage end profiles.
+    /// </summary>
+    private async Task UploadToRegistryAsync()
+    {
+        message = null;
+        _status = null;
+        try
+        {
+            if (_endProfileEditor?.Current is not { } profile) return;
+            await _endProfileEditor.FlushAsync();
+            var (result, uploaded) = await Catalogues.UploadToModuleRegistryAsync(profile);
+            if (uploaded is not null)
+            {
+                _catalogue = await Catalogues.GetAsync();
+                _status = T.Format("UploadedToRegistry", uploaded.Designation, uploaded.Revision);
+                return;
+            }
+            message = result.Status switch
+            {
+                Tellurian.Trains.Drawing.App.Catalogues.EndProfileUploadStatus.NoApiKey => T["UploadNeedsApiKey"],
+                Tellurian.Trains.Drawing.App.Catalogues.EndProfileUploadStatus.NotAllowed => T.Format("UploadNotAllowed", result.Message ?? string.Empty),
+                Tellurian.Trains.Drawing.App.Catalogues.EndProfileUploadStatus.Conflict => T.Format("UploadConflict", result.Message ?? string.Empty),
+                _ => T.Format("UploadRefused", result.Message ?? string.Empty),
+            };
+        }
+        catch (Tellurian.Trains.Drawing.App.Catalogues.ModuleRegistryException ex)
+        {
+            message = T.Format("RegistryError", ex.Message);
+        }
+        catch (StorageException ex)
+        {
+            message = T.Format("StorageError", ex.Message);
+        }
+    }
 
     private async Task SaveAsync(bool saveAs)
     {

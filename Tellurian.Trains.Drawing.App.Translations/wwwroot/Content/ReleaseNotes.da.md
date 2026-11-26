@@ -1,5 +1,12 @@
 # Udgivelsesnoter
 
+## Version 0.11.0
+Udgivet 2026-11-26
+- *Hent fra Modulregistret* på siden *Katalog* henter registrets standarder og endeprofiler for din skala og dit land ind, at vælge imellem som når du importerer en katalogfil.
+- Endeprofiler, som registret ikke har en tegning af, er markeret *ingen tegning*. *Opret tegning* tegner en ud fra skabelonen og beholder dens betegnelse og reference i registret; indtil da kan den ikke bruges på et modul.
+- En endeprofil, du selv har tegnet, med samme betegnelse, standard og skala som en, registret ikke har en tegning af, bliver registrets, når du henter: den beholder din tegning, og moduler, der bruger den, flyttes til den, når du åbner dem.
+- *Upload til Modulregistret* i panelet *Arkiv* gemmer en endeprofiltegning i registret som en ny revision. Det kræver din API-nøgle i *Indstillinger*, og registret skal tillade dig at administrere endeprofiler.
+
 ## Version 0.10.0
 Udgivet 2026-11-24
 - Appen har ikke længere sit eget katalog: kataloget er dit. Importér en katalogfil (.catalogue.json) på siden *Katalog*, fx fra din klub; den har sine skalaer, standarder, tilføjelser og kompatibilitetsundtagelser med sammen med de endeprofiler, du vælger. Alle poster kan ændres og slettes.

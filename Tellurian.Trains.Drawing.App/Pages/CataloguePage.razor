@@ -13,6 +13,7 @@
 <p>@T["CatalogueIntro"]</p>
 
 <div class="toolbar">
+    <button type="button" id="fetch-registry" @onclick="FetchFromRegistryAsync">@T["FetchFromRegistry"]</button>
     <button type="button" id="import-files" @onclick="() => ImportAsync(ImportSourceKind.Files)">@T["ImportFiles"]</button>
     <button type="button" id="import-archive" @onclick="() => ImportAsync(ImportSourceKind.Archive)">@T["ImportArchive"]</button>
     <button type="button" id="import-folder" @onclick="() => ImportAsync(ImportSourceKind.Folder)">@T["ImportFolder"]</button>
@@ -71,7 +72,7 @@
                                 <input type="checkbox" aria-label="@item.Imported.Designation" disabled="@(item.Status == EndProfileImportStatus.Unchanged)"
                                        checked="@chosen.Contains(item)" @onchange="e => Choose(item, e.Value is true)" />
                             </td>
-                            <td>@item.Imported.Designation <span class="detail">@item.Imported.Scale</span></td>
+                            <td>@item.Imported.Designation <span class="detail">@item.Imported.Scale@(item.Imported.HasOutline() ? "" : $", {T["NoDrawing"]}")</span></td>
                             <td>@T[$"ImportStatus_{item.Status}"]</td>
                             <td>@ChangesText(item)</td>
                         </tr>
@@ -99,13 +100,21 @@
                 @foreach (var profile in catalogue.EndProfiles.OrderBy(p => p.Scale).ThenBy(p => p.Designation))
                 {
                     <tr>
-                        <td>@profile.Designation</td>
+                        @{ var isDrawn = profile.HasOutline(); }
+                        <td>@profile.Designation @if (!isDrawn) { <span class="detail no-drawing">@T["NoDrawing"]</span> }</td>
                         <td>@profile.Scale</td>
                         <td>@string.Join(", ", profile.Standards.Select(s => s.Name))</td>
-                        <td>@profile.Tracks.Count</td>
+                        <td>@(isDrawn ? profile.Tracks.Count : "–")</td>
                         <td class="actions">
-                            <button type="button" class="link" @onclick="() => CopyAsync(profile)">@T["Copy"]</button>
-                            <button type="button" class="link edit-profile" @onclick="() => EditAsync(profile)">@T["EditAsDraft"]</button>
+                            @if (isDrawn)
+                            {
+                                <button type="button" class="link" @onclick="() => CopyAsync(profile)">@T["Copy"]</button>
+                                <button type="button" class="link edit-profile" @onclick="() => EditAsync(profile)">@T["EditAsDraft"]</button>
+                            }
+                            else
+                            {
+                                <a class="create-drawing" href="@NewEndProfilePage.Url(profile.Id)">@T["CreateDrawing"]</a>
+                            }
                             <button type="button" class="link" @onclick="() => RemoveAsync(profile.Designation, () => Catalogues.DeleteEndProfileAsync(profile.Id))">@T["Delete"]</button>
                         </td>
                     </tr>
@@ -234,7 +243,14 @@
         var result = await Catalogues.PickImportAsync(source);
         if (result is null) return;
         preview = result;
-        chosen = [.. result.Items.Where(i => i.Status == EndProfileImportStatus.New)];
+        chosen = [.. result.Items.Where(i => i.Status is EndProfileImportStatus.New or EndProfileImportStatus.Merged)];
+    });
+
+    /// <summary>Fetches the Module Registry's catalogue for the scale and country in the settings (CA-5).</summary>
+    private async Task FetchFromRegistryAsync() => await RunAsync(async () =>
+    {
+        preview = await Catalogues.FetchFromModuleRegistryAsync();
+        chosen = [.. preview.Items.Where(i => i.Status is EndProfileImportStatus.New or EndProfileImportStatus.Merged)];
     });
 
     private async Task ApplyImportAsync() => await RunAsync(async () =>
@@ -283,6 +299,10 @@
         catch (Exception ex) when (ex is FileOperationException or StorageException)
         {
             message = T.Format(ex is FileOperationException ? "FileError" : "StorageError", ex.Message);
+        }
+        catch (ModuleRegistryException ex)
+        {
+            message = T.Format("RegistryError", ex.Message);
         }
         await LoadAsync();
     }
