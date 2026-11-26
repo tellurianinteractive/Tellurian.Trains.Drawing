@@ -21,7 +21,7 @@
 }
 else
 {
-    <form class="form" @onsubmit="CreateAsync" @onsubmit:preventDefault>
+    <form class="form" @onsubmit="@(() => busy.RunAsync("create", CreateAsync))" @onsubmit:preventDefault>
         <fieldset class="choices">
             <legend>@T["Template"]</legend>
             @foreach (var kind in Enum.GetValues<ModuleTemplateKind>())
@@ -157,7 +157,7 @@ else
         <div class="toolbar">
             @if (created is null)
             {
-                <button type="submit" class="primary" disabled="@(creating is not null)">@T["Create"]</button>
+                <BusyButton Busy="busy" Key="create" Type="submit" Class="primary" Disabled="@(creating is not null)">@T["Create"]</BusyButton>
             }
             else
             {
@@ -175,6 +175,9 @@ else
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     private Catalogue? catalogue;
     private readonly Form form = new();
     private IReadOnlyList<string> errors = [];

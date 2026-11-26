@@ -1693,6 +1693,13 @@
             }
           ]
         },
+        "extendsStandardId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
         "trackSystem": {
           "type": [
             "string",

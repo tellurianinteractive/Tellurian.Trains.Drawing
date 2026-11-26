@@ -98,7 +98,11 @@ public sealed class CataloguePageTests
     private static EndProfile Shapeless(AppTestContext context)
     {
         var like = SampleCatalogue.Instance.EndProfiles[0];
-        var profile = new EndProfile { Id = Guid.NewGuid(), Designation = "REGISTRY-SHAPELESS", Scale = like.Scale, Standards = [.. like.Standards] };
+        var profile = new EndProfile
+        {
+            Id = Guid.NewGuid(), Designation = "REGISTRY-SHAPELESS", Scale = like.Scale, Standards = [.. like.Standards],
+            ExternalReferences = Schedules.Model.Layouts.ExternalReferences.WithModuleRegistryId(null, Schedules.Model.Layouts.ExternalReferences.EndProfileId, 42),
+        };
         context.Services.GetRequiredService<CatalogueService>().SaveEndProfileAsync(profile).Wait();
         return profile;
     }
@@ -157,6 +161,7 @@ public sealed class CataloguePageTests
         var drawn = DrawingFileSerializer.DeserializeEndProfile(context.Workbench.Drafts.Values.Single().Json);
         Assert.AreEqual((profile.Id, profile.Designation, profile.Scale), (drawn.Id, drawn.Designation, drawn.Scale));
         Assert.IsTrue(drawn.HasOutline());
+        Assert.AreEqual(42, CatalogueService.ModuleRegistryId(drawn), "The Registry id is kept, so the drawing can be uploaded.");
     }
 
     [TestMethod]

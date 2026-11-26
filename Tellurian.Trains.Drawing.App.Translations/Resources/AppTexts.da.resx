@@ -319,6 +319,7 @@
   <data name="Hide" xml:space="preserve"><value>Skjul</value></data>
   <data name="SettingsSaved" xml:space="preserve"><value>Indstillingerne er gemt.</value></data>
   <data name="Field_Countries" xml:space="preserve"><value>Lande</value></data>
+  <data name="Field_ExtendsStandardId" xml:space="preserve"><value>Udvider standarden</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Landekoder på to bogstaver, for eksempel SE, adskilt med komma. Tomt: standarden gælder i alle lande.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: brug landekoder på to bogstaver, for eksempel SE.</value></data>
   <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: en standard skal have mindst én sporvidde.</value></data>

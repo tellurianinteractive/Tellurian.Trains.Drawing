@@ -23,12 +23,37 @@ public sealed class CatalogueEditorPageTests
         var page = context.Render<StandardEditorPage>();
 
         page.Find("#shortName").Change("MY-H0");
-        page.Find("#normalGauge").Change("16.5");
+        page.Find("#countries").Change("se, no");
         page.Find("form").Submit();
 
         var standard = User(context).Standards.Single(s => s.ShortName == "MY-H0");
-        Assert.AreEqual(("MY-H0", "H0", (double?)16.5), (standard.ShortName, standard.ScaleName, standard.NormalGauge));
+        Assert.AreEqual(("MY-H0", "H0", "SE,NO"), (standard.ShortName, standard.ScaleName, string.Join(",", standard.Countries!)));
         Assert.EndsWith("catalogue", Uri(context));
+    }
+
+    [TestMethod]
+    public void AnEditedStandardKeepsItsRegistryId()
+    {
+        using var context = new AppTestContext();
+        var registry = SampleCatalogue.Instance.Standards[0].With(s =>
+            s.ExternalReferences = Schedules.Model.Layouts.ExternalReferences.WithModuleRegistryId(null, Schedules.Model.Layouts.ExternalReferences.StandardId, 2));
+        context.Services.GetRequiredService<CatalogueService>().SaveUserAsync(User(context).With(registry)).Wait();
+        var page = context.Render<StandardEditorPage>(p => p.Add(x => x.Id, registry.Id));
+
+        page.Find("#countries").Change("SE");
+        page.Find("form").Submit();
+
+        var saved = User(context).FindStandard(registry.Id!.Value)!;
+        Assert.AreEqual(2, Schedules.Model.Layouts.ExternalReferences.ModuleRegistryId(saved.ExternalReferences, Schedules.Model.Layouts.ExternalReferences.StandardId));
+    }
+
+    [TestMethod]
+    public void OnlyTheShortNameScaleAndCountriesAreShown()
+    {
+        using var context = new AppTestContext();
+        var page = context.Render<StandardEditorPage>(p => p.Add(x => x.Id, SampleCatalogue.Instance.Standards[0].Id));
+
+        CollectionAssert.AreEquivalent(new[] { "shortName", "scale", "countries" }, page.FindAll("form input, form select").Select(e => e.Id).ToArray());
     }
 
     [TestMethod]
@@ -42,7 +67,7 @@ public sealed class CatalogueEditorPageTests
 
         var problems = page.FindAll(".problems li").Select(e => e.TextContent).ToList();
         CollectionAssert.Contains(problems, "Short name: the name is already used.");
-        CollectionAssert.Contains(problems, "Normal gauge (mm): a standard needs at least one gauge.");
+        Assert.IsFalse(problems.Any(p => p.Contains("gauge", StringComparison.OrdinalIgnoreCase)), "A gauge is given per track in the end profiles.");
         Assert.HasCount(SampleCatalogue.Instance.Standards.Count, User(context).Standards, "Nothing is saved.");
     }
 
@@ -54,11 +79,12 @@ public sealed class CatalogueEditorPageTests
         var page = context.Render<StandardEditorPage>(p => p.Add(x => x.Id, standard.Id));
         Assert.AreEqual(standard.ShortName, page.Find("#shortName").GetAttribute("value"));
 
-        page.Find("#railTopHeight").Change("1250");
+        page.Find("#shortName").Change("RENAMED");
         page.Find("form").Submit();
 
         var saved = User(context).FindStandard(standard.Id!.Value)!;
-        Assert.AreEqual((1250.0, standard.DefaultSingleTrackEndProfileId), (saved.RailTopHeight, saved.DefaultSingleTrackEndProfileId));
+        Assert.AreEqual("RENAMED", saved.ShortName);
+        Assert.AreEqual((standard.NormalGauge, standard.DefaultSingleTrackEndProfileId), (saved.NormalGauge, saved.DefaultSingleTrackEndProfileId), "The values not shown are kept.");
         Assert.HasCount(SampleCatalogue.Instance.Standards.Count, User(context).Standards);
     }
 

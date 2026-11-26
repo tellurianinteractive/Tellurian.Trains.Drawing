@@ -319,6 +319,7 @@
   <data name="Hide" xml:space="preserve"><value>Verbergen</value></data>
   <data name="SettingsSaved" xml:space="preserve"><value>Einstellungen gespeichert.</value></data>
   <data name="Field_Countries" xml:space="preserve"><value>Länder</value></data>
+  <data name="Field_ExtendsStandardId" xml:space="preserve"><value>Erweitert die Norm</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Ländercodes mit zwei Buchstaben, zum Beispiel SE, durch Kommas getrennt. Leer: Die Norm gilt in allen Ländern.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: verwende Ländercodes mit zwei Buchstaben, zum Beispiel SE.</value></data>
   <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: ein Standard braucht mindestens eine Spurweite.</value></data>

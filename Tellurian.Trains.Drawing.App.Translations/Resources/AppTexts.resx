@@ -319,6 +319,7 @@
   <data name="Hide" xml:space="preserve"><value>Hide</value></data>
   <data name="SettingsSaved" xml:space="preserve"><value>Settings saved.</value></data>
   <data name="Field_Countries" xml:space="preserve"><value>Countries</value></data>
+  <data name="Field_ExtendsStandardId" xml:space="preserve"><value>Extends standard</value></data>
   <data name="CountriesHelp" xml:space="preserve"><value>Two-letter country codes, e.g. SE, separated by commas. Empty: the standard applies in all countries.</value></data>
   <data name="Problem_CountryInvalid" xml:space="preserve"><value>{0}: use two-letter country codes such as SE.</value></data>
   <data name="Problem_GaugesMissing" xml:space="preserve"><value>{0}: a standard needs at least one gauge.</value></data>

@@ -72,8 +72,10 @@ public static class EndProfileImport
     {
         ArgumentNullException.ThrowIfNull(user);
         ArgumentNullException.ThrowIfNull(entries);
-        var merged = Catalogue.Merge(user, entries with { EndProfiles = [] }) with { Version = user.Version };
-        return Apply(merged, chosen);
+        // Standards first, by id or short name (StandardMerge), so the catalogue never has two with the same name.
+        var (standards, moved) = StandardMerge.Merge(user.Standards, entries.Standards);
+        var merged = Catalogue.Merge(user with { Standards = standards }, entries with { Standards = [], EndProfiles = [] }) with { Version = user.Version };
+        return StandardMerge.WithMovedStandards(Apply(merged, chosen), moved);
     }
 
     /// <summary>Matches and compares <paramref name="imported"/> with the profiles in <paramref name="catalogue"/>.</summary>

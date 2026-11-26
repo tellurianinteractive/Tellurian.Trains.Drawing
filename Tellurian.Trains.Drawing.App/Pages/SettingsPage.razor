@@ -21,7 +21,7 @@
 }
 @if (form is not null)
 {
-    <form class="form" @onsubmit="SaveAsync" @onsubmit:preventDefault>
+    <form class="form" @onsubmit="@(() => busy.RunAsync("save", SaveAsync))" @onsubmit:preventDefault>
         <label>
             <span>@T["Field_UserName"]</span>
             <input id="userName" @bind="form.UserName" autocomplete="name" />
@@ -59,7 +59,7 @@
         </label>
 
         <div class="toolbar">
-            <button type="submit" class="primary" id="save-settings">@T["Save"]</button>
+            <BusyButton Busy="busy" Key="save" Type="submit" Class="primary" id="save-settings">@T["Save"]</BusyButton>
             @if (status is not null)
             {
                 <span class="note" id="settings-saved" role="status">@status</span>
@@ -71,8 +71,8 @@
         <h2 id="settings-file-title">@T["SettingsFileTitle"]</h2>
         <p class="note">@T["SettingsFileHelp"]</p>
         <div class="toolbar">
-            <button type="button" id="export-settings" @onclick="ExportAsync">@T["ExportSettings"]</button>
-            <button type="button" id="import-settings" @onclick="ImportAsync">@T["ImportSettings"]</button>
+            <BusyButton Busy="busy" Key="export" id="export-settings" OnClick="ExportAsync">@T["ExportSettings"]</BusyButton>
+            <BusyButton Busy="busy" Key="import" id="import-settings" OnClick="ImportAsync">@T["ImportSettings"]</BusyButton>
         </div>
     </section>
 }
@@ -88,7 +88,7 @@
         {
             <p id="storage-not-persisted" class="warning">@T["StorageNotPersisted"]</p>
             <div class="toolbar">
-                <button type="button" id="request-persistence" @onclick="RequestPersistenceAsync">@T["StorageAskToKeep"]</button>
+                <BusyButton Busy="busy" Key="persist" id="request-persistence" OnClick="RequestPersistenceAsync">@T["StorageAskToKeep"]</BusyButton>
             </div>
             @if (persistenceRefused)
             {
@@ -102,6 +102,9 @@
 }
 
 @code {
+    /// <summary>The IO action running, if any (BusyButton).</summary>
+    private readonly BusyState busy = new();
+
     public const string Url = "settings";
 
     private Form? form;

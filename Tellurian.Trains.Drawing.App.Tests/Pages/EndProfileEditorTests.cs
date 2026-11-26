@@ -101,6 +101,27 @@ public sealed class EndProfileEditorTests
 
         page.WaitForAssertion(() => StringAssert.Contains(page.Find(".status").TextContent, "REGISTRY-42"));
         Assert.AreEqual(ModuleRegistryClient.EndProfileDrawingAddress(42), context.Registry.Requests.Single().Address);
+        Assert.AreEqual(42, CatalogueService.ModuleRegistryId(DrawingFileSerializer.DeserializeEndProfile(context.Registry.Requests.Single().Body!)), "The file names the end profile it is a drawing of.");
+    }
+
+    [TestMethod]
+    public async Task ARegistryProfileEditedFromTheCatalogueKeepsItsRegistryId()
+    {
+        using var context = new AppTestContext();
+        await context.Services.GetRequiredService<global::Tellurian.Trains.Drawing.App.Settings.SettingsService>().SaveAsync(new() { ApiKey = "secret-key" });
+        var profile = SampleCatalogue.Instance.EndProfiles[0].With(p =>
+            p.ExternalReferences = Schedules.Model.Layouts.ExternalReferences.WithModuleRegistryId(null, Schedules.Model.Layouts.ExternalReferences.EndProfileId, 7));
+        await context.Services.GetRequiredService<CatalogueService>().SaveEndProfileAsync(profile);
+        var draft = await context.Services.GetRequiredService<DrawingDocuments>().EditAsync(DrawingFileSerializer.Serialize(profile));
+        var page = context.Render<DrawingPage>(p => p.Add(x => x.Id, draft.Id));
+
+        page.WaitForElement("#save-to-catalogue").Click();
+        page.WaitForElement("#upload-to-registry").Click();
+
+        page.WaitForAssertion(() => Assert.HasCount(1, context.Registry.Requests));
+        Assert.AreEqual(ModuleRegistryClient.EndProfileDrawingAddress(7), context.Registry.Requests.Single().Address);
+        var catalogued = (await context.Services.GetRequiredService<CatalogueService>().GetUserAsync()).FindEndProfile(profile.Id)!;
+        Assert.AreEqual(7, CatalogueService.ModuleRegistryId(catalogued));
     }
 
     [TestMethod]
